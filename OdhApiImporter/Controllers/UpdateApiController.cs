@@ -419,9 +419,67 @@ namespace OdhApiImporter.Controllers
 
         #region LTS ACTIVITYDATA SYNC
 
+        [HttpGet, Route("LTS/ActivityData/UpdateAll")]
+        public async Task<IActionResult> ImportLTSActivities(
+            string? changedafter = null,
+            List<string>? idlist = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS ActivityData data";
+            string updatetype = GetUpdateType(idlist);
+            string source = "lts";
+            string otherinfo = "activity";
+
+            try
+            {
+                LCSImportHelper lcsimporthelper = new LCSImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("LTS/ActivityData"));
+                lcsimporthelper.EntityType = LCSEntities.ActivityData;
+                updatedetail = await lcsimporthelper.SaveDataToODH(null, null, cancellationToken);
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS ActivityData data succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS ActivityData data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
         #endregion
 
         #region LTS POIDATA SYNC
+
+        [HttpGet, Route("LTS/PoiData/UpdateAll")]
+        public async Task<IActionResult> ImportLTSPois(
+          string? changedafter = null,
+          List<string>? idlist = null,
+          CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS PoiData data";
+            string updatetype = GetUpdateType(idlist);
+            string source = "lts";
+            string otherinfo = "poi";
+
+            try
+            {
+                LCSImportHelper lcsimporthelper = new LCSImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("LTS/PoiData"));
+                lcsimporthelper.EntityType = LCSEntities.PoiData;
+                updatedetail = await lcsimporthelper.SaveDataToODH(null, null, cancellationToken);
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS PoiData data succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS PoiData data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
 
         #endregion
 
@@ -439,7 +497,7 @@ namespace OdhApiImporter.Controllers
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import LTS GastronomicData data";
-            string updatetype = "all";
+            string updatetype = GetUpdateType(idlist);
             string source = "lts";
             string otherinfo = "gastronomy";
 
@@ -635,6 +693,14 @@ namespace OdhApiImporter.Controllers
                     return location.AbsoluteUri;
                 };
             }
+        }
+
+        private static string GetUpdateType(List<string>? idlist)
+        {
+            if (idlist == null)
+                return "all";
+            else
+                return "passed_ids";
         }
     }
 }
