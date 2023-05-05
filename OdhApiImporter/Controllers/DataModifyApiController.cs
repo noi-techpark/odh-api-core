@@ -41,6 +41,7 @@ namespace OdhApiImporter.Controllers
 
         #region EventShort
 
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ModifyEventShort")]
         public async Task<IActionResult> ModifyEventShort(CancellationToken cancellationToken)
         {
@@ -69,6 +70,7 @@ namespace OdhApiImporter.Controllers
             });
         }
 
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("CleanEventShort")]
         public async Task<IActionResult> CleanEventShort(CancellationToken cancellationToken)
         {
@@ -99,8 +101,38 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region Accommodations
+
+        [Authorize(Roles = "DataPush")]
+        [HttpPost, Route("ModifyAccommodations")]
+        public async Task<IActionResult> ModifyAccommodations(bool trim, [FromBody] List<string> idlist)
+        {
+            var objectscount = 0;
+
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+          
+            objectscount = await customdataoperation.AccommodationModify(idlist, trim);
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify Accommodation",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        #endregion
+
         #region Articles
 
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("FillDummyNews")]
         public async Task<IActionResult> FillDBWithDummynews(CancellationToken cancellationToken)
         {
@@ -126,6 +158,7 @@ namespace OdhApiImporter.Controllers
 
         #region Weather
 
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ModifyWeatherHistory")]
         public async Task<IActionResult> ModifyWeatherHistory(CancellationToken cancellationToken)
         {
@@ -151,6 +184,7 @@ namespace OdhApiImporter.Controllers
 
         #region ODHActivityPoi
 
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ModifyOldODHActivityPoi")]
         public async Task<IActionResult> ModifyODHActivityPoiTags(CancellationToken cancellationToken)
         {
@@ -174,6 +208,7 @@ namespace OdhApiImporter.Controllers
             });
         }
 
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ModifySTAVendingpoint")]
         public async Task<IActionResult> ModifySTAVendingpoint(CancellationToken cancellationToken)
         {
@@ -199,6 +234,7 @@ namespace OdhApiImporter.Controllers
 
         #region MetaData
 
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("UpdateMetaDataRecordCount")]
         public async Task<IActionResult> UpdateMetaDataRecordCount(CancellationToken cancellationToken)
         {

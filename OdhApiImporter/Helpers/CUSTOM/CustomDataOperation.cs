@@ -258,6 +258,38 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> AccommodationModify(List<string> idlist, bool trim)
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("accommodations")
+                   .WhereIn("id",idlist);
+
+            var data = await query.GetObjectListAsync<AccommodationLinked>();
+            int i = 0;
+
+            foreach (var acco in data)
+            {
+                if (trim)
+                {
+                    acco.AccoDetail["de"].Name = acco.AccoDetail["de"].Name.Trim();
+                }
+                else
+                {
+                    acco.AccoDetail["de"].Name = acco.AccoDetail["de"].Name + " ";
+                }
+
+                //Save tp DB
+                var queryresult = await QueryFactory.Query("accommodations").Where("id", acco.Id)
+                     .UpdateAsync(new JsonBData() { id = acco.Id, data = new JsonRaw(acco) });
+
+                i++;
+            }
+
+            return i;
+        }
+
 
         public async Task<int> UpdateAllSTAVendingpoints()
         {
