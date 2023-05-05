@@ -266,10 +266,10 @@ namespace OdhApiImporter.Helpers
                    .From("accommodations")
                    .WhereIn("id",idlist);
 
-            var data = await query.GetObjectListAsync<AccommodationLinked>();
+            var accos = await query.GetObjectListAsync<AccommodationLinked>();
             int i = 0;
 
-            foreach (var acco in data)
+            foreach (var acco in accos)
             {
                 if (trim)
                 {
