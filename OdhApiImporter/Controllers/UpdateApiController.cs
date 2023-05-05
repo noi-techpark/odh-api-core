@@ -27,6 +27,7 @@ using OdhApiImporter.Helpers.LOOPTEC;
 using OdhApiImporter.Helpers.SuedtirolWein;
 using OdhNotifier;
 using ServiceReferenceLCS;
+using OdhApiImporter.Helpers.LTSLCS;
 
 namespace OdhApiImporter.Controllers
 {
@@ -431,7 +432,10 @@ namespace OdhApiImporter.Controllers
         #region LTS GASTRONOMIC DATA SYNC
 
         [HttpGet, Route("LTS/GastronomicData/UpdateAll")]
-        public async Task<IActionResult> ImportLTSGastronomies(bool onlychanged, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportLTSGastronomies( 
+            string? changedafter = null, 
+            List<string>? idlist = null,
+            CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import LTS GastronomicData data";
@@ -441,7 +445,10 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                
+                LCSImportHelper lcsimporthelper = new LCSImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("LTS/GastronomicData"));
+                lcsimporthelper.EntityType = LCSEntities.GastronomicData;
+                updatedetail = await lcsimporthelper.SaveDataToODH(null, null, cancellationToken);
+
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS GastronomicData data succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
@@ -521,7 +528,7 @@ namespace OdhApiImporter.Controllers
                 {
                     case "webcam":
                    
-                        DSSWebcamImportHelper dsswebcamimporthelper = new DSSWebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("DSS/Webcam"));                        
+                        DSSWebcamImportHelper dsswebcamimporthelper = new DSSWebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("DSS/Webcam"));
 
                         updatedetail = await dsswebcamimporthelper.SaveDataToODH(null, null, cancellationToken);
                         break;
@@ -530,7 +537,7 @@ namespace OdhApiImporter.Controllers
                         DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("DSS/" + dssentity));
                         dssimporthelper.entitytype = dssentity;
 
-                       updatedetail = await dssimporthelper.SaveDataToODH(null, null, cancellationToken);
+                        updatedetail = await dssimporthelper.SaveDataToODH(null, null, cancellationToken);
                         break;
                 }
 

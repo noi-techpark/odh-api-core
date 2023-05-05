@@ -44,7 +44,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\LTSLCS\" />
     <Folder Include="Models\" />
     <Folder Include="json\" />
   </ItemGroup>

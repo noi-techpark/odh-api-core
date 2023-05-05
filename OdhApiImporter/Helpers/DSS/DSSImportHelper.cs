@@ -16,14 +16,16 @@ using System.Collections;
 
 namespace OdhApiImporter.Helpers.DSS
 {
+    
+
     public class DSSImportHelper : ImportHelper, IImportHelper
     {        
         public DSSImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
             requesttypelist = new();
-            entitytype = "";
             rawonly = true;
             idlistdssinterface = new();
+            entitytype = "";
         }
 
         public List<DSSRequestType> requesttypelist { get; set; }
