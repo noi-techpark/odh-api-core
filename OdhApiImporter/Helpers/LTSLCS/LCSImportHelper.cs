@@ -42,7 +42,7 @@ namespace OdhApiImporter.Helpers.LTSLCS
             }
             else
             {
-                var result2 = GetGastronomicDataListPaged.GetGastronomyListLTS(lcs, 25, "de", settings.LcsConfig.MessagePassword);
+                var result2 = lcs.GetGastronomyListLTS(25, "de", settings.LcsConfig.MessagePassword);
             }
 
             
