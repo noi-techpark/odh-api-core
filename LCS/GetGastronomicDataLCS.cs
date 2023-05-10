@@ -82,7 +82,7 @@ namespace LCS
             GastronomicDataSearchRS gastroresponse = default(GastronomicDataSearchRS);
 
             var mygastrorequest = GetLCSRequests.GetGastronomicDataSearchRequestAsync("", "1", pagesize.ToString(), language, "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "NOI", ltsmsgpswd);
-
+            
             gastroresponse = GetGastronomicDataSearch(mygastrorequest);
 
             string resultrid = gastroresponse.Result.RID;
