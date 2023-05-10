@@ -3434,30 +3434,40 @@ namespace DataModel
     public class RegionInfo
     {
         public string? Id { get; set; }
+
+        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class TvInfo
     {
         public string? Id { get; set; }
+
+        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class MunicipalityInfo
     {
         public string? Id { get; set; }
+
+        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class DistrictInfo
     {
         public string? Id { get; set; }
+
+        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
     public class AreaInfo
     {
         public string? Id { get; set; }
+
+        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string>? Name { get; set; }
     }
 

@@ -448,12 +448,12 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("LTS/GastronomicData/Update")]
         public async Task<IActionResult> ImportLTSGastronomies( 
             string? changedafter = null, 
-            List<string>? idlist = null,
+            //List<string>? idlist = null,
             CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import LTS GastronomicData data";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = "all"; //GetUpdateType(idlist);
             string source = "lts";
             string otherinfo = "gastronomy";
 

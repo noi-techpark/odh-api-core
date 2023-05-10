@@ -1,10 +1,15 @@
 ﻿using Helper;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net;
 using System.ServiceModel;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Threading.Tasks;
+using System.Linq;
+using ServiceReferenceLCS;
 
 namespace LCS
 {
@@ -44,6 +49,13 @@ namespace LCS
             return gastrosearch;
         }
 
+        //Gastronomy DataChanged
+        public ServiceReferenceLCS.GastronomicDataChangedItemsRS GetGastronomicDataChanged(XElement myrequest)
+        {
+            var gastrosearch = lcs.oGastronomicDataChangedItems(myrequest.ToXmlElement());
+            return gastrosearch;
+        }
+
         //Gastronomy Detail
         public ServiceReferenceLCS.GastronomicDataDetailRS GetGastronomicDataDetail(XElement myrequest)
         {
@@ -51,24 +63,45 @@ namespace LCS
             return gastrodetail;
         }
 
-        //Gastronomy Detail
+        //Gastronomy Codes
         public ServiceReferenceLCS.GastronomicCodesRS GetGastronomicCodes(XElement myrequest)
         {
             var gastrocodes = lcs.oGastronomicCodes(myrequest.ToXmlElement());
             return gastrocodes;
         }
 
-        //Gastronomy Codes
+        //Gastronomy Codes as Xelement
         public XElement GetGastronomicCodesXElement(XElement myrequest)
         {
             var gastrocodes = lcs.GastronomicCodes(myrequest.ToXmlElement());
-            return GetXElementFromXmlElement(gastrocodes);
+            return XElement.Load(gastrocodes.CreateNavigator().ReadSubtree());
         }
 
-        //Convert to Xelement
-        public XElement GetXElementFromXmlElement(XmlElement xmlElement)
+        public ServiceReferenceLCS.GastronomicDataSearchRS GetGastronomyListLTS(int pagesize, string language, string ltsmsgpswd)
         {
-            return XElement.Load(xmlElement.CreateNavigator().ReadSubtree());
-        }              
+            GastronomicDataSearchRS gastroresponse = default(GastronomicDataSearchRS);
+
+            var mygastrorequest = GetLCSRequests.GetGastronomicDataSearchRequestAsync("", "1", pagesize.ToString(), language, "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "NOI", ltsmsgpswd);
+            
+            gastroresponse = GetGastronomicDataSearch(mygastrorequest);
+
+            string resultrid = gastroresponse.Result.RID;
+            int pages = gastroresponse.Paging.PagesQty;
+
+            for (int i = 2; i <= pages; i++)
+            {
+                mygastrorequest = GetLCSRequests.GetGastronomicDataSearchRequestAsync(resultrid, i.ToString(), pagesize.ToString(), language, "1", "0", "0", "0", "0", "0", "", "0", "0", "0", new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), new List<string>(), "NOI", ltsmsgpswd);
+
+                var tempgastroresponse = GetGastronomicDataSearch(mygastrorequest);
+
+                List<GastronomicData> gastronomicDatas = gastroresponse.GastronomicData.ToList();
+                gastronomicDatas.AddRange(tempgastroresponse.GastronomicData.ToList());
+
+                gastroresponse.GastronomicData = gastronomicDatas.ToArray();
+            }
+
+            return gastroresponse;
+        }
+
     }
 }
