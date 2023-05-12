@@ -186,11 +186,11 @@ namespace OdhApiImporter.Controllers
         #region EBMS DATA SYNC (EventShort)
 
         [HttpGet, Route("EBMS/EventShort/Update")]
-        public async Task<IActionResult> UpdateAllEBMS(List<string> idlist = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update EBMS";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "ebms";
 
             try
@@ -214,11 +214,11 @@ namespace OdhApiImporter.Controllers
         #region NINJA DATA SYNC (Events Centro Trevi and DRIN)
 
         [HttpGet, Route("NINJA/Events/Update")]
-        public async Task<IActionResult> UpdateAllNinjaEvents(List<string> idlist = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update Ninja Events";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "mobilityapi";
 
             try
@@ -241,11 +241,11 @@ namespace OdhApiImporter.Controllers
         #region SIAG DATA SYNC WEATHER 
 
         [HttpGet, Route("Siag/Weather/Import")]
-        public async Task<IActionResult> ImportWeather(List<string> idlist = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportWeather(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import Weather data";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "siag";
             string otherinfo = "actual";
 
@@ -293,11 +293,11 @@ namespace OdhApiImporter.Controllers
         #region SIAG DATA SYNC MUSEUMS
 
         [HttpGet, Route("Siag/Museum/Update")]
-        public async Task<IActionResult> ImportSiagMuseum(List<string> idlist = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportSiagMuseum(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import SIAG Museum data";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "siag";
             string otherinfo = "actual";
 
@@ -322,11 +322,11 @@ namespace OdhApiImporter.Controllers
         #region SUEDTIROLWEIN DATA SYNC
 
         [HttpGet, Route("SuedtirolWein/Company/Update")]
-        public async Task<IActionResult> ImportSuedtirolWineCompany(List<string> idlist = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportSuedtirolWineCompany(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import SuedtirolWein Company data";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "suedtirolwein";
             string otherinfo = "actual";
 
@@ -347,11 +347,11 @@ namespace OdhApiImporter.Controllers
         }
 
         [HttpGet, Route("SuedtirolWein/WineAward/Update")]
-        public async Task<IActionResult> ImportSuedtirolWineAward(List<string> idlist = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ImportSuedtirolWineAward(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import SuedtirolWein WineAward data";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "suedtirolwein";
             string otherinfo = "actual";
 
@@ -378,12 +378,11 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("LTS/ActivityData/Update")]
         public async Task<IActionResult> ImportLTSActivities(
             string? changedafter = null,
-            List<string>? idlist = null,
             CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import LTS ActivityData data";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "lts";
             string otherinfo = "activity";
 
@@ -411,12 +410,11 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("LTS/PoiData/Update")]
         public async Task<IActionResult> ImportLTSPois(
           string? changedafter = null,
-          List<string>? idlist = null,
           CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import LTS PoiData data";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "lts";
             string otherinfo = "poi";
 
@@ -448,12 +446,11 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("LTS/GastronomicData/Update")]
         public async Task<IActionResult> ImportLTSGastronomies( 
             string? changedafter = null, 
-            //List<string>? idlist = null,
             CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import LTS GastronomicData data";
-            string updatetype = "all"; //GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "lts";
             string otherinfo = "gastronomy";
 
@@ -496,11 +493,11 @@ namespace OdhApiImporter.Controllers
 
         //[Authorize(Roles = "DataWriter,STAPoiImport")]
         [HttpPost, Route("STA/VendingPoints/Update")]
-        public async Task<IActionResult> SendVendingPointsFromSTA(List<string> idlist, CancellationToken cancellationToken)
+        public async Task<IActionResult> SendVendingPointsFromSTA(CancellationToken cancellationToken)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import Vendingpoints";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "xls";
             string otherinfo = "STA";
 
@@ -527,11 +524,11 @@ namespace OdhApiImporter.Controllers
         #region DSS DATA SYNC
 
         [HttpGet, Route("DSS/{dssentity}/Update")]
-        public async Task<IActionResult> UpdateAllDSSData(string dssentity, List<string> idlist = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllDSSData(string dssentity, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update DSS " + dssentity;
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "dss";
             string otherinfo = "actual";
 
@@ -572,11 +569,11 @@ namespace OdhApiImporter.Controllers
         #region EJOBS DATA SYNC
 
         [HttpGet, Route("LOOPTEC/Ejobs/Update")]
-        public async Task<IActionResult> UpdateAllLooptecEjobs(List<string> idlist = null, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdateAllLooptecEjobs(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import Looptec Ejobs";
-            string updatetype = GetUpdateType(idlist);
+            string updatetype = GetUpdateType(null);
             string source = "looptec";
             string otherinfo = "rawonly";
 
