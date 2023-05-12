@@ -287,6 +287,7 @@ namespace OdhNotifier
             myfailure.Id = Guid.NewGuid().ToString();
             myfailure.ItemId = notify.Id;
             myfailure.Type = notify.Type;
+            myfailure.NotifyType = notify.NotifyType;
             myfailure.Exception = exmessage;
             myfailure.LastChange = DateTime.Now;
             myfailure.Service = notify.Destination;
