@@ -16,7 +16,7 @@ namespace DataModel
             {
                 if (gpsinfos != null && gpsinfos.Count > 0)
                     return gpsinfos
-                        .Distinct()
+                        .DistinctBy(x => x.Gpstype)
                         .Where(x => x.Gpstype != null)
                         .ToDictionary(x => x.Gpstype!, x => x);
                 else
