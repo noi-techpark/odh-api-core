@@ -384,7 +384,7 @@ namespace Helper
                 if(comparedata)
                     equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
 
-                //Check if Publishedon List changed and populate channels to publish information
+                //Check if Publishedon List changed and populate channels to publish information  //ATTENTION HERE queryresult.PublishedOn is NULL in my case!!!!
                 if (queryresult != null && queryresult.PublishedOn != null && data.PublishedOn != null)
                 {
                     //var publishedoncomparision = EqualityHelper.ComparePublishedOn(queryresult.PublishedOn, data.PublishedOn);
