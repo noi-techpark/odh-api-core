@@ -626,24 +626,25 @@ namespace RAVEN
 
             data._Meta = MetadataHelper.GetMetadataobject<ODHTagLinked>(data, MetadataHelper.GetMetadataforOdhTag);  //GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
 
-            //Hack Publishedon because ODHTag not implementing ISource
-            if (data.DisplayAsCategory != null && data.DisplayAsCategory.Value == true)
-            {
-                //IF list is null instantiate it otherwise it will be empty
-                data.PublishedOn = data.PublishedOn ?? new List<string>();
+            //Change, Get the Publishedon directly from raven instance
 
-                data.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
-            }
+            ////Hack Publishedon because ODHTag not implementing ISource
+            //if (data.DisplayAsCategory != null && data.DisplayAsCategory.Value == true)
+            //{
+            //    //IF list is null instantiate it otherwise it will be empty
+            //    data.PublishedOn = data.PublishedOn ?? new List<string>();
 
+            //    data.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
+            //}
+           
+            ////If Redactional Tag activate it
+            //if (data.Source != null && data.Source.Contains("IDMRedactionalCategory"))
+            //{
+            //    //IF list is null instantiate it otherwise it will be empty
+            //    data.PublishedOn = data.PublishedOn ?? new List<string>();
 
-            //If Redactional Tag activate it
-            if (data.Source != null && data.Source.Contains("IDMRedactionalCategory"))
-            {
-                //IF list is null instantiate it otherwise it will be empty
-                data.PublishedOn = data.PublishedOn ?? new List<string>();
-
-                data.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
-            }
+            //    data.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
+            //}
 
             return data;
         }        
