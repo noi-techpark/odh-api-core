@@ -45,7 +45,7 @@ namespace Helper.Extensions
                 smgtags.Add(tagToAdd);
         }
 
-        public static IEnumerable<string> UnionIfNotNull(this ICollection<string> sourceunion, ICollection<string> listtounion)
+        public static IEnumerable<string> UnionIfNotNull(this ICollection<string>? sourceunion, ICollection<string>? listtounion)
         {
             if (sourceunion != null && listtounion != null)
                 return sourceunion.Union(listtounion);
