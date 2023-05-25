@@ -626,6 +626,9 @@ namespace RAVEN
 
             data._Meta = MetadataHelper.GetMetadataobject<ODHTagLinked>(data, MetadataHelper.GetMetadataforOdhTag);  //GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
 
+            if (data.PublishedOn == null)
+                data.PublishedOn = new List<string>();
+
             //Change, Get the Publishedon directly from raven instance
 
             ////Hack Publishedon because ODHTag not implementing ISource

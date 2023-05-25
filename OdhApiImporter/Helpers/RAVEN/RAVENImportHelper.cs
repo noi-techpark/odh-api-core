@@ -90,8 +90,9 @@ namespace OdhApiImporter.Helpers
                             myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, accoroomresult });
                         }
                     }
-                    else
-                        throw new Exception("No data found!");
+                    //Remove Exception not all accommodations have rooms
+                    //else
+                    //    throw new Exception("No data found!");
 
                     //Check if the Object has Changed and Push all infos to the channels
                     myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);

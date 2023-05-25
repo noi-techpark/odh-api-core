@@ -24,7 +24,7 @@ namespace OdhNotifier
     {
         Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null);
         Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, bool imagechanged, bool isdelete, string origin, List<string> publishedonlist, string? referer = null);
-        Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null);
+        Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, int elementstoprocess, string? referer = null);
         Task<IDictionary<string, ICollection<NotifierResponse>>> PushCustomObjectsToPublishedonService(List<string> publishedonlist, List<string> idlist, string odhtype, string? referer = null);
     }
 
@@ -344,19 +344,20 @@ namespace OdhNotifier
             GC.SuppressFinalize(this);
         }
 
-        private async Task<IEnumerable<NotifierFailureQueue>> GetFromFailureQueue(string service, string status)
+        private async Task<IEnumerable<NotifierFailureQueue>> GetFromFailureQueue(string service, string status, int elementstoprocess)
         {
             var query = QueryFactory.Query("notificationfailures")
                 .SelectRaw("data")
                 .Where("gen_service", service)
-                .Where("gen_status", status);
+                .Where("gen_status", status)
+                .When(elementstoprocess > 0, x => x.Take(elementstoprocess));
 
             var data = await query.GetObjectListAsync<NotifierFailureQueue>();
 
             return data;
         }
 
-        public async Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, string? referer = null)
+        public async Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, int elementstoprocess = 100, string? referer = null)
         {
             IDictionary<string, ICollection<NotifierResponse>> notifierresponsedict = new Dictionary<string, ICollection<NotifierResponse>>();
 
@@ -365,7 +366,7 @@ namespace OdhNotifier
                 //GET All failed pushes            
                 if (publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
                 {
-                    var failedpushes = await GetFromFailureQueue(notifyconfig.ServiceName.ToLower(), "open");
+                    var failedpushes = await GetFromFailureQueue(notifyconfig.ServiceName.ToLower(), "open", elementstoprocess);
                     
                     List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
 

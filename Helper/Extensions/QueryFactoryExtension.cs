@@ -206,13 +206,7 @@ namespace Helper
                     imagecompareresult = EqualityHelper.CompareImageGallery(data.ImageGallery, queryresult.ImageGallery, new List<string>() { });
 
                 //Check if Publishedon List changed and populate channels to publish information
-                if (queryresult != null && queryresult.PublishedOn != null && data.PublishedOn != null)
-                {
-                    //var publishedoncomparision = EqualityHelper.ComparePublishedOn(queryresult.PublishedOn, data.PublishedOn);
-                    var allchannels = data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn);
-
-                    channelstopublish.AddRange(allchannels);
-                }
+                channelstopublish.AddRange(data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn));                
 
                 if (errorwhendataexists)
                     throw new ArgumentNullException(nameof(data.Id), "Id exists already");
@@ -365,6 +359,8 @@ namespace Helper
             if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
 
+            //
+
             if (queryresult == null)
             {
                 if (errorwhendataisnew)
@@ -384,15 +380,9 @@ namespace Helper
                 if(comparedata)
                     equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
 
-                //Check if Publishedon List changed and populate channels to publish information
-                if (queryresult != null && queryresult.PublishedOn != null && data.PublishedOn != null)
-                {
-                    //var publishedoncomparision = EqualityHelper.ComparePublishedOn(queryresult.PublishedOn, data.PublishedOn);
-                    var allchannels = data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn);
-
-                    channelstopublish.AddRange(allchannels);
-                }
-
+                //Add all Publishedonfields before and after change
+                channelstopublish.AddRange(data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn));
+            
                 if (errorwhendataexists)
                     throw new ArgumentNullException(nameof(data.Id), "Id exists already");
 
@@ -482,14 +472,9 @@ namespace Helper
                 if (compareimagedata && queryresult != null)
                     imagecompareresult = EqualityHelper.CompareImageGallery(data.ImageGallery, queryresult.ImageGallery, new List<string>() { });
 
-                //Check if Publishedon List changed and populate channels to publish information
-                if(queryresult != null && queryresult.PublishedOn != null && data.PublishedOn != null)
-                {                    
-                    var allchannels = data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn);
-
-                    channelstopublish.AddRange(allchannels);                    
-                }
-
+                //Add all Publishedonfields before and after change
+                channelstopublish.AddRange(data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn));
+                
                 if (errorwhendataexists)
                     throw new ArgumentNullException(nameof(data.Id), "Id exists already");
 

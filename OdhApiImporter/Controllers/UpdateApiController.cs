@@ -115,7 +115,7 @@ namespace OdhApiImporter.Controllers
         #region REPROCESS PUSH FAILURE QUEUE
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("PushFailureQueue/Retry/{publishedon}")]
-        public async Task<IActionResult> ElaborateFailureQueue(string publishedon, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ElaborateFailureQueue(string publishedon, int elementstoprocess = 100,  CancellationToken cancellationToken = default)
         {
             UpdateDetailFailureQueue updatedetail = default(UpdateDetailFailureQueue);
             string operation = "Update Failurequeue";
@@ -125,7 +125,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                var resulttuple = await OdhPushnotifier.PushFailureQueueToPublishedonService(new List<string>() { publishedon });
+                var resulttuple = await OdhPushnotifier.PushFailureQueueToPublishedonService(new List<string>() { publishedon }, elementstoprocess);
 
                 updatedetail = new UpdateDetailFailureQueue()
                 {                   
