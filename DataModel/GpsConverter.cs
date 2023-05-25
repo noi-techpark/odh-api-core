@@ -32,7 +32,7 @@ namespace DataModel
                 {
                     foreach (var gpsinfo in gpsinfos)
                     {
-                        string postionstr = "position";
+                        string postionstr = "position";                        
 
                         if (positioncount > 0)
                             postionstr = postionstr + positioncount;
@@ -43,7 +43,7 @@ namespace DataModel
                         if (gpsinfo.Gpstype == "position" || gpsinfo.Gpstype == "Standpunkt" || gpsinfo.Gpstype == "Startpunkt" || gpsinfo.Gpstype == "Start und Ziel" || gpsinfo.Gpstype == "Talstation")
                             gpspoints.Add(postionstr, gpsinfo);
 
-                        positioncount = gpspoints.Where(x => x.Key == "position").Count();
+                        positioncount = gpspoints.Where(x => x.Key.StartsWith("position")).Count();
                     }
                 }
 
