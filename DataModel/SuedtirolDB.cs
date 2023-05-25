@@ -2102,10 +2102,16 @@ namespace DataModel
 
         public Dictionary<string, string> EventText { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use EventTitle")]
         public Dictionary<string, string> EventDescription { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescriptionDE { get; set; }
+     
+        [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescriptionIT { get; set; }
+        
+        [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescriptionEN { get; set; }
 
         public string? EventAnchorVenue { get; set; }
@@ -2126,8 +2132,11 @@ namespace DataModel
         public string? VideoUrl { get; set; }
         public Nullable<bool> ActiveWeb { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextDE { get; set; }
+        [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextIT { get; set; }
+        [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextEN { get; set; }
 
         public List<string>? TechnologyFields { get; set; }

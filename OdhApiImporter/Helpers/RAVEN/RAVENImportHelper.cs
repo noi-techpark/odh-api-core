@@ -507,7 +507,7 @@ namespace OdhApiImporter.Helpers
         public async Task<Tuple<string, UpdateDetail>> DeletePGObject(string id, string datatype, CancellationToken cancellationToken)
         {
             //var mypgdata = default(IIdentifiable);
-            var table = ODHTypeHelper.TranslateTypeString2Table(datatype.ToLower());
+            //var table = ODHTypeHelper.TranslateTypeString2Table(datatype.ToLower());
           
             var deleteresult = default(UpdateDetail);
             var deleteresultreduced = default(UpdateDetail);
@@ -539,7 +539,7 @@ namespace OdhApiImporter.Helpers
                 case "odhactivitypoi":
 
                     //Delete
-                    deleteresult = await DeleteRavenObjectFromPG<ODHActivityPoiLinked>(id, table, true);
+                    deleteresult = await DeleteRavenObjectFromPG<ODHActivityPoiLinked>(id, "smgpois", true);
                     deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
 
                     break;
@@ -576,7 +576,7 @@ namespace OdhApiImporter.Helpers
                 case "skiarea":
 
                     //Delete
-                    deleteresult = await DeleteRavenObjectFromPG<SkiAreaLinked>(id, table, false);
+                    deleteresult = await DeleteRavenObjectFromPG<SkiAreaLinked>(id, "skiareas", false);
                     deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
 
                     break;
@@ -584,7 +584,7 @@ namespace OdhApiImporter.Helpers
                 case "skiregion":
 
                     //Delete
-                    deleteresult = await DeleteRavenObjectFromPG<SkiRegionLinked>(id, table, false);
+                    deleteresult = await DeleteRavenObjectFromPG<SkiRegionLinked>(id, "skiregions", false);
                     deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
 
                     break;
@@ -596,7 +596,7 @@ namespace OdhApiImporter.Helpers
                 case "odhtag":
 
                     //Delete
-                    deleteresult = await DeleteRavenObjectFromPG<ODHTagLinked>(id, table, false);
+                    deleteresult = await DeleteRavenObjectFromPG<ODHTagLinked>(id, "smgtags", false);
                     deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
                    
                     break;
