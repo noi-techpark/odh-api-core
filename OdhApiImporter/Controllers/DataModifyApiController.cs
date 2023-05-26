@@ -238,8 +238,8 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("UpdateMetaDataRecordCount")]
         public async Task<IActionResult> UpdateMetaDataRecordCount(CancellationToken cancellationToken)
         {
-            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            //var objectscount = await customdataoperation.UpdateMetaDataApiRecordCount();            
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateMetaDataApiRecordCount();            
 
             return Ok(new UpdateResult
             {
@@ -250,6 +250,28 @@ namespace OdhApiImporter.Controllers
                 recordsmodified = 0,
                 created = 0,
                 deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        //[Authorize(Roles = "DataPush")]
+        [HttpGet, Route("UpdateMetaDataApiId")]
+        public async Task<IActionResult> UpdateMetaDataApiId(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateMetaDataApiId();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify Metadata ApiId",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = 0,
+                created = objectscount["created"],
+                deleted = objectscount["deleted"],
                 id = "",
                 updated = 0,
                 success = true

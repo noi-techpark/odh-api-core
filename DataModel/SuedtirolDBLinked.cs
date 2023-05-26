@@ -1450,13 +1450,15 @@ namespace DataModel
             _Meta = new Metadata();
         }
 
+        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        public string ApiId { get; set; }
+
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public string ApiIdentifier { get; set; }
         
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string>? ApiFilter { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public string Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
