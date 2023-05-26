@@ -256,7 +256,7 @@ namespace OdhApiImporter.Controllers
             });
         }
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("UpdateMetaDataApiId")]
         public async Task<IActionResult> UpdateMetaDataApiId(CancellationToken cancellationToken)
         {
