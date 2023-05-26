@@ -48,6 +48,47 @@ namespace OdhApiImporter.Helpers
             return i;            
         }
 
+        public async Task<Dictionary<string,int>> UpdateMetaDataApiId()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("metadata");
+
+            var data = await query.GetObjectListAsync<TourismMetaData>();
+            int created = 0;
+
+            foreach (var metadata in data)
+            {
+                metadata.ApiId = metadata.Id;
+             
+                metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
+
+                //Save tp DB                 
+                var queryresult = await QueryFactory.Query("metadata")
+                    .InsertAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
+
+                created++;
+            }
+
+            int deleted = 0;
+
+            //Delete old ids
+            var idlisttodelete = data.Select(x => x.Id).ToList();
+            foreach(var metadataidtodelete in idlisttodelete)
+            {
+                var deltedresult = await QueryFactory.Query("metadata").Where("id", metadataidtodelete)
+                        .DeleteAsync();
+                deleted++;
+            }
+
+            return new Dictionary<string, int>()
+            {
+                { "created", created },
+                { "deleted", deleted }
+            };
+        }
+
 
 
         public async Task<int> UpdateAllEventShortstonewDataModel()
