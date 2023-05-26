@@ -60,7 +60,8 @@ namespace OdhApiImporter.Helpers
 
             foreach (var metadata in data)
             {
-                metadata.ApiId = metadata.Id;
+                if(String.IsNullOrEmpty(metadata.ApiId))
+                    metadata.ApiId = metadata.Id;
              
                 metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
                 metadata._Meta.Id = metadata.Id;
