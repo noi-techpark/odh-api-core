@@ -63,10 +63,11 @@ namespace OdhApiImporter.Helpers
                 metadata.ApiId = metadata.Id;
              
                 metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
+                metadata._Meta.Id = metadata.Id;
 
                 //Save tp DB                 
                 var queryresult = await QueryFactory.Query("metadata")
-                    .InsertAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
+                    .InsertAsync(new JsonBData() { id = metadata.Id, data = new JsonRaw(metadata) });
 
                 created++;
             }
