@@ -97,6 +97,26 @@ namespace Helper
                 serializer.Serialize(writer, data);
             }
         }
+
+        public static async Task GenerateJSONLocationlist(QueryFactory queryFactory, string jsondir, string jsonName)
+        {
+            var serializer = new JsonSerializer();
+
+            var query =
+                queryFactory.Query()
+                  .SelectRaw("data")
+                  .From("tags");
+
+            var data = await query.GetObjectListAsync<TagLinked>();
+
+            //Save json
+            string fileName = Path.Combine(jsondir, $"{jsonName}.json");
+            using (var writer = File.CreateText(fileName))
+            {
+                serializer.Serialize(writer, data);
+            }
+        }
+
     }
 
     public struct AccoBooklist
@@ -108,5 +128,13 @@ namespace Helper
     {
         public string Id { get; set; }
         public IDictionary<string, bool> PublishDataWithTagOn { get; set; }
+    }
+
+    public class LocationList
+    {
+        public string Id { get; set; }
+        public string Type { get; set; }
+
+        public IDictionary<string, string> Name { get; set; }
     }
 }
