@@ -185,6 +185,7 @@ namespace OdhApiImporter.Controllers
 
         #region EBMS DATA SYNC (EventShort)
 
+        [HttpGet, Route("EBMS/EventShort/UpdateAll")]
         [HttpGet, Route("EBMS/EventShort/Update")]
         public async Task<IActionResult> UpdateAllEBMS(CancellationToken cancellationToken = default)
         {
