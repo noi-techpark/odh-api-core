@@ -1,6 +1,7 @@
 ﻿using DataModel;
 using SqlKata;
 using SqlKata.Execution;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -96,7 +97,39 @@ namespace Helper
                               .Distinct();
         }
 
-        #endregion        
+        #endregion
 
+        #region LocationApi Helper
+        
+        public static async Task<IEnumerable<T>> GetLocationFromDB<T>(QueryFactory queryFactory, string table, string whereraw) where T : notnull
+        {
+            return await queryFactory.Query()
+                   .Select("data")
+                   .From(table)
+                   .WhereRaw(whereraw)
+                   .GetObjectListAsync<T>();
+        }
+        public static async Task<IEnumerable<T>> GetLocationFromDB<T>(QueryFactory queryFactory, string table, Tuple<string, string> where) where T : notnull
+        {
+            return await queryFactory.Query()
+                   .Select("data")
+                   .From(table)
+                   .Where(where.Item1, where.Item2)
+                   .GetObjectListAsync<T>();
+        }
+
+        public static IEnumerable<LocHelperclassDynamic> CreateLocHelperClassDynamic<T>(string typ, IEnumerable<T> locationlist, string? lang) where T : IIdentifiable, IDetailInfosAware
+        {
+            var locationlistreduced = default(IEnumerable<LocHelperclassDynamic>);
+
+            if (lang != null)
+                locationlistreduced = locationlist.Select(x => new LocHelperclassDynamic { typ = typ, name = x.Detail[lang].Title, id = x.Id });
+            else
+                locationlistreduced = locationlist.Select(x => new LocHelperclassDynamic { typ = typ, name = x.Detail.ToDictionary(y => y.Key, y => y.Value.Title), id = x.Id });
+
+            return locationlistreduced;
+        }
+
+        #endregion        
     }
 }

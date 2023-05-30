@@ -70,7 +70,30 @@ namespace OdhApiImporter.Controllers
 
                 return BadRequest(result);
             }
-        }        
+        }
+
+        #endregion
+
+        #region LocationInfo
+
+        [HttpGet, Route("ODH/LocationList")]
+        public async Task<IActionResult> ProduceLocationListJson(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await JsonGeneratorHelper.GenerateJSONLocationlist(QueryFactory, settings.JsonConfig.Jsondir, "LocationList");
+
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "LocationList", "Generate Json LocationList succeeded", true);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "LocationList", "Generate Json LocationList failed", ex, true);
+
+                return BadRequest(result);
+            }
+        }
 
         #endregion
     }
