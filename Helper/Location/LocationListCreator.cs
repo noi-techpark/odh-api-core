@@ -100,9 +100,7 @@ namespace Helper
         #endregion
 
         #region LocationApi Helper
-
-        #region HelperMethods
-
+        
         public static async Task<IEnumerable<T>> GetLocationFromDB<T>(QueryFactory queryFactory, string table, string whereraw) where T : notnull
         {
             return await queryFactory.Query()

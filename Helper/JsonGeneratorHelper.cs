@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -102,18 +103,30 @@ namespace Helper
         {
             var serializer = new JsonSerializer();
 
-            var query =
-                queryFactory.Query()
-                  .SelectRaw("data")
-                  .From("tags");
+            var regionlist = await LocationListCreator.GetLocationFromDB<Region>(queryFactory, "regions", "");
+            var tvlist = await LocationListCreator.GetLocationFromDB<Tourismverein>(queryFactory, "tvs", "");
+            var municipalitylist = await LocationListCreator.GetLocationFromDB<Municipality>(queryFactory, "municipalities", "");
+            var districtlist = await LocationListCreator.GetLocationFromDB<District>(queryFactory, "districts", "");
+            var arealist = await LocationListCreator.GetLocationFromDB<Area>(queryFactory, "areas", "");
 
-            var data = await query.GetObjectListAsync<TagLinked>();
+            var regionlistreduced = LocationListCreator.CreateLocHelperClassDynamic<Region>("reg", regionlist, null);
+            var tvlistreduced = LocationListCreator.CreateLocHelperClassDynamic<Tourismverein>("tvs", tvlist, null);
+            var municipalitylistreduced = LocationListCreator.CreateLocHelperClassDynamic<Municipality>("mun", municipalitylist, null);
+            var districtlistreduced = LocationListCreator.CreateLocHelperClassDynamic<District>("fra", districtlist, null);
+            var arealistreduced = arealist.Select(x => new LocHelperclassDynamic { typ = "are", name = x.Detail.ToDictionary(y => y.Key, y => y.Value.Title), id = x.Id });
+
+            var locationlist = new List<LocHelperclassDynamic>();
+            locationlist.AddRange(regionlistreduced);
+            locationlist.AddRange(tvlistreduced);
+            locationlist.AddRange(municipalitylistreduced);
+            locationlist.AddRange(districtlistreduced);
+            locationlist.AddRange(arealistreduced);
 
             //Save json
             string fileName = Path.Combine(jsondir, $"{jsonName}.json");
             using (var writer = File.CreateText(fileName))
             {
-                serializer.Serialize(writer, data);
+                serializer.Serialize(writer, locationlist);
             }
         }
 
