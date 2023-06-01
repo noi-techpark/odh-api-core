@@ -1462,7 +1462,7 @@ namespace DataModel
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string>? ApiFilter { get; set; }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         public string OdhType { get; set; }
         
