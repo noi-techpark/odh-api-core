@@ -36,19 +36,65 @@ namespace OdhApiImporter.Helpers
 
             foreach (var metadata in data)
             {
-                metadata.RecordCount = await MetaDataApiRecordCount.GetRecordCountfromDB(metadata.ApiFilter, metadata.OdhType, QueryFactory);
+                if (!String.IsNullOrEmpty(metadata.OdhType))
+                {
+                    metadata.RecordCount = await MetaDataApiRecordCount.GetRecordCountfromDB(metadata.ApiFilter, metadata.OdhType, QueryFactory);
 
-                //Save tp DB                 
-                var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)                    
-                    .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
+                    //Save tp DB                 
+                    var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
+                        .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
 
-                i++;
+                    i++;
+                }
             }
 
             return i;            
         }
 
-        public async Task<Dictionary<string,int>> UpdateMetaDataApiId()
+        //public async Task<Dictionary<string,int>> UpdateMetaDataApiId()
+        //{
+            ////Load all data from PG and resave
+            //var query = QueryFactory.Query()
+            //       .SelectRaw("data")
+            //       .From("metadata");
+
+            //var data = await query.GetObjectListAsync<TourismMetaData>();
+            //int created = 0;
+
+            //foreach (var metadata in data)
+            //{
+            //    if(String.IsNullOrEmpty(metadata.ApiId))
+            //        metadata.ApiId = metadata.Id;
+             
+            //    metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
+            //    metadata._Meta.Id = metadata.Id;
+
+            //    //Save tp DB                 
+            //    var queryresult = await QueryFactory.Query("metadata")
+            //        .InsertAsync(new JsonBData() { id = metadata.Id, data = new JsonRaw(metadata) });
+
+            //    created++;
+            //}
+
+            //int deleted = 0;
+
+            ////Delete old ids
+            //var idlisttodelete = data.Select(x => x.Id).ToList();
+            //foreach(var metadataidtodelete in idlisttodelete)
+            //{
+            //    var deltedresult = await QueryFactory.Query("metadata").Where("id", metadataidtodelete)
+            //            .DeleteAsync();
+            //    deleted++;
+            //}
+
+            //return new Dictionary<string, int>()
+            //{
+            //    { "created", created },
+            //    { "deleted", deleted }
+            //};
+        //}
+
+        public async Task<int> ResaveMetaData()
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
@@ -56,41 +102,19 @@ namespace OdhApiImporter.Helpers
                    .From("metadata");
 
             var data = await query.GetObjectListAsync<TourismMetaData>();
-            int created = 0;
+            int i = 0;
 
             foreach (var metadata in data)
             {
-                if(String.IsNullOrEmpty(metadata.ApiId))
-                    metadata.ApiId = metadata.Id;
-             
-                metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
-                metadata._Meta.Id = metadata.Id;
-
                 //Save tp DB                 
-                var queryresult = await QueryFactory.Query("metadata")
-                    .InsertAsync(new JsonBData() { id = metadata.Id, data = new JsonRaw(metadata) });
+                var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
+                    .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
 
-                created++;
+                i++;
             }
 
-            int deleted = 0;
-
-            //Delete old ids
-            var idlisttodelete = data.Select(x => x.Id).ToList();
-            foreach(var metadataidtodelete in idlisttodelete)
-            {
-                var deltedresult = await QueryFactory.Query("metadata").Where("id", metadataidtodelete)
-                        .DeleteAsync();
-                deleted++;
-            }
-
-            return new Dictionary<string, int>()
-            {
-                { "created", created },
-                { "deleted", deleted }
-            };
+            return i;
         }
-
 
 
         public async Task<int> UpdateAllEventShortstonewDataModel()

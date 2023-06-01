@@ -1451,32 +1451,33 @@ namespace DataModel
             ApiFilter = new List<string>();
         }
 
+        //not needed
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public string ApiId { get; set; }
+        //public string ApiId { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public string ApiIdentifier { get; set; }
+        //using only PathParam
+        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        //public string ApiIdentifier { get; set; }
         
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string>? ApiFilter { get; set; }
 
         public string Id { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public string OdhType { get; set; }
         
-        private string swaggerUrl = default!;
-        public string SwaggerUrl
-        {
-            get { return "swagger/index.html#/" + swaggerUrl; }
-            set { swaggerUrl = value; }
-        }
+        //private string swaggerUrl = default!;
+        public string SwaggerUrl { get; set; }
+        //{
+        //    get { return "swagger/index.html#/" + swaggerUrl; }
+        //    set { swaggerUrl = value; }
+        //}
 
         public string Self
         {
             get
             {
-                return this.ApiVersion + "/MetaData/" + this.Id;
+                return "v1/MetaData/" + this.Id;
             }
         }
 
@@ -1484,9 +1485,13 @@ namespace DataModel
         {
             get
             {
-                return String.Format("{0}/{1}{2}", this.ApiVersion, this.ApiIdentifier, this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : "");
+                return String.Format("{0}?{1}", String.Join("/", this.PathParam), this.ApiFilter != null && this.ApiFilter.Count > 0 ? String.Join("&", this.ApiFilter) : "");
             }
         }
+
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        public ICollection<string> PathParam { get; set; }
+
 
         //public string Source { get; set; }
 
@@ -1512,12 +1517,11 @@ namespace DataModel
 
         public IDictionary<string, string> ApiDescription { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public string ApiVersion { get; set; }
+        //using PathParam only
+        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        //public string ApiVersion { get; set; }
 
-        [Required]
-        public ICollection<string> PathParam { get; set; }
-
+     
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, string> ApiAccess { get; set; }
