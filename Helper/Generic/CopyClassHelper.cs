@@ -1,4 +1,8 @@
-﻿using Helper.JsonHelpers;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Helper.JsonHelpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

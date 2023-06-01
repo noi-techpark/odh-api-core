@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

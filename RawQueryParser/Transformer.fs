@@ -1,4 +1,8 @@
-﻿module RawQueryParser.Transformer
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+module RawQueryParser.Transformer
 
 open FParsec
 

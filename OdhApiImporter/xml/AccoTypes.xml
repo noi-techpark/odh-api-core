@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 ﻿<AccoTypes>
   <AccoType RID="522000BB51CA11D18F1400A02427D15E" Name="nicht definiert" SmgType="Notdefined"></AccoType>
   <AccoType RID="52281FAE51CA11D18F1400A02427D15E" Name="Hotel" SmgType="HotelPension"></AccoType>

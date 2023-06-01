@@ -1,4 +1,8 @@
-﻿using Helper;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Helper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;

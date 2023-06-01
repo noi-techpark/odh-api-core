@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

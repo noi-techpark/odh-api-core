@@ -1,4 +1,8 @@
-﻿using CsvHelper;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using CsvHelper;
 using CsvHelper.Configuration;
 using System;
 using System.Collections.Generic;

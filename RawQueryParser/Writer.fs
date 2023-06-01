@@ -1,4 +1,8 @@
-﻿/// Generates PostgreSQL commands
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+/// Generates PostgreSQL commands
 module RawQueryParser.Writer
 
 /// <summary>
