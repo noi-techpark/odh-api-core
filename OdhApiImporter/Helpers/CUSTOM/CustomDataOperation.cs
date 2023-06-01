@@ -106,6 +106,9 @@ namespace OdhApiImporter.Helpers
 
             foreach (var metadata in data)
             {
+                //fix swaggerurl mess
+                var swaggerurl = "swagger/index.html#" + metadata.SwaggerUrl.Split("#").LastOrDefault();
+
                 //Save tp DB                 
                 var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
                     .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });

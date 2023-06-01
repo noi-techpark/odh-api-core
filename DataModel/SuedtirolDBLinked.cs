@@ -1485,7 +1485,7 @@ namespace DataModel
         {
             get
             {
-                return String.Format("{0}?{1}", String.Join("/", this.PathParam), this.ApiFilter != null && this.ApiFilter.Count > 0 ? String.Join("&", this.ApiFilter) : "");
+                return String.Format("{0}{1}", String.Join("/", this.PathParam), this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : "");
             }
         }
 
