@@ -1467,7 +1467,7 @@ namespace DataModel
 
         public string? Id { get; set; }
 
-        public string OdhType { get; set; }
+        public string? OdhType { get; set; }
         
         //private string swaggerUrl = default!;
         public string SwaggerUrl { get; set; }
@@ -1512,13 +1512,13 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         public string Shortname { get; set; }
 
-        public ICollection<string> Sources { get; set; }
+        public ICollection<string>? Sources { get; set; }
         
-        public IDictionary<string, int> RecordCount { get; set; }
+        public IDictionary<string, int>? RecordCount { get; set; }
 
-        public IDictionary<string, string> Output { get; set; }
+        public IDictionary<string, string>? Output { get; set; }
 
-        public IDictionary<string, string> ApiDescription { get; set; }
+        public IDictionary<string, string>? ApiDescription { get; set; }
 
         //using PathParam only
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
@@ -1527,7 +1527,7 @@ namespace DataModel
      
         public ICollection<string>? PublishedOn { get; set; }
 
-        public IDictionary<string, string> ApiAccess { get; set; }
+        public IDictionary<string, string>? ApiAccess { get; set; }
     }
 
     #endregion
