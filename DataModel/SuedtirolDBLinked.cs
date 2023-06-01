@@ -1447,7 +1447,6 @@ namespace DataModel
 
         public TourismMetaData()
         {
-            _Meta = new Metadata();
             ApiFilter = new List<string>();
         }
 
