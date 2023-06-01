@@ -1,4 +1,8 @@
-﻿using CsvHelper;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using CsvHelper;
 using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Http;

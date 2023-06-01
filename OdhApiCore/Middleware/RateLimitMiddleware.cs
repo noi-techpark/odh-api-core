@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.IdentityModel.Tokens.Jwt;

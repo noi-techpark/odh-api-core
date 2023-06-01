@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 ﻿<Board>
   <Data T0RID="52281FB151CA11D18F1400A02427D15E" T0ID="A.004.000.000.000" T0Typ="0" T0Va1="" T0Va2="" T0Va3="" T0SID="0" T0AcR="0">
     <DataLng T1Des="board-type" LngID="FL" />
