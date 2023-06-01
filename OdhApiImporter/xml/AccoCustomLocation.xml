@@ -1,10 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <!--
 SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
 
 SPDX-License-Identifier: CC0-1.0
 -->
-
-﻿<?xml version="1.0" encoding="utf-8" ?>
 <Accommodations>
   <Accommodation RID="824d853f29e711d599d20050da7125db" DistrictRIDtoassign="79CBD6DD51C911D18F1400A02427D15E" SetSmgActive="true"></Accommodation> 
   <Accommodation RID="32001b84aa1311d1926f00805a150b0b" DistrictRIDtoassign="79CBD82C51C911D18F1400A02427D15E" SetSmgActive="true"></Accommodation>

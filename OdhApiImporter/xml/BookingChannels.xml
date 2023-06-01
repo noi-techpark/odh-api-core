@@ -1,10 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
 
 SPDX-License-Identifier: CC0-1.0
 -->
-
-﻿<BookingChannels>
+<BookingChannels>
   <BookingChannel Pos1ID="0F41198A98244216B92C1FD6972412C3" Portalname="valgardena.com" Shortname="valgardena"></BookingChannel>
   <BookingChannel Pos1ID="2" Portalname="HGV Booking" Shortname="hgv"></BookingChannel>
   <BookingChannel Pos1ID="2313018779054362969E1A47B514678E" Portalname="rosengarten-latemar.com" Shortname="eggental"></BookingChannel>
