@@ -93,6 +93,7 @@ namespace Helper
                 //Get Closed
                 var closedcount = await QueryFactory.Query()
                     .From(table)
+                    .Where("gen_licenseinfo_closeddata", true)
                     .When(sources.Count > 0 && odhtype != "odhactivitypoi", q => q.SourceFilter_GeneratedColumn(sources))
                     .When(sources.Count > 0 && odhtype == "odhactivitypoi", q => q.SyncSourceInterfaceFilter_GeneratedColumn(sources))
                     .When(tags.Count > 0 && odhtype == "odhactivitypoi", q => q.WhereArrayInListOr(tags, "gen_tags"))
