@@ -1470,7 +1470,7 @@ namespace DataModel
         public string? OdhType { get; set; }
         
         //private string swaggerUrl = default!;
-        public string SwaggerUrl { get; set; }
+        public string? SwaggerUrl { get; set; }
         //{
         //    get { return "swagger/index.html#/" + swaggerUrl; }
         //    set { swaggerUrl = value; }
@@ -1510,6 +1510,8 @@ namespace DataModel
         public Metadata? _Meta { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public string Shortname { get; set; }
 
         public ICollection<string>? Sources { get; set; }
