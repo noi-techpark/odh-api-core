@@ -310,7 +310,7 @@ namespace Helper
             }
             static JProperty? TransformProp(JProperty prop, Func<string, string> urlGenerator)
             {
-                if (prop.Name == "Self" || prop.Name == "SwaggerUrl" || prop.Name == "ApiUrl")
+                if (prop.Name == "Self" || prop.Name == "ApiUrl")
                 {
                     string? value = TransformSelf(prop.Value.Value<string?>(), urlGenerator);
                     return new JProperty(prop.Name, value);
