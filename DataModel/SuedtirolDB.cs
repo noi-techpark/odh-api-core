@@ -1625,6 +1625,9 @@ namespace DataModel
         public string? Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+
+        public IEnumerable<string>? SkiAreaIds { get; set; }
     }
 
     public class WeatherObservation

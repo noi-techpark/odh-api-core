@@ -101,10 +101,26 @@ namespace Helper
                               .Distinct();
         }
 
+        public static async Task<IEnumerable<string>> GetSkiAreaIdsfromSkiAreasAsync(this Query query, List<string> areaids, CancellationToken cancellationToken)
+        {
+
+            var skiareas = await query
+                .From("skiareas")
+                .Select("id")
+                .WhereInJsonb(
+                        areaids,
+                        area => new { AreaIds = new[] { area.ToUpper() } }
+                    )
+                .GetAsync<string>();
+
+
+            return skiareas.Distinct();
+        }
+
         #endregion
 
         #region LocationApi Helper
-        
+
         public static async Task<IEnumerable<T>> GetLocationFromDB<T>(QueryFactory queryFactory, string table, string whereraw) where T : notnull
         {
             return await queryFactory.Query()

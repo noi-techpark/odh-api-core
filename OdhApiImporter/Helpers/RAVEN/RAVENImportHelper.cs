@@ -423,6 +423,11 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Measuringpoint, Fill SkiAreaIds
+                    var areaids = ((MeasuringpointLinked)mypgdata).AreaIds;
+                    if (areaids != null)
+                        ((MeasuringpointLinked)mypgdata).SkiAreaIds = await QueryFactory.Query().GetSkiAreaIdsfromSkiAreasAsync(areaids, cancellationToken);
+
                     //Add the PublishedOn Logic
                     ((MeasuringpointLinked)mypgdata).CreatePublishedOnList();
 

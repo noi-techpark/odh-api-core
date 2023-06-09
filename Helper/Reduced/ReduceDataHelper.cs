@@ -427,6 +427,8 @@ namespace Helper
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "measuringpoint", "lts", reduced.LastChange, true);
             reduced.PublishedOn = measuringpoint.PublishedOn;
             
+            reduced.SkiAreaIds = measuringpoint.SkiAreaIds;
+    
             return reduced;
         }
 
