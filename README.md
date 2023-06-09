@@ -8,6 +8,7 @@ SPDX-License-Identifier: CC0-1.0
 
 Port of ODH Tourim Api to .Net Core.
 
+![REUSE Compliance](https://github.com/noi-techpark/odh-api-core/actions/workflows/reuse.yml/badge.svg)
 [![CI/CD API](https://github.com/noi-techpark/odh-api-core/actions/workflows/main_api.yml/badge.svg)](https://github.com/noi-techpark/odh-api-core/actions/workflows/main_api.yml)
 [![CI/CD Importer](https://github.com/noi-techpark/odh-api-core/actions/workflows/main_importer.yml/badge.svg)](https://github.com/noi-techpark/odh-api-core/actions/workflows/main_importer.yml)
 
