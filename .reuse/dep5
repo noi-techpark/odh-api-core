@@ -3,7 +3,7 @@ Upstream-Name: odh-api-core
 Upstream-Contact: NOI Techpark <digital@noi.bz.it>
 Source: https://github.com/noi-techpark/odh-api-core
 
-Files: .github/* infrastructure/* .gitignore .dockerignore .env.example .gitmodules docker-compose.dcproj OdhApiCore.sln */*.csproj */*.fsproj */appsettings.* */Dockerfile */Properties/*.json OdhApiImporter/json/* OdhApiCoreTests/xunit.runner.json OdhApiCore/Pages/Index.cshtml OdhApiCore/wwwroot/images/* OdhApiCore/wwwroot/json/* OdhApiCore/wwwroot/favicon.ico OdhApiCore/docker/* LCS/**/ConnectedService.json CDB/**/ConnectedService.json GeoConverterTests/Files/*
+Files: .github/* infrastructure/* .gitignore .pre-commit-config.yaml .dockerignore .env.example .gitmodules docker-compose.dcproj OdhApiCore.sln */*.csproj */*.fsproj */appsettings.* */Dockerfile */Properties/*.json OdhApiImporter/json/* OdhApiCoreTests/xunit.runner.json OdhApiCore/Pages/Index.cshtml OdhApiCore/wwwroot/images/* OdhApiCore/wwwroot/json/* OdhApiCore/wwwroot/favicon.ico OdhApiCore/docker/* LCS/**/ConnectedService.json CDB/**/ConnectedService.json GeoConverterTests/Files/*
 Copyright: (c) NOI Techpark <digital@noi.bz.it>
 License: CC0-1.0
 
