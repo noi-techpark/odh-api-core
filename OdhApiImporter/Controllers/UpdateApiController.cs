@@ -58,7 +58,7 @@ namespace OdhApiImporter.Controllers
         #region UPDATE FROM RAVEN INSTANCE
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
-        [Authorize(Roles = "DataPush")]
+        //[Authorize(Roles = "DataPush")]
         public async Task<IActionResult> UpdateDataFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);

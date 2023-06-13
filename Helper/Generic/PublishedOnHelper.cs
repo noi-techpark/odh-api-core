@@ -114,10 +114,15 @@ namespace Helper
                     //ODHActivityPoi 
                     case "odhactivitypoi":
 
+                        if ((mydata as ODHActivityPoiLinked).SmgActive)
+                            publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
+                        if ((mydata as ODHActivityPoiLinked).SmgActive && mydata._Meta.Source == "suedtirolwein")
+                            publishedonlist.TryAddOrUpdateOnList("suedtirolwein.com");
+
+
                         if ((mydata as ODHActivityPoiLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                         {
-                            if ((mydata as ODHActivityPoiLinked).SmgActive)
-                                publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
+                          
 
                             //IF category is white or blacklisted find an intersection
                             var tagintersection = allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags);
@@ -208,7 +213,8 @@ namespace Helper
                         if ((mydata as WineLinked).Active == true)
                         {
                             publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
-                            publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                            publishedonlist.TryAddOrUpdateOnList("suedtirolwein.com");
+                            //publishedonlist.TryAddOrUpdateOnList("idm-marketplace"); /??
                         }
                         break;
 
