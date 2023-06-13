@@ -262,6 +262,12 @@ namespace Helper
                 areaid => new { AreaIds = new[] { areaid } }
             );
 
+        public static Query SkiAreaFilterMeasuringpoints(this Query query, IReadOnlyCollection<string> skiarealist) =>
+            query.WhereInJsonb(
+                skiarealist,
+                skiareaid => new { SkiAreaIds = new[] { skiareaid } }
+            );
+
         public static Query HighlightFilter(this Query query, bool? highlight) =>
             query.When(
                 highlight != null,

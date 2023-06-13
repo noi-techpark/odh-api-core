@@ -21,6 +21,7 @@ namespace OdhApiCore.Controllers
         public List<string> tourismvereinlist;
         public List<string> regionlist;
         public List<string> arealist;
+        public List<string> skiarealist;
         public List<string> sourcelist;
         public bool? active;
         public bool? smgactive;
@@ -35,7 +36,7 @@ namespace OdhApiCore.Controllers
         {
             //TODO SKIAREAFILTER AND AREAFILTER not like on Activity Endpoint!
 
-            var arealistfromskiarea = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, skiareafilter, cancellationToken);
+            //var arealistfromskiarea = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, skiareafilter, cancellationToken);
             var arealistfromarea = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
 
             IEnumerable<string>? tourismusvereinids = null;
@@ -46,14 +47,14 @@ namespace OdhApiCore.Controllers
             }
 
             return new MeasuringPointsHelper(
-                idfilter: idfilter, locfilter: locfilter, areafilterlist: arealistfromarea, skiareafilterlist: arealistfromskiarea, sourcefilter: sourcefilter,
+                idfilter: idfilter, locfilter: locfilter, skiareafilter: skiareafilter, areafilterlist: arealistfromarea, sourcefilter: sourcefilter,
                 activefilter: activefilter, smgactivefilter: smgactivefilter,
                 lastchange: lastchange, publishedonfilter: publishedonfilter, 
                 tourismusvereinids: tourismusvereinids);
         }
 
         private MeasuringPointsHelper(
-            string? idfilter, string? locfilter, IEnumerable<string> areafilterlist, IEnumerable<string> skiareafilterlist, string? sourcefilter,
+            string? idfilter, string? locfilter, string? skiareafilter, IEnumerable<string> areafilterlist,  string? sourcefilter,
             bool? activefilter, bool? smgactivefilter, string? lastchange, string? publishedonfilter, IEnumerable<string>? tourismusvereinids)
         {
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
@@ -65,8 +66,8 @@ namespace OdhApiCore.Controllers
 
             if (areafilterlist != null)
                 arealist.AddRange(areafilterlist);
-            if (skiareafilterlist != null)
-                arealist.AddRange(skiareafilterlist);
+            //if (skiareafilterlist != null)
+            //    arealist.AddRange(skiareafilterlist);
 
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();
@@ -90,6 +91,9 @@ namespace OdhApiCore.Controllers
 
             //smgactive
             smgactive = smgactivefilter;
+
+            //skiarea filter
+            skiarealist = Helper.CommonListCreator.CreateIdList(skiareafilter?.ToUpper());
 
             this.lastchange = lastchange;
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
