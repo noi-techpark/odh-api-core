@@ -313,7 +313,7 @@ namespace OdhApiImporter.Helpers.DSS
             try
             {
                 //Begin SetDataNotinListToInactive
-                var idlistdb = await GetAllDSSDataByInterface(new List<string>() { "dss" + entitytype + "base" });
+                var idlistdb = await GetAllDSSDataByInterface(new List<string>() { "dss" + entitytype.ToLower() + "base" });
 
                 var idstodelete = idlistdb.Where(p => !idlistdssinterface.Any(p2 => p2 == p));
 
