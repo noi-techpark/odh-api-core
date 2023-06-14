@@ -72,7 +72,7 @@ Custom Functions on DB
 These custom functions are used for the generated Columns
 
 Test Server on https://api.tourism.testingmachine.eu  
-Production Server on https://tourism.api.opendatahub.bz.it
+Production Server on https://tourism.api.opendatahub.com
 
 ## Getting started:
 
