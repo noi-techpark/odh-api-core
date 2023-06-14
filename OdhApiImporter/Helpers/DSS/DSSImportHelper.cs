@@ -414,7 +414,7 @@ namespace OdhApiImporter.Helpers.DSS
             var query =
                QueryFactory.Query(table)
                    .Select("id")
-                   .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
+                   .SyncSourceInterfaceFilter_GeneratedColumn(syncsourceinterfacelist);
 
             var idlist = await query.GetAsync<string>();
 
