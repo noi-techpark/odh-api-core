@@ -592,7 +592,7 @@ namespace Helper
             this Query query, 
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> districtlist,
             IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
-            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist,
+            IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, IReadOnlyCollection<string> skiarealist,
             bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
@@ -613,6 +613,7 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AreaFilterMeasuringpoints(arealist)
+                .SkiAreaFilterMeasuringpoints(skiarealist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)

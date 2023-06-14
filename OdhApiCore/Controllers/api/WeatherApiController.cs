@@ -793,11 +793,11 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Fix add are to every arefilter item
-                string? arefilterwithprefix = String.IsNullOrEmpty(areafilter) ? "" : "are" + areafilter;
-                string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
+                string? areafilterwithprefix = String.IsNullOrEmpty(areafilter) ? "" : "are" + areafilter;
+                //string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
 
                 MeasuringPointsHelper mymeasuringpointshelper = await MeasuringPointsHelper.Create(QueryFactory, idfilter, locfilter,
-                    arefilterwithprefix, skiarefilterwithprefix, source, active, smgactive, lastchange, publishedon, cancellationToken);
+                    areafilterwithprefix, skiareafilter, source, active, smgactive, lastchange, publishedon, cancellationToken);
 
                 var query =
                     QueryFactory.Query()
@@ -805,7 +805,8 @@ namespace OdhApiCore.Controllers
                         .From("measuringpoints")
                         .MeasuringpointWhereExpression(
                             idlist: mymeasuringpointshelper.idlist, districtlist: mymeasuringpointshelper.districtlist, municipalitylist: mymeasuringpointshelper.municipalitylist,
-                            tourismvereinlist: mymeasuringpointshelper.tourismvereinlist, regionlist: mymeasuringpointshelper.regionlist, arealist: mymeasuringpointshelper.arealist,
+                            tourismvereinlist: mymeasuringpointshelper.tourismvereinlist, regionlist: mymeasuringpointshelper.regionlist, 
+                            arealist: mymeasuringpointshelper.arealist, skiarealist: mymeasuringpointshelper.skiarealist,
                             activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper.publishedonlist,
                             sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
