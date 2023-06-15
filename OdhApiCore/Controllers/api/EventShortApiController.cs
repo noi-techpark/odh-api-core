@@ -1208,7 +1208,7 @@ namespace OdhApiCore.Controllers.api
 
         #region BDPRooms
 
-        private const string bdpserviceurl = @"https://mobility.api.opendatahub.bz.it/v2/flat/NOI-Place?select=smetadata&where=sactive.eq.true&limit=-1";
+        private const string bdpserviceurl = @"https://mobility.api.opendatahub.com/v2/flat/NOI-Place?select=smetadata&where=sactive.eq.true&limit=-1";
 
         private async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLink(string? language)
         {
