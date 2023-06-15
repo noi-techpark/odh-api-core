@@ -304,7 +304,7 @@ namespace Helper
                 if (self == null)
                     return null;
                 // FIXME: Temporary workaround
-                if (self.StartsWith("https://tourism.opendatahub.bz.it/api/"))
+                if (self.StartsWith("https://tourism.opendatahub.com/api/"))
                     self = self.Substring(38);
                 return urlGenerator(self);
             }

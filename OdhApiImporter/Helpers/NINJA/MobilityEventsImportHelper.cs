@@ -173,7 +173,7 @@ namespace OdhApiImporter.Helpers
                             raw = JsonConvert.SerializeObject(ninjaevent.Value),
                             sourceinterface = "culture",
                             sourceid = ninjaevent.Key,
-                            sourceurl = "https://mobility.api.opendatahub.bz.it/v2/flat/Culture/",
+                            sourceurl = "https://mobility.api.opendatahub.com/v2/flat/Culture/",
                             type = "event_centrotrevi-drin",
                             license = "open",
                             rawformat = "json"
