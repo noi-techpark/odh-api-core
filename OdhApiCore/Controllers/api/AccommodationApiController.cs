@@ -669,7 +669,7 @@ namespace OdhApiCore.Controllers
                 var accosrequested = accobooklist != null ? ((List<string>)accobooklist).Count : 0;
                 var resultid = ((MssResult?)Request.HttpContext.Items["mssavailablity"])?.ResultId ?? "";
 
-                if (availableonline > 0)
+                if (availableonline > 0 || availableonrequest > 0)
                 {
                     return ResponseHelpers.GetResult(
                       pagenumber,
