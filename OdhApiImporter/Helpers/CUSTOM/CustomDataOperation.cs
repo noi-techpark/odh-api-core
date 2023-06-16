@@ -414,9 +414,9 @@ namespace OdhApiImporter.Helpers
 
                 myarticle.LicenseInfo = new LicenseInfo() { Author = "", License = "CC0", ClosedData = false, LicenseHolder= "https://noi.bz.it" };
 
-                myarticle.ContactInfos.TryAddOrUpdate("de", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "de", CompanyName = "NOI Techpark" });
-                myarticle.ContactInfos.TryAddOrUpdate("it", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "it", CompanyName = "NOI Techpark" });
-                myarticle.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "en", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("de", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "de", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("it", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "it", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "en", CompanyName = "NOI Techpark" });
 
                 myarticle.ArticleDate = DateTime.Now.Date.AddDays(i);
                 
@@ -541,14 +541,14 @@ namespace OdhApiImporter.Helpers
                     //ImageGallery link
                     foreach(var image in eventshort.ImageGallery)
                     {
-                        //https://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/
+                        //https://tourism.opendatahub.com/imageresizer/ImageHandler.ashx?src=images/eventshort/
                         
                         if (image.ImageUrl.Contains("imageresizer/ImageHandler.ashx?src=images/eventshort/"))
                         {
                             if(image.ImageUrl.StartsWith("https"))
-                                image.ImageUrl = image.ImageUrl.Replace("https://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl=");
+                                image.ImageUrl = image.ImageUrl.Replace("https://tourism.opendatahub.com/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.com/api/Image/GetImage?imageurl=");
                             else
-                                image.ImageUrl = image.ImageUrl.Replace("http://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl=");
+                                image.ImageUrl = image.ImageUrl.Replace("http://tourism.opendatahub.com/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.com/api/Image/GetImage?imageurl=");
                             
                             resave = true;
                         }                        
@@ -564,9 +564,9 @@ namespace OdhApiImporter.Helpers
                         if (doc.DocumentURL.Contains("imageresizer/images/eventshort/pdf/"))
                         {
                             if (doc.DocumentURL.StartsWith("https"))
-                                doc.DocumentURL = doc.DocumentURL.Replace("https://tourism.opendatahub.bz.it/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.bz.it/api/File/GetFile/");
+                                doc.DocumentURL = doc.DocumentURL.Replace("https://tourism.opendatahub.com/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.com/api/File/GetFile/");
                             else
-                                doc.DocumentURL = doc.DocumentURL.Replace("http://tourism.opendatahub.bz.it/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.bz.it/api/File/GetFile/");
+                                doc.DocumentURL = doc.DocumentURL.Replace("http://tourism.opendatahub.com/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.com/api/File/GetFile/");
                             
                             resave = true;
                         }
