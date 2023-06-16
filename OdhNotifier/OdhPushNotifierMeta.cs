@@ -529,6 +529,7 @@ namespace OdhNotifier
                     "experiencearea" => "NOT SUPPORTED", //to check
                     "municipality" => "MUNICIPALITY",
                     "tvs" => "TOURISM_ASSOCIATION",
+                    "tv" => "TOURISM_ASSOCIATION",
                     "district" => "DISTRICT",
                     "skiregion" => "NOT SUPPORTED",  //to check
                     "skiarea" => "SKI_AREA",
@@ -538,6 +539,10 @@ namespace OdhNotifier
                     "odhtag" => "ODH_TAG",
                     "ski_area" => "SKI_AREA",
                     "odh_activity_poi" => "ODH_ACTIVITY_POI",
+                    "webcam" => "NOT SUPPORTED",
+                    "measuringpoint" => "NOT SUPPORTED",
+                    "venue" => "NOT SUPPORTED",
+                    "wine" => "NOT SUPPORTED",
                     _ => "NOT SUPPORTED"
                 };
             }
