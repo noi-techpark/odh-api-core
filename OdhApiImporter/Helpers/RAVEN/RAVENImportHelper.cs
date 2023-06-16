@@ -450,9 +450,7 @@ namespace OdhApiImporter.Helpers
                     //TODO ADD new Venue Model
 
                     mydata = await GetDataFromRaven.GetRavenData<DDVenue>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
-
-                    var myvenuedata = default(IIdentifiable);
-                    
+                   
                     if (mydata != null)
                     {
                         mypgdata = TransformToPGObject.GetPGObject<DDVenue, DDVenue>((DDVenue)mydata, TransformToPGObject.GetVenuePGObject);
