@@ -202,7 +202,7 @@ namespace Helper
                     equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
 
                 //Compare Image Gallery
-                if (compareimagedata && queryresult != null && data.ImageGallery != null && queryresult.ImageGallery != null)
+                if (compareimagedata && queryresult != null)
                     imagecompareresult = EqualityHelper.CompareImageGallery(data.ImageGallery, queryresult.ImageGallery, new List<string>() { });
 
                 //Check if Publishedon List changed and populate channels to publish information
@@ -398,7 +398,7 @@ namespace Helper
         }
 
         /// <summary>
-        /// Upsert Data and check if Object and ImageGallerz has changed
+        /// Upsert Data and check if Object and ImageGallery has changed
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="QueryFactory"></param>
