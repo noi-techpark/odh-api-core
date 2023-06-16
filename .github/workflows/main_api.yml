@@ -113,7 +113,7 @@ jobs:
     runs-on: ubuntu-20.04
     if: github.ref == 'refs/heads/prod'
     env:
-      API_URL: "https://tourism.api.opendatahub.bz.it/v1/"
+      API_URL: "https://tourism.api.opendatahub.com/v1/"
     needs: test
     concurrency: deploy-prod-api
     steps:
@@ -143,8 +143,8 @@ jobs:
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
           X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
-          X_IMG_URL: "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl="
-          X_DOC_URL: "https://tourism.images.opendatahub.bz.it/api/File/GetFile/"
+          X_IMG_URL: "https://tourism.images.opendatahub.com/api/Image/GetImage?imageurl="
+          X_DOC_URL: "https://tourism.images.opendatahub.com/api/File/GetFile/"
           X_S3_BUCKET_ACCESSPOINT: ${{ secrets.S3_BUCKET_ACCESSPOINT_TEST }}
           X_S3_IMAGEUPLOADER_ACCESSKEY: ${{ secrets.S3_IMAGEUPLOADER_ACCESSKEY_TEST }}
           X_S3_IMAGEUPLOADER_SECRETKEY: ${{ secrets.S3_IMAGEUPLOADER_SECRETKEY_TEST }}
@@ -154,7 +154,7 @@ jobs:
           X_JSONPATH: "./wwwroot/json/"
           X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
           X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
-          X_DATABROWSER_URL: "https://databrowser.opendatahub.bz.it/"
+          X_DATABROWSER_URL: "https://databrowser.opendatahub.com/"
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
           X_RAVEN_PSWD: ${{ secrets.RAVEN_PSWD_TEST }}
