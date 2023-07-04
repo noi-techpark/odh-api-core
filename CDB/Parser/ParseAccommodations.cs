@@ -1342,12 +1342,15 @@ namespace CDB.Parser
                 //"8192350ABF6B41DA89B255B340003991",
                 //"3CB7D42AD51C4E2BA061CF9838A3735D",
                 //"9C8140EB332F46E794DFDDB240F9A9E4"
+                //new C414648944CE49D38506D176C5B58486 merancard_allyear
+
+
                 var guestcard = myacco.Features.Where(x => x.Id == "035577098B254201A865684EF050C851" || x.Id == "CEE3703E4E3B44E3BD1BEE3F559DD31C" || x.Id == "C7758584EFDE47B398FADB6BDBD0F198" ||
                                                            x.Id == "C3C7ABEB0F374A0F811788B775D96AC0" || x.Id == "3D703D2EA16645BD9EA3273069A0B918" || x.Id == "D02AE2F641A4496AB1D2C4871475293D" ||
                                                            x.Id == "DA4CAD333B8D45448AAEA9E966C68380" || x.Id == "500AEFA8868748899BEC826B5E81951C" || x.Id == "DE13880FA929461797146596FA3FFC07" ||
                                                            x.Id == "49E9FF69F86846BD9915A115988C5484" || x.Id == "FAEB6769EC564CBF982D454DCEEBCB27" || x.Id == "3FD7253E3F6340E1AF642EA3DE005128" ||
                                                            x.Id == "24E475F20FF64D748EBE7033C2DBC3A8" || x.Id == "056486AFBEC4471EA32B3DB658A96D48" || x.Id == "8192350ABF6B41DA89B255B340003991" ||
-                                                           x.Id == "3CB7D42AD51C4E2BA061CF9838A3735D" || x.Id == "9C8140EB332F46E794DFDDB240F9A9E4").Count();
+                                                           x.Id == "3CB7D42AD51C4E2BA061CF9838A3735D" || x.Id == "9C8140EB332F46E794DFDDB240F9A9E4" || x.Id == "C414648944CE49D38506D176C5B58486").Count();
 
                 if (guestcard > 0)
                 {
@@ -1374,11 +1377,13 @@ namespace CDB.Parser
             RemoveTagIf("24E475F20FF64D748EBE7033C2DBC3A8", "valgardenamobilcard", myacco);
             RemoveTagIf("056486AFBEC4471EA32B3DB658A96D48", "vilnoessdolomitimobilcard", myacco);
             RemoveTagIf("9C8140EB332F46E794DFDDB240F9A9E4", "mobilactivcard", myacco);
-            //NEU
             RemoveTagIf("8192350ABF6B41DA89B255B340003991", "suedtirolguestpass", myacco);
             RemoveTagIf("3CB7D42AD51C4E2BA061CF9838A3735D", "holidaypass3zinnen", myacco);
             RemoveTagIf("19ABB47430F64287BEA96237A2E99899", "seiseralm_balance", myacco);
             RemoveTagIf("D1C1C206AA0B4025A98EE83C2DBC2DFA", "workation", myacco);
+            //new
+            RemoveTagIf("C414648944CE49D38506D176C5B58486", "merancard_allyear", myacco);
+
 
             List<string> guestcardlist = new List<string>()
             {
@@ -1398,7 +1403,8 @@ namespace CDB.Parser
                 "056486AFBEC4471EA32B3DB658A96D48",
                 "8192350ABF6B41DA89B255B340003991",
                 "3CB7D42AD51C4E2BA061CF9838A3735D",
-                "9C8140EB332F46E794DFDDB240F9A9E4"
+                "9C8140EB332F46E794DFDDB240F9A9E4",
+                "C414648944CE49D38506D176C5B58486"
             };
 
             RemoveTagIf(guestcardlist, "guestcard", myacco);
