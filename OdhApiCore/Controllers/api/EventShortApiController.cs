@@ -82,7 +82,7 @@ namespace OdhApiCore.Controllers.api
             string? enddate = null, 
             string? datetimeformat = null, 
             string? source = null,
-            [SwaggerEnum(new[] { "NOI", "EV", "VV", "OUT" })]
+            [SwaggerEnum(new[] { "NOI", "EC", "VV", "OUT" })]
             [SwaggerParameter("<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>")]
             string? eventlocation = null, 
             LegacyBool onlyactive = null!,
@@ -178,7 +178,9 @@ namespace OdhApiCore.Controllers.api
             string? startdate = null, 
             string? enddate = null, 
             string? datetimeformat = null, 
-            string? source = null, 
+            string? source = null,
+            [SwaggerEnum(new[] { "NOI", "EC", "VV", "OUT" })]
+            [SwaggerParameter("<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>")]
             string? eventlocation = null,
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
