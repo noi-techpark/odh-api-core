@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using DataModel.Annotations;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -427,18 +428,21 @@ namespace DataModel
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
     }
 
-    public class EventPG : Event
-    {
-        public List<DateTime> EventDatesBegin { get; set; }
-        public List<DateTime> EventDatesEnd { get; set; }
+    //public class EventPG : Event
+    //{
+    //    public List<DateTime> EventDatesBegin { get; set; }
+    //    public List<DateTime> EventDatesEnd { get; set; }
 
-        public int EventDateCounter { get; set; }
-    }
+    //    public int EventDateCounter { get; set; }
+    //}
 
     public class EventLinked : Event, IMetaData
     {
         public Metadata? _Meta { get; set; }
 
+        //TODO mark this (EventDatesBegin/EventDatesEnd/EventDateCounter) as obsolete
+
+        [SwaggerDeprecated("Obsolete")]
         public List<DateTime> EventDatesBegin
         {
             get
@@ -447,6 +451,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerDeprecated("Obsolete")]
         public List<DateTime> EventDatesEnd
         {
             get
@@ -455,6 +460,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerDeprecated("Obsolete")]
         public int EventDateCounter
         {
             get
@@ -463,6 +469,7 @@ namespace DataModel
             }
         }
 
+
         public string Self
         {
             get
@@ -470,6 +477,12 @@ namespace DataModel
                 return "Event/" + Uri.EscapeDataString(this.Id);
             }
         }
+
+        //public class DateRange
+        //{
+        //    public DateTime? From { get; set; }
+        //    public DateTime? To { get; set; }
+        //}
 
         public ICollection<DistrictLink> Districts
         {

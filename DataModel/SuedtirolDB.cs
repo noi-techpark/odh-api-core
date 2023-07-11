@@ -3314,6 +3314,23 @@ namespace DataModel
 
     public class EventDate : IEventDate
     {
+        //Test automatic Generation
+        //public DateTime DateBegin
+        //{
+        //    get
+        //    {
+        //        return new DateTime(From.Year, From.Month, From.Day, Begin.Value.Hours, Begin.Value.Minutes, Begin.Value.Days);
+        //    }
+        //}
+
+        //public DateTime DateEnd
+        //{
+        //    get
+        //    {
+        //        return new DateTime(To.Year, To.Month, To.Day, End.Value.Hours, End.Value.Minutes, End.Value.Days);
+        //    }
+        //}
+
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public bool? SingleDays { get; set; }

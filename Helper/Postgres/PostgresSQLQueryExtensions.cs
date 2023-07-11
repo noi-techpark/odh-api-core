@@ -532,7 +532,7 @@ namespace Helper
         public static Query EventPublisherRancFilter(this Query query, IReadOnlyCollection<string> eventrancfilterlist) =>
             query.WhereInJsonb(
                eventrancfilterlist,
-               ranc => new { EventPublisher = new[] { new { Id = ranc } } }                      
+               ranc => new { EventPublisher = new[] { new { Id = ranc } } }
            );
 
         public static Query EventOrgFilter(this Query query, IReadOnlyCollection<string> eventorgfilter) =>
@@ -997,7 +997,7 @@ namespace Helper
 
         public static Query TaggingFilter_GeneratedColumn(this Query query, IDictionary<string, List<string>> tags) =>
             query.Where(q => tags.Aggregate(q, (q, tag) =>
-                q.When(tag.Key == "and", v => q.WhereArrayInListAnd(tag.Value, "gen_tags"), v => q.WhereArrayInListOr(tag.Value, "gen_tags"))                
+                q.When(tag.Key == "and", v => q.WhereArrayInListAnd(tag.Value, "gen_tags"), v => q.WhereArrayInListOr(tag.Value, "gen_tags"))
                 ));
 
         //? q.WhereArrayInListAnd(tag.Value, "gen_tags") : q.WhereArrayInListOr(tag.Value, "gen_tags"))
@@ -1392,12 +1392,12 @@ namespace Helper
 
         public static Query FilterClosedData_Raw(this Query query) =>
           query.Where(q =>
-              q.Where("license","open")              
+              q.Where("license", "open")
           );
 
         #endregion
 
-        #region Date_Query_Helpers
+        #region Date_Query_Helpers Event
 
         //Events
         //EVENTS Usecase to check
@@ -1429,6 +1429,24 @@ namespace Helper
                 )
             );
 
+        //EVENT Array of Tuples(begindate, enddate)
+        //Both Begin and Enddate given
+        public static Query EventDateFilterBeginEndArray_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query.When(
+                begin != DateTime.MinValue && end != DateTime.MaxValue,
+                query => 
+                
+
+                
+                query.WhereRaw(
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+                )       
+            );
+
+        #endregion
+
+        #region Date_Query_Helpers Article
+
         //Article
         //NEWS Usecase: Begindate filter shows all News that ends after requested date, and all News which begin before the requested date 
 
@@ -1458,6 +1476,10 @@ namespace Helper
                     "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
                 )
             );
+
+        #endregion
+
+        #region Date_Query_Helpers EventShort
 
         //EventShort
         //EVENTSHORT Usecase: all events which ends after the requested date
@@ -1561,4 +1583,6 @@ namespace Helper
         
 
     }
+
+    
 }
