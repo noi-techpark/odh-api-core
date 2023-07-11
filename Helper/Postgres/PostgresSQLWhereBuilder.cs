@@ -384,7 +384,7 @@ namespace Helper
         public static Query EventWhereExpression(
           this Query query, IReadOnlyCollection<string> languagelist,
           IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> topiclist,
-          IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> ranclist,
+          IReadOnlyCollection<string> ranclist,
           IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
           IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
           IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> orglist,
@@ -398,7 +398,7 @@ namespace Helper
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, topiclist,
-                typelist, ranclist,
+                ranclist,
                 smgtaglist, districtlist,
                 municipalitylist, tourismvereinlist,
                 regionlist, orglist, sourcelist, languagelist, begindate, enddate,
@@ -423,7 +423,7 @@ namespace Helper
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
-                .EventTypeFilter(typelist)
+                //.EventTypeFilter(typelist) //Obsolete
                 //.EventRancFilter(ranclist) //Obsolete Ranc
                 .EventPublisherRancFilter(ranclist)
                 .EventOrgFilter(orglist)

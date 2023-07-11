@@ -46,7 +46,6 @@ namespace OdhApiCore.Controllers
         /// <param name="idlist">IDFilter (Separator ',' List of Event IDs, 'null' = No Filter), (default:'null')</param>
         /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
         /// <param name="rancfilter">Rancfilter, Return only Events with this Ranc assigned (1 = not visible, 3 = visible, 4 = important, 5 = top-event),(default: 'null')</param>
-        /// <param name="typefilter">Typefilter (Type of Event: not used yet),(default: 'null')</param>
         /// <param name="topicfilter">Topic ID Filter (Filter by Topic ID) BITMASK refers to 'v1/EventTopics',(default: 'null')</param>
         /// <param name="orgfilter">Organization Filter (Filter by Organizer RID)</param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=event'), (default:'null')</param>        
@@ -85,7 +84,6 @@ namespace OdhApiCore.Controllers
             string? idlist = null,
             string? locfilter = null,
             string? rancfilter = null,
-            string? typefilter = null,
             string? topicfilter = null,
             string? orgfilter = null,
             string? odhtagfilter = null,
@@ -114,7 +112,7 @@ namespace OdhApiCore.Controllers
 
             return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
-                    pagesize: pagesize, typefilter: typefilter, idfilter: idlist, rancfilter: rancfilter,
+                    pagesize: pagesize, idfilter: idlist, rancfilter: rancfilter,
                     searchfilter: searchfilter, locfilter: locfilter, topicfilter: topicfilter, orgfilter: orgfilter,
                     begindate: begindate, enddate: enddate, sort: sort, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
@@ -212,7 +210,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetFiltered(
-        string[] fields, string? language, uint pagenumber, int? pagesize, string? typefilter, string? idfilter,
+        string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter,
         string? rancfilter, string? searchfilter, string? locfilter, string? orgfilter, string? topicfilter, string? begindate, string? enddate,
         string? sort, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? source, string? publishedon,
         PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
@@ -220,7 +218,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 EventHelper myeventhelper = await EventHelper.CreateAsync(
-                    QueryFactory, idfilter, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate, enddate,
+                    QueryFactory, idfilter, locfilter, rancfilter, topicfilter, orgfilter, begindate, enddate,
                     active, smgactive, smgtags, lastchange, langfilter, source, publishedon,
                     cancellationToken);
 
@@ -245,7 +243,7 @@ namespace OdhApiCore.Controllers
                         .SelectRaw("data")
                         .From("events")
                         .EventWhereExpression(
-                            idlist: myeventhelper.idlist, typelist: myeventhelper.typeidlist,
+                            idlist: myeventhelper.idlist, 
                             ranclist: myeventhelper.rancidlist, orglist: myeventhelper.orgidlist,
                             smgtaglist: myeventhelper.smgtaglist, districtlist: myeventhelper.districtlist,
                             municipalitylist: myeventhelper.municipalitylist, tourismvereinlist: myeventhelper.tourismvereinlist,

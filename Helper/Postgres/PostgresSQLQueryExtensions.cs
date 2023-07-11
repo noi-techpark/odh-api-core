@@ -521,6 +521,7 @@ namespace Helper
                 type => type
             );
 
+        //Obsolete
         public static Query EventRancFilter(this Query query, IReadOnlyCollection<string> eventrancfilterlist) =>
            query.WhereInJsonb(
                 list: eventrancfilterlist,

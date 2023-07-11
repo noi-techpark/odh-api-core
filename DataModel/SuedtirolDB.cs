@@ -2793,6 +2793,8 @@ namespace DataModel
         public string? Ticket { get; set; }
         public string? SignOn { get; set; }
         public string? PayMet { get; set; }
+
+        [SwaggerDeprecated("Obsolete")]
         public string? Type { get; set; }
         public string Pdf { get; set; }
 
