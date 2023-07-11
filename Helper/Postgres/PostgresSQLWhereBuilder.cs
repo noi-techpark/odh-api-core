@@ -424,7 +424,8 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .EventTypeFilter(typelist)
-                .EventRancFilter(ranclist)
+                //.EventRancFilter(ranclist) //Obsolete Ranc
+                .EventPublisherRancFilter(ranclist)
                 .EventOrgFilter(orglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());

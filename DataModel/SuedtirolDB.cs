@@ -2787,6 +2787,8 @@ namespace DataModel
         public string? AltitudeUnitofMeasure { get; set; }
 
         public string? OrgRID { get; set; }
+
+        [SwaggerDeprecated("Obsolete use EventPublisher List")]
         public int? Ranc { get; set; }
         public string? Ticket { get; set; }
         public string? SignOn { get; set; }

@@ -528,6 +528,12 @@ namespace Helper
                 ranc => ranc
             );
 
+        public static Query EventPublisherRancFilter(this Query query, IReadOnlyCollection<string> eventrancfilterlist) =>
+            query.WhereInJsonb(
+               eventrancfilterlist,
+               ranc => new { EventPublisher = new[] { new { Id = ranc } } }                      
+           );
+
         public static Query EventOrgFilter(this Query query, IReadOnlyCollection<string> eventorgfilter) =>
            query.WhereInJsonb(
                 list: eventorgfilter,
