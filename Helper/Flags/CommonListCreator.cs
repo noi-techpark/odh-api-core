@@ -30,6 +30,30 @@ namespace Helper
             return activityIds;
         }
 
+        public static List<Int32> CreateNumericIdList(string? idstring)
+        {
+            List<int> activityIds = new List<int>();
+
+            if (!String.IsNullOrEmpty(idstring))
+            {
+                if (idstring.Substring(idstring.Length - 1, 1) == ",")
+                    idstring = idstring.Substring(0, idstring.Length - 1);
+
+                var splittedfilter = idstring.Split(',');
+
+                foreach (var filter in splittedfilter)
+                {
+                    int filterint;
+
+                    if(int.TryParse(filter, out filterint))
+                        activityIds.Add(filterint);
+                }
+            }
+
+            return activityIds;
+        }
+
+
         public static List<string> CreateSmgPoiSourceList(string? sourcestring)
         {
             List<string> activityIds = new List<string>();

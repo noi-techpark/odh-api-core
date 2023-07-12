@@ -384,7 +384,7 @@ namespace Helper
         public static Query EventWhereExpression(
           this Query query, IReadOnlyCollection<string> languagelist,
           IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> topiclist,
-          IReadOnlyCollection<string> ranclist,
+          IReadOnlyCollection<Int32> ranclist,
           IReadOnlyCollection<string> smgtaglist, IReadOnlyCollection<string> districtlist,
           IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
           IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> orglist,

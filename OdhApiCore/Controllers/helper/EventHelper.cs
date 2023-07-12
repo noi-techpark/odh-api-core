@@ -18,7 +18,7 @@ namespace OdhApiCore.Controllers
     {
         public List<string> idlist;
         public List<string> orgidlist;
-        public List<string> rancidlist;        
+        public List<Int32> rancidlist;        
         public List<string> topicrids;
         public List<string> smgtaglist;
         public List<string> districtlist;
@@ -70,11 +70,8 @@ namespace OdhApiCore.Controllers
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
             orgidlist = CommonListCreator.CreateIdList(orgfilter);            
-            rancidlist = CommonListCreator.CreateIdList(rancfilter);
-
-            if (rancidlist.Count > 0 && rancidlist.Contains("0"))
-                rancidlist = new List<string>();
-            
+            rancidlist = CommonListCreator.CreateNumericIdList(rancfilter);
+           
             topicrids = EventListCreator.CreateEventTopicRidListfromFlag(topicfilter);
 
             tourismvereinlist = new List<string>();
