@@ -69,8 +69,8 @@ namespace OdhApiImporter.Helpers
                         updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations");
                     }               
 
-                    //UPDATE ACCOMMODATIONROOMS
-                    var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
+                    //UPDATE ACCOMMODATIONROOMS CAUTION this only gets rooms from hgv if both sources exists, Rooms from lts are 
+                    var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?getall=true&accoid=");
 
                     //TODO make a call on all rooms, save the processed rooms and delete all rooms that are no more on the list
                     var currentassignedroomids = await QueryFactory.Query("accommodationrooms")
@@ -80,7 +80,7 @@ namespace OdhApiImporter.Helpers
 
                     if(currentassignedroomids.Count() > 0)
                     {
-                        var roomdataidsactual = myroomdatalist.Select(x => x.Id).ToList();
+                        var roomdataidsactual = myroomdatalist.Select(x => x.Id.ToUpper()).ToList();
 
                         var roomidstodelete = currentassignedroomids.Except(roomdataidsactual);
 
@@ -112,9 +112,7 @@ namespace OdhApiImporter.Helpers
                             ((AccommodationRoomLinked)mypgroomdata).CreatePublishedOnList(null, roomsourcecheck);
 
                             var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms", true, true);
-
                        
-
                             //Merge with updateresult
                             myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, accoroomresult, });
                         }
