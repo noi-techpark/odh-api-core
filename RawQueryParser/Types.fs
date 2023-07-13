@@ -1,4 +1,8 @@
-﻿namespace RawQueryParser
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+namespace RawQueryParser
 
 /// <summary>
 /// Differentiate between an identifier segment, e.g. 'Detail' and an array segment: []

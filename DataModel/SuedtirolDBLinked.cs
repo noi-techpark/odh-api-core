@@ -1,4 +1,9 @@
-﻿using Swashbuckle.AspNetCore.Annotations;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel.Annotations;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -423,18 +428,21 @@ namespace DataModel
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
     }
 
-    public class EventPG : Event
-    {
-        public List<DateTime> EventDatesBegin { get; set; }
-        public List<DateTime> EventDatesEnd { get; set; }
+    //public class EventPG : Event
+    //{
+    //    public List<DateTime> EventDatesBegin { get; set; }
+    //    public List<DateTime> EventDatesEnd { get; set; }
 
-        public int EventDateCounter { get; set; }
-    }
+    //    public int EventDateCounter { get; set; }
+    //}
 
     public class EventLinked : Event, IMetaData
     {
         public Metadata? _Meta { get; set; }
 
+        //TODO mark this (EventDatesBegin/EventDatesEnd/EventDateCounter) as obsolete
+
+        [SwaggerDeprecated("Obsolete")]
         public List<DateTime> EventDatesBegin
         {
             get
@@ -443,6 +451,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerDeprecated("Obsolete")]
         public List<DateTime> EventDatesEnd
         {
             get
@@ -451,6 +460,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerDeprecated("Obsolete")]
         public int EventDateCounter
         {
             get
@@ -459,6 +469,7 @@ namespace DataModel
             }
         }
 
+
         public string Self
         {
             get
@@ -466,6 +477,12 @@ namespace DataModel
                 return "Event/" + Uri.EscapeDataString(this.Id);
             }
         }
+
+        //public class DateRange
+        //{
+        //    public DateTime? From { get; set; }
+        //    public DateTime? To { get; set; }
+        //}
 
         public ICollection<DistrictLink> Districts
         {
@@ -1447,36 +1464,36 @@ namespace DataModel
 
         public TourismMetaData()
         {
-            _Meta = new Metadata();
             ApiFilter = new List<string>();
         }
 
+        //not needed
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public string ApiId { get; set; }
+        //public string ApiId { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public string ApiIdentifier { get; set; }
+        //using only PathParam
+        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        //public string ApiIdentifier { get; set; }
         
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string>? ApiFilter { get; set; }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
-        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public string OdhType { get; set; }
+        public string? OdhType { get; set; }
         
-        private string swaggerUrl = default!;
-        public string SwaggerUrl
-        {
-            get { return "swagger/index.html#/" + swaggerUrl; }
-            set { swaggerUrl = value; }
-        }
+        //private string swaggerUrl = default!;
+        public string? SwaggerUrl { get; set; }
+        //{
+        //    get { return "swagger/index.html#/" + swaggerUrl; }
+        //    set { swaggerUrl = value; }
+        //}
 
         public string Self
         {
             get
             {
-                return this.ApiVersion + "/MetaData/" + this.Id;
+                return "v1/MetaData/" + this.Id;
             }
         }
 
@@ -1484,9 +1501,13 @@ namespace DataModel
         {
             get
             {
-                return String.Format("{0}/{1}{2}", this.ApiVersion, this.ApiIdentifier, this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : "");
+                return String.Format("{0}{1}", String.Join("/", this.PathParam), this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : "");
             }
         }
+
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        public ICollection<string> PathParam { get; set; }
+
 
         //public string Source { get; set; }
 
@@ -1502,25 +1523,26 @@ namespace DataModel
         public Metadata? _Meta { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
-        public string Shortname { get; set; }
-
-        public ICollection<string> Sources { get; set; }
-        
-        public IDictionary<string, int> RecordCount { get; set; }
-
-        public IDictionary<string, string> Output { get; set; }
-
-        public IDictionary<string, string> ApiDescription { get; set; }
 
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public string ApiVersion { get; set; }
+        public string Shortname { get; set; }
 
-        [Required]
-        public ICollection<string> PathParam { get; set; }
+        public ICollection<string>? Sources { get; set; }
+        
+        public IDictionary<string, int>? RecordCount { get; set; }
 
+        public IDictionary<string, string>? Output { get; set; }
+
+        public IDictionary<string, string>? ApiDescription { get; set; }
+
+        //using PathParam only
+        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        //public string ApiVersion { get; set; }
+
+     
         public ICollection<string>? PublishedOn { get; set; }
 
-        public IDictionary<string, string> ApiAccess { get; set; }
+        public IDictionary<string, string>? ApiAccess { get; set; }
     }
 
     #endregion

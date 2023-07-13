@@ -1,4 +1,8 @@
-﻿using Helper;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Helper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
@@ -18,7 +22,7 @@ namespace OdhApiCore
                 //If Root is requested forward to Databrowser (Compatibility reason)
                 if (String.IsNullOrEmpty(context.Request.Path.Value) || context.Request.Path.Value == "/")
                 {
-                    if (context.Request.Host.ToString().Equals("tourism.opendatahub.bz.it"))
+                    if (context.Request.Host.ToString().Equals("tourism.opendatahub.com") || context.Request.Host.ToString().Equals("tourism.opendatahub.bz.it"))
                     {
                         context.Response.Redirect(configuration.GetSection("DataBrowserConfig").GetValue<string>("Url"));
                         return;

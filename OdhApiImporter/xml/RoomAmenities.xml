@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 <ltshgv-amenities-mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<amenity>
 		<hgvid>1</hgvid>

@@ -1,4 +1,8 @@
-﻿using DataModel;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using SqlKata.Execution;
 using System;
 using System.Threading;
@@ -309,7 +313,7 @@ namespace OdhApiImporter.Helpers.DSS
             try
             {
                 //Begin SetDataNotinListToInactive
-                var idlistdb = await GetAllDSSDataByInterface(new List<string>() { "dss" + entitytype + "base" });
+                var idlistdb = await GetAllDSSDataByInterface(new List<string>() { "dss" + entitytype.ToLower() + "base" });
 
                 var idstodelete = idlistdb.Where(p => !idlistdssinterface.Any(p2 => p2 == p));
 
@@ -410,7 +414,7 @@ namespace OdhApiImporter.Helpers.DSS
             var query =
                QueryFactory.Query(table)
                    .Select("id")
-                   .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
+                   .SyncSourceInterfaceFilter_GeneratedColumn(syncsourceinterfacelist);
 
             var idlist = await query.GetAsync<string>();
 

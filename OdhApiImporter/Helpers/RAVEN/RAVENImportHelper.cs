@@ -1,4 +1,8 @@
-﻿using DataModel;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Mvc;
 using OdhNotifier;
@@ -65,8 +69,34 @@ namespace OdhApiImporter.Helpers
                         updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations");
                     }               
 
-                    //UPDATE ACCOMMODATIONROOMS
-                    var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?accoid=");
+                    //UPDATE ACCOMMODATIONROOMS CAUTION this only gets rooms from hgv if both sources exists, Rooms from lts are 
+                    var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?getall=true&accoid=");
+
+                    //TODO make a call on all rooms, save the processed rooms and delete all rooms that are no more on the list
+                    var currentassignedroomids = await QueryFactory.Query("accommodationrooms")
+                        .Select("id")
+                        .Where("gen_a0rid", "ILIKE", mypgdata.Id)
+                        .GetAsync<string>();
+
+                    if(currentassignedroomids.Count() > 0)
+                    {
+                        var roomdataidsactual = myroomdatalist.Select(x => x.Id.ToUpper()).ToList();
+
+                        var roomidstodelete = currentassignedroomids.Except(roomdataidsactual);
+
+                        if(roomidstodelete.Count() > 0)
+                        {
+                            //DELETE this rooms
+                            foreach(var  roomid in roomidstodelete)
+                            {
+                                var roomdeleteresult = await DeleteRavenObjectFromPG<AccommodationRoomLinked>(roomid, "accommodationrooms", false);
+
+                                //Merge with updateresult
+                                myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, roomdeleteresult });
+                            }
+                        }
+                    }
+
 
                     if (myroomdatalist != null)
                     {
@@ -82,21 +112,18 @@ namespace OdhApiImporter.Helpers
                             ((AccommodationRoomLinked)mypgroomdata).CreatePublishedOnList(null, roomsourcecheck);
 
                             var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms", true, true);
-
-                            //TO DO, delete all deleted rooms?
-
-
+                       
                             //Merge with updateresult
-                            myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, accoroomresult });
+                            myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, accoroomresult, });
                         }
-                    }
+                    }                                      
+                    
                     //Remove Exception not all accommodations have rooms
                     //else
                     //    throw new Exception("No data found!");
 
                     //Check if the Object has Changed and Push all infos to the channels
                     myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
-
 
                     break;
 
@@ -419,6 +446,11 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
+                    //Measuringpoint, Fill SkiAreaIds
+                    var areaids = ((MeasuringpointLinked)mypgdata).AreaIds;
+                    if (areaids != null)
+                        ((MeasuringpointLinked)mypgdata).SkiAreaIds = await QueryFactory.Query().GetSkiAreaIdsfromSkiAreasAsync(areaids, cancellationToken);
+
                     //Add the PublishedOn Logic
                     ((MeasuringpointLinked)mypgdata).CreatePublishedOnList();
 
@@ -543,7 +575,10 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "event":
-                   
+
+                    //Delete
+                    deleteresult = await DeleteRavenObjectFromPG<EventLinked>(id, "events", true);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
 
                     break;
 

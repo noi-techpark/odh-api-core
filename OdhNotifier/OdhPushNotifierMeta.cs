@@ -1,4 +1,8 @@
-﻿using DataModel;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Server.IIS.Core;
@@ -175,7 +179,7 @@ namespace OdhNotifier
                                 isHardDelete = notify.IsDelete
                             }));
 
-                            imageupdate = notify.HasImagechanged ? true : false;
+                            imageupdate = notify.HasImagechanged;
 
                             data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 

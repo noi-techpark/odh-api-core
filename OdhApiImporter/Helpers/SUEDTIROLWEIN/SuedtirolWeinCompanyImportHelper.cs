@@ -1,4 +1,8 @@
-﻿using Amazon.Runtime.Internal.Transform;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Amazon.Runtime.Internal.Transform;
 using DataModel;
 using Helper;
 using SqlKata.Execution;

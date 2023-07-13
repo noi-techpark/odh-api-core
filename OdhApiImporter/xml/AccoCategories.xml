@@ -1,4 +1,11 @@
-﻿<Category>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
+<Category>
   <Data T0RID="52281FA251CA11D18F1400A02427D15E" T0ID="A.001.000.000.000" T0Typ="0" T0Va1="" T0Va2="" T0Va3="" T0SID="0" T0AcR="0">
     <DataLng T1Des="categoria" LngID="IT" />
     <DataLng T1Des="catégorie" LngID="FR" />

@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using SqlKata;
 using SqlKata.Compilers;

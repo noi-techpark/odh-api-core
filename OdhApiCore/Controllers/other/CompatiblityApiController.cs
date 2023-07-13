@@ -1,4 +1,8 @@
-﻿using DataModel;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -716,7 +720,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 EventHelper helper = await EventHelper.CreateAsync(
-                    QueryFactory, null, locfilter, rancfilter, typefilter, topicfilter, orgfilter, begindate,
+                    QueryFactory, null, locfilter, rancfilter, topicfilter, orgfilter, begindate,
                     enddate, active, smgactive, smgtagfilter, null, langfilter, source, null, cancellationToken);
 
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{Detail,{language},Title\\}}' as \"Name\"";
@@ -731,7 +735,7 @@ namespace OdhApiCore.Controllers.api
                         .SelectRaw(select)
                         .From("events")
                         .EventWhereExpression(
-                            idlist: helper.idlist, topiclist: helper.topicrids, typelist: helper.typeidlist, ranclist: helper.rancidlist,
+                            idlist: helper.idlist, topiclist: helper.topicrids, ranclist: helper.rancidlist,
                             smgtaglist: helper.smgtaglist, districtlist: helper.districtlist, municipalitylist: helper.municipalitylist,
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             orglist: helper.orgidlist, sourcelist: helper.sourcelist, begindate: helper.begin, enddate: helper.end, activefilter: helper.active,

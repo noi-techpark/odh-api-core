@@ -1,4 +1,8 @@
-﻿using DataModel;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -111,7 +115,7 @@ namespace OdhApiCore.Filters
                     if (CheckArrivalAndDeparture(arrival, departure))
                     {
                         var booklist = new List<string>();
-                        var bokfilterlist = bokfilter.Split(',').ToList();
+                        var bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
                         if (actionid == "GetAccommodations")
                         {
@@ -195,7 +199,7 @@ namespace OdhApiCore.Filters
             }
 
             string bokfilter = (string?)query["bokfilter"] ?? "hgv";
-            var bokfilterlist = bokfilter.Split(',').ToList();
+            var bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
             var availabilityonlychecklegacy = (string?)query["availabilityonly"];
             bool.TryParse(availabilityonlychecklegacy, out bool availabilityonly);

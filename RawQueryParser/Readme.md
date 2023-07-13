@@ -1,4 +1,10 @@
-﻿# Raw Query Parser Project
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
+# Raw Query Parser Project
 
 This project enables the tourism open data hub to support custom filtering and sorting.
 

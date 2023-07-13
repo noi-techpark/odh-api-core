@@ -1,4 +1,8 @@
-﻿using DataModel;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -234,7 +238,7 @@ namespace OdhApiImporter.Controllers
 
         #region MetaData
 
-        [Authorize(Roles = "DataPush")]
+        //[Authorize(Roles = "DataPush")]
         [HttpGet, Route("UpdateMetaDataRecordCount")]
         public async Task<IActionResult> UpdateMetaDataRecordCount(CancellationToken cancellationToken)
         {
@@ -256,22 +260,44 @@ namespace OdhApiImporter.Controllers
             });
         }
 
-        [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("UpdateMetaDataApiId")]
-        public async Task<IActionResult> UpdateMetaDataApiId(CancellationToken cancellationToken)
+        //[Authorize(Roles = "DataPush")]
+        //[HttpGet, Route("UpdateMetaDataApiId")]
+        //public async Task<IActionResult> UpdateMetaDataApiId(CancellationToken cancellationToken)
+        //{
+        //    CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+        //    var objectscount = await customdataoperation.UpdateMetaDataApiId();
+
+        //    return Ok(new UpdateResult
+        //    {
+        //        operation = "Modify Metadata ApiId",
+        //        updatetype = "custom",
+        //        otherinfo = "",
+        //        message = "Done",
+        //        recordsmodified = 0,
+        //        created = objectscount["created"],
+        //        deleted = objectscount["deleted"],
+        //        id = "",
+        //        updated = 0,
+        //        success = true
+        //    });
+        //}
+
+        //[Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ResaveMetaData")]
+        public async Task<IActionResult> ResaveMetaData(CancellationToken cancellationToken)
         {
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.UpdateMetaDataApiId();
+            var objectscount = await customdataoperation.ResaveMetaData();
 
             return Ok(new UpdateResult
             {
-                operation = "Modify Metadata ApiId",
+                operation = "Resave Metadata",
                 updatetype = "custom",
                 otherinfo = "",
                 message = "Done",
                 recordsmodified = 0,
-                created = objectscount["created"],
-                deleted = objectscount["deleted"],
+                created = 0,
+                deleted = 0,
                 id = "",
                 updated = 0,
                 success = true

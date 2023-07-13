@@ -1,4 +1,9 @@
-﻿using DataModel;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
+using Helper.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SqlKata.Execution;
@@ -48,8 +53,8 @@ namespace Helper
             {
                 string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
-                string source = "";
-                string tag = "";
+                List<string> sources = new List<string>();
+                List<string> tags = new List<string>();
 
                 
                 if (filters != null)
@@ -58,32 +63,40 @@ namespace Helper
                     {
                         if (filter.StartsWith("source="))
                         {
-                            source = filter.Replace("source=", "");
+                            sources.Add(filter.Replace("source=", ""));
                         }
 
                         if (filter.StartsWith("tagfilter="))
                         {
-                            tag = filter.Replace("tagfilter=", "");
+                            tags.Add(filter.Replace("tagfilter=", ""));
                         }
                     }
                         
                 }
+
+                if(sources.Count > 0 && odhtype == "odhactivitypoi")
+                {
+                    sources = SourceFilterHelper.ExtendSourceFilterODHActivityPois(sources);
+                }               
+
 
                 //Get Reduced
                 var reducedcount = await QueryFactory.Query()
                     .From(table)
                     .Where("gen_reduced", true)
                     .Where("gen_licenseinfo_closeddata", false)
-                    .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
-                    .When(!String.IsNullOrEmpty(tag), q => q.WhereArrayInListOr(new List<string>() { tag }, "gen_tags"))
+                    .When(sources.Count > 0 && odhtype != "odhactivitypoi", q => q.SourceFilter_GeneratedColumn(sources))
+                    .When(sources.Count > 0 && odhtype == "odhactivitypoi", q => q.SyncSourceInterfaceFilter_GeneratedColumn(sources))
+                    .When(tags.Count > 0 && odhtype == "odhactivitypoi", q => q.WhereArrayInListOr(tags, "gen_tags"))
                     .CountAsync<int>();
 
                 //Get Closed
                 var closedcount = await QueryFactory.Query()
                     .From(table)
                     .Where("gen_licenseinfo_closeddata", true)
-                    .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
-                    .When(!String.IsNullOrEmpty(tag), q => q.WhereArrayInListOr(new List<string>() { tag }, "gen_tags"))
+                    .When(sources.Count > 0 && odhtype != "odhactivitypoi", q => q.SourceFilter_GeneratedColumn(sources))
+                    .When(sources.Count > 0 && odhtype == "odhactivitypoi", q => q.SyncSourceInterfaceFilter_GeneratedColumn(sources))
+                    .When(tags.Count > 0 && odhtype == "odhactivitypoi", q => q.WhereArrayInListOr(tags, "gen_tags"))
                     .CountAsync<int>();
 
                 //Get Open
@@ -91,8 +104,9 @@ namespace Helper
                     .From(table)
                     .Where("gen_licenseinfo_closeddata", false)
                     .Where("gen_reduced", false)
-                    .When(!String.IsNullOrEmpty(source), q => q.Where("gen_source", source))
-                    .When(!String.IsNullOrEmpty(tag), q => q.WhereArrayInListOr(new List<string>() { tag }, "gen_tags"))
+                    .When(sources.Count > 0 && odhtype != "odhactivitypoi", q => q.SourceFilter_GeneratedColumn(sources))
+                    .When(sources.Count > 0 && odhtype == "odhactivitypoi", q => q.SyncSourceInterfaceFilter_GeneratedColumn(sources))
+                    .When(tags.Count > 0 && odhtype == "odhactivitypoi", q => q.WhereArrayInListOr(tags, "gen_tags"))
                     .CountAsync<int>();
 
                 result.TryAddOrUpdate("reduced", reducedcount);

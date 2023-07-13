@@ -1,4 +1,9 @@
-﻿<Weather>
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+SPDX-License-Identifier: CC0-1.0
+-->
+<Weather>
   <Station Id="1" NameDE="Schlanders" NameIT="Silandro" NameEN="Silandro/Schlanders">
     <Regions>
       <!--Vinschgau-->

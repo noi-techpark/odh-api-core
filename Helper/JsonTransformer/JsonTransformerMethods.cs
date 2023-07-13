@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -300,13 +304,13 @@ namespace Helper
                 if (self == null)
                     return null;
                 // FIXME: Temporary workaround
-                if (self.StartsWith("https://tourism.opendatahub.bz.it/api/"))
+                if (self.StartsWith("https://tourism.opendatahub.com/api/"))
                     self = self.Substring(38);
                 return urlGenerator(self);
             }
             static JProperty? TransformProp(JProperty prop, Func<string, string> urlGenerator)
             {
-                if (prop.Name == "Self" || prop.Name == "SwaggerUrl" || prop.Name == "ApiUrl")
+                if (prop.Name == "Self" || prop.Name == "ApiUrl")
                 {
                     string? value = TransformSelf(prop.Value.Value<string?>(), urlGenerator);
                     return new JProperty(prop.Name, value);

@@ -1,4 +1,8 @@
-﻿using Helper;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Helper;
 using SqlKata;
 using SqlKata.Execution;
 using System;
@@ -14,8 +18,7 @@ namespace OdhApiCore.Controllers
     {
         public List<string> idlist;
         public List<string> orgidlist;
-        public List<string> rancidlist;
-        public List<string> typeidlist;
+        public List<Int32> rancidlist;        
         public List<string> topicrids;
         public List<string> smgtaglist;
         public List<string> districtlist;
@@ -34,7 +37,7 @@ namespace OdhApiCore.Controllers
 
         public static async Task<EventHelper> CreateAsync(
             QueryFactory queryFactory, string? idfilter, string? locfilter, string? rancfilter,
-            string? typefilter, string? topicfilter, string? orgfilter, string? begindate, string? enddate,
+            string? topicfilter, string? orgfilter, string? begindate, string? enddate,
             bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? langfilter, string? source, 
             string? publishedonfilter,
             CancellationToken cancellationToken)
@@ -47,7 +50,7 @@ namespace OdhApiCore.Controllers
             }
 
             return new EventHelper(
-                idfilter: idfilter, locfilter: locfilter, rancfilter: rancfilter, typefilter: typefilter,
+                idfilter: idfilter, locfilter: locfilter, rancfilter: rancfilter, 
                 topicfilter: topicfilter, orgfilter: orgfilter, begindate: begindate, enddate: enddate,
                 activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, sourcefilter: source, 
                 languagefilter: langfilter, publishedonfilter: publishedonfilter, tourismusvereinids: tourismusvereinids);
@@ -55,7 +58,7 @@ namespace OdhApiCore.Controllers
 
         private EventHelper(
             string? idfilter, string? locfilter, string? rancfilter,
-            string? typefilter, string? topicfilter, string? orgfilter,
+            string? topicfilter, string? orgfilter,
             string? begindate, string? enddate, bool? activefilter, bool? smgactivefilter,
             string? smgtags, string? lastchange, string? languagefilter, string? sourcefilter, string? publishedonfilter, 
             IEnumerable<string>? tourismusvereinids)
@@ -66,9 +69,9 @@ namespace OdhApiCore.Controllers
             sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
-            orgidlist = CommonListCreator.CreateIdList(orgfilter);
-            rancidlist = CommonListCreator.CreateIdList(rancfilter);
-            typeidlist = CommonListCreator.CreateIdList(typefilter);
+            orgidlist = CommonListCreator.CreateIdList(orgfilter);            
+            rancidlist = CommonListCreator.CreateNumericIdList(rancfilter);
+           
             topicrids = EventListCreator.CreateEventTopicRidListfromFlag(topicfilter);
 
             tourismvereinlist = new List<string>();

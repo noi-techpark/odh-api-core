@@ -1,4 +1,8 @@
-﻿using DataModel;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -36,19 +40,65 @@ namespace OdhApiImporter.Helpers
 
             foreach (var metadata in data)
             {
-                metadata.RecordCount = await MetaDataApiRecordCount.GetRecordCountfromDB(metadata.ApiFilter, metadata.OdhType, QueryFactory);
+                if (!String.IsNullOrEmpty(metadata.OdhType))
+                {
+                    metadata.RecordCount = await MetaDataApiRecordCount.GetRecordCountfromDB(metadata.ApiFilter, metadata.OdhType, QueryFactory);
 
-                //Save tp DB                 
-                var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)                    
-                    .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
+                    //Save tp DB                 
+                    var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
+                        .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
 
-                i++;
+                    i++;
+                }
             }
 
             return i;            
         }
 
-        public async Task<Dictionary<string,int>> UpdateMetaDataApiId()
+        //public async Task<Dictionary<string,int>> UpdateMetaDataApiId()
+        //{
+            ////Load all data from PG and resave
+            //var query = QueryFactory.Query()
+            //       .SelectRaw("data")
+            //       .From("metadata");
+
+            //var data = await query.GetObjectListAsync<TourismMetaData>();
+            //int created = 0;
+
+            //foreach (var metadata in data)
+            //{
+            //    if(String.IsNullOrEmpty(metadata.ApiId))
+            //        metadata.ApiId = metadata.Id;
+             
+            //    metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
+            //    metadata._Meta.Id = metadata.Id;
+
+            //    //Save tp DB                 
+            //    var queryresult = await QueryFactory.Query("metadata")
+            //        .InsertAsync(new JsonBData() { id = metadata.Id, data = new JsonRaw(metadata) });
+
+            //    created++;
+            //}
+
+            //int deleted = 0;
+
+            ////Delete old ids
+            //var idlisttodelete = data.Select(x => x.Id).ToList();
+            //foreach(var metadataidtodelete in idlisttodelete)
+            //{
+            //    var deltedresult = await QueryFactory.Query("metadata").Where("id", metadataidtodelete)
+            //            .DeleteAsync();
+            //    deleted++;
+            //}
+
+            //return new Dictionary<string, int>()
+            //{
+            //    { "created", created },
+            //    { "deleted", deleted }
+            //};
+        //}
+
+        public async Task<int> ResaveMetaData()
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
@@ -56,41 +106,24 @@ namespace OdhApiImporter.Helpers
                    .From("metadata");
 
             var data = await query.GetObjectListAsync<TourismMetaData>();
-            int created = 0;
+            int i = 0;
 
             foreach (var metadata in data)
             {
-                if(String.IsNullOrEmpty(metadata.ApiId))
-                    metadata.ApiId = metadata.Id;
-             
-                metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
-                metadata._Meta.Id = metadata.Id;
+                //fix swaggerurl mess
+                var swaggerurl = "swagger/index.html#" + metadata.SwaggerUrl.Split("#").LastOrDefault();
+
+                metadata.SwaggerUrl = swaggerurl;
 
                 //Save tp DB                 
-                var queryresult = await QueryFactory.Query("metadata")
-                    .InsertAsync(new JsonBData() { id = metadata.Id, data = new JsonRaw(metadata) });
+                var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
+                    .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
 
-                created++;
+                i++;
             }
 
-            int deleted = 0;
-
-            //Delete old ids
-            var idlisttodelete = data.Select(x => x.Id).ToList();
-            foreach(var metadataidtodelete in idlisttodelete)
-            {
-                var deltedresult = await QueryFactory.Query("metadata").Where("id", metadataidtodelete)
-                        .DeleteAsync();
-                deleted++;
-            }
-
-            return new Dictionary<string, int>()
-            {
-                { "created", created },
-                { "deleted", deleted }
-            };
+            return i;
         }
-
 
 
         public async Task<int> UpdateAllEventShortstonewDataModel()
@@ -381,9 +414,9 @@ namespace OdhApiImporter.Helpers
 
                 myarticle.LicenseInfo = new LicenseInfo() { Author = "", License = "CC0", ClosedData = false, LicenseHolder= "https://noi.bz.it" };
 
-                myarticle.ContactInfos.TryAddOrUpdate("de", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "de", CompanyName = "NOI Techpark" });
-                myarticle.ContactInfos.TryAddOrUpdate("it", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "it", CompanyName = "NOI Techpark" });
-                myarticle.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.bz.it/icons/NOI.png", Language = "en", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("de", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "de", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("it", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "it", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "en", CompanyName = "NOI Techpark" });
 
                 myarticle.ArticleDate = DateTime.Now.Date.AddDays(i);
                 
@@ -508,14 +541,14 @@ namespace OdhApiImporter.Helpers
                     //ImageGallery link
                     foreach(var image in eventshort.ImageGallery)
                     {
-                        //https://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/
+                        //https://tourism.opendatahub.com/imageresizer/ImageHandler.ashx?src=images/eventshort/
                         
                         if (image.ImageUrl.Contains("imageresizer/ImageHandler.ashx?src=images/eventshort/"))
                         {
                             if(image.ImageUrl.StartsWith("https"))
-                                image.ImageUrl = image.ImageUrl.Replace("https://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl=");
+                                image.ImageUrl = image.ImageUrl.Replace("https://tourism.opendatahub.com/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.com/api/Image/GetImage?imageurl=");
                             else
-                                image.ImageUrl = image.ImageUrl.Replace("http://tourism.opendatahub.bz.it/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.bz.it/api/Image/GetImage?imageurl=");
+                                image.ImageUrl = image.ImageUrl.Replace("http://tourism.opendatahub.com/imageresizer/ImageHandler.ashx?src=images/eventshort/eventshort/", "https://tourism.images.opendatahub.com/api/Image/GetImage?imageurl=");
                             
                             resave = true;
                         }                        
@@ -531,9 +564,9 @@ namespace OdhApiImporter.Helpers
                         if (doc.DocumentURL.Contains("imageresizer/images/eventshort/pdf/"))
                         {
                             if (doc.DocumentURL.StartsWith("https"))
-                                doc.DocumentURL = doc.DocumentURL.Replace("https://tourism.opendatahub.bz.it/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.bz.it/api/File/GetFile/");
+                                doc.DocumentURL = doc.DocumentURL.Replace("https://tourism.opendatahub.com/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.com/api/File/GetFile/");
                             else
-                                doc.DocumentURL = doc.DocumentURL.Replace("http://tourism.opendatahub.bz.it/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.bz.it/api/File/GetFile/");
+                                doc.DocumentURL = doc.DocumentURL.Replace("http://tourism.opendatahub.com/imageresizer/images/eventshort/pdf/", "https://tourism.images.opendatahub.com/api/File/GetFile/");
                             
                             resave = true;
                         }

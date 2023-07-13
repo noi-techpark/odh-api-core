@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
@@ -1621,6 +1625,9 @@ namespace DataModel
         public string? Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+
+        public IEnumerable<string>? SkiAreaIds { get; set; }
     }
 
     public class WeatherObservation
@@ -2780,10 +2787,14 @@ namespace DataModel
         public string? AltitudeUnitofMeasure { get; set; }
 
         public string? OrgRID { get; set; }
+
+        [SwaggerDeprecated("Obsolete use EventPublisher List")]
         public int? Ranc { get; set; }
         public string? Ticket { get; set; }
         public string? SignOn { get; set; }
         public string? PayMet { get; set; }
+
+        [SwaggerDeprecated("Obsolete")]
         public string? Type { get; set; }
         public string Pdf { get; set; }
 
@@ -3303,6 +3314,23 @@ namespace DataModel
 
     public class EventDate : IEventDate
     {
+        //Test automatic Generation
+        //public DateTime DateBegin
+        //{
+        //    get
+        //    {
+        //        return new DateTime(From.Year, From.Month, From.Day, Begin.Value.Hours, Begin.Value.Minutes, Begin.Value.Days);
+        //    }
+        //}
+
+        //public DateTime DateEnd
+        //{
+        //    get
+        //    {
+        //        return new DateTime(To.Year, To.Month, To.Day, End.Value.Hours, End.Value.Minutes, End.Value.Days);
+        //    }
+        //}
+
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public bool? SingleDays { get; set; }

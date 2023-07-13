@@ -1,4 +1,8 @@
-﻿#nullable disable
+// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+#nullable disable
 
 using DataModel;
 using System;
@@ -54,9 +58,10 @@ namespace OdhApiImporter.Controllers
         #region UPDATE FROM RAVEN INSTANCE
 
         [HttpGet, Route("Raven/{datatype}/Update/{id}")]
-        [Authorize(Roles = "DataPush")]
+        //[Authorize(Roles = "DataPush")]
         public async Task<IActionResult> UpdateDataFromRaven(string id, string datatype, CancellationToken cancellationToken = default)
         {
+            
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Update Raven";
             string updatetype = "single";
