@@ -1474,14 +1474,14 @@ namespace DataModel
         //using only PathParam
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         //public string ApiIdentifier { get; set; }
-        
+
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string>? ApiFilter { get; set; }
 
         public string? Id { get; set; }
 
         public string? OdhType { get; set; }
-        
+
         //private string swaggerUrl = default!;
         public string? SwaggerUrl { get; set; }
         //{
@@ -1528,7 +1528,7 @@ namespace DataModel
         public string Shortname { get; set; }
 
         public ICollection<string>? Sources { get; set; }
-        
+
         public IDictionary<string, int>? RecordCount { get; set; }
 
         public IDictionary<string, string>? Output { get; set; }
@@ -1539,10 +1539,12 @@ namespace DataModel
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         //public string ApiVersion { get; set; }
 
-     
+
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, string>? ApiAccess { get; set; }
+
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
     }
 
     #endregion
