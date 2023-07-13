@@ -22,7 +22,7 @@ namespace OdhApiCore
                 //If Root is requested forward to Databrowser (Compatibility reason)
                 if (String.IsNullOrEmpty(context.Request.Path.Value) || context.Request.Path.Value == "/")
                 {
-                    if (context.Request.Host.ToString().Equals("tourism.opendatahub.com"))
+                    if (context.Request.Host.ToString().Equals("tourism.opendatahub.com") || context.Request.Host.ToString().Equals("tourism.opendatahub.bz.it"))
                     {
                         context.Response.Redirect(configuration.GetSection("DataBrowserConfig").GetValue<string>("Url"));
                         return;
