@@ -121,7 +121,7 @@ namespace OdhApiImporter.Helpers
                 if (host.StartsWith("importer.tourism"))
                     metadata.BaseUrl = "https://api.tourism.testingmachine.eu";
                 else
-                    metadata.BaseUrl = "https://localhost:7001";
+                    metadata.BaseUrl = "https://localhost:5001";
 
 
                 //Save tp DB                 

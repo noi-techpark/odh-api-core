@@ -162,6 +162,8 @@ namespace OdhApiImporter.Helpers.DSS
                     //Add to list
                     idlistdssinterface.Add(parsedobject.Id);
 
+                    var getlocationfromarea = true;
+
                     //Add the LocationInfo
                     //TODO if Area can be mapped return locationinfo
                     if (parsedobject.GpsInfo != null && parsedobject.GpsInfo.Count > 0)
@@ -176,6 +178,8 @@ namespace OdhApiImporter.Helpers.DSS
 
                                 parsedobject.LocationInfo = locinfo;
                                 parsedobject.TourismorganizationId = locinfo.TvInfo?.Id;
+
+                                getlocationfromarea = false;
                             }
                         }
                     }
@@ -209,21 +213,62 @@ namespace OdhApiImporter.Helpers.DSS
                             parsedobject.LocationInfo.AreaInfo = new AreaInfoLinked() { Id = area.Id, Name = areanames };
 
                             //Use RegionId, TVId from Area
-                            if (parsedobject.LocationInfo.RegionInfo == null)
+                            if (parsedobject.LocationInfo.RegionInfo == null || getlocationfromarea)
                                 if (!String.IsNullOrEmpty(area.RegionId))
-                                    parsedobject.LocationInfo.RegionInfo = new RegionInfoLinked() { Id = area.RegionId, Name = null };
+                                {
+                                    var region = await QueryFactory.Query("regions")
+                                                    .Select("data")
+                                                    .Where("id", area.RegionId.ToUpper())
+                                                    .GetObjectSingleAsync<Region>();
+                                
+                                    if (region != null)
+                                    {
+                                        parsedobject.LocationInfo.RegionInfo = new RegionInfoLinked() 
+                                        { 
+                                            Id = region.Id, Name = (from x in region?.Detail
+                                                                  select x).ToDictionary(x => x.Key, x => x.Value.Title)
+                                        };
+                                    }
+                                }
 
-                            if (parsedobject.LocationInfo.TvInfo == null)
+                            if (parsedobject.LocationInfo.TvInfo == null || getlocationfromarea)
                                 if (!String.IsNullOrEmpty(area.TourismvereinId))
                                 {
-                                    parsedobject.LocationInfo.TvInfo = new TvInfoLinked() { Id = area.TourismvereinId, Name = null };
-                                    parsedobject.TourismorganizationId = area.TourismvereinId;
+                                    var tv = await QueryFactory.Query("tvs")
+                                                    .Select("data")
+                                                    .Where("id", area.TourismvereinId.ToUpper())
+                                                    .GetObjectSingleAsync<Tourismverein>();
+
+                                    if (tv != null)
+                                    {
+                                        parsedobject.LocationInfo.TvInfo = new TvInfoLinked() 
+                                        { 
+                                            Id = tv.Id, Name = (from x in tv?.Detail
+                                                                             select x).ToDictionary(x => x.Key, x => x.Value.Title)
+                                        };
+                                        parsedobject.TourismorganizationId = area.TourismvereinId;
+                                    }
                                 }
 
 
-                            if (parsedobject.LocationInfo.MunicipalityInfo == null)
-                                if (!String.IsNullOrEmpty(area.MunicipalityId))
-                                    parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked() { Id = area.MunicipalityId, Name = null };
+                            if (parsedobject.LocationInfo.MunicipalityInfo == null || getlocationfromarea)
+                                if (!String.IsNullOrEmpty(area.MunicipalityId) )
+                                {
+                                    var mun = await QueryFactory.Query("municipality")
+                                                    .Select("data")
+                                                    .Where("id", area.MunicipalityId.ToUpper())
+                                                    .GetObjectSingleAsync<Municipality>();
+
+                                    if (mun != null)
+                                    {
+                                        parsedobject.LocationInfo.MunicipalityInfo = new MunicipalityInfoLinked()
+                                        {
+                                            Id = mun.Id,
+                                            Name = (from x in mun?.Detail
+                                                    select x).ToDictionary(x => x.Key, x => x.Value.Title)
+                                        };                                        
+                                    }
+                                }
 
                         }
                     }
