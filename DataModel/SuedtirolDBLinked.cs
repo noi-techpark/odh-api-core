@@ -1501,13 +1501,15 @@ namespace DataModel
         {
             get
             {
-                return String.Format("{0}{1}", String.Join("/", this.PathParam), this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : "");
+                return String.Format("{0}/{1}{2}", this.BaseUrl != null ? this.BaseUrl : "", String.Join("/", this.PathParam), this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : ""); ;
             }
         }
 
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string> PathParam { get; set; }
 
+        //[SwaggerEnum(new[] { "Y", "N" })]
+        public string? BaseUrl { get; set; }
 
         //public string Source { get; set; }
 

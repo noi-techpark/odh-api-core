@@ -287,7 +287,7 @@ namespace OdhApiImporter.Controllers
         public async Task<IActionResult> ResaveMetaData(CancellationToken cancellationToken)
         {
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.ResaveMetaData();
+            var objectscount = await customdataoperation.ResaveMetaData(Request.Host.ToString());
 
             return Ok(new UpdateResult
             {
