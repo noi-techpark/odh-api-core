@@ -133,7 +133,7 @@ namespace OdhApiImporter.Controllers
         }
 
         [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("ModifyAccommodations")]
+        [HttpGet, Route("ModifyAccommodationRooms")]
         public async Task<IActionResult> ModifyAccommodationRooms()
         {
             var objectscount = 0;
