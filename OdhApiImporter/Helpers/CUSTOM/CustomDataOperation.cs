@@ -98,7 +98,7 @@ namespace OdhApiImporter.Helpers
             //};
         //}
 
-        public async Task<int> ResaveMetaData()
+        public async Task<int> ResaveMetaData(string host)
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
@@ -111,9 +111,18 @@ namespace OdhApiImporter.Helpers
             foreach (var metadata in data)
             {
                 //fix swaggerurl mess
-                var swaggerurl = "swagger/index.html#" + metadata.SwaggerUrl.Split("#").LastOrDefault();
+                //var swaggerurl = "swagger/index.html#" + metadata.SwaggerUrl.Split("#").LastOrDefault();
 
-                metadata.SwaggerUrl = swaggerurl;
+                //metadata.SwaggerUrl = swaggerurl;
+
+                //add domain
+                if (host.StartsWith("tourism.importer"))
+                    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+                if (host.StartsWith("importer.tourism"))
+                    metadata.BaseUrl = "https://api.tourism.testingmachine.eu";
+                else
+                    metadata.BaseUrl = "https://localhost:5001";
+
 
                 //Save tp DB                 
                 var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
@@ -361,6 +370,39 @@ namespace OdhApiImporter.Helpers
                      .UpdateAsync(new JsonBData() { id = acco.Id, data = new JsonRaw(acco) });
 
                 i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> AccommodationRoomModify()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("accommodationrooms");
+
+            var accorooms = await query.GetObjectListAsync<AccommodationRoomLinked>();
+            int i = 0;
+
+            foreach (var accoroom in accorooms)
+            {
+                if(accoroom.PublishedOn != null && accoroom.PublishedOn.Count == 2 && accoroom.PublishedOn.FirstOrDefault() == "idm-marketplace")
+                {
+                    accoroom.PublishedOn = new List<string>()
+                    {
+                        "suedtirol.info",
+                        "idm-marketplace"
+                    };
+
+                    //Save tp DB
+                    var queryresult = await QueryFactory.Query("accommodationrooms").Where("id", accoroom.Id)
+                         .UpdateAsync(new JsonBData() { id = accoroom.Id, data = new JsonRaw(accoroom) });
+
+                    i++;
+                }
+
+
             }
 
             return i;

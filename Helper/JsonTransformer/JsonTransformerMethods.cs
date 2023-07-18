@@ -304,17 +304,25 @@ namespace Helper
                 if (self == null)
                     return null;
                 // FIXME: Temporary workaround
-                if (self.StartsWith("https://tourism.opendatahub.com/api/"))
+                if (self.StartsWith("https://tourism.opendatahub.bz.it/api/"))
                     self = self.Substring(38);
+                if (self.StartsWith("https://tourism.opendatahub.com/api/"))
+                    self = self.Substring(36);
                 return urlGenerator(self);
             }
             static JProperty? TransformProp(JProperty prop, Func<string, string> urlGenerator)
             {
-                if (prop.Name == "Self" || prop.Name == "ApiUrl")
+                if (prop.Name == "Self")
                 {
                     string? value = TransformSelf(prop.Value.Value<string?>(), urlGenerator);
                     return new JProperty(prop.Name, value);
                 }
+                //Temporary Remove
+                //if (prop.Name == "ApiUrl")
+                //{
+                //    string? value = TransformSelf(prop.Value.Value<string?>(), urlGenerator);
+                //    return new JProperty(prop.Name, value);
+                //}
                 else
                 {
                     var value = Walk(prop.Value, urlGenerator);

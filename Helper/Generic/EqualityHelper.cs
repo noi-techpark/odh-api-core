@@ -92,12 +92,25 @@ namespace Helper.Generic
             {
                 //TO TEST JSON DIFF
                 var jdp = new JsonDiffPatch();
+
+                //new Options() { ArrayDiff = ArrayDiffMode.Simplev }
+
                 JToken patch = jdp.Diff(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));
                 //if (patch != null)
                 //{
                 //    var formatter = new JsonDeltaFormatter();
                 //    var operations = formatter.Format(patch);
                 //}
+
+                //TEST Array position moves ignore
+                //var customDiffPatch = jsondiffpatch.create({
+                //arrays:
+                //    {
+                //    detectMove: false
+                //}
+                //};
+
+
 
                 equalityresult.patch = patch;
             }

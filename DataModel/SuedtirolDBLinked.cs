@@ -1474,14 +1474,14 @@ namespace DataModel
         //using only PathParam
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         //public string ApiIdentifier { get; set; }
-        
+
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string>? ApiFilter { get; set; }
 
         public string? Id { get; set; }
 
         public string? OdhType { get; set; }
-        
+
         //private string swaggerUrl = default!;
         public string? SwaggerUrl { get; set; }
         //{
@@ -1501,13 +1501,15 @@ namespace DataModel
         {
             get
             {
-                return String.Format("{0}{1}", String.Join("/", this.PathParam), this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : "");
+                return String.Format("{0}/{1}{2}", this.BaseUrl != null ? this.BaseUrl : "", String.Join("/", this.PathParam), this.ApiFilter != null && this.ApiFilter.Count > 0 ? "?" + String.Join("&", this.ApiFilter) : ""); ;
             }
         }
 
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string> PathParam { get; set; }
 
+        //[SwaggerEnum(new[] { "Y", "N" })]
+        public string? BaseUrl { get; set; }
 
         //public string Source { get; set; }
 
@@ -1528,7 +1530,7 @@ namespace DataModel
         public string Shortname { get; set; }
 
         public ICollection<string>? Sources { get; set; }
-        
+
         public IDictionary<string, int>? RecordCount { get; set; }
 
         public IDictionary<string, string>? Output { get; set; }
@@ -1539,10 +1541,12 @@ namespace DataModel
         //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         //public string ApiVersion { get; set; }
 
-     
+
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, string>? ApiAccess { get; set; }
+
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
     }
 
     #endregion
