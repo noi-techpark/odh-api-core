@@ -375,6 +375,39 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> AccommodationRoomModify()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("accommodationrooms");
+
+            var accorooms = await query.GetObjectListAsync<AccommodationRoomLinked>();
+            int i = 0;
+
+            foreach (var accoroom in accorooms)
+            {
+                if(accoroom.PublishedOn != null && accoroom.PublishedOn.Count == 2 && accoroom.PublishedOn.FirstOrDefault() == "idm-marketplace")
+                {
+                    accoroom.PublishedOn = new List<string>()
+                    {
+                        "suedtirol.info",
+                        "idm-marketplace"
+                    };
+
+                    //Save tp DB
+                    var queryresult = await QueryFactory.Query("accommodationrooms").Where("id", accoroom.Id)
+                         .UpdateAsync(new JsonBData() { id = accoroom.Id, data = new JsonRaw(accoroom) });
+
+                    i++;
+                }
+
+
+            }
+
+            return i;
+        }
+
 
         public async Task<int> UpdateAllSTAVendingpoints()
         {

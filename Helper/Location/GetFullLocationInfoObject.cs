@@ -16,6 +16,12 @@ namespace Helper.Location
 {
     public class GetFullLocationInfoObject
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldlocationinfo"></param>
+        /// <param name="locationlist"></param>
+        /// <returns></returns>
         public static LocationInfoLinked UpdateLocationInfo(LocationInfoLinked oldlocationinfo, IEnumerable<LocHelperclassDynamic> locationlist)
         {
             LocationInfoLinked locationInfoLinked = new LocationInfoLinked();

@@ -67,6 +67,8 @@ namespace Helper
 
                         //TO check add publishedon logic only for rooms with source hgv? for online bookable accommodations?
 
+                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
+
                         if (activatesourceonly != null && activatesourceonly.Item2 == true)
                         {
                             if (activatesourceonly.Item1 == (mydata as AccommodationRoomLinked)._Meta.Source)
@@ -79,7 +81,6 @@ namespace Helper
                             publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                         }
 
-                        publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
 
                         break;
                     //Event Add all Active Events from now
