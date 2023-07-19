@@ -55,7 +55,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<MetaRegionLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<MetaRegionLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[Authorize(Roles = "DataReader,CommonReader")]
@@ -151,7 +151,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<ExperienceAreaLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<ExperienceAreaLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("ExperienceArea")]
@@ -245,7 +245,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<RegionLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<RegionLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Region")]
@@ -338,7 +338,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<TourismvereinLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<TourismvereinLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("TourismAssociation")]
@@ -433,7 +433,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<MunicipalityLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<MunicipalityLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Municipality")]
@@ -529,7 +529,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<DistrictLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<DistrictLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("District")]
@@ -622,7 +622,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<AreaLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<AreaLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Area")]
@@ -712,7 +712,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<SkiRegionLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<SkiRegionLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("SkiRegion")]
@@ -801,7 +801,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<SkiAreaLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<SkiAreaLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("SkiArea")]
@@ -896,7 +896,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<WineLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<WineLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("WineAward")]
