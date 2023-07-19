@@ -18,6 +18,9 @@ COPY SuedtirolWein/SuedtirolWein.csproj SuedtirolWein/
 COPY NINJA/NINJA.csproj NINJA/
 COPY RAVEN/RAVEN.csproj RAVEN/
 COPY STA/STA.csproj STA/
+COPY PANOMAX/PANOMAX.csproj PANOMAX/
+COPY PANOCLOUD/PANOCLOUD.csproj PANOCLOUD/
+COPY FERATEL/FERATEL.csproj FERATEL/
 COPY OdhNotifier/OdhNotifier.csproj OdhNotifier/
 COPY OdhApiImporter/OdhApiImporter.csproj OdhApiImporter/
 RUN dotnet restore OdhApiImporter/OdhApiImporter.csproj

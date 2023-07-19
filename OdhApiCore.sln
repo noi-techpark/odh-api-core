@@ -52,7 +52,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoConverter", "GeoConverte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoConverterTests", "GeoConverterTests\GeoConverterTests.csproj", "{875F0429-6B54-4734-B3E2-C532EE4899D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OdhNotifier", "OdhNotifier\OdhNotifier.csproj", "{FFA377A9-71FE-4BA3-A337-90D7EE2463DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OdhNotifier", "OdhNotifier\OdhNotifier.csproj", "{FFA377A9-71FE-4BA3-A337-90D7EE2463DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PANOMAX", "PANOMAX\PANOMAX.csproj", "{DFC7D879-3BD5-472E-9FCC-93C687185266}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PANOCLOUD", "PANOCLOUD\PANOCLOUD.csproj", "{FBAC6875-A67D-4581-B2BD-622979EB75E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FERATEL", "FERATEL\FERATEL.csproj", "{ED79209C-5FBF-4D7E-8DAD-3CD4759BFF69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -152,6 +158,18 @@ Global
 		{FFA377A9-71FE-4BA3-A337-90D7EE2463DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFA377A9-71FE-4BA3-A337-90D7EE2463DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFA377A9-71FE-4BA3-A337-90D7EE2463DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFC7D879-3BD5-472E-9FCC-93C687185266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFC7D879-3BD5-472E-9FCC-93C687185266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFC7D879-3BD5-472E-9FCC-93C687185266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFC7D879-3BD5-472E-9FCC-93C687185266}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBAC6875-A67D-4581-B2BD-622979EB75E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBAC6875-A67D-4581-B2BD-622979EB75E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBAC6875-A67D-4581-B2BD-622979EB75E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBAC6875-A67D-4581-B2BD-622979EB75E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED79209C-5FBF-4D7E-8DAD-3CD4759BFF69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED79209C-5FBF-4D7E-8DAD-3CD4759BFF69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED79209C-5FBF-4D7E-8DAD-3CD4759BFF69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED79209C-5FBF-4D7E-8DAD-3CD4759BFF69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
