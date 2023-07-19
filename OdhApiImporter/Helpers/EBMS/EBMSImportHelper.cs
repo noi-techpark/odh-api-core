@@ -27,7 +27,7 @@ namespace OdhApiImporter.Helpers
 
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
-            var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
+            var resulttuple = GetEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
          
             var currenteventshort = await GetAllEventsShort(DateTime.Now);
 
