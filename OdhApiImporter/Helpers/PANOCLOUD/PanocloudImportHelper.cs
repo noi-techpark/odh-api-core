@@ -66,7 +66,7 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "webcams",
                             sourceurl = serviceurl,
                             type = "webcam",
-                            sourceid = "panomax" + webcam.lastModifiedUnix,
+                            sourceid = "panomax" + (string)webcam["@attributes"]["locationId"] + "_" + (string)webcam["@attributes"]["lastModifiedUnix"],
                             raw = JsonConvert.SerializeObject(webcam),
                         });
         }
