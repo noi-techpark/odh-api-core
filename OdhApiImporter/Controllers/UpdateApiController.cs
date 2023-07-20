@@ -544,7 +544,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                switch(dssentity)
+                switch(dssentity.ToLower())
                 {
                     case "webcam":
                    
@@ -555,7 +555,7 @@ namespace OdhApiImporter.Controllers
                    
                     default:
                         DSSImportHelper dssimporthelper = new DSSImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("DSS/" + dssentity));
-                        dssimporthelper.entitytype = dssentity;
+                        dssimporthelper.entitytype = dssentity.ToLower();
 
                         updatedetail = await dssimporthelper.SaveDataToODH(null, null, cancellationToken);
                         break;
