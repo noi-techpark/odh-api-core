@@ -203,7 +203,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                             sourceinterface = "suedtirolwein-award",
                             sourceid = suedtirolweindata.Key,
                             sourceurl = "https://suedtirolwein.secure.consisto.net/awards.ashx",
-                            type = "common_wineaward",
+                            type = "wineaward",
                             license = "open",
                             rawformat = "xml"
                         });

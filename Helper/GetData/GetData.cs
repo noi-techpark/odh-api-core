@@ -77,6 +77,10 @@ namespace Helper.GetData
         {
             //Request
             HttpResponseMessage response = await GetDataFromService();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+                throw new Exception("Error on getting data "+ response.StatusCode.ToString());
+
             //Parse JSON Response to
             var responsecontent = await response.Content.ReadAsStringAsync();
             dynamic? responseobject = JsonConvert.DeserializeObject(responsecontent);
@@ -88,6 +92,10 @@ namespace Helper.GetData
         {
             //Request
             HttpResponseMessage response = await GetDataFromService();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+                throw new Exception("Error on getting data " + response.StatusCode.ToString());
+
             //Parse JSON Response to
             var responsecontent = await response.Content.ReadAsStringAsync();
             XDocument responseobject = XDocument.Parse(responsecontent);

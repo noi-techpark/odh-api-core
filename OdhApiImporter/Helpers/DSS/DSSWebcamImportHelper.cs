@@ -220,7 +220,7 @@ namespace OdhApiImporter.Helpers.DSS
                             sourceinterface = "webcam",
                             sourceid = dssdata.Key,
                             sourceurl = settings.DSSConfig.ServiceUrl,
-                            type = "dss.webcam",
+                            type = "webcam",
                             license = "open",
                             rawformat = "json"
                         });

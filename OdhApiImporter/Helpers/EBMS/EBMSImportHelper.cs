@@ -223,7 +223,7 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "ebms",
                             sourceid = eventebms.Key,
                             sourceurl = "https://emea-interface.ungerboeck.com",
-                            type = "event_euracnoi",
+                            type = "event",
                             license = "open",
                             rawformat = "json"
                         });
