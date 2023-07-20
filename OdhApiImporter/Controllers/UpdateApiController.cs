@@ -33,7 +33,6 @@ using OdhNotifier;
 using ServiceReferenceLCS;
 using OdhApiImporter.Helpers.LTSLCS;
 using System.Collections;
-using OdhApiImporter.Helpers.PANOMAX;
 
 namespace OdhApiImporter.Controllers
 {
@@ -639,31 +638,31 @@ namespace OdhApiImporter.Controllers
 
         #region PANOCLOUD DATA SYNC
 
-        ////[Authorize(Roles = "DataPush")]
-        //[HttpGet, Route("PANOCLOUD/Webcam/Update")]
-        //public async Task<IActionResult> UpdateAllPanocloudWebcams(CancellationToken cancellationToken = default)
-        //{
-        //    UpdateDetail updatedetail = default(UpdateDetail);
-        //    string operation = "Import PANOCLOUD Webcam";
-        //    string updatetype = GetUpdateType(null);
-        //    string source = "panocloud";
-        //    string otherinfo = "rawonly";
+        //[Authorize(Roles = "DataPush")]
+        [HttpGet, Route("PANOCLOUD/Webcam/Update")]
+        public async Task<IActionResult> UpdateAllPanocloudWebcams(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import PANOCLOUD Webcam";
+            string updatetype = GetUpdateType(null);
+            string source = "panocloud";
+            string otherinfo = "rawonly";
 
-        //    try
-        //    {
-        //        PanocloudImportHelper panocloudimporthelper = new PanocloudImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("PANOCLOUD/Webcam"));
+            try
+            {
+                PanocloudImportHelper panocloudimporthelper = new PanocloudImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("PANOCLOUD/Webcam"));
 
-        //        updatedetail = await panocloudimporthelper.SaveDataToODH(null, null, cancellationToken);
-        //        var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import PANOCLOUD Webcam succeeded", otherinfo, updatedetail, true);
+                updatedetail = await panocloudimporthelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import PANOCLOUD Webcam succeeded", otherinfo, updatedetail, true);
 
-        //        return Ok(updateResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import PANOCLOUD Webcam failed", otherinfo, updatedetail, ex, true);
-        //        return BadRequest(updateResult);
-        //    }
-        //}
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import PANOCLOUD Webcam failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
 
         #endregion
 

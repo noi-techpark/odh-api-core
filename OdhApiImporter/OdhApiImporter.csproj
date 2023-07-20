@@ -48,7 +48,6 @@
 
   <ItemGroup>
     <Folder Include="Helpers\FERATEL\" />
-    <Folder Include="Helpers\PANOCLOUD\" />
     <Folder Include="Models\" />
     <Folder Include="json\" />
   </ItemGroup>

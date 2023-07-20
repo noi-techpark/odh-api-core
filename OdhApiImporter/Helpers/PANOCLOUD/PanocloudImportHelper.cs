@@ -7,18 +7,18 @@ using SqlKata.Execution;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using PANOMAX;
+using PANOCLOUD;
 using Newtonsoft.Json;
 using Helper;
 using System.Collections.Generic;
 
 namespace OdhApiImporter.Helpers
 {
-    public class PanomaxImportHelper : ImportHelper, IImportHelper
+    public class PanocloudImportHelper : ImportHelper, IImportHelper
     {
-        public const string serviceurl = @"https://api.panomax.com/1.0/instances/lists/public";
+        public const string serviceurl = @"https://backend.panocloud.com/partner-api/api.php?key=be39ad8114f6e9d99414151c62bc9a7fb83dbb69";
 
-        public PanomaxImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public PanocloudImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
@@ -31,14 +31,14 @@ namespace OdhApiImporter.Helpers
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET Data and Deserialize to Json
-            var data = await GetPanomaxData.GetWebcams(serviceurl);
+            var data = await GetPanocloudData.GetWebcams(serviceurl);
 
             var newcounter = 0;
 
             if(data != null)
             {
                 //Save to RAWTABLE
-                foreach (var webcam in data)
+                foreach (var webcam in data.LiveCam)
                 {
                     var rawdataid = await InsertInRawDataDB(webcam);
                     newcounter++;
@@ -46,7 +46,7 @@ namespace OdhApiImporter.Helpers
                     //Because a dynamic is passed to the method a dynamic is returned also if int is defined!!! strange behavior of c#
                     string rawdataidstr = rawdataid.ToString();
 
-                    WriteLog.LogToConsole(rawdataidstr, "dataimport", "single.panomax", new ImportLog() { sourceid = rawdataidstr, sourceinterface = "panomax.webcam", success = true, error = "" });
+                    WriteLog.LogToConsole(rawdataidstr, "dataimport", "single.panocloud", new ImportLog() { sourceid = rawdataidstr, sourceinterface = "panocloud.webcam", success = true, error = "" });
                 }
             }            
 
@@ -58,7 +58,7 @@ namespace OdhApiImporter.Helpers
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
-                            datasource = "panomax",
+                            datasource = "panocloud",
                             rawformat = "json",
                             importdate = DateTime.Now,
                             license = "open",
