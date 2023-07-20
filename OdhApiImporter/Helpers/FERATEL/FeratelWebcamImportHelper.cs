@@ -11,6 +11,8 @@ using FERATEL;
 using Newtonsoft.Json;
 using Helper;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace OdhApiImporter.Helpers
 {
@@ -36,10 +38,14 @@ namespace OdhApiImporter.Helpers
 
             var newcounter = 0;
 
-            if(data != null && data.Root.Element("content") != null && data.Root.Element("content").Element("portal") != null)
+            if(data != null && 
+                data.Root.Element("content") != null && 
+                data.Root.Element("content").Element("portal") != null &&
+                data.Root.Element("content").Element("portal").Element("links") != null &&
+                data.Root.Element("content").Element("portal").Element("links").Elements("link").Count() > 0)
             {
                 //Save to RAWTABLE
-                foreach (var webcam in data.Element("content").Element("portal").Elements("link"))
+                foreach (var webcam in data.Root.Element("content").Element("portal").Element("links").Elements("link"))
                 {
                     var rawdataid = await InsertInRawDataDB(webcam);
                     newcounter++;
@@ -54,20 +60,20 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = newcounter, updated = 0, deleted = 0, error = 0 };
         }        
 
-        private async Task<int> InsertInRawDataDB(dynamic webcam)
+        private async Task<int> InsertInRawDataDB(XElement webcam)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
                             datasource = "feratel",
-                            rawformat = "json",
+                            rawformat = "xml",
                             importdate = DateTime.Now,
                             license = "open",
                             sourceinterface = "webcams",
                             sourceurl = serviceurl,
                             type = "webcam",
-                            sourceid = webcam.identifier,
-                            raw = JsonConvert.SerializeObject(webcam),
+                            sourceid = webcam.Attribute("id").Value,
+                            raw = webcam.Value,
                         });
         }
     }

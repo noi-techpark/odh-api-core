@@ -532,7 +532,7 @@ namespace OdhApiImporter.Controllers
 
         #region DSS DATA SYNC
 
-        [Authorize(Roles = "DataPush")]
+        //[Authorize(Roles = "DataPush")]
         [HttpGet, Route("DSS/{dssentity}/Update")]
         public async Task<IActionResult> UpdateAllDSSData(string dssentity, CancellationToken cancellationToken = default)
         {
@@ -668,31 +668,31 @@ namespace OdhApiImporter.Controllers
 
         #region FERATEL DATA SYNC
 
-        ////[Authorize(Roles = "DataPush")]
-        //[HttpGet, Route("FERATEL/Webcam/Update")]
-        //public async Task<IActionResult> UpdateAllFeratelWebcams(CancellationToken cancellationToken = default)
-        //{
-        //    UpdateDetail updatedetail = default(UpdateDetail);
-        //    string operation = "Import FERATEL Wecam";
-        //    string updatetype = GetUpdateType(null);
-        //    string source = "feratel";
-        //    string otherinfo = "rawonly";
+        //[Authorize(Roles = "DataPush")]
+        [HttpGet, Route("FERATEL/Webcam/Update")]
+        public async Task<IActionResult> UpdateAllFeratelWebcams(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import FERATEL Wecam";
+            string updatetype = GetUpdateType(null);
+            string source = "feratel";
+            string otherinfo = "rawonly";
 
-        //    try
-        //    {
-        //        FeratelWebcamImportHelper feratelwebcamimporthelper = new FeratelWebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("FERATEL/Wecam"));
+            try
+            {
+                FeratelWebcamImportHelper feratelwebcamimporthelper = new FeratelWebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("FERATEL/Wecam"));
 
-        //        updatedetail = await feratelwebcamimporthelper.SaveDataToODH(null, null, cancellationToken);
-        //        var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam succeeded", otherinfo, updatedetail, true);
+                updatedetail = await feratelwebcamimporthelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam succeeded", otherinfo, updatedetail, true);
 
-        //        return Ok(updateResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam failed", otherinfo, updatedetail, ex, true);
-        //        return BadRequest(updateResult);
-        //    }
-        //}
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
 
         #endregion
 
