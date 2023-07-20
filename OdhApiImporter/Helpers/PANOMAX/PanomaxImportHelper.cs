@@ -16,6 +16,7 @@ namespace OdhApiImporter.Helpers
 {
     public class PanomaxImportHelper : ImportHelper, IImportHelper
     {
+        //TODO Make BaseUrl configurable in settings
         public const string serviceurl = @"https://api.panomax.com/1.0/instances/lists/public";
 
         public PanomaxImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)

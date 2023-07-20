@@ -17,16 +17,7 @@ using System.Threading.Tasks;
 namespace OdhApiImporter.Helpers
 {
     public class MobilityEventsImportHelper : ImportHelper, IImportHelper
-    {
-        //private readonly QueryFactory QueryFactory;
-        //private readonly ISettings settings;
-
-        //public MobilityEventsImportHelper(ISettings settings, QueryFactory queryfactory)
-        //{
-        //    this.QueryFactory = queryfactory;
-        //    this.settings = settings;
-        //}
-
+    {       
         public MobilityEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 

@@ -16,6 +16,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
 {
     public class LooptecEjobsImportHelper : ImportHelper, IImportHelper
     {
+        //TODO Make BaseUrl configurable in settings
         public const string serviceurl = @"https://app.onboard-staging.org/exports/v1/jobs/open_data_hub.json";
 
         public LooptecEjobsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)

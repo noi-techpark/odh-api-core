@@ -14,6 +14,7 @@ namespace SIAG
 {
     public class GetMuseumFromSIAG
     {
+        //TODO Make BaseUrl configurable in settings
         public const string serviceurl = @"https://musport.prov.bz.it/musport/services/MuseumsService/";
 
         public static async Task<HttpResponseMessage> MuseumList()

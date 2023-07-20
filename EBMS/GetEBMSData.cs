@@ -15,19 +15,17 @@ using System.Threading.Tasks;
 namespace EBMS
 {
     public class GetEBMSData
-    {
-        public const string serviceurlebmsrest = @"https://emea-interface.ungerboeck.com/clients/Bozen/PROD/EventExportAPI/api/event/masterdata/?organization=20";
-
-        public static async Task<string> GetEBMSEventsFromService(string user, string pass)
+    {        
+        public static async Task<string> GetEBMSEventsFromService(string serviceurl, string user, string pass)
         {
             CredentialCache wrCache = new CredentialCache();
-            wrCache.Add(new Uri(serviceurlebmsrest), "Basic", new NetworkCredential(user, pass));
+            wrCache.Add(new Uri(serviceurl), "Basic", new NetworkCredential(user, pass));
 
             using (var handler = new HttpClientHandler { Credentials = wrCache })
             {
                 using (var client = new HttpClient(handler))
                 {
-                    var myresponse = await client.GetAsync(serviceurlebmsrest);
+                    var myresponse = await client.GetAsync(serviceurl);
 
                     var myresponsestring = await myresponse.Content.ReadAsStringAsync();
 
@@ -36,14 +34,14 @@ namespace EBMS
             }
         }
 
-        public static List<Tuple<EventShortLinked, EBMSEventREST>> GetEbmsEvents(string user, string pass)
+        public static List<Tuple<EventShortLinked, EBMSEventREST>> GetEbmsEvents(string serviceurl, string user, string pass)
         {
 
             List<Tuple<EventShortLinked, EBMSEventREST>> myeventshortlist = new List<Tuple<EventShortLinked, EBMSEventREST>>();
 
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
-            var response = GetEBMSEventsFromService(user, pass).Result;
+            var response = GetEBMSEventsFromService(serviceurl, user, pass).Result;
 
             if (response == null)
                 throw new Exception("No data from Interface");
