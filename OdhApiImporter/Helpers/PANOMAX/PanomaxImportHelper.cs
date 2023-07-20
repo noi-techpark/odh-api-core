@@ -66,7 +66,7 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "webcams",
                             sourceurl = serviceurl,
                             type = "webcam",
-                            sourceid = webcam.identifier,
+                            sourceid = webcam.id,
                             raw = JsonConvert.SerializeObject(webcam),
                         });
         }
