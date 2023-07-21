@@ -120,15 +120,15 @@ namespace OdhApiCore.Controllers
                 if (rawsort == null)
                     rawsort = "Id";
 
-                var searchfields = PostgresSQLWhereBuilder.TourismMetaDataTitleFieldsToSearchFor(language);
-                searchfields.Append("Shortname");
+                var searchfields = PostgresSQLWhereBuilder.TourismMetaDataTitleFieldsToSearchFor(language).ToList();
+                searchfields.Add("Shortname");
 
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
                         .From("metadata")
                         .ApplyRawFilter(rawfilter)
-                        .SearchFilter(searchfields, searchfilter)
+                        .SearchFilter(searchfields.ToArray(), searchfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
                 // Get paginated data
