@@ -1465,6 +1465,7 @@ namespace DataModel
         public TourismMetaData()
         {
             ApiFilter = new List<string>();
+            //Tags = new List<Tags>();
         }
 
         //not needed
@@ -1547,6 +1548,9 @@ namespace DataModel
         public IDictionary<string, string>? ApiAccess { get; set; }
 
         public ICollection<ImageGallery>? ImageGallery { get; set; }
+
+        //public ICollection<Tags> Tags { get; set; }
+
     }
 
     #endregion
