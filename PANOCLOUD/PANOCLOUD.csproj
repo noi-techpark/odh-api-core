@@ -11,8 +11,4 @@
     <ProjectReference Include="..\Helper\Helper.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Parser\" />
-  </ItemGroup>
-
 </Project>
