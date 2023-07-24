@@ -1549,7 +1549,16 @@ namespace DataModel
 
         public ICollection<ImageGallery>? ImageGallery { get; set; }
 
-        //public ICollection<Tags> Tags { get; set; }
+        //New Tagging
+        public ICollection<string>? OdhTagIds { get; set; }
+
+        public ICollection<ODHTags> ODHTags
+        {
+            get
+            {
+                return this.OdhTagIds != null ? this.OdhTagIds.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+            }
+        }
 
     }
 
