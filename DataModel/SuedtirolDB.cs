@@ -3046,7 +3046,34 @@ namespace DataModel
                 return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
             }
         }
+
+        //New Webcam fields Feratel, Panomax, Panocloud Integration
+
+        //ContactInfo
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+
+        //Video Items
+        public IDictionary<string, ICollection<VideoItems>> VideoItems { get; set; }
+
+
+        public WebcamProperties WebCamProperties { get; set; }
     }
+
+    //New WebcamProperties
+    public class WebcamProperties
+    {
+        //TODO QUESTION add here also the Props WebcamName, WebcamUrl, StreamUrl, PreviewUrl and let the props on level 0 there for compatibility?
+        public IDictionary<string,string> Description { get; set; }
+        public IDictionary<string,string> AdditionalText { get; set; }
+
+        public string ViewAngleDegree { get; set; }
+        public int ZeroDirection { get; set; }
+        public string HtmlEmbed { get; set; }
+        public bool TourCam { get; set; }
+        public bool HasVR { get; set; }
+        public string ViewerType { get; set; }
+    }
+
 
     public class PublishedonObject
     {
