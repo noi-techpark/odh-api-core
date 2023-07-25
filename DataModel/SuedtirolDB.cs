@@ -512,6 +512,9 @@ namespace DataModel
 
         public string? LiftCount { get; set; }
 
+        public string? AreaRadius { get; set; }
+
+
         public Nullable<int> AltitudeFrom { get; set; }
         public Nullable<int> AltitudeTo { get; set; }
 
