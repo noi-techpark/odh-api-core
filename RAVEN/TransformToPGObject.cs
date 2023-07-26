@@ -362,7 +362,7 @@ namespace RAVEN
             webcam.Active = data.Active;
             webcam.AreaIds = data.AreaIds;
             webcam.FirstImport = data.FirstImport;
-            webcam.GpsInfo = new List<GpsInfo>() { data.GpsInfo };
+            webcam.GpsInfo = data.GpsInfo != null ? new List<GpsInfo>() { data.GpsInfo } : new List<GpsInfo>();
             webcam.LastChange = data.LastChange;
             webcam.LicenseInfo = data.LicenseInfo;
             webcam.ListPosition = data.ListPosition;
