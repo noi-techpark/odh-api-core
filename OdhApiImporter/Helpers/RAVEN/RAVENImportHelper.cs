@@ -246,9 +246,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "webcam":
-                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "WebcamInfo/");
+                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "WebcamInfo/");
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<WebcamInfoLinked, WebcamInfoLinked>((WebcamInfoLinked)mydata, TransformToPGObject.GetWebcamInfoPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<WebcamInfoRaven, WebcamInfoLinked>((WebcamInfoRaven)mydata, TransformToPGObject.GetWebcamInfoPGObject);
                     else
                         throw new Exception("No data found!");
 

@@ -383,7 +383,7 @@ namespace DSS.Parser
 
             List<GpsInfo> gpsinfolist = ParseDSSSlopeToODHGpsInfo(dssitem["location"], (int?)dssitem["altitude"]);
             if (gpsinfolist.Count > 0)
-                mywebcaminfolinked.GpsInfo = gpsinfolist.FirstOrDefault();
+                mywebcaminfolinked.GpsInfo = gpsinfolist;
 
             //WEBCAMIMAGE
             var webcamurl = (string)dssitem["original-image"];

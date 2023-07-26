@@ -352,6 +352,53 @@ namespace RAVEN
             return data;
         }
 
+
+        public static WebcamInfoLinked GetWebcamInfoPGObject(WebcamInfoRaven data)
+        {
+            WebcamInfoLinked webcam = new WebcamInfoLinked();
+
+            webcam.Id = data.Id.ToUpper();
+
+            webcam.Active = data.Active;
+            webcam.AreaIds = data.AreaIds;
+            webcam.FirstImport = data.FirstImport;
+            webcam.GpsInfo = new List<GpsInfo>() { data.GpsInfo };
+            webcam.LastChange = data.LastChange;
+            webcam.LicenseInfo = data.LicenseInfo;
+            webcam.ListPosition = data.ListPosition;
+            webcam.Mapping = data.Mapping;
+            webcam.SmgActive = data.SmgActive;
+            webcam.Previewurl = data.Previewurl;
+            webcam.Shortname = data.Shortname;
+            webcam.SmgTags = data.SmgTags;
+            webcam.Streamurl = data.Streamurl;
+            webcam.WebcamAssignedOn = data.WebcamAssignedOn;
+            webcam.Webcamname = data.Webcamname;
+            webcam.WebcamId = data.WebcamId;
+            webcam.Webcamurl = data.Webcamurl;
+
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                webcam.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            string sourcemeta = data.Source.ToLower();
+            if (sourcemeta == "content")
+                sourcemeta = "idm";
+
+            if (String.IsNullOrEmpty(data.Source))
+                webcam.Source = sourcemeta;
+            else
+                webcam.Source = data.Source.ToLower();
+
+            webcam._Meta = MetadataHelper.GetMetadataobject<WebcamInfoLinked>(webcam, MetadataHelper.GetMetadataforWebcam); //GetMetadata(data.Id, "webcam", sourcemeta, data.LastChange);
+            var webcampublished = data.WebcamAssignedOn != null && data.WebcamAssignedOn.Count > 0 ? true : false;
+
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("webcam", webcampublished);
+
+            return webcam;
+        }
+
+
         public static MeasuringpointLinked GetMeasuringpointPGObject(MeasuringpointLinked data)
         {
             data.Id = data.Id.ToUpper();

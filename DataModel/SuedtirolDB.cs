@@ -627,8 +627,7 @@ namespace DataModel
         //Generic Mapping Object
         //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
-
-
+    
     public class LTSTaggingInfo
     {
         //NEW LTS RID
@@ -2966,10 +2965,11 @@ namespace DataModel
         }
 
         public string? WebcamId { get; set; }
+
         public IDictionary<string, string> Webcamname { get; set; }
+
         public string? Webcamurl { get; set; }
 
-        [SwaggerDeprecated("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
         public int? ListPosition { get; set; }
         public string? Streamurl { get; set; }
@@ -2988,9 +2988,9 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
+    public class WebcamInfoRaven : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
     {
-        public WebcamInfo()
+        public WebcamInfoRaven()
         {
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
@@ -2999,14 +2999,18 @@ namespace DataModel
 
         //NEW Webcam Properties
         public string? Id { get; set; }
-        public new string? Streamurl { get; set; }
-        public new string? Previewurl { get; set; }
+
+        //public new string? Streamurl { get; set; }
+
+        //public new string? Previewurl { get; set; }
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
         public string? Shortname { get; set; }
         public bool Active { get; set; }
+
+        [Obsolete("Use Publishedon")]
         public bool SmgActive { get; set; }
-        public new string? Source { get; set; }
+       // public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 
         public ICollection<string>? AreaIds { get; set; }
@@ -3032,46 +3036,89 @@ namespace DataModel
                     };
                 }
             }
-        }
+        }        
 
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        //Temporary Hack because GpsInfo here is a object instead of object list
-        public ICollection<GpsInfo> GpsInfos
+
+        ////Temporary Hack because GpsInfo here is a object instead of object list
+        //public ICollection<GpsInfo> GpsInfos
+        //{
+        //    get
+        //    {
+        //        return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
+        //    }
+        //}       
+    }
+    
+    public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags
+    {
+
+        public new ICollection<GpsInfo> GpsInfo { get; set; }
+
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new IDictionary<string, GpsInfo> GpsPoints
         {
             get
             {
-                return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
+                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
+                {
+                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
             }
         }
 
         //New Webcam fields Feratel, Panomax, Panocloud Integration
 
-        //ContactInfo
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+
+        public ICollection<ImageGallery> ImageGallery { get; set; }
 
         //Video Items
         public IDictionary<string, ICollection<VideoItems>> VideoItems { get; set; }
 
+        public IDictionary<string, Detail> Detail { get; set; }
 
         public WebcamProperties WebCamProperties { get; set; }
+
+
+        [Obsolete("Use Detail.Title")]
+        public new IDictionary<string, string> Webcamname { get { return this.Detail.ToDictionary(x => x.Key, x => x.Value.Title); } }
+
+        [Obsolete("Use WebcamProperties.Webcamurl")]
+        public new string? Webcamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.Webcamurl : null; } }
+
+        [Obsolete("Use WebcamProperties.Streamurl")]
+        public new string? Streamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.Streamurl : null; } }
+
+        [Obsolete("Use WebcamProperties.Previewurl")]
+        public new string? Previewurl { get { return this.WebCamProperties != null ? this.WebCamProperties.Previewurl : null; } }
+
+        public ICollection<string> HasLanguage { get; set; }
     }
+
 
     //New WebcamProperties
     public class WebcamProperties
     {
-        //TODO QUESTION add here also the Props WebcamName, WebcamUrl, StreamUrl, PreviewUrl and let the props on level 0 there for compatibility?
-        public IDictionary<string,string> Description { get; set; }
-        public IDictionary<string,string> AdditionalText { get; set; }
+        public string? Webcamurl { get; set; }
+        public string? Streamurl { get; set; }
+        public string? Previewurl { get; set; }
 
-        public string ViewAngleDegree { get; set; }
-        public int ZeroDirection { get; set; }
-        public string HtmlEmbed { get; set; }
-        public bool TourCam { get; set; }
-        public bool HasVR { get; set; }
-        public string ViewerType { get; set; }
+        public string? ViewAngleDegree { get; set; }
+        public int? ZeroDirection { get; set; }
+        public string? HtmlEmbed { get; set; }
+        public bool? TourCam { get; set; }
+        public bool? HasVR { get; set; }
+        public string? ViewerType { get; set; }
     }
 
 

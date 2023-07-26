@@ -74,7 +74,7 @@ namespace LCS
                         mygpsinfolist.Add(mygpsinfo);
                     }
 
-                    webcam.GpsInfo = mygpsinfolist.FirstOrDefault();
+                    webcam.GpsInfo = mygpsinfolist;
                 }
             }
 
