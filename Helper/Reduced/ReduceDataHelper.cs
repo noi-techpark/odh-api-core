@@ -418,6 +418,7 @@ namespace Helper
             reduced.Active = measuringpoint.Active;
             reduced.SmgActive = measuringpoint.SmgActive;
             reduced.LastChange = measuringpoint.LastChange;
+            reduced.LastUpdate = measuringpoint.LastUpdate;
             reduced.FirstImport = measuringpoint.FirstImport;
             reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(measuringpoint.LocationInfo);
             reduced.Source = measuringpoint.Source;
