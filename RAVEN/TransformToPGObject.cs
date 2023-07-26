@@ -368,15 +368,27 @@ namespace RAVEN
             webcam.ListPosition = data.ListPosition;
             webcam.Mapping = data.Mapping;
             webcam.SmgActive = data.SmgActive;
-            webcam.Previewurl = data.Previewurl;
             webcam.Shortname = data.Shortname;
             webcam.SmgTags = data.SmgTags;
-            webcam.Streamurl = data.Streamurl;
             webcam.WebcamAssignedOn = data.WebcamAssignedOn;
-            webcam.Webcamname = data.Webcamname;
             webcam.WebcamId = data.WebcamId;
-            webcam.Webcamurl = data.Webcamurl;
+            //Webcamproperties
+            webcam.WebCamProperties = new WebcamProperties();
+            webcam.WebCamProperties.Webcamurl = data.Webcamurl;
+            webcam.WebCamProperties.Previewurl = data.Previewurl; 
+            webcam.WebCamProperties.Streamurl = data.Streamurl;
+       
+            //Detail
+            foreach(var kvp in data.Webcamname)
+            {
+                Detail detail = new Detail();
+                detail.Language = kvp.Key;
+                detail.Title = kvp.Value;
 
+                webcam.Detail.TryAddOrUpdate(kvp.Key, detail);
+            }
+
+            webcam.HasLanguage = webcam.Detail.Keys;
 
             if (data.SmgTags != null && data.SmgTags.Count > 0)
                 webcam.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();

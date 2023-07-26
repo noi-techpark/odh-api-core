@@ -2971,6 +2971,7 @@ namespace DataModel
         public string? Webcamurl { get; set; }
 
         public GpsInfo? GpsInfo { get; set; }
+        [Obsolete("Use Publishedon")]
         public int? ListPosition { get; set; }
         public string? Streamurl { get; set; }
         public string? Previewurl { get; set; }
@@ -3055,6 +3056,12 @@ namespace DataModel
     
     public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags
     {
+        public WebcamInfo()
+        {
+            WebCamProperties = new WebcamProperties();
+            Detail = new Dictionary<string, Detail>();
+            ContactInfos = new Dictionary<string, ContactInfos>();
+        }
 
         public new ICollection<GpsInfo> GpsInfo { get; set; }
 
