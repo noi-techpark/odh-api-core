@@ -21,7 +21,27 @@ namespace PANOCLOUD
             if (webcam == null)
                 webcam = new WebcamInfoLinked();
 
-            //TODO Parse the Panocloud XML
+            webcam.Source = "panocloud";
+            webcam.Id = "panocloud_" + (string)webcamtoparse.url; //no id in panocloud
+
+            //TODO Parse the Panocloud Json
+
+            if ((string)webcamtoparse.cameraStatus == "active")
+                webcam.Active = true;
+            else
+                webcam.Active = false;
+
+            if ((string)webcamtoparse.full360 == "yes")
+                webcam.WebCamProperties.ViewAngleDegree = "360";
+            else
+                webcam.WebCamProperties.ViewAngleDegree = "";
+
+            if ((string)webcamtoparse.hasVR == "yes")
+                webcam.WebCamProperties.HasVR = true;
+            else
+                webcam.WebCamProperties.HasVR = false;
+
+
 
             return webcam;
         }
