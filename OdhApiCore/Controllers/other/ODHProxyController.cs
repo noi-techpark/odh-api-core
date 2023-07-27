@@ -14,7 +14,7 @@ namespace OdhApiCore.Controllers.other
     {
         
         [ApiExplorerSettings(IgnoreApi = true)]                
-        [HttpGet, Route("v1/ODHProxy/{*url}")]        
+        [HttpGet,HttpHead, Route("v1/ODHProxy/{*url}")]        
         public Task GetODHProxy(string url)
         {
             try
