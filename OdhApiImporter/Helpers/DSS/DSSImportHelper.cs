@@ -364,7 +364,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+                    var deletedisableresult = await DeleteOrDisableData<ODHActivityPoiLinked>(idtodelete, false);
 
                     if (deletedisableresult.Item1 > 0)
                         WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });

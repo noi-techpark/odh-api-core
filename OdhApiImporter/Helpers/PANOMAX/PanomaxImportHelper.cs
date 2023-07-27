@@ -11,6 +11,12 @@ using PANOMAX;
 using Newtonsoft.Json;
 using Helper;
 using System.Collections.Generic;
+using DSS;
+using OdhApiImporter.Helpers.DSS;
+using System.Globalization;
+using System.Linq;
+using DSS.Parser;
+using static Microsoft.FSharp.Core.ByRefKinds;
 
 namespace OdhApiImporter.Helpers
 {
@@ -22,41 +28,118 @@ namespace OdhApiImporter.Helpers
 
         public PanomaxImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
-
+            
         }
-
-        public async Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete)
-        {
-            throw new NotImplementedException();
-        }
-
+     
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
-            //GET Data List
-            var data = await GetPanomaxData.GetWebcams(serviceurl);
+            //GET Data List Webcams and Videos
+            var data = await GetData(cancellationToken);
 
-            var newcounter = 0;
+            //UPDATE all data
+            var updateresult = await ImportData(data, cancellationToken);
 
-            if(data != null)
-            {
+            //Disable Data not in panomax list
+            var deleteresult = await SetDataNotinListToInactive(data.Select(x => (string)x.id).ToList(), cancellationToken);
 
-                //Save to RAWTABLE
-                foreach (var webcam in data)
+            return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
+        }
+
+        private async Task<List<dynamic>> GetData(CancellationToken cancellationToken)
+        {
+            List<dynamic> panomaxdata = new List<dynamic>();
+
+            //Get Panomax webcam data
+            panomaxdata.Add(await GetPanomaxData.GetWebcams(serviceurl));
+            //Get Panomax video data
+            panomaxdata.Add(await GetPanomaxData.GetVideos(serviceurlvideos));
+
+            return panomaxdata;
+        }
+
+        public async Task<UpdateDetail> ImportData(List<dynamic> panomaxinput, CancellationToken cancellationToken)
+        {
+            int updatecounter = 0;
+            int newcounter = 0;
+            int deletecounter = 0;
+            int errorcounter = 0;
+
+            if (panomaxinput != null && panomaxinput.Count > 0)
+            {                
+                //loop trough dss items
+                foreach (var webcam in panomaxinput[0])
                 {
-                    var rawdataid = await InsertInRawDataDB(webcam);
-                    newcounter++;
+                    var importresult = await ImportDataSingle(webcam, panomaxinput[1]);
 
-                    //Because a dynamic is passed to the method a dynamic is returned also if int is defined!!! strange behavior of c#
-                    string rawdataidstr = rawdataid.ToString();
-
-                    WriteLog.LogToConsole(rawdataidstr, "dataimport", "single.panomax", new ImportLog() { sourceid = rawdataidstr, sourceinterface = "panomax.webcam", success = true, error = "" });
+                    newcounter = newcounter + importresult.created ?? newcounter;
+                    updatecounter = updatecounter + importresult.updated ?? updatecounter;
+                    errorcounter = errorcounter + importresult.error ?? errorcounter;
                 }
-            }            
+            }
 
-            return new UpdateDetail() { created = newcounter, updated = 0, deleted = 0, error = 0 };
-        }        
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
+        }
 
-        private async Task<int> InsertInRawDataDB(dynamic webcam)
+        public async Task<UpdateDetail> ImportDataSingle(dynamic webcam, dynamic videolist)
+        {
+            int updatecounter = 0;
+            int newcounter = 0;
+            int deletecounter = 0;
+            int errorcounter = 0;
+
+            //id
+            string returnid = "";
+
+            try
+            {
+                //id
+                returnid = webcam.id;
+                
+                //Parse Panomax Webcam Data
+                WebcamInfoLinked parsedobject = await ParsePanomaxDataToWebcam("panomax_" + returnid, webcam);
+                if (parsedobject == null)
+                    throw new Exception();
+
+                //Get Areas to Assign
+
+                //Set Shortname
+                parsedobject.Shortname = parsedobject.Detail.Select(x => x.Value.Title).FirstOrDefault();
+
+                //TODO assign Videos
+
+                //Save parsedobject to DB + Save Rawdata to DB
+                var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(returnid, webcam));
+
+                newcounter = newcounter + pgcrudresult.created ?? 0;
+                updatecounter = updatecounter + pgcrudresult.updated ?? 0;
+
+                WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.panomax", new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "panomax.webcam", success = true, error = "" });
+            }
+            catch (Exception ex)
+            {
+                WriteLog.LogToConsole(returnid, "dataimport", "single.panomax", new ImportLog() { sourceid = returnid, sourceinterface = "panomax.webcam", success = false, error = "panomax webcam could not be parsed" });
+
+                errorcounter = errorcounter + 1;
+            }
+
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
+        }
+
+        private async Task<PGCRUDResult> InsertDataToDB(WebcamInfoLinked webcam, KeyValuePair<string, dynamic> panomaxdata)
+        {
+            var rawdataid = await InsertInRawDataDB(panomaxdata);
+
+            webcam.Id = webcam.Id?.ToLower();
+
+            //Set LicenseInfo
+            webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
+
+            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "panomax.webcam.import", importerURL);
+
+            return pgcrudresult;
+        }
+
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, dynamic> panomaxdata)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
@@ -68,9 +151,70 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "webcams",
                             sourceurl = serviceurl,
                             type = "webcam",
-                            sourceid = webcam.id,
-                            raw = JsonConvert.SerializeObject(webcam),
+                            sourceid = panomaxdata.Key,
+                            raw = JsonConvert.SerializeObject(panomaxdata.Value),
                         });
         }
+      
+        //Parse the panomax interface content
+        public async Task<WebcamInfoLinked?> ParsePanomaxDataToWebcam(string odhid, dynamic input)
+        {         
+            //Get the ODH Item
+            var mydssquery = QueryFactory.Query(table)
+              .Select("data")
+              .Where("id", odhid);
+
+            var webcamindb = await mydssquery.GetObjectSingleAsync<WebcamInfoLinked>();
+            var webcam = default(WebcamInfoLinked);
+
+            webcam = ParsePanomaxToODH.ParseWebcamToWebcamInfo(webcamindb, input);
+
+            return webcam;
+        }
+
+        private async Task<UpdateDetail> SetDataNotinListToInactive(List<string> currentidlist, CancellationToken cancellationToken)
+        {
+            int updateresult = 0;
+            int deleteresult = 0;
+            int errorresult = 0;
+
+            try
+            {
+                //Begin SetDataNotinListToInactive
+                var idlistdb = await GetAllPanomaxDataByInterface(new List<string>() { "panomax" });
+
+                var idstodelete = idlistdb.Where(p => !currentidlist.Any(p2 => p2 == p));
+
+                foreach (var idtodelete in idstodelete)
+                {
+                    var result = await DeleteOrDisableData<WebcamInfoLinked>(idtodelete, false);
+
+                    updateresult = updateresult + result.Item1;
+                    deleteresult = deleteresult + result.Item2;                    
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog.LogToConsole("", "dataimport", "deactivate.panomax", new ImportLog() { sourceid = "", sourceinterface = "panomax.webcam", success = false, error = ex.Message });
+
+                errorresult = errorresult + 1;
+            }
+
+            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult, error = errorresult };
+        }
+
+        private async Task<List<string>> GetAllPanomaxDataByInterface(List<string> syncsourceinterfacelist)
+        {
+            var query =
+               QueryFactory.Query(table)
+                   .Select("id")
+                   .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
+
+            var idlist = await query.GetAsync<string>();
+
+            return idlist.ToList();
+        }
+
+
     }
 }

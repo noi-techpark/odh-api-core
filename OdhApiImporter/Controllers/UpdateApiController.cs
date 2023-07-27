@@ -620,7 +620,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                PanomaxImportHelper panomaximporthelper = new PanomaxImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("PANOMAX/Webcam"));
+                PanomaxImportHelper panomaximporthelper = new PanomaxImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("PANOMAX/Webcam"));
 
                 updatedetail = await panomaximporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import PANOMAX Webcam succeeded", otherinfo, updatedetail, true);
@@ -650,7 +650,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                PanocloudImportHelper panocloudimporthelper = new PanocloudImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("PANOCLOUD/Webcam"));
+                PanocloudImportHelper panocloudimporthelper = new PanocloudImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("PANOCLOUD/Webcam"));
 
                 updatedetail = await panocloudimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import PANOCLOUD Webcam succeeded", otherinfo, updatedetail, true);
@@ -680,7 +680,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                FeratelWebcamImportHelper feratelwebcamimporthelper = new FeratelWebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("FERATEL/Wecam"));
+                FeratelWebcamImportHelper feratelwebcamimporthelper = new FeratelWebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("FERATEL/Wecam"));
 
                 updatedetail = await feratelwebcamimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam succeeded", otherinfo, updatedetail, true);

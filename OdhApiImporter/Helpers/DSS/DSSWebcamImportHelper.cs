@@ -62,9 +62,7 @@ namespace OdhApiImporter.Helpers.DSS
             int newcounter = 0;
             int deletecounter = 0;
             int errorcounter = 0;
-
-            List<string> idlistdssinterface = new List<string>();
-
+        
             if (dssinput != null && dssinput.Count > 0)
             {
                 string lastupdatestr = dssinput[0].lastUpdate;
@@ -154,7 +152,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+                    var deletedisableresult = await DeleteOrDisableData<WebcamInfoLinked>(idtodelete, false);
 
                     if (deletedisableresult.Item1 > 0)
                         WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });

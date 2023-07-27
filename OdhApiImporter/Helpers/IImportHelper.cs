@@ -17,7 +17,7 @@ namespace OdhApiImporter.Helpers
     {
         Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null,  CancellationToken cancellationToken = default);
 
-        Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete);
+        Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete) where T : IActivateable,ISmgActive;
 
         //Task<UpdateDetail> ImportData(ImportObject importobject, CancellationToken cancellationToken);
     }
@@ -37,7 +37,7 @@ namespace OdhApiImporter.Helpers
             this.importerURL = importerURL;
         }
 
-        public async Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete)
+        public async Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete) where T: IActivateable, ISmgActive
         {
             var deleteresult = 0;
             var updateresult = 0;
@@ -54,7 +54,7 @@ namespace OdhApiImporter.Helpers
                    .Select("data")
                    .Where("id", id);
 
-                var data = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
+                var data = await query.GetObjectSingleAsync<T>();
 
                 if (data != null)
                 {

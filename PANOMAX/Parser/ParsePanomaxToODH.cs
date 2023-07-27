@@ -23,7 +23,7 @@ namespace PANOMAX
 
             webcam.Source = "panomax";
 
-            webcam.Id = "panomax_" + webcamtoparse.Id;
+            webcam.Id = "panomax_" + webcamtoparse.id;
             webcam.Active = true;
             webcam.WebcamId = webcamtoparse.camId;
 
