@@ -3124,7 +3124,7 @@ namespace DataModel
         public string? Previewurl { get; set; }
 
         public string? ViewAngleDegree { get; set; }
-        public int? ZeroDirection { get; set; }
+        public string? ZeroDirection { get; set; }
         public string? HtmlEmbed { get; set; }
         public bool? TourCam { get; set; }
         public bool? HasVR { get; set; }

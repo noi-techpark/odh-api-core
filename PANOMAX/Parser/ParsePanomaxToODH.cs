@@ -37,7 +37,7 @@ namespace PANOMAX
             ContactInfos contactinfo = new ContactInfos();
             contactinfo.CompanyName = webcamtoparse.customerName;
             contactinfo.LogoUrl = webcamtoparse.logo;
-            contactinfo.CountryCode = webcamtoparse.country.ToUpper();
+            contactinfo.CountryCode = ((string)webcamtoparse.country).ToUpper();
             contactinfo.CountryName = webcamtoparse.countryName;
             contactinfo.City = webcamtoparse.city;
             contactinfo.Region = webcamtoparse.state;
@@ -53,7 +53,7 @@ namespace PANOMAX
             gpsinfo.Latitude = Convert.ToDouble(webcamtoparse.latitude);
             gpsinfo.Longitude = Convert.ToDouble(webcamtoparse.longitude);
             gpsinfo.Altitude = Convert.ToDouble(webcamtoparse.elevation);
-            webcam.GpsInfo.Add(gpsinfo);
+            webcam.GpsInfo = new List<GpsInfo>() { gpsinfo };            
 
             //WebcamProperties
             WebcamProperties webcamproperties = new WebcamProperties();
@@ -65,8 +65,9 @@ namespace PANOMAX
 
             webcam.WebCamProperties = webcamproperties;
 
+            webcam.ImageGallery = new List<ImageGallery>();
             //ImageGallery
-            foreach(var imagetoparse in webcamtoparse.images)
+            foreach (var imagetoparse in webcamtoparse.images)
             {
                 ImageGallery imagetoadd = new ImageGallery();
                 imagetoadd.ImageSource = "panomax";
