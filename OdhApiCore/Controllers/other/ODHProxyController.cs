@@ -29,7 +29,7 @@ namespace OdhApiCore.Controllers.other
                 var fullurl = url + parameter;
 
                 //Quick production fix
-                fullurl = fullurl.Replace("https:/", "https://");
+                //fullurl = fullurl.Replace("https:/", "https://");
 
                 Console.WriteLine("Url to proxy: " + fullurl);
 
