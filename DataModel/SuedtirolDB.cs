@@ -3184,11 +3184,23 @@ namespace DataModel
         public string? License { get; set; }
         public string? LicenseHolder { get; set; }
         public string? Language { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
     }
 
     public class ContactInfos : IContactInfos, ILanguage
     {
+        [SwaggerSchema(Description = "Street Address")]
         public string? Address { get; set; }
+        
+        [SwaggerSchema(Description = "Region (Province / State / Departement / Canton etc...")] 
+        public string? Region { get; set; }
+        
+        [SwaggerSchema(Description = "Regioncode")]
+        public string? RegionCode { get; set; }
+
+        [SwaggerSchema(Description = "Area (Additional Area Name)")] 
+        public string? Area { get; set; }
         public string? City { get; set; }
         public string? ZipCode { get; set; }
         public string? CountryCode { get; set; }

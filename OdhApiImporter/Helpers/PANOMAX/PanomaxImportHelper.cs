@@ -18,6 +18,7 @@ namespace OdhApiImporter.Helpers
     {
         //TODO Make BaseUrl configurable in settings
         public const string serviceurl = @"https://api.panomax.com/1.0/instances/lists/public";
+        public const string serviceurlvideos = @"https://api.panomax.com/1.0/cams/videos/public";
 
         public PanomaxImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
@@ -31,13 +32,14 @@ namespace OdhApiImporter.Helpers
 
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
-            //GET Data and Deserialize to Json
+            //GET Data List
             var data = await GetPanomaxData.GetWebcams(serviceurl);
 
             var newcounter = 0;
 
             if(data != null)
             {
+
                 //Save to RAWTABLE
                 foreach (var webcam in data)
                 {
