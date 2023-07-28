@@ -94,6 +94,9 @@ namespace PANOMAX
             {
                 foreach (var videotoparse in videostoparse.videos)
                 {
+                    if(videoitemsdict == null)
+                        videoitemsdict = new Dictionary<string, ICollection<VideoItems>>();
+
                     var videoitemlist = new List<VideoItems>();
 
                     VideoItems videoitem = new VideoItems();
