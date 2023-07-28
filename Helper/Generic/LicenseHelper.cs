@@ -231,6 +231,21 @@ namespace Helper
                 licenseholder = @"https://www.dolomitisuperski.com";
             }
 
+            if (data.Source?.ToLower() == "panomax")
+            {
+                licenseholder = @"https://panomax.com";
+            }
+
+            if (data.Source?.ToLower() == "panocloud")
+            {
+                licenseholder = @"https://panocloud.com";
+            }
+
+            if (data.Source?.ToLower() == "feratel")
+            {
+                licenseholder = @"https://feratel.com";
+            }
+
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
