@@ -3104,13 +3104,13 @@ namespace DataModel
         public new IDictionary<string, string> Webcamname { get { return this.Detail.ToDictionary(x => x.Key, x => x.Value.Title); } }
 
         [Obsolete("Use WebcamProperties.Webcamurl")]
-        public new string? Webcamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.Webcamurl : null; } }
+        public new string? Webcamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.WebcamUrl : null; } }
 
         [Obsolete("Use WebcamProperties.Streamurl")]
-        public new string? Streamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.Streamurl : null; } }
+        public new string? Streamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.StreamUrl : null; } }
 
         [Obsolete("Use WebcamProperties.Previewurl")]
-        public new string? Previewurl { get { return this.WebCamProperties != null ? this.WebCamProperties.Previewurl : null; } }
+        public new string? Previewurl { get { return this.WebCamProperties != null ? this.WebCamProperties.PreviewUrl : null; } }
 
         public ICollection<string> HasLanguage { get; set; }
     }
@@ -3119,9 +3119,9 @@ namespace DataModel
     //New WebcamProperties
     public class WebcamProperties
     {
-        public string? Webcamurl { get; set; }
-        public string? Streamurl { get; set; }
-        public string? Previewurl { get; set; }
+        public string? WebcamUrl { get; set; }
+        public string? StreamUrl { get; set; }
+        public string? PreviewUrl { get; set; }
 
         public string? ViewAngleDegree { get; set; }
         public string? ZeroDirection { get; set; }

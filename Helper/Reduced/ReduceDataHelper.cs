@@ -545,8 +545,8 @@ namespace Helper
 
             //URL, StreamURL
             reduced.WebCamProperties = new WebcamProperties();
-            reduced.WebCamProperties.Webcamurl = webcam.WebCamProperties.Webcamurl;
-            reduced.WebCamProperties.Streamurl = webcam.WebCamProperties.Streamurl;
+            reduced.WebCamProperties.WebcamUrl = webcam.WebCamProperties.WebcamUrl;
+            reduced.WebCamProperties.StreamUrl = webcam.WebCamProperties.StreamUrl;
 
             //ODH Fields            
             reduced.Active = webcam.Active;
