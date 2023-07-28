@@ -37,7 +37,7 @@ namespace PANOMAX
             ContactInfos contactinfo = new ContactInfos();
             contactinfo.CompanyName = webcamtoparse.customerName;
             contactinfo.LogoUrl = webcamtoparse.logo;
-            contactinfo.CountryCode = ((string)webcamtoparse.country).ToUpper();
+            contactinfo.CountryCode = webcamtoparse.country != null ? ((string)webcamtoparse.country).ToUpper() : "";
             contactinfo.CountryName = webcamtoparse.countryName;
             contactinfo.City = webcamtoparse.city;
             contactinfo.Region = webcamtoparse.state;
@@ -50,9 +50,9 @@ namespace PANOMAX
             //GPS
             GpsInfo gpsinfo = new GpsInfo();
             gpsinfo.Gpstype = "position";
-            gpsinfo.Latitude = Convert.ToDouble(webcamtoparse.latitude);
-            gpsinfo.Longitude = Convert.ToDouble(webcamtoparse.longitude);
-            gpsinfo.Altitude = Convert.ToDouble(webcamtoparse.elevation);
+            gpsinfo.Latitude = webcamtoparse.latitude != null ? Convert.ToDouble(webcamtoparse.latitude) : 0;
+            gpsinfo.Longitude = webcamtoparse.longitude != null ? Convert.ToDouble(webcamtoparse.longitude) : 0;
+            gpsinfo.Altitude = webcamtoparse.elevation != null ? Convert.ToDouble(webcamtoparse.elevation) : 0;
             webcam.GpsInfo = new List<GpsInfo>() { gpsinfo };            
 
             //WebcamProperties
@@ -61,7 +61,7 @@ namespace PANOMAX
             webcamproperties.ViewAngleDegree = webcamtoparse.viewAngleDegree;
             webcamproperties.ZeroDirection = webcamtoparse.zeroDirection;
             webcamproperties.HtmlEmbed = webcamtoparse.htmlEmbed;
-            webcamproperties.TourCam = (bool)webcamtoparse.tourCam;
+            webcamproperties.TourCam = webcamtoparse.latitude != null ? (bool)webcamtoparse.tourCam : false;
 
             webcam.WebCamProperties = webcamproperties;
 
