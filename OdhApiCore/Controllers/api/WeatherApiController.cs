@@ -17,6 +17,7 @@ using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using ServiceReferenceLCS;
 using SIAG;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -638,6 +639,9 @@ namespace OdhApiCore.Controllers
             int? pagesize, 
             string language, 
             string? id,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
             CancellationToken cancellationToken)
         {
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
@@ -654,6 +658,33 @@ namespace OdhApiCore.Controllers
             }
             else
             {
+                if(latitude != null && longitude != null && radius != null 
+                    && Double.TryParse(latitude, out var latitudedouble)
+                    && Double.TryParse(longitude, out var longitudedouble)
+                    && Double.TryParse(radius, out var radiusdouble)
+                    )
+                {
+                    Dictionary<double, WeatherRealTime> ordereddistance = new Dictionary<double, WeatherRealTime>();
+                    //TODO calculate distance and order by it
+                    foreach(var weatherealtime in weatherresult)
+                    {
+                        var distance = DistanceCalculator.Distance(
+                            latitudedouble,
+                            longitudedouble,
+                            weatherealtime.latitude,
+                            weatherealtime.longitude,
+                            'K'
+                            );
+
+                        double radiuskm = radiusdouble / 1000; 
+
+                        if(distance < radiusdouble)
+                            ordereddistance.Add(distance, weatherealtime);
+                    }
+                    
+                    weatherresult = ordereddistance.OrderBy(x => x.Key).Select(x => x.Value).ToList();
+                }
+
                 if (pagenumber != null)
                 {
                     return Ok(ResponseHelpers.GetResult(
