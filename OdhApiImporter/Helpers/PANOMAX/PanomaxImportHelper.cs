@@ -26,9 +26,11 @@ namespace OdhApiImporter.Helpers
         public const string serviceurl = @"https://api.panomax.com/1.0/instances/lists/public";
         public const string serviceurlvideos = @"https://api.panomax.com/1.0/cams/videos/public";
 
+        public List<string> idlistinterface { get; set; }
+
         public PanomaxImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
-            
+            idlistinterface = new List<string>();
         }
      
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
@@ -40,7 +42,7 @@ namespace OdhApiImporter.Helpers
             var updateresult = await ImportData(data, cancellationToken);
 
             //Disable Data not in panomax list
-            var deleteresult = await SetDataNotinListToInactive(data.Select(x => (string)x.id).ToList(), cancellationToken);
+            var deleteresult = await SetDataNotinListToInactive(cancellationToken);
 
             return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
         }
@@ -94,7 +96,9 @@ namespace OdhApiImporter.Helpers
             {
                 //id
                 returnid = webcam.id;
-                
+
+                idlistinterface.Add("panomax_" + returnid);
+
                 //Parse Panomax Webcam Data
                 WebcamInfoLinked parsedobject = await ParsePanomaxDataToWebcam("panomax_" + returnid, webcam);
                 if (parsedobject == null)
@@ -172,7 +176,7 @@ namespace OdhApiImporter.Helpers
             return webcam;
         }
 
-        private async Task<UpdateDetail> SetDataNotinListToInactive(List<string> currentidlist, CancellationToken cancellationToken)
+        private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
         {
             int updateresult = 0;
             int deleteresult = 0;
@@ -183,7 +187,7 @@ namespace OdhApiImporter.Helpers
                 //Begin SetDataNotinListToInactive
                 var idlistdb = await GetAllPanomaxDataByInterface(new List<string>() { "panomax" });
 
-                var idstodelete = idlistdb.Where(p => !currentidlist.Any(p2 => p2 == p));
+                var idstodelete = idlistdb.Where(p => !idlistinterface.Any(p2 => p2 == p));
 
                 foreach (var idtodelete in idstodelete)
                 {
