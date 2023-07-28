@@ -238,11 +238,14 @@ namespace OdhApiCore.Controllers
             uint? pagenumber = null,
             PageSize pagesize = null!, 
             string? language = "en",
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", null, cancellationToken);
+                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", null, latitude, longitude, radius, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -267,7 +270,7 @@ namespace OdhApiCore.Controllers
         {
             try
             {
-                return await GetRealTimeWeather(null, null, language ?? "en", id, cancellationToken);
+                return await GetRealTimeWeather(null, null, language ?? "en", id, null, null, null, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -639,9 +642,9 @@ namespace OdhApiCore.Controllers
             int? pagesize, 
             string language, 
             string? id,
-            string? latitude = null,
-            string? longitude = null,
-            string? radius = null,
+            string? latitude,
+            string? longitude,
+            string? radius,
             CancellationToken cancellationToken)
         {
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
