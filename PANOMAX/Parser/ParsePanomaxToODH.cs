@@ -108,6 +108,8 @@ namespace PANOMAX
                     videoitem.Active = true;
                     videoitem.Language = "en";
 
+                    videoitemlist.Add(videoitem);
+
                     videoitemsdict.TryAddOrUpdate("en", videoitemlist);
                 }
             }            
