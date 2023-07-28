@@ -88,26 +88,28 @@ namespace PANOMAX
             return webcam;
         }
 
-        public static ICollection<VideoItems> ParseVideosToVideoItems(ICollection<VideoItems> videoitems, dynamic videostoparse)
+        public static IDictionary<string, ICollection<VideoItems>> ParseVideosToVideoItems(IDictionary<string, ICollection<VideoItems>> videoitemsdict, dynamic videostoparse)
         {
-            if (videoitems == null)
-                videoitems = new List<VideoItems>();
-
-            foreach(var videotoparse in videostoparse.videos)
+            if(videostoparse != null)
             {
-                VideoItems videoitem = new VideoItems();
-                videoitem.Url = videotoparse.url;
-                videoitem.VideoTitle = videotoparse.fileName;
-                videoitem.Width = Convert.ToInt32(videotoparse.width);
-                videoitem.Height = Convert.ToInt32(videotoparse.height);
-                videoitem.VideoSource = "panomax";
-                videoitem.Active = true;
-                videoitem.Language = "en";
+                foreach (var videotoparse in videostoparse.videos)
+                {
+                    var videoitemlist = new List<VideoItems>();
 
-                videoitems.Add(videoitem);
+                    VideoItems videoitem = new VideoItems();
+                    videoitem.Url = videotoparse.url;
+                    videoitem.VideoTitle = videotoparse.fileName;
+                    videoitem.Width = Convert.ToInt32(videotoparse.width);
+                    videoitem.Height = Convert.ToInt32(videotoparse.height);
+                    videoitem.VideoSource = "panomax";
+                    videoitem.Active = true;
+                    videoitem.Language = "en";
+
+                    videoitemsdict.TryAddOrUpdate("en", videoitemlist);
+                }
             }            
 
-            return videoitems;
+            return videoitemsdict;
         }
     }
 }

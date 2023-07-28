@@ -104,12 +104,24 @@ namespace OdhApiImporter.Helpers
                 if (parsedobject == null)
                     throw new Exception();
 
-                //Get Areas to Assign
+                //Get Areas to Assign (Areas is a LTS only concept and will be removed in future)
 
                 //Set Shortname
                 parsedobject.Shortname = parsedobject.Detail.Select(x => x.Value.Title).FirstOrDefault();
 
-                //TODO assign Videos
+                //assign Videos
+                dynamic videostoassign = null;
+                foreach(var video in videolist.cams)
+                {
+                    if (video.id == webcam.camId)
+                    {
+                        videostoassign = video;
+                    }
+                }
+
+                var hasvideos = ((IEnumerable<dynamic>)videolist.cams).Where(x => x.id == webcam.camId).FirstOrDefault();
+
+                parsedobject.VideoItems = ParsePanomaxToODH.ParseVideosToVideoItems(parsedobject.VideoItems, videostoassign);
 
                 //Save parsedobject to DB + Save Rawdata to DB
                 var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(returnid, webcam));
