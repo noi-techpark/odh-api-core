@@ -668,7 +668,7 @@ namespace OdhApiCore.Controllers
                     )
                 {
                     Dictionary<double, WeatherRealTime> ordereddistance = new Dictionary<double, WeatherRealTime>();
-                    //TODO calculate distance and order by it
+                    //TODO calculate distance and order by it NOT WORKING
                     foreach(var weatherealtime in weatherresult)
                     {
                         var distance = DistanceCalculator.Distance(
