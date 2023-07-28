@@ -148,9 +148,9 @@ namespace LCS
             //webcam.GpsTrack = mygpstracklist.ToList();
 
             //URls        
-            webcam.WebCamProperties.Webcamurl = thewebcamde.URL != null ? thewebcamde.URL.InnerText : "";
-            webcam.WebCamProperties.Streamurl = thewebcamde.StreamURL != null ? thewebcamde.StreamURL.InnerText : "";
-            webcam.WebCamProperties.Previewurl = thewebcamde.PreviewURL != null ? thewebcamde.PreviewURL.InnerText : "";
+            webcam.WebCamProperties.WebcamUrl = thewebcamde.URL != null ? thewebcamde.URL.InnerText : "";
+            webcam.WebCamProperties.StreamUrl = thewebcamde.StreamURL != null ? thewebcamde.StreamURL.InnerText : "";
+            webcam.WebCamProperties.PreviewUrl = thewebcamde.PreviewURL != null ? thewebcamde.PreviewURL.InnerText : "";
 
 
             //Name

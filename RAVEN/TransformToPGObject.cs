@@ -374,9 +374,9 @@ namespace RAVEN
             webcam.WebcamId = data.WebcamId;
             //Webcamproperties
             webcam.WebCamProperties = new WebcamProperties();
-            webcam.WebCamProperties.Webcamurl = data.Webcamurl;
-            webcam.WebCamProperties.Previewurl = data.Previewurl; 
-            webcam.WebCamProperties.Streamurl = data.Streamurl;
+            webcam.WebCamProperties.WebcamUrl = data.Webcamurl;
+            webcam.WebCamProperties.PreviewUrl = data.Previewurl; 
+            webcam.WebCamProperties.StreamUrl = data.Streamurl;
        
             //Detail
             foreach(var kvp in data.Webcamname)
