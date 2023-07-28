@@ -57,7 +57,7 @@ namespace PANOMAX
 
             //WebcamProperties
             WebcamProperties webcamproperties = new WebcamProperties();
-            webcamproperties.WebcamUrl = webcamtoparse.webcamurl;
+            webcamproperties.WebcamUrl = webcamtoparse.webcamUrl;
             webcamproperties.ViewAngleDegree = webcamtoparse.viewAngleDegree;
             webcamproperties.ZeroDirection = webcamtoparse.zeroDirection;
             webcamproperties.HtmlEmbed = webcamtoparse.htmlEmbed;
