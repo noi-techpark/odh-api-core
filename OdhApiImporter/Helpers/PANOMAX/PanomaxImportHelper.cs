@@ -97,10 +97,10 @@ namespace OdhApiImporter.Helpers
                 //id
                 returnid = webcam.id;
 
-                idlistinterface.Add("panomax_" + returnid);
+                idlistinterface.Add("PANOMAX_" + returnid);
 
                 //Parse Panomax Webcam Data
-                WebcamInfoLinked parsedobject = await ParsePanomaxDataToWebcam("panomax_" + returnid, webcam);
+                WebcamInfoLinked parsedobject = await ParsePanomaxDataToWebcam("PANOMAX_" + returnid, webcam);
                 if (parsedobject == null)
                     throw new Exception();
 
@@ -145,7 +145,7 @@ namespace OdhApiImporter.Helpers
         {
             var rawdataid = await InsertInRawDataDB(panomaxdata);
 
-            webcam.Id = webcam.Id?.ToLower();
+            webcam.Id = webcam.Id?.ToUpper();
 
             //Set LicenseInfo
             webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
@@ -183,7 +183,7 @@ namespace OdhApiImporter.Helpers
             var webcamindb = await mydssquery.GetObjectSingleAsync<WebcamInfoLinked>();
             var webcam = default(WebcamInfoLinked);
 
-            webcam = ParsePanomaxToODH.ParseWebcamToWebcamInfo(webcamindb, input);
+            webcam = ParsePanomaxToODH.ParseWebcamToWebcamInfo(webcamindb, input, odhid);
 
             return webcam;
         }

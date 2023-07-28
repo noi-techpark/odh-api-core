@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -16,14 +17,14 @@ namespace PANOMAX
 {
     public class ParsePanomaxToODH
     {
-        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked webcam, dynamic webcamtoparse)
+        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked webcam, dynamic webcamtoparse, string odhid)
         {
             if (webcam == null)
                 webcam = new WebcamInfoLinked();
 
             webcam.Source = "panomax";
 
-            webcam.Id = "panomax_" + webcamtoparse.id;
+            webcam.Id = odhid;
             webcam.Active = true;
             webcam.WebcamId = webcamtoparse.camId;
 
