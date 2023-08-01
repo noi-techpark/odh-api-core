@@ -401,8 +401,6 @@ namespace OdhApiImporter.Helpers
 
                     i++;
                 }
-
-
             }
 
             return i;

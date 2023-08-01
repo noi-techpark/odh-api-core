@@ -58,6 +58,13 @@ namespace Helper
                 $"EventTitle.{lang}"
             ).ToArray();
 
+        public static string[] TourismMetaDataTitleFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"ApiDescription.{lang}"
+            ).ToArray();
+
         //TODO TRANSFORM LANGUAGE to deu,eng,ita
         //public static string[] VenueTitleFieldsToSearchFor(string? language) =>
         //   _languagesToSearchFor.Where(lang =>

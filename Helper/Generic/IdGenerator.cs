@@ -127,6 +127,14 @@ namespace Helper
                 _ => throw new Exception("not known odh type")
             };
         }
+
+        public static string TransformIDbyIdStyle(string id, IDStyle idstyle)
+        {
+            if (idstyle == IDStyle.uppercase)
+                return id.ToUpper();
+            else
+                return id.ToLower();
+        }
     }
 
     public enum IDStyle

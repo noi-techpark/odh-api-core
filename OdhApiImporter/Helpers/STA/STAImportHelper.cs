@@ -136,7 +136,7 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "csv",
                             sourceid = stavendingpoint?.STA_ID ?? "",
                             sourceurl = "csvfile",
-                            type = "odhactivitypoi_vendingpoint",
+                            type = "odhactivitypoi.vendingpoint",
                             license = "open",
                             rawformat = "json"
                         });

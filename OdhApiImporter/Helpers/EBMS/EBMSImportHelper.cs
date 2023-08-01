@@ -17,7 +17,10 @@ using System.Threading.Tasks;
 namespace OdhApiImporter.Helpers
 {
     public class EbmsEventsImportHelper : ImportHelper, IImportHelper
-    {        
+    {
+        //TODO Make BaseUrl configurable in settings
+        public const string serviceurl = @"https://emea-interface.ungerboeck.com/clients/Bozen/PROD/EventExportAPI/api/event/masterdata/?organization=20";
+
         public EbmsEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
@@ -27,7 +30,7 @@ namespace OdhApiImporter.Helpers
 
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
-            var resulttuple = ImportEBMSData.GetEbmsEvents(settings.EbmsConfig.User, settings.EbmsConfig.Password);
+            var resulttuple = GetEBMSData.GetEbmsEvents(serviceurl, settings.EbmsConfig.User, settings.EbmsConfig.Password);
          
             var currenteventshort = await GetAllEventsShort(DateTime.Now);
 
@@ -223,7 +226,7 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "ebms",
                             sourceid = eventebms.Key,
                             sourceurl = "https://emea-interface.ungerboeck.com",
-                            type = "event_euracnoi",
+                            type = "event",
                             license = "open",
                             rawformat = "json"
                         });

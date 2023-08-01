@@ -547,22 +547,27 @@ namespace OdhApiImporter.Helpers
             switch (datatype.ToLower())
             {
                 case "accommodation":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG<AccommodationLinked>(id, "accommodations", true);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
 
                     break;
 
                 case "gastronomy":
-                   
+                    
+                    deleteresult = await DeleteRavenObjectFromPG(id, "gastronomies", true, IdGenerator.GetIDStyle(typeof(GastronomyLinked)));
 
                     break;
 
                 case "activity":
                     
+                    deleteresult = await DeleteRavenObjectFromPG(id, "activities", true, IdGenerator.GetIDStyle(typeof(LTSActivityLinked)));
 
                     break;
 
                 case "poi":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG(id, "pois", true, IdGenerator.GetIDStyle(typeof(LTSPoiLinked)));
 
                     break;
 
@@ -583,27 +588,43 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "metaregion":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG<MetaRegionLinked>(id, "metaregions", false);                    
+
                     break;
 
                 case "region":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG<RegionLinked>(id, "regions", false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+
                     break;
 
                 case "tv":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG<TourismvereinLinked>(id, "tvs", false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+
                     break;
 
                 case "municipality":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG<MunicipalityLinked>(id, "municipalities", false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+
                     break;
 
                 case "district":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG<DistrictLinked>(id, "districts", false);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+
                     break;
 
                 case "experiencearea":
-                   
+
+                    deleteresult = await DeleteRavenObjectFromPG<ExperienceAreaLinked>(id, "experienceareas", false);
+
                     break;
 
                 case "skiarea":
@@ -623,7 +644,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "article":
-                   
+
+                    deleteresult = await DeleteRavenObjectFromPG<ArticlesLinked>(id, "articles", false);
+
                     break;
 
                 case "odhtag":
@@ -635,19 +658,28 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "measuringpoint":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG<MeasuringpointLinked>(id, "measuringpoints", true);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+
                     break;
 
                 case "venue":
-                    
+
+                    deleteresult = await DeleteRavenObjectFromPG<VenueLinked>(id, "venues_v2", true);
+                    deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+
                     break;
 
                 case "wine":
-                 
+
+                    deleteresult = await DeleteRavenObjectFromPG<WineLinked>(id, "wines", false);
+
                     break;
 
                 case "webcam":
                     //TODO DELETE ALL ASSIGNMENTS OF THIS Webcam
+                    deleteresult = await DeleteRavenObjectFromPG<VenueLinked>(id, "webcams", true);                    
 
                     break;
 
@@ -742,6 +774,34 @@ namespace OdhApiImporter.Helpers
             }
 
             return pushresults;
+        }
+
+
+        private async Task<UpdateDetail> DeleteRavenObjectFromPG(string id, string table, bool deletereduced, IDStyle idstyle)
+        {
+            var result = await QueryFactory.DeleteData(IdGenerator.TransformIDbyIdStyle(id, idstyle), table);
+
+            var reducedresult = new PGCRUDResult() { changes = null, compareobject = false, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimageschanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
+
+            //Check if reduced object has to be deleted
+            if (deletereduced)
+            {
+                reducedresult = await QueryFactory.DeleteData(IdGenerator.TransformIDbyIdStyle(id + "_reduced", idstyle), table);
+            }
+
+            return new UpdateDetail()
+            {
+                created = result.created,
+                updated = result.updated,
+                deleted = result.deleted + reducedresult.deleted,
+                error = result.error + reducedresult.error,
+                objectchanged = result.objectchanged,
+                objectimagechanged = result.objectimageschanged,
+                comparedobjects = 0,
+                pushchannels = result.pushchannels,
+                changes = result.changes
+            };
+
         }
 
 

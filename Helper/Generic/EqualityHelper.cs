@@ -71,6 +71,10 @@ namespace Helper.Generic
                 }
             }
 
+            //TODO SORT ALL ARRAYS so Deepequals gets not hit.....
+
+
+
             //Postgres JsonB does a Dictionary Key sorting automatically. So the retrieved Json has the Dictionary Keys ordered by Keyname alphabetically, therefore a resort is needed to compare
             //both Serialized Objects
 

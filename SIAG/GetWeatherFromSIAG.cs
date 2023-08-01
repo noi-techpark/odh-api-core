@@ -18,6 +18,8 @@ namespace SIAG
         //public const string serviceurlsiag = @"https://wetter.ws.siag.it/Weather_V1.svc/web/getLastProvBulletin";
         //public const string serviceurlbezirksiag = @"https://wetter.ws.siag.it/Agriculture_V1.svc/web/getLastBulletin";
 
+        //TODO Make BaseUrl configurable in settings
+
         public const string serviceurlsiag = @"https://weather.services.siag.it/api/v2/bulletinHD";
         public const string serviceurlbezirksiag = @"https://weather.services.siag.it/api/v2/district/";
 
@@ -25,6 +27,8 @@ namespace SIAG
 
         public const string serviceurl = @"http://daten.buergernetz.bz.it/services/weather/bulletin";
         public const string serviceurlbezirk = @"http://daten.buergernetz.bz.it/services/weather/district/";
+
+
 
         public static async Task<HttpResponseMessage> RequestAsync(string lang, string siaguser, string siagpswd, string source, bool usejson = false, string? weatherid = null)
         {

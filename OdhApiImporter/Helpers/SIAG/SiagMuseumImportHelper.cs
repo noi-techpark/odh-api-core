@@ -484,7 +484,7 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "museumdata",
                             sourceid = siagmuseumdata.Key,
                             sourceurl = "https://musport.prov.bz.it/musport/services/MuseumsService/",
-                            type = "odhactivitypoi_museum",
+                            type = "odhactivitypoi.museum",
                             license = "open",
                             rawformat = "xml"
                         });

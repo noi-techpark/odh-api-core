@@ -404,7 +404,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                             sourceinterface = "suedtirolwein-company",
                             sourceid = suedtirolweindata.Key,
                             sourceurl = "https://suedtirolwein.secure.consisto.net/companies.ashx",
-                            type = "odhactivitypoi_winecompany",
+                            type = "odhactivitypoi.winecompany",
                             license = "open",
                             rawformat = "xml"
                         });

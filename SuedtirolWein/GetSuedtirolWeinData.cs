@@ -12,6 +12,7 @@ namespace SuedtirolWein
 {
     public class GetSuedtirolWeinData
     {
+        //TODO Make BaseUrl configurable in settings
         public const string serviceurlcompanies = @"https://suedtirolwein.secure.consisto.net/companies.ashx";
         public const string serviceurlawards = @"https://suedtirolwein.secure.consisto.net/awards.ashx";
 

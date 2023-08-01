@@ -7,19 +7,19 @@ using SqlKata.Execution;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using LOOPTEC;
+using PANOMAX;
 using Newtonsoft.Json;
 using Helper;
 using System.Collections.Generic;
 
-namespace OdhApiImporter.Helpers.LOOPTEC
+namespace OdhApiImporter.Helpers
 {
-    public class LooptecEjobsImportHelper : ImportHelper, IImportHelper
+    public class PanomaxImportHelper : ImportHelper, IImportHelper
     {
         //TODO Make BaseUrl configurable in settings
-        public const string serviceurl = @"https://app.onboard-staging.org/exports/v1/jobs/open_data_hub.json";
+        public const string serviceurl = @"https://api.panomax.com/1.0/instances/lists/public";
 
-        public LooptecEjobsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public PanomaxImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
@@ -32,42 +32,42 @@ namespace OdhApiImporter.Helpers.LOOPTEC
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET Data and Deserialize to Json
-            var data = await GetEJobsData.GetEjobsDataAsync("", "", serviceurl);
+            var data = await GetPanomaxData.GetWebcams(serviceurl);
 
             var newcounter = 0;
 
             if(data != null)
             {
                 //Save to RAWTABLE
-                foreach (var ejob in data.jobs)
+                foreach (var webcam in data)
                 {
-                    var rawdataid = await InsertInRawDataDB(ejob);
+                    var rawdataid = await InsertInRawDataDB(webcam);
                     newcounter++;
 
                     //Because a dynamic is passed to the method a dynamic is returned also if int is defined!!! strange behavior of c#
                     string rawdataidstr = rawdataid.ToString();
 
-                    WriteLog.LogToConsole(rawdataidstr, "dataimport", "single.ejob", new ImportLog() { sourceid = rawdataidstr, sourceinterface = "looptec.ejob", success = true, error = "" });
+                    WriteLog.LogToConsole(rawdataidstr, "dataimport", "single.panomax", new ImportLog() { sourceid = rawdataidstr, sourceinterface = "panomax.webcam", success = true, error = "" });
                 }
             }            
 
             return new UpdateDetail() { created = newcounter, updated = 0, deleted = 0, error = 0 };
         }        
 
-        private async Task<int> InsertInRawDataDB(dynamic ejob)
+        private async Task<int> InsertInRawDataDB(dynamic webcam)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
-                            datasource = "looptec",
+                            datasource = "panomax",
                             rawformat = "json",
                             importdate = DateTime.Now,
                             license = "open",
-                            sourceinterface = "ejobs-onboard",
+                            sourceinterface = "webcams",
                             sourceurl = serviceurl,
-                            type = "ejob",
-                            sourceid = ejob.identifier,
-                            raw = JsonConvert.SerializeObject(ejob),
+                            type = "webcam",
+                            sourceid = webcam.id,
+                            raw = JsonConvert.SerializeObject(webcam),
                         });
         }
     }
