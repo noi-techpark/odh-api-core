@@ -3394,6 +3394,7 @@ namespace DataModel
         public string? Type { get; set; }
         public string? Pstd { get; set; }
         public string? ShortDesc { get; set; }
+        public string? LongDesc { get; set; }
         public string? Description { get; set; }
 
         public string? Language { get; set; }

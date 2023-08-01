@@ -17,6 +17,7 @@ using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using ServiceReferenceLCS;
 using SIAG;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -237,11 +238,16 @@ namespace OdhApiCore.Controllers
             uint? pagenumber = null,
             PageSize pagesize = null!, 
             string? language = "en",
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", null, cancellationToken);
+                var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", null, geosearchresult, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -265,8 +271,8 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             try
-            {
-                return await GetRealTimeWeather(null, null, language ?? "en", id, cancellationToken);
+            {             
+                return await GetRealTimeWeather(null, null, language ?? "en", id, null, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -638,6 +644,7 @@ namespace OdhApiCore.Controllers
             int? pagesize, 
             string language, 
             string? id,
+            PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
@@ -654,6 +661,29 @@ namespace OdhApiCore.Controllers
             }
             else
             {
+                if(geosearchresult.geosearch)                    
+                {
+                    Dictionary<double, WeatherRealTime> ordereddistance = new Dictionary<double, WeatherRealTime>();
+                    //TODO calculate distance and order by it NOT WORKING
+                    foreach(var weatherealtime in weatherresult)
+                    {
+                        var distance = DistanceCalculator.Distance(
+                            geosearchresult.latitude,
+                            geosearchresult.longitude,
+                            weatherealtime.latitude,
+                            weatherealtime.longitude,
+                            'K'
+                            );
+
+                        double radiusdistancem = distance * 1000; 
+
+                        if(radiusdistancem < geosearchresult.radius)
+                            ordereddistance.Add(distance, weatherealtime);
+                    }
+                    
+                    weatherresult = ordereddistance.OrderBy(x => x.Key).Select(x => x.Value).ToList();
+                }
+
                 if (pagenumber != null)
                 {
                     return Ok(ResponseHelpers.GetResult(
