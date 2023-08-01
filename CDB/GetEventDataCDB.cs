@@ -12,6 +12,114 @@ using ServiceReferenceCDBData;
 
 namespace CDB
 {
+    public class GetEvents
+    {
+        //Methode für Liste
+        public static XDocument GetEventList(string lang, string searchid, int pageSize, int pagenr, string requestor,
+            string publRIDList,
+            string topicRIDList,
+            DateTime datefrom,
+            DateTime dateto,
+            string ranc,
+            string fraRIDList,
+            string seekword,
+            string orgRIDList,
+            string title,
+            string onlyEveHead,
+            string showSDat,
+            string zone,
+            string withCdays,
+            string compatibilitymode,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+            )
+        {
+            try
+            {
+                XDocument myEvents = GetEventDataCDB.GetEventSeekEngine(publRIDList, 
+                    String.Format("{0:yyyy-MM-dd}", datefrom), 
+                    String.Format("{0:yyyy-MM-dd}", dateto), 
+                    topicRIDList, ranc, fraRIDList, seekword, lang, 
+                    pagenr.ToString(), pageSize.ToString(), orgRIDList, 
+                    title, searchid, onlyEveHead, showSDat, zone, withCdays, 
+                    compatibilitymode, 
+                    ltsuser, 
+                    ltspswd,
+                    serviceurl);
+
+                return myEvents;
+
+                //var eventdata = myEvents.Root.Elements("Head");
+                //var eventoverview = myEvents.Root.Element("Overview");
+
+                //Result myeventlist = new Result();
+                //myeventlist.SeekID = eventoverview.Attribute("SeekID").Value;
+                //myeventlist.CurrentPage = Convert.ToInt32(eventoverview.Attribute("PageAct").Value);
+                //myeventlist.TotalPages = Convert.ToInt32(eventoverview.Attribute("PagesTotal").Value);
+                //myeventlist.TotalResults = Convert.ToInt32(eventoverview.Attribute("EventsTotal").Value);
+
+                //int i = 1;
+
+                //foreach (XElement myevent in eventdata)
+                //{
+                //    var myparsedevent = ParseEventResponse.ParsemyEventResponse(i, lang, myevent);
+                //    i++;
+                //    myeventlist.Event.Add(myparsedevent);
+                //}
+                //return myeventlist;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        //Methode für Liste der Geänderten
+        public static XDocument GetEventChangeList(DateTime startDate, string ltsuser, string ltspswd,
+            string serviceurl)
+        {
+            try
+            {
+                XDocument myEventsChanged = GetEventDataCDB.GetEventsChangedfromCDB(String.Format("{0:yyyy-MM-dd}", startDate), "0", 
+                    ltsuser, ltspswd,serviceurl);
+
+                return myEventsChanged;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        //Methode für Detail
+        public static XElement GetEventDetail(string lang, string requestor,
+            string evRIDList,
+            string publRIDList,
+            string withOrganizer,
+            string withCdays,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+            )
+        {
+            try
+            {
+                XDocument myEvents = GetEventDataCDB.GetEventDatafromCDB(evRIDList, withOrganizer, lang, publRIDList, withCdays, ltsuser, ltspswd, serviceurl);
+
+                var myEventElement = myEvents.Root.Element("Root").Element("Head");
+
+                return myEventElement;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+    }
+
     public class GetEventDataCDB
     {
         public static CDBDataSoapClient.EndpointConfiguration GetEndpointConfig()

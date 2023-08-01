@@ -319,7 +319,7 @@ namespace OdhApiImporter.Controllers
             {
                 operation = "Resave Metadata",
                 updatetype = "custom",
-                otherinfo = "",
+                otherinfo = Request.Host.ToString(),
                 message = "Done",
                 recordsmodified = 0,
                 created = 0,

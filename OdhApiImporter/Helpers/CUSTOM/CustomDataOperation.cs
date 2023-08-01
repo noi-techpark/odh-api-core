@@ -116,12 +116,12 @@ namespace OdhApiImporter.Helpers
                 //metadata.SwaggerUrl = swaggerurl;
 
                 //add domain
-                if (host.StartsWith("tourism.importer"))
-                    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+                if (host.StartsWith("localhost"))
+                    metadata.BaseUrl = "https://localhost:5001";
                 if (host.StartsWith("importer.tourism"))
                     metadata.BaseUrl = "https://api.tourism.testingmachine.eu";
                 else
-                    metadata.BaseUrl = "https://localhost:5001";
+                    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
 
 
                 //Save tp DB                 
