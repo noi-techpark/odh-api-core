@@ -1237,6 +1237,11 @@ namespace DataModel
         public string? Temperatures { get; set; }
         public string? Weatherdesc { get; set; }
 
+        //Compatibility
+        //public string? WeatherCode { get { return this.Weathercode; } }
+        public string? WeatherDesc { get { return this.Weatherdesc; } }
+        public string? WeatherImgUrl { get { return this.WeatherImgurl; } }
+
         //NEW
         public string? Reliability { get; set; }
         public int TempMaxmax { get; set; }
@@ -1256,6 +1261,13 @@ namespace DataModel
         public string? Weatherdesc { get; set; }
         public string? Weathercode { get; set; }
         public string? WeatherImgurl { get; set; }
+
+        //Compatibility
+        public string? WeatherCode { get { return this.Weathercode; } }
+        public string? WeatherDesc { get { return this.Weatherdesc; } }
+        public string? WeatherImgUrl { get { return this.WeatherImgurl; } }
+
+
         public string? Reliability { get; set; }
     }
 
@@ -1307,7 +1319,7 @@ namespace DataModel
         //Compatibility
         public string? Weathercode { get { return this.WeatherCode; } }
         public string? Weatherdesc { get { return this.WeatherDesc; } }
-        public string? Weatherimgurl { get { return this.WeatherImgUrl; } }
+        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
 
         public int MinTemp { get; set; }
         public int Maxtemp { get; set; }
@@ -1344,7 +1356,7 @@ namespace DataModel
         //Compatibility
         public string? Weathercode { get { return this.WeatherCode; } }
         public string? Weatherdesc { get { return this.WeatherDesc; } }
-        public string? Weatherimgurl { get { return this.WeatherImgUrl; } }
+        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
 
 
         public int MaxTemp { get; set; }
