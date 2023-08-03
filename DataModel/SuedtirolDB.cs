@@ -1303,6 +1303,12 @@ namespace DataModel
         public string? WeatherCode { get; set; }
         public string? WeatherDesc { get; set; }
         public string? WeatherImgUrl { get; set; }
+
+        //Compatibility
+        public string? Weathercode { get { return this.WeatherCode; } }
+        public string? Weatherdesc { get { return this.WeatherDesc; } }
+        public string? Weatherimgurl { get { return this.WeatherImgUrl; } }
+
         public int MinTemp { get; set; }
         public int Maxtemp { get; set; }
 
@@ -1334,6 +1340,12 @@ namespace DataModel
         public string? WeatherCode { get; set; }
         public string? WeatherDesc { get; set; }
         public string? WeatherImgUrl { get; set; }
+
+        //Compatibility
+        public string? Weathercode { get { return this.WeatherCode; } }
+        public string? Weatherdesc { get { return this.WeatherDesc; } }
+        public string? Weatherimgurl { get { return this.WeatherImgUrl; } }
+
 
         public int MaxTemp { get; set; }
         public int MinTemp { get; set; }
