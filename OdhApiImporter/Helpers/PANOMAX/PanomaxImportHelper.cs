@@ -11,12 +11,7 @@ using PANOMAX;
 using Newtonsoft.Json;
 using Helper;
 using System.Collections.Generic;
-using DSS;
-using OdhApiImporter.Helpers.DSS;
-using System.Globalization;
 using System.Linq;
-using DSS.Parser;
-using static Microsoft.FSharp.Core.ByRefKinds;
 
 namespace OdhApiImporter.Helpers
 {
@@ -28,11 +23,13 @@ namespace OdhApiImporter.Helpers
 
         public List<string> idlistinterface { get; set; }
 
+        //Constructor
         public PanomaxImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
             idlistinterface = new List<string>();
         }
      
+        //Main Method, Gets the data list (Webcams and Videos) from source, Imports and Parses the data, Sets Data no more on the interface to inactive
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET Data List Webcams and Videos
@@ -47,6 +44,7 @@ namespace OdhApiImporter.Helpers
             return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
         }
 
+        //Get Data from Source
         private async Task<List<dynamic>> GetData(CancellationToken cancellationToken)
         {
             List<dynamic> panomaxdata = new List<dynamic>();
@@ -59,6 +57,7 @@ namespace OdhApiImporter.Helpers
             return panomaxdata;
         }
 
+        //Import the Data
         public async Task<UpdateDetail> ImportData(List<dynamic> panomaxinput, CancellationToken cancellationToken)
         {
             int updatecounter = 0;
@@ -82,6 +81,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
         }
 
+        //Parsing the Data
         public async Task<UpdateDetail> ImportDataSingle(dynamic webcam, dynamic videolist)
         {
             int updatecounter = 0;
@@ -141,6 +141,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
         }
 
+        //Inserting into DB
         private async Task<PGCRUDResult> InsertDataToDB(WebcamInfoLinked webcam, KeyValuePair<string, dynamic> panomaxdata)
         {
             var rawdataid = await InsertInRawDataDB(panomaxdata);
@@ -155,7 +156,8 @@ namespace OdhApiImporter.Helpers
             return pgcrudresult;
         }
 
-        private async Task<int> InsertInRawDataDB(KeyValuePair<string, dynamic> panomaxdata)
+        //Inserting into RawDB
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, dynamic> data)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
@@ -167,8 +169,8 @@ namespace OdhApiImporter.Helpers
                             sourceinterface = "webcams",
                             sourceurl = serviceurl,
                             type = "webcam",
-                            sourceid = panomaxdata.Key,
-                            raw = JsonConvert.SerializeObject(panomaxdata.Value),
+                            sourceid = data.Key,
+                            raw = JsonConvert.SerializeObject(data.Value),
                         });
         }
       
@@ -188,6 +190,7 @@ namespace OdhApiImporter.Helpers
             return webcam;
         }
 
+        //Deactivates all data that is no more on the interface
         private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
         {
             int updateresult = 0;
@@ -197,7 +200,7 @@ namespace OdhApiImporter.Helpers
             try
             {
                 //Begin SetDataNotinListToInactive
-                var idlistdb = await GetAllPanomaxDataByInterface(new List<string>() { "panomax" });
+                var idlistdb = await GetAllDataBySource(new List<string>() { "panomax" });
 
                 var idstodelete = idlistdb.Where(p => !idlistinterface.Any(p2 => p2 == p));
 
@@ -218,19 +221,5 @@ namespace OdhApiImporter.Helpers
 
             return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult, error = errorresult };
         }
-
-        private async Task<List<string>> GetAllPanomaxDataByInterface(List<string> syncsourceinterfacelist)
-        {
-            var query =
-               QueryFactory.Query(table)
-                   .Select("id")
-                   .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
-
-            var idlist = await query.GetAsync<string>();
-
-            return idlist.ToList();
-        }
-
-
     }
 }

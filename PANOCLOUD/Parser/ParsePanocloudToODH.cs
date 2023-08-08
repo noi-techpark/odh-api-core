@@ -16,13 +16,13 @@ namespace PANOCLOUD
 {
     public class ParsePanocloudToODH
     {
-        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked webcam, dynamic webcamtoparse)
+        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked webcam, dynamic webcamtoparse, string odhid)
         {
             if (webcam == null)
                 webcam = new WebcamInfoLinked();
 
             webcam.Source = "panocloud";
-            webcam.Id = "panocloud_" + (string)webcamtoparse.url; //no id in panocloud
+            webcam.Id = odhid; //no id in panocloud
 
             //TODO Parse the Panocloud Json
 

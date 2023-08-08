@@ -4,9 +4,11 @@
 
 using DataModel;
 using Helper;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -70,6 +72,19 @@ namespace OdhApiImporter.Helpers
             }
 
             return Tuple.Create(updateresult, deleteresult);
+        }
+
+        //Helper get all data from source
+        public async Task<List<string>> GetAllDataBySource(List<string> syncsourceinterfacelist)
+        {
+            var query =
+               QueryFactory.Query(table)
+                   .Select("id")                   
+                   .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
+
+            var idlist = await query.GetAsync<string>();
+
+            return idlist.ToList();
         }
     }
 
