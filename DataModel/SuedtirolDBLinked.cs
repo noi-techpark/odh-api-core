@@ -1560,6 +1560,11 @@ namespace DataModel
             }
         }
 
+        public string Dataspace { get; set; }
+
+        public ICollection<string> Category { get; set; }
+
+        public ICollection<string> DataProvider { get; set; }
     }
 
     #endregion
