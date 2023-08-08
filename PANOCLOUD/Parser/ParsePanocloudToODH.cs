@@ -25,22 +25,75 @@ namespace PANOCLOUD
             webcam.Id = odhid; //no id in panocloud
 
             //TODO Parse the Panocloud Json
+            var z = webcamtoparse["@attributes"]["cameraStatus"];
 
-            if ((string)webcamtoparse.cameraStatus == "active")
+            if ((string)webcamtoparse["@attributes"]["cameraStatus"] == "active")
                 webcam.Active = true;
             else
                 webcam.Active = false;
-
-            if ((string)webcamtoparse.full360 == "yes")
+        
+            if ((string)webcamtoparse["@attributes"]["full360"] == "yes")
                 webcam.WebCamProperties.ViewAngleDegree = "360";
             else
                 webcam.WebCamProperties.ViewAngleDegree = "";
 
-            if ((string)webcamtoparse.hasVR == "yes")
+            if ((string)webcamtoparse["@attributes"]["hasVR"] == "yes")
                 webcam.WebCamProperties.HasVR = true;
             else
                 webcam.WebCamProperties.HasVR = false;
 
+            webcam.WebCamProperties.ViewerType = webcamtoparse["@attributes"]["viewerType"];            
+
+            webcam.LastChange = Convert.ToDateTime(webcamtoparse["@attributes"]["lastModified"]);
+            webcam.Shortname = webcamtoparse["@attributes"]["name"];
+
+            var defaultlanguage = webcamtoparse["@attributes"]["defaultLang"];
+
+            //Detail
+            Detail detail = new Detail();
+            detail.Title = webcamtoparse["@attributes"]["name"];
+            detail.IntroText = webcamtoparse["@attributes"]["description"];
+
+
+            //throws exception
+            detail.BaseText = !String.IsNullOrEmpty(webcamtoparse["@attributes"]["longdescription"]) ? webcamtoparse["@attributes"]["longdescription"] : webcamtoparse["@attributes"]["description"];
+
+            detail.AdditionalText = webcamtoparse["urlConfig"]["example"];
+
+            detail.Language = defaultlanguage;
+
+            webcam.Detail.TryAddOrUpdate(detail.Language, detail);
+
+            //ContactInfos
+            ContactInfos contactinfo = new ContactInfos();
+            contactinfo.CompanyName = !String.IsNullOrEmpty(webcamtoparse["@attributes"]["pageTitle"]) ? webcamtoparse["@attributes"]["pageTitle"] : webcamtoparse["@attributes"]["name"];
+            contactinfo.CountryCode = webcamtoparse["@attributes"]["addressIso"] != null ? ((string)webcamtoparse["@attributes"]["addressIso"]).ToUpper() : "";
+            contactinfo.CountryName = contactinfo.CountryCode == "IT" ? "Italien" : "";
+            contactinfo.ZipCode = webcamtoparse["@attributes"]["addressZip"];
+            contactinfo.Address = webcamtoparse["@attributes"]["addressStreet"];
+            contactinfo.City = webcamtoparse["@attributes"]["geoPlacename"];
+            contactinfo.Region = webcamtoparse["@attributes"]["geoRegion"];
+            contactinfo.Url = webcamtoparse["@attributes"]["url"];            
+            contactinfo.Language = defaultlanguage;
+            contactinfo.LogoUrl = webcamtoparse["Logos"]["0"]["@attributes"]["logoUrl"];
+
+            webcam.ContactInfos.TryAddOrUpdate(contactinfo.Language, contactinfo);
+
+            //GPSInfo
+            GpsInfo gpsinfo = new GpsInfo();
+            gpsinfo.Gpstype = "position";
+            gpsinfo.Latitude = webcamtoparse["@attributes"]["geoLat"] != null ? Convert.ToDouble(webcamtoparse["@attributes"]["geoLat"]) : 0;
+            gpsinfo.Longitude = webcamtoparse["@attributes"]["geoLong"] != null ? Convert.ToDouble(webcamtoparse["@attributes"]["geoLong"]) : 0;
+            gpsinfo.Altitude = webcamtoparse["@attributes"]["geoAlt"] != null ? Convert.ToDouble(webcamtoparse["@attributes"]["geoAlt"]) : 0;
+            gpsinfo.AltitudeUnitofMeasure = "m";
+            webcam.GpsInfo = new List<GpsInfo>() { gpsinfo };
+
+            //Images
+
+            //Videos
+
+            //Mapping
+            webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "locationId", (string)webcamtoparse["@attributes"]["locationId"] } });
 
 
             return webcam;

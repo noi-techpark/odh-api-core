@@ -57,7 +57,7 @@ namespace OdhApiImporter.Helpers
             int deletecounter = 0;
             int errorcounter = 0;
 
-            if (panomaxinput != null && panomaxinput.Count > 0)
+            if (panomaxinput != null)
             {
                 //loop trough dss items
                 foreach (var webcam in panomaxinput.LiveCam)
@@ -156,11 +156,11 @@ namespace OdhApiImporter.Helpers
         public async Task<WebcamInfoLinked?> ParsePanocloudDataToWebcam(string odhid, dynamic input)
         {
             //Get the ODH Item
-            var mydssquery = QueryFactory.Query(table)
+            var query = QueryFactory.Query(table)
               .Select("data")
               .Where("id", odhid);
 
-            var webcamindb = await mydssquery.GetObjectSingleAsync<WebcamInfoLinked>();
+            var webcamindb = await query.GetObjectSingleAsync<WebcamInfoLinked>();
             var webcam = default(WebcamInfoLinked);
 
             webcam = ParsePanocloudToODH.ParseWebcamToWebcamInfo(webcamindb, input, odhid);

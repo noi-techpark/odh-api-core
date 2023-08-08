@@ -54,6 +54,7 @@ namespace PANOMAX
             gpsinfo.Latitude = webcamtoparse.latitude != null ? Convert.ToDouble(webcamtoparse.latitude) : 0;
             gpsinfo.Longitude = webcamtoparse.longitude != null ? Convert.ToDouble(webcamtoparse.longitude) : 0;
             gpsinfo.Altitude = webcamtoparse.elevation != null ? Convert.ToDouble(webcamtoparse.elevation) : 0;
+            gpsinfo.AltitudeUnitofMeasure = "m";
             webcam.GpsInfo = new List<GpsInfo>() { gpsinfo };            
 
             //WebcamProperties
