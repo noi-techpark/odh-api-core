@@ -3210,6 +3210,12 @@ namespace DataModel
         public string? Language { get; set; }
         public int? Width { get; set; }
         public int? Height { get; set; }
+
+        //NEW
+        public string? Definition { get; set; }
+        public double? Duration { get; set; }
+        public int? Resolution { get; set; }
+        public int? Bitrate { get; set; }
     }
 
     public class ContactInfos : IContactInfos, ILanguage
