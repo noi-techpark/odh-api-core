@@ -84,6 +84,39 @@ namespace OdhApiCore.Controllers
 
         //TODO EXTEND THE FILTER with the possibility to add fields for search
 
+
+        /// <summary>
+        /// GET Search over all Entities 
+        /// </summary>
+        /// <param name="odhtype">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
+        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
+        /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <returns>Collection of ODHTag Objects</returns>        
+        /// <response code="200">List created</response>
+        /// <response code="400">Request Error</response>
+        /// <response code="500">Internal Server Error</response>
+        [ProducesResponseType(typeof(IEnumerable<SmgTags>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
+        [HttpGet, Route("Distinct")]        
+        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
+        public async Task<IActionResult> GetDistinctAsync(
+            string? odhtype = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            string? rawfilter = null,
+            string? rawsort = null,            
+            bool removenullvalues = false,
+            CancellationToken cancellationToken = default)
+        {
+            var fieldstodisplay = fields ?? Array.Empty<string>();
+            
+            return await GetDistinct(validforentity: odhtype, fieldstodisplay, rawfilter, rawsort, removenullvalues: removenullvalues, null, cancellationToken);
+        }
+
         #endregion
 
         #region GETTER
@@ -191,6 +224,51 @@ namespace OdhApiCore.Controllers
             return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide))
                     .Where(json => json != null)
                     .Select(json => json!);
+        }
+
+        #endregion
+
+        #region DISTINCT GETTER
+
+        private Task<IActionResult> GetDistinct(
+            string validforentity, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues,
+            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                if (validforentity == null)
+                    throw new Exception("Invalid Request, missing odhtype");
+
+                var table = ODHTypeHelper.TranslateTypeString2Table(validforentity);
+
+                //Generates a distinct()
+                string select = "";
+
+                //Custom Fields filter
+                if (fields.Length > 0)
+                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+
+                //Remove first , from select
+                if (select.StartsWith(", "))
+                    select = select.Substring(2);
+
+                var query =
+                        QueryFactory.Query()
+                        .SelectRaw(select)
+                        .From(table)
+                        .ApplyRawFilter(rawfilter)
+                        //.ApplyOrdering_GeneratedColumns(geosearchresult, rawsort)
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
+                        .Distinct();                        
+
+                var data = await query.GetAsync<string>();
+
+                var fieldsTohide = FieldsToHide;
+
+                return data;  //.Select(raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide))
+                        //.Where(json => json != null)
+                        //.Select(json => json!);
+            });
         }
 
         #endregion
