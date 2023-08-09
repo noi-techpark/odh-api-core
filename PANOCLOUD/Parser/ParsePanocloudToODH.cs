@@ -57,8 +57,8 @@ namespace PANOCLOUD
             detail.Language = defaultlanguage;
 
             //TODO add urlconfig in Detail Object
-            detail.AdditionalText = (string)webcamtoparse["urlConfig"]["example"];
-            detail.AuthorTip = (string)webcamtoparse["urlConfig"]["@attributes"]["description"];
+            detail.AdditionalText = !String.IsNullOrEmpty((string)webcamtoparse["urlConfig"]) ? (string)webcamtoparse["urlConfig"]["example"] : null;
+            detail.AuthorTip = !String.IsNullOrEmpty((string)webcamtoparse["urlConfig"]) ? (string)webcamtoparse["urlConfig"]["@attributes"]["description"] : null;
 
 
             webcam.Detail.TryAddOrUpdate(detail.Language, detail);
@@ -74,7 +74,23 @@ namespace PANOCLOUD
             contactinfo.City = (string)webcamtoparse["@attributes"]["geoPlacename"];
             contactinfo.Region = (string)webcamtoparse["@attributes"]["geoRegion"];
             contactinfo.Language = defaultlanguage;
-            contactinfo.LogoUrl = webcamtoparse["Logos"] != null ? (string)webcamtoparse["Logos"]["0"]["@attributes"]["logoUrl"] : "";
+
+            if (webcamtoparse["Logos"] != null)
+            {
+                if (webcamtoparse["Logos"]["0"] != null)
+                {
+                    contactinfo.LogoUrl = (string)webcamtoparse["Logos"]["0"]["@attributes"]["logoUrl"];
+                }
+                else if (webcamtoparse["Logos"]["Logo"] != null)
+                {
+                    //Take the first logo
+                    foreach (var logo in webcamtoparse.Logos.Logo)
+                    {
+                        contactinfo.LogoUrl = logo["@attributes"]["logoUrl"];
+                        break;
+                    }
+                }
+            }
 
             webcam.ContactInfos.TryAddOrUpdate(contactinfo.Language, contactinfo);
 
@@ -164,35 +180,28 @@ namespace PANOCLOUD
                 }
                 else
                 {
-                    foreach (var videostoparse in webcamtoparse.Videos)
+                    var videoitemslist = new List<VideoItems>();
+
+                    foreach (var videotoparse in webcamtoparse.Videos.video)
                     {
-                        if (videostoparse.videos != null)
-                        {
-                            var videoitemslist = new List<VideoItems>();
 
-                            foreach (var videotoparse in videostoparse.videos)
-                            {
-                                VideoItems videoitem = new VideoItems();
-                                //"videoClipUrl": "alpenrose-haidersee.panocloud.webcam/clip_current_720p.mp4",
-                                videoitem.Url = (string)videotoparse["@attributes"]["videoClipUrl"];
-                                videoitem.StreamingSource = "panocloud";
-                                videoitem.Active = true;
+                        VideoItems videoitem = new VideoItems();
+                        //"videoClipUrl": "alpenrose-haidersee.panocloud.webcam/clip_current_720p.mp4",
+                        videoitem.Url = (string)videotoparse["@attributes"]["videoClipUrl"];
+                        videoitem.StreamingSource = "panocloud";
+                        videoitem.Active = true;
 
-                                videoitem.Resolution = (int)videotoparse["@attributes"]["resolution"];
-                                videoitem.Definition = (string)videotoparse["@attributes"]["definition"];
-                                videoitem.Bitrate = (int)videotoparse["@attributes"]["videoBitRate"];
-                                videoitem.Duration = (double)videotoparse["@attributes"]["duration"];
+                        videoitem.Resolution = (int)videotoparse["@attributes"]["resolution"];
+                        videoitem.Definition = (string)videotoparse["@attributes"]["definition"];
+                        videoitem.Bitrate = (int)videotoparse["@attributes"]["videoBitRate"];
+                        videoitem.Duration = (double)videotoparse["@attributes"]["duration"];
 
-                                //"mimeType": "video/mp4",
-                                videoitem.VideoType = (string)videotoparse["@attributes"]["mimeType"];
+                        //"mimeType": "video/mp4",
+                        videoitem.VideoType = (string)videotoparse["@attributes"]["mimeType"];
 
-                                videoitemslist.Add(videoitem);
-                            }
-
-                            webcam.VideoItems.TryAddOrUpdate(defaultlanguage, videoitemslist);
-                        }
+                        videoitemslist.Add(videoitem);
                     }
-
+                    webcam.VideoItems.TryAddOrUpdate(defaultlanguage, videoitemslist);
                 }
             }
             
