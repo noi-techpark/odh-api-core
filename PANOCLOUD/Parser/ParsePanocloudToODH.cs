@@ -89,8 +89,31 @@ namespace PANOCLOUD
             webcam.GpsInfo = new List<GpsInfo>() { gpsinfo };
 
             //Images
+            webcam.ImageGallery = new List<ImageGallery>();
+            foreach(var imagetoparse in webcamtoparse.Images.image)
+            {
+                ImageGallery image = new ImageGallery();
+
+                image.Width = (int)imagetoparse["@attributes"]["imgWidth"];
+                image.Height = (int)imagetoparse["@attributes"]["imgHeight"];
+                image.ImageName = (string)imagetoparse["@attributes"]["fileName"];
+                image.ImageUrl = (string)imagetoparse["@attributes"]["fileUrl"];
+                image.ImageSource = "panocloud";                
+                image.IsInGallery = true;
+                //"panorama": "yes",
+                //"fileType": "big",
+                //"fileTimeUnix": "1691568228",
+                //"fileTime": "2023-08-09T08:03:48+00:00"
+                //"mimeType": "image/jpeg",
+
+                webcam.ImageGallery.Add(image);
+            }
 
             //Videos
+            foreach (var videotoparse in webcamtoparse.Videos)
+            {
+
+            }
 
             //Mapping
             webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "locationId", (string)webcamtoparse["@attributes"]["locationId"] } });
