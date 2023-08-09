@@ -139,56 +139,64 @@ namespace PANOCLOUD
             //"fileTime": "2023-08-09T07:07:08+00:00",                        
             //"videoPlayerUrl": "alpenrose-haidersee.panocloud.webcam/wmsclipplayer.php"
 
+            webcam.VideoItems = new Dictionary<string, ICollection<VideoItems>>();
+
             //Only one videos assigned
-            if (webcamtoparse["Videos"] != null && webcamtoparse["Videos"]["0"] != null)
+            if (webcamtoparse["Videos"] != null)
             {
-                VideoItems videoitem = new VideoItems();
-                //"videoClipUrl": "alpenrose-haidersee.panocloud.webcam/clip_current_720p.mp4",
-                videoitem.Url = (string)webcamtoparse["Videos"]["0"]["@attributes"]["videoClipUrl"];
-                videoitem.StreamingSource = "panocloud";
-                videoitem.Active = true;
-
-                videoitem.Resolution = (int)webcamtoparse["Videos"]["0"]["@attributes"]["resolution"];
-                videoitem.Definition = (string)webcamtoparse["Videos"]["0"]["@attributes"]["definition"];
-                videoitem.Bitrate = (int)webcamtoparse["Videos"]["0"]["@attributes"]["videoBitRate"];
-                videoitem.Duration = (double)webcamtoparse["Videos"]["0"]["@attributes"]["duration"];
-
-                //"mimeType": "video/mp4",
-                videoitem.VideoType = (string)webcamtoparse["Videos"]["0"]["@attributes"]["mimeType"];
-
-                webcam.VideoItems.TryAddOrUpdate(defaultlanguage, new List<VideoItems>() { videoitem });
-            }
-
-
-            foreach (var videostoparse in webcamtoparse.Videos)
-            {                
-                if(videostoparse.videos != null)
+                if (webcamtoparse["Videos"]["0"] != null)
                 {
-                    var videoitemslist = new List<VideoItems>();
+                    VideoItems videoitem = new VideoItems();
+                    //"videoClipUrl": "alpenrose-haidersee.panocloud.webcam/clip_current_720p.mp4",
+                    videoitem.Url = (string)webcamtoparse["Videos"]["0"]["@attributes"]["videoClipUrl"];
+                    videoitem.StreamingSource = "panocloud";
+                    videoitem.Active = true;
 
-                    foreach (var videotoparse in videostoparse.videos)
+                    videoitem.Resolution = (int)webcamtoparse["Videos"]["0"]["@attributes"]["resolution"];
+                    videoitem.Definition = (string)webcamtoparse["Videos"]["0"]["@attributes"]["definition"];
+                    videoitem.Bitrate = (int)webcamtoparse["Videos"]["0"]["@attributes"]["videoBitRate"];
+                    videoitem.Duration = (double)webcamtoparse["Videos"]["0"]["@attributes"]["duration"];
+
+                    //"mimeType": "video/mp4",
+                    videoitem.VideoType = (string)webcamtoparse["Videos"]["0"]["@attributes"]["mimeType"];
+
+                    webcam.VideoItems.TryAddOrUpdate(defaultlanguage, new List<VideoItems>() { videoitem });
+                }
+                else
+                {
+                    foreach (var videostoparse in webcamtoparse.Videos)
                     {
-                        VideoItems videoitem = new VideoItems();
-                        //"videoClipUrl": "alpenrose-haidersee.panocloud.webcam/clip_current_720p.mp4",
-                        videoitem.Url = (string)videotoparse["@attributes"]["videoClipUrl"];
-                        videoitem.StreamingSource = "panocloud";
-                        videoitem.Active = true;
+                        if (videostoparse.videos != null)
+                        {
+                            var videoitemslist = new List<VideoItems>();
 
-                        videoitem.Resolution = (int)videotoparse["@attributes"]["resolution"];
-                        videoitem.Definition = (string)videotoparse["@attributes"]["definition"];
-                        videoitem.Bitrate = (int)videotoparse["@attributes"]["videoBitRate"];
-                        videoitem.Duration = (double)videotoparse["@attributes"]["duration"];
+                            foreach (var videotoparse in videostoparse.videos)
+                            {
+                                VideoItems videoitem = new VideoItems();
+                                //"videoClipUrl": "alpenrose-haidersee.panocloud.webcam/clip_current_720p.mp4",
+                                videoitem.Url = (string)videotoparse["@attributes"]["videoClipUrl"];
+                                videoitem.StreamingSource = "panocloud";
+                                videoitem.Active = true;
 
-                        //"mimeType": "video/mp4",
-                        videoitem.VideoType = (string)videotoparse["@attributes"]["mimeType"];
+                                videoitem.Resolution = (int)videotoparse["@attributes"]["resolution"];
+                                videoitem.Definition = (string)videotoparse["@attributes"]["definition"];
+                                videoitem.Bitrate = (int)videotoparse["@attributes"]["videoBitRate"];
+                                videoitem.Duration = (double)videotoparse["@attributes"]["duration"];
 
-                        videoitemslist.Add(videoitem);
+                                //"mimeType": "video/mp4",
+                                videoitem.VideoType = (string)videotoparse["@attributes"]["mimeType"];
+
+                                videoitemslist.Add(videoitem);
+                            }
+
+                            webcam.VideoItems.TryAddOrUpdate(defaultlanguage, videoitemslist);
+                        }
                     }
 
-                    webcam.VideoItems.TryAddOrUpdate(defaultlanguage, videoitemslist);
                 }
             }
-
+            
+          
             //TODO digitalSignage
 
             //TODO WeatherData
