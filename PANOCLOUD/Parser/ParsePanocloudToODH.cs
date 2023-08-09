@@ -23,10 +23,7 @@ namespace PANOCLOUD
 
             webcam.Source = "panocloud";
             webcam.Id = odhid; //no id in panocloud
-
-            //TODO Parse the Panocloud Json
-            var z = webcamtoparse["@attributes"]["cameraStatus"];
-
+            
             if ((string)webcamtoparse["@attributes"]["cameraStatus"] == "active")
                 webcam.Active = true;
             else
@@ -42,40 +39,43 @@ namespace PANOCLOUD
             else
                 webcam.WebCamProperties.HasVR = false;
 
-            webcam.WebCamProperties.ViewerType = webcamtoparse["@attributes"]["viewerType"];            
+            webcam.WebCamProperties.ViewerType = (string)webcamtoparse["@attributes"]["viewerType"];            
 
             webcam.LastChange = Convert.ToDateTime(webcamtoparse["@attributes"]["lastModified"]);
-            webcam.Shortname = webcamtoparse["@attributes"]["name"];
+            webcam.Shortname = (string)webcamtoparse["@attributes"]["name"];
 
-            var defaultlanguage = webcamtoparse["@attributes"]["defaultLang"];
+            var defaultlanguage = (string)webcamtoparse["@attributes"]["defaultLang"];
 
             //Detail
             Detail detail = new Detail();
-            detail.Title = webcamtoparse["@attributes"]["name"];
-            detail.IntroText = webcamtoparse["@attributes"]["description"];
+            detail.Title = (string)webcamtoparse["@attributes"]["name"];
+            detail.IntroText = (string)webcamtoparse["@attributes"]["description"];
+
+            var test = webcamtoparse["Logos"];
 
 
             //throws exception
-            detail.BaseText = !String.IsNullOrEmpty(webcamtoparse["@attributes"]["longdescription"]) ? webcamtoparse["@attributes"]["longdescription"] : webcamtoparse["@attributes"]["description"];
+            detail.BaseText = !String.IsNullOrEmpty((string)webcamtoparse["@attributes"]["longdescription"]) ? (string)webcamtoparse["@attributes"]["longdescription"] : (string)webcamtoparse["@attributes"]["description"];
 
-            detail.AdditionalText = webcamtoparse["urlConfig"]["example"];
+            detail.AdditionalText = (string)webcamtoparse["urlConfig"]["example"];
 
             detail.Language = defaultlanguage;
 
             webcam.Detail.TryAddOrUpdate(detail.Language, detail);
 
+       
             //ContactInfos
             ContactInfos contactinfo = new ContactInfos();
-            contactinfo.CompanyName = !String.IsNullOrEmpty(webcamtoparse["@attributes"]["pageTitle"]) ? webcamtoparse["@attributes"]["pageTitle"] : webcamtoparse["@attributes"]["name"];
-            contactinfo.CountryCode = webcamtoparse["@attributes"]["addressIso"] != null ? ((string)webcamtoparse["@attributes"]["addressIso"]).ToUpper() : "";
-            contactinfo.CountryName = contactinfo.CountryCode == "IT" ? "Italien" : "";
-            contactinfo.ZipCode = webcamtoparse["@attributes"]["addressZip"];
-            contactinfo.Address = webcamtoparse["@attributes"]["addressStreet"];
-            contactinfo.City = webcamtoparse["@attributes"]["geoPlacename"];
-            contactinfo.Region = webcamtoparse["@attributes"]["geoRegion"];
-            contactinfo.Url = webcamtoparse["@attributes"]["url"];            
+            contactinfo.CompanyName = !String.IsNullOrEmpty((string)webcamtoparse["@attributes"]["pageTitle"]) ? (string)webcamtoparse["@attributes"]["pageTitle"] : (string)webcamtoparse["@attributes"]["name"];
+            contactinfo.CountryCode = (string)webcamtoparse["@attributes"]["addressIso"] != null ? ((string)webcamtoparse["@attributes"]["addressIso"]).ToUpper() : "";
+            contactinfo.CountryName = (string)contactinfo.CountryCode == "IT" ? "Italien" : "";
+            contactinfo.ZipCode = (string)webcamtoparse["@attributes"]["addressZip"];
+            contactinfo.Address = (string)webcamtoparse["@attributes"]["addressStreet"];
+            contactinfo.City = (string)webcamtoparse["@attributes"]["geoPlacename"];
+            contactinfo.Region = (string)webcamtoparse["@attributes"]["geoRegion"];
+            contactinfo.Url = (string)webcamtoparse["@attributes"]["url"];            
             contactinfo.Language = defaultlanguage;
-            contactinfo.LogoUrl = webcamtoparse["Logos"]["0"]["@attributes"]["logoUrl"];
+            contactinfo.LogoUrl = webcamtoparse["Logos"] != null ? (string)webcamtoparse["Logos"]["0"]["@attributes"]["logoUrl"] : "";
 
             webcam.ContactInfos.TryAddOrUpdate(contactinfo.Language, contactinfo);
 
@@ -110,10 +110,43 @@ namespace PANOCLOUD
             }
 
             //Videos
-            foreach (var videotoparse in webcamtoparse.Videos)
-            {
+            //"duration": "120",
+            //"frameRate": "25.05",
+            //"bitRate": "1678000",
+            //"videoBitRate": "1677000",
+            //"videoCodec": "",
+            //"definition": "HD",
+            //"resolution": "720",
+            //"fileTimeUnix": "1691564828",
+            //"fileTime": "2023-08-09T07:07:08+00:00",                        
+            //"videoPlayerUrl": "alpenrose-haidersee.panocloud.webcam/wmsclipplayer.php"
 
+            foreach (var videostoparse in webcamtoparse.Videos)
+            {
+                if(videostoparse["0"] != null)
+                {
+                    VideoItems videoitem = new VideoItems();
+                    //"videoClipUrl": "alpenrose-haidersee.panocloud.webcam/clip_current_720p.mp4",
+                    videoitem.Url = (string)videostoparse["@attributes"]["videoClipUrl"];
+                    videoitem.StreamingSource = "panocloud";
+                    videoitem.Active = true;
+                    //"mimeType": "video/mp4",
+                    videoitem.VideoType = (string)videostoparse["@attributes"]["mimeType"];
+                }
+                else if(videostoparse.videos != null)
+                {
+                    foreach(var videotoparse in videostoparse.videos)
+                    {
+
+                    }
+                }
             }
+
+            //TODO digitalSignage
+
+            //TODO WeatherData
+
+            //TODO urlConfig
 
             //Mapping
             webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "locationId", (string)webcamtoparse["@attributes"]["locationId"] } });
