@@ -46,6 +46,8 @@ namespace PANOCLOUD
             webcam.Shortname = (string)webcamtoparse["@attributes"]["name"];
 
             var defaultlanguage = (string)webcamtoparse["@attributes"]["defaultLang"];
+            if (String.IsNullOrEmpty(defaultlanguage))
+                defaultlanguage = "de";
 
             //Detail
             Detail detail = new Detail();
@@ -57,8 +59,8 @@ namespace PANOCLOUD
             detail.Language = defaultlanguage;
 
             //TODO add urlconfig in Detail Object
-            detail.AdditionalText = !String.IsNullOrEmpty((string)webcamtoparse["urlConfig"]) ? (string)webcamtoparse["urlConfig"]["example"] : null;
-            detail.AuthorTip = !String.IsNullOrEmpty((string)webcamtoparse["urlConfig"]) ? (string)webcamtoparse["urlConfig"]["@attributes"]["description"] : null;
+            detail.AdditionalText =webcamtoparse["urlConfig"] != null ? (string)webcamtoparse["urlConfig"]["example"] : null;
+            detail.AuthorTip = webcamtoparse["urlConfig"]!= null ? (string)webcamtoparse["urlConfig"]["@attributes"]["description"] : null;
 
 
             webcam.Detail.TryAddOrUpdate(detail.Language, detail);
