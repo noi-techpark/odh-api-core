@@ -74,6 +74,7 @@ module Filtering =
             skipString "ge" >>% Ge
             skipString "lt" >>% Lt
             skipString "le" >>% Le
+            skipString "like" >>% Like
         ]
 
     let boolean: Parser<Value> =

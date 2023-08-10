@@ -67,6 +67,7 @@ module Filtering =
         | Ge -> ">="
         | Lt -> "<"
         | Le -> "<="
+        | Like -> "Like"
 
     let writeRawValue = function
         | Boolean x -> box x
@@ -119,4 +120,5 @@ module Filtering =
             $"NOT {writeStatement jsonSerializer (Condition (In (field, values)))}"
         | Condition (IsNull property) -> $"{writeTextField property} IS NULL"
         | Condition (IsNotNull property) -> $"{writeTextField property} IS NOT NULL"
+        //| Condition (Like operator) ->  $"{writeTextField property} LIKE "
 
