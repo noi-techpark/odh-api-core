@@ -242,15 +242,15 @@ namespace OdhApiCore.Controllers
                 var table = ODHTypeHelper.TranslateTypeString2Table(validforentity);
 
                 //Generates a distinct()
-                string select = "";
+                string select = GetSelectDistinct(fields); ;
 
                 //Custom Fields filter
-                if (fields.Length > 0)
-                    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                //if (fields.Length > 0)
+                //    select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
-                //Remove first , from select
-                if (select.StartsWith(", "))
-                    select = select.Substring(2);
+                ////Remove first , from select
+                //if (select.StartsWith(", "))
+                //    select = select.Substring(2);
 
                 var query =
                         QueryFactory.Query()
@@ -269,6 +269,25 @@ namespace OdhApiCore.Controllers
                         //.Where(json => json != null)
                         //.Select(json => json!);
             });
+        }
+
+        private string GetSelectDistinct(string[] fields)
+        {
+            string select = "";
+
+            //Custom Fields filter
+            if (fields.Length > 0)
+            {
+                select += string.Join("", fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")).Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
+                select += string.Join("", fields.Where(x => x.Contains("[*]") || x.Contains("[]")).Select(field => $", unnest(json_array_to_pg_array(data#>'\\{{{field.Replace(".[*]", "").Replace(".[]", "").Replace(".", ",") }\\}}'))"));
+            }                
+
+            //Remove first , from select
+            if (select.StartsWith(", "))
+                select = select.Substring(2);
+
+
+            return select;
         }
 
         #endregion
