@@ -115,13 +115,15 @@ namespace OdhApiImporter.Helpers
 
                 //metadata.SwaggerUrl = swaggerurl;
 
-                //add domain
-                if (host.StartsWith("localhost"))
-                    metadata.BaseUrl = "https://localhost:5001";
-                if (host.StartsWith("importer.tourism"))
-                    metadata.BaseUrl = "https://api.tourism.testingmachine.eu";
-                else
-                    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+                ////add domain
+                //if (host.StartsWith("localhost"))
+                //    metadata.BaseUrl = "https://localhost:5001";
+                //if (host.StartsWith("importer.tourism"))
+                //    metadata.BaseUrl = "https://api.tourism.testingmachine.eu";
+                //else
+                //    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+
+                metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
 
 
                 //Save tp DB                 
