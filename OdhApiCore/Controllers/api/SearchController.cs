@@ -243,7 +243,7 @@ namespace OdhApiCore.Controllers
                 var table = ODHTypeHelper.TranslateTypeString2Table(validforentity);
 
                 //Generates a distinct()
-                string select = GetSelectDistinct(fields); ;
+                var select = GetSelectDistinct(fields);
 
                 //Custom Fields filter
                 //if (fields.Length > 0)
@@ -251,18 +251,25 @@ namespace OdhApiCore.Controllers
 
                 ////Remove first , from select
                 //if (select.StartsWith(", "))
-                //    select = select.Substring(2);
+                //    select = select.Substring(2);        
 
                 var query =
                         QueryFactory.Query()
-                        .SelectRaw(select)
+                        .SelectRaw(select.select)
                         .From(table)
                         .ApplyRawFilter(rawfilter)
                         //.ApplyOrdering_GeneratedColumns(geosearchresult, rawsort)
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
-                        .Distinct();                        
+                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                
+                //Get as Text
+                var newquery =
+                    QueryFactory.Query()
+                    //.SelectRaw("\"Sources\"->>0")
+                    .SelectRaw(select.mainselect)
+                    .From(query, "subsel")
+                    .Distinct();
 
-                var data = await query.GetAsync<string>();
+                var data = await newquery.GetAsync<string>();
 
                 var fieldsTohide = FieldsToHide;
 
@@ -272,21 +279,29 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        private string GetSelectDistinct(string[] fields)
+        private DistinctSelectObj GetSelectDistinct(string[] fields)
         {
+            DistinctSelectObj myselectobj = new DistinctSelectObj();            
+
             string select = "";
-
-            List<string> firstselector = new List<string>();
-
+            string mainselect = "";
+            
             //Custom Fields filter
             if (fields.Length > 0)
             {
+                //select += string.Join("", fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")).Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));                
 
+                foreach(var field in fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")))
+                {
+                    select += $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\"";
 
-                select += string.Join("", fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")).Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));                
+                    myselectobj.selectinfo.TryAddOrUpdate(field, false);
+
+                    mainselect += $", \"{field}\"";
+                }
 
                 //select += string.Join("", fields.Where(x => x.Contains("[*]") || x.Contains("[]")).Select(field => $", unnest(json_array_to_pg_array(data#>'\\{{{field.Replace(".[*]", "").Replace(".[]", "").Replace(".", ",") }\\}}'))"));
-          
+
                 foreach (var field in fields.Where(x => x.Contains("[*]") || x.Contains("[]")))
                 {
                     // Tags.[*].Id --> jsonb_path_query(data#>'{Tags}', '$[*] ? (@ <> null).Id')   Tags|.Id
@@ -295,7 +310,11 @@ namespace OdhApiCore.Controllers
                     var tempfield = field.Replace(".[*]", "|").Replace(".[].", "|");
                     var splitted = tempfield.Split('|');
 
-                    select += $", jsonb_path_query(data#>'\\{{{splitted[0].Replace(".", ",")}\\}}', '$\\[*\\] ? (@ <> null){splitted[1]}') as \"{splitted[0].Replace(".", ",")}\"";
+                    select += $", jsonb_path_query(data#>'\\{{{splitted[0].Replace(".", ",")}\\}}', '$\\[*\\] ? (@ <> null){splitted[1]}') as \"{splitted[0] + splitted[1]}\"";
+
+                    myselectobj.selectinfo.TryAddOrUpdate(splitted[0] + splitted[1], true);
+
+                    mainselect += $", \"{splitted[0] + splitted[1]}\"->>0";
                 }
                 
                 //SELECT DISTINCT hallo->> 0
@@ -306,12 +325,28 @@ namespace OdhApiCore.Controllers
             if (select.StartsWith(", "))
                 select = select.Substring(2);
 
-            //Add first selector
-            //select = "SELECT " + string.Join(", ", firstselector) + " from (" + select + ") as test";
+            if (mainselect.StartsWith(", "))
+                mainselect = mainselect.Substring(2);            
 
-            return select;
+            myselectobj.select = select;
+            myselectobj.mainselect = mainselect;
+
+            return myselectobj;
         }
+        
 
         #endregion
+    }
+
+    public class DistinctSelectObj
+    {
+        public DistinctSelectObj()
+        {
+            selectinfo = new Dictionary<string, bool>();
+        }
+
+        public string select { get; set; }
+        public string mainselect { get; set; }        
+        public Dictionary<string, bool> selectinfo { get; set; }
     }
 }
