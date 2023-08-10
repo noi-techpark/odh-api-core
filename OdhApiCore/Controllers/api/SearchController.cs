@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Responses;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -275,17 +276,38 @@ namespace OdhApiCore.Controllers
         {
             string select = "";
 
+            List<string> firstselector = new List<string>();
+
             //Custom Fields filter
             if (fields.Length > 0)
             {
-                select += string.Join("", fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")).Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
-                select += string.Join("", fields.Where(x => x.Contains("[*]") || x.Contains("[]")).Select(field => $", unnest(json_array_to_pg_array(data#>'\\{{{field.Replace(".[*]", "").Replace(".[]", "").Replace(".", ",") }\\}}'))"));
+
+
+                select += string.Join("", fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")).Select(field => $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));                
+
+                //select += string.Join("", fields.Where(x => x.Contains("[*]") || x.Contains("[]")).Select(field => $", unnest(json_array_to_pg_array(data#>'\\{{{field.Replace(".[*]", "").Replace(".[]", "").Replace(".", ",") }\\}}'))"));
+          
+                foreach (var field in fields.Where(x => x.Contains("[*]") || x.Contains("[]")))
+                {
+                    // Tags.[*].Id --> jsonb_path_query(data#>'{Tags}', '$[*] ? (@ <> null).Id')   Tags|.Id
+                    // Sources.[*] --> jsonb_path_query(data#>'{Sources}', '$[*] ? (@ <> null)') Sources|
+
+                    var tempfield = field.Replace(".[*]", "|").Replace(".[].", "|");
+                    var splitted = tempfield.Split('|');
+
+                    select += $", jsonb_path_query(data#>'\\{{{splitted[0].Replace(".", ",")}\\}}', '$\\[*\\] ? (@ <> null){splitted[1]}') as \"{splitted[0].Replace(".", ",")}\"";
+                }
+                
+                //SELECT DISTINCT hallo->> 0
+                //from(select jsonb_path_query(data#>'{Sources}', '$[*] ? (@ <> null)') as hallo from metadata) as test
             }                
 
             //Remove first , from select
             if (select.StartsWith(", "))
                 select = select.Substring(2);
 
+            //Add first selector
+            //select = "SELECT " + string.Join(", ", firstselector) + " from (" + select + ") as test";
 
             return select;
         }
