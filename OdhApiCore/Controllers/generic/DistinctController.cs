@@ -34,12 +34,15 @@ namespace OdhApiCore.Controllers
         }
 
         #region SWAGGER Exposed API
-      
+
         /// <summary>
         /// GET Generic Distinct search of fields
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
+        /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="odhtype">Mandatory search trough Entities (metadata, accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
-        /// <param name="fields">Mandatory Select a fields for the Distinct Query, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="fields">Mandatory Select a fields for the Distinct Query, More fields are indicated by separator ',' example fields=Source, arrays are selected with a .[*] example HasLanguage.[*] / Features.[*].Id  (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
@@ -104,7 +107,7 @@ namespace OdhApiCore.Controllers
                         .SelectRaw(select.select)
                         .From(table)
                         .ApplyRawFilter(rawfilter)
-                        //.ApplyOrdering_GeneratedColumns(geosearchresult, rawsort)
+                        //.ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort)
                         .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
                 
                 //Get as Text
@@ -113,7 +116,8 @@ namespace OdhApiCore.Controllers
                     //.SelectRaw("\"Sources\"->>0")
                     .SelectRaw(select.mainselect)
                     .From(query, "subsel")
-                    .Distinct();
+                    .Distinct()
+                    .OrderByRawIfNotNull(GetOrderStatement(rawsort, select));
 
                 //var data = await newquery.GetAsync<string>();                
 
@@ -193,7 +197,7 @@ namespace OdhApiCore.Controllers
 
                     select += $", jsonb_path_query(data#>'\\{{{splitted[0].Replace(".", ",")}\\}}', '$\\[*\\] ? (@ <> null){splitted[1]}') as \"{splitted[0] + splitted[1]}\"";
 
-                    myselectobj.selectinfo.TryAddOrUpdate(splitted[0] + splitted[1], true);
+                    myselectobj.selectinfo.TryAddOrUpdate(splitted[0] + astoadd + splitted[1], true);
 
                     mainselect += $", \"{splitted[0] + splitted[1]}\"->>0 as \"{splitted[0] + astoadd + splitted[1]}\"";
                 }
@@ -215,6 +219,40 @@ namespace OdhApiCore.Controllers
             return myselectobj;
         }
         
+        private string? GetOrderStatement(string? rawsort, DistinctSelectObj distinctselectobj)
+        {
+            if (String.IsNullOrEmpty(rawsort))
+                return null;
+
+            string orderby = "";
+
+            var rawsorttemp = rawsort.Split(',');
+
+            foreach (var rawsortitem in rawsorttemp)
+            {
+                string direction = " ASC";
+                string rawsortfield = rawsortitem;
+
+                if (rawsortitem.StartsWith("-"))
+                {
+                    direction = " DESC";
+                    rawsortfield = rawsortitem.Replace("-", "");
+                }
+                    
+                if(distinctselectobj.selectinfo.Select(x => x.Key.Replace("\\", "")).Contains(rawsortfield))
+                {            
+                    var rawsortterm = distinctselectobj.selectinfo.Where(x => x.Key.Replace("\\", "").Contains(rawsortfield)).FirstOrDefault();
+
+                    if(rawsortterm.Key != null)
+                        orderby += $"\"{rawsortterm.Key}\" {direction} ,";
+                }                
+            }
+
+            if(orderby.EndsWith(","))
+                orderby = orderby.Substring(0, orderby.Length - 1);
+
+            return orderby;
+        }
 
         #endregion
     }
