@@ -17,6 +17,7 @@ using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,9 +54,12 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Distinct")]        
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetDistinctAsync(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
             string? odhtype = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
+            string? seed = null,
             string? rawfilter = null,
             string? rawsort = null,            
             bool removenullvalues = false,
@@ -63,15 +67,15 @@ namespace OdhApiCore.Controllers
         {
             var fieldstodisplay = fields ?? Array.Empty<string>();
             
-            return await GetDistinct(validforentity: odhtype, fieldstodisplay, rawfilter, rawsort, removenullvalues: removenullvalues, null, cancellationToken);
+            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay, seed, rawfilter, rawsort, removenullvalues: removenullvalues, null, cancellationToken);
         }
 
         #endregion
     
         #region GETTER
 
-        private Task<IActionResult> GetDistinct(
-            string validforentity, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues,
+        private Task<IActionResult> GetDistinct(uint? pagenumber, int? pagesize,
+            string validforentity, string[] fields, string? seed, string? rawfilter, string? rawsort, bool removenullvalues,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -104,24 +108,49 @@ namespace OdhApiCore.Controllers
                         .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
                 
                 //Get as Text
-                var newquery =
+                var mainquery =
                     QueryFactory.Query()
                     //.SelectRaw("\"Sources\"->>0")
                     .SelectRaw(select.mainselect)
                     .From(query, "subsel")
                     .Distinct();
 
-                //var data = await newquery.GetAsync<string>();
+                //var data = await newquery.GetAsync<string>();                
 
-                var test = await newquery.GetAsync();
+                if (pagenumber.HasValue)
+                {
+                    // Get paginated data
+                    var data =
+                        await mainquery
+                            .PaginateAsync(
+                            page: (int)pagenumber,
+                                perPage: pagesize ?? 25);
 
+                    uint totalpages = (uint)data.TotalPages;
+                    uint totalcount = (uint)data.Count;
+
+                    return ResponseHelpers.GetResult<dynamic>(
+                        pagenumber.Value,
+                        totalpages,
+                        totalcount,
+                        seed,
+                        data.List,
+                        Url);
+                }
+                else
+                {
+                    var data = await mainquery.GetAsync();
+                    return data;
+                }
+                
+     
 
 
                 //var fieldsTohide = FieldsToHide;
 
-                return test;  //.Select(raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide))
-                        //.Where(json => json != null)
-                        //.Select(json => json!);
+                //.Select(raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide))
+                //.Where(json => json != null)
+                //.Select(json => json!);
             });
         }
 
@@ -150,6 +179,12 @@ namespace OdhApiCore.Controllers
 
                 foreach (var field in fields.Where(x => x.Contains("[*]") || x.Contains("[]")))
                 {
+                    string astoadd = "";
+                    if (field.Contains("[*]"))
+                        astoadd = ".\\[*\\]";
+                    if (field.Contains("[]"))
+                        astoadd = ".\\[\\]";
+
                     // Tags.[*].Id --> jsonb_path_query(data#>'{Tags}', '$[*] ? (@ <> null).Id')   Tags|.Id
                     // Sources.[*] --> jsonb_path_query(data#>'{Sources}', '$[*] ? (@ <> null)') Sources|
 
@@ -160,7 +195,7 @@ namespace OdhApiCore.Controllers
 
                     myselectobj.selectinfo.TryAddOrUpdate(splitted[0] + splitted[1], true);
 
-                    mainselect += $", \"{splitted[0] + splitted[1]}\"->>0 as \"{splitted[0] + splitted[1]}\"";
+                    mainselect += $", \"{splitted[0] + splitted[1]}\"->>0 as \"{splitted[0] + astoadd + splitted[1]}\"";
                 }
                 
                 //SELECT DISTINCT hallo->> 0
