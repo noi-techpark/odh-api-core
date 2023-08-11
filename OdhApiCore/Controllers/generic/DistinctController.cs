@@ -176,7 +176,8 @@ namespace OdhApiCore.Controllers
                 foreach(var field in fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")))
                 {
                     select += $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\"";
-                    //The use of json_path_query filters out all null values
+
+                    //The use of json_path_query filters out all null values but when used two json_pah_querys the result is always a tuple <null, value> <value, value> need to investigate
                     //select += $", jsonb_path_query(data#>'\\{{{field.Replace(".", ",")}\\}}', '$\\[*\\] ? (@ <> null)') as \"{field}\"";
 
                     myselectobj.selectinfo.TryAddOrUpdate(field, false);
