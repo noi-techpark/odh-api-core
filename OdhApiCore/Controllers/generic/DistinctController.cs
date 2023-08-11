@@ -45,8 +45,8 @@ namespace OdhApiCore.Controllers
         /// <param name="fields">Mandatory Select a fields for the Distinct Query, More fields are indicated by separator ',' example fields=Source, arrays are selected with a .[*] example HasLanguage.[*] / Features.[*].Id  (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Array of string</returns>        
+        /// <param name="getasarray">Get only first selected field as simple string Array</param>        
+        /// <returns>Array of string/object</returns>        
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -64,13 +64,13 @@ namespace OdhApiCore.Controllers
             string[]? fields = null,
             string? seed = null,
             string? rawfilter = null,
-            string? rawsort = null,            
-            bool removenullvalues = false,
+            string? rawsort = null,
+            bool getasarray = false,            
             CancellationToken cancellationToken = default)
         {
             var fieldstodisplay = fields ?? Array.Empty<string>();
             
-            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay, seed, rawfilter, rawsort, removenullvalues: removenullvalues, null, cancellationToken);
+            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay, seed, rawfilter, rawsort, getasarray, null, cancellationToken);
         }
 
         #endregion
@@ -78,18 +78,18 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetDistinct(uint? pagenumber, int? pagesize,
-            string validforentity, string[] fields, string? seed, string? rawfilter, string? rawsort, bool removenullvalues,
+            string odhtype, string[] fields, string? seed, string? rawfilter, string? rawsort, bool? getasarray,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
-                if (validforentity == null)
+                if (odhtype == null)
                     return BadRequest("odhtype missing");
 
                 if (fields.Count() == 0)
                     return BadRequest("please add a field");
 
-                var table = ODHTypeHelper.TranslateTypeString2Table(validforentity);
+                var table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
                 //Generates a distinct()
                 var select = GetSelectDistinct(fields);
@@ -119,8 +119,14 @@ namespace OdhApiCore.Controllers
                     .Distinct()
                     .OrderByRawIfNotNull(GetOrderStatement(rawsort, select));
 
-                //var data = await newquery.GetAsync<string>();                
+                if(getasarray != null && getasarray.Value)
+                {
+                    var data = await mainquery.GetAsync<string>();
 
+                    return data;
+                }                
+
+                //Get Paged
                 if (pagenumber.HasValue)
                 {
                     // Get paginated data
@@ -146,9 +152,6 @@ namespace OdhApiCore.Controllers
                     var data = await mainquery.GetAsync();
                     return data;
                 }
-                
-     
-
 
                 //var fieldsTohide = FieldsToHide;
 
@@ -172,11 +175,14 @@ namespace OdhApiCore.Controllers
 
                 foreach(var field in fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")))
                 {
-                    select += $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\"";
+                    //select += $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\"";
+                    //The use of json_path_query filters out all null values
+                    select += $", jsonb_path_query(data#>'\\{{{field.Replace(".", ",")}\\}}', '$\\[*\\] ? (@ <> null)') as \"{field}\"";
 
                     myselectobj.selectinfo.TryAddOrUpdate(field, false);
 
-                    mainselect += $", \"{field}\" as \"{field}\"";
+                    //mainselect += $", \"{field}\" as \"{field}\"";
+                    mainselect += $", \"{field}\"->>0 as \"{field}\"";
                 }
 
                 //select += string.Join("", fields.Where(x => x.Contains("[*]") || x.Contains("[]")).Select(field => $", unnest(json_array_to_pg_array(data#>'\\{{{field.Replace(".[*]", "").Replace(".[]", "").Replace(".", ",") }\\}}'))"));
