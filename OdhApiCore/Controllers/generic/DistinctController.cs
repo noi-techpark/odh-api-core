@@ -175,14 +175,14 @@ namespace OdhApiCore.Controllers
 
                 foreach(var field in fields.Where(x => !x.Contains("[*]") && !x.Contains("[]")))
                 {
-                    //select += $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\"";
+                    select += $", data#>>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\"";
                     //The use of json_path_query filters out all null values
-                    select += $", jsonb_path_query(data#>'\\{{{field.Replace(".", ",")}\\}}', '$\\[*\\] ? (@ <> null)') as \"{field}\"";
+                    //select += $", jsonb_path_query(data#>'\\{{{field.Replace(".", ",")}\\}}', '$\\[*\\] ? (@ <> null)') as \"{field}\"";
 
                     myselectobj.selectinfo.TryAddOrUpdate(field, false);
 
-                    //mainselect += $", \"{field}\" as \"{field}\"";
-                    mainselect += $", \"{field}\"->>0 as \"{field}\"";
+                    mainselect += $", \"{field}\" as \"{field}\"";
+                    //mainselect += $", \"{field}\"->>0 as \"{field}\"";
                 }
 
                 //select += string.Join("", fields.Where(x => x.Contains("[*]") || x.Contains("[]")).Select(field => $", unnest(json_array_to_pg_array(data#>'\\{{{field.Replace(".[*]", "").Replace(".[]", "").Replace(".", ",") }\\}}'))"));
