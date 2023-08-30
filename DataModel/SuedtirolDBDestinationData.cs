@@ -118,6 +118,10 @@ namespace DataModel
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
 
         public ICollection<ImageGallery> ImageGallery { get; set; }
+
+        public int? Beds { get; set; }
+
+        public ICollection<OperationSchedule>? OperationSchedule { get; set; }
     }   
 
     public class VenueType
