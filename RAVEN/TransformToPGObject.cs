@@ -432,6 +432,8 @@ namespace RAVEN
             //venueLinked.ODHTags = destinationdata.odhdata.ODHTags;
             venueLinked.RoomCount = destinationdata.odhdata.RoomCount;
             venueLinked.RoomDetails = destinationdata.odhdata.RoomDetails;
+            venueLinked.Beds = destinationdata.odhdata.Beds;
+            venueLinked.OperationSchedule = destinationdata.odhdata.OperationSchedule;
             venueLinked.Shortname = destinationdata.odhdata.Shortname;
             venueLinked.SmgTags = destinationdata.odhdata.SmgTags;
             venueLinked.Source = destinationdata.odhdata.Source;
@@ -439,7 +441,7 @@ namespace RAVEN
             venueLinked.VenueCategory = destinationdata.odhdata.VenueCategory;
             venueLinked._Meta = destinationdata._Meta;
             venueLinked.PublishedOn = destinationdata.odhdata.PublishedOn;
-
+            
             return venueLinked;
         }
 
