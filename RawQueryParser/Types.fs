@@ -52,6 +52,7 @@ module Filtering =
         | Le
         | Gt
         | Ge
+        | Like
 
     /// Defines values of booleans, numbers and strings.
     type Value =

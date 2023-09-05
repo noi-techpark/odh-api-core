@@ -1162,7 +1162,7 @@ namespace DataModel
         public string SyncSourceInterface { get; set; }
 
         //New Details
-        public Nullable<int> RoomCount { get; set; }
+        public int? RoomCount { get; set; }
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
@@ -1187,6 +1187,10 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo DistanceInfo { get; set; }
+
+        public int? Beds { get; set; }
+
+        public ICollection<OperationSchedule>? OperationSchedule { get; set; }
     }
 
 

@@ -1452,7 +1452,7 @@ namespace DataModel
     //Location??
 
 
-    public class TourismMetaData : IMetaData, IImportDateassigneable, IIdentifiable, IPublishedOn
+    public class TourismMetaData : IMetaData, IImportDateassigneable, IIdentifiable, IPublishedOn, ILicenseInfo
     {
         //openapi
         //Procudes non nullable string not required
@@ -1565,6 +1565,8 @@ namespace DataModel
         public ICollection<string>? Category { get; set; }
 
         public ICollection<string>? DataProvider { get; set; }
+
+        public LicenseInfo? LicenseInfo { get; set; }
     }
 
     #endregion

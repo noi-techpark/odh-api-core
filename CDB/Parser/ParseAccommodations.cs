@@ -904,11 +904,19 @@ namespace CDB.Parser
                 var biken = myacco.Features.Where(x =>
                     x.Id == "8068941DF6F34B9D955965062614A3C2" ||
                     x.Id == "349A4D98B26B448A908679142C3394D6" ||
-                    x.Id == "BF108AD2B62042DF9FEAD4E865E11E75");
+                    x.Id == "BF108AD2B62042DF9FEAD4E865E11E75" ||
+                    x.Id == "05988DB63E5146E481C95279FB285C6A" ||
+                    x.Id == "5F22AD3E93D54E99B7E6F97719A47153");
 
                 bool biken1 = false;
                 bool biken2 = false;
                 bool biken3 = false;
+                bool biken4 = false;
+                bool biken5 = false;
+                bool bikenbadge = false;
+
+                if (myacco.MarketingGroupIds != null && myacco.MarketingGroupIds.Where(x => x == "F2CAAF48AC1C4EE88342FB4E59610A68").Count() > 0)
+                    bikenbadge = true;
 
                 if (biken.Count() > 0)
                 {
@@ -920,9 +928,13 @@ namespace CDB.Parser
                             biken2 = true;
                         if (mybiken.Id == "BF108AD2B62042DF9FEAD4E865E11E75")
                             biken3 = true;
+                        if (mybiken.Id == "05988DB63E5146E481C95279FB285C6A")
+                            biken4 = true;
+                        if (mybiken.Id == "5F22AD3E93D54E99B7E6F97719A47153")
+                            biken5 = true;
                     }
 
-                    if (biken1 && biken2 && biken3)
+                    if ((biken1 && biken2 && biken3) || biken4 || biken5 || bikenbadge)
                     {
                         myacco.ThemeIds.Add("Biken");
                     }
