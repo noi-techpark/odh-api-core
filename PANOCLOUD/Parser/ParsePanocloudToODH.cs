@@ -216,6 +216,8 @@ namespace PANOCLOUD
             //Mapping
             webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "locationId", (string)webcamtoparse["@attributes"]["locationId"] } });
 
+            //HasLanguage
+            webcam.HasLanguage = new List<string>() { defaultlanguage };
 
             return webcam;
         }

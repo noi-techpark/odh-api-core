@@ -64,13 +64,17 @@ namespace OdhApiImporter.Helpers
                     ferateldata.Root.Element("content").Element("portal").Element("links").Elements("link").Count() > 0)
             {
                 //loop trough feratel items
-                foreach (var webcam in ferateldata.Root.Element("content").Element("portal").Element("links").Elements("link"))
+                foreach (var link in ferateldata.Root.Element("content").Element("portal").Element("links").Elements("link"))
                 {
-                    var importresult = await ImportDataSingle(webcam);
+                    //Special case feratel has more cams on a link
+                    foreach(var webcam in link.Element("cams").Elements("cam"))
+                    {
+                        var importresult = await ImportDataSingle(webcam, link);
 
-                    newcounter = newcounter + importresult.created ?? newcounter;
-                    updatecounter = updatecounter + importresult.updated ?? updatecounter;
-                    errorcounter = errorcounter + importresult.error ?? errorcounter;                                        
+                        newcounter = newcounter + importresult.created ?? newcounter;
+                        updatecounter = updatecounter + importresult.updated ?? updatecounter;
+                        errorcounter = errorcounter + importresult.error ?? errorcounter;
+                    }                                                        
                 }
             }
 
@@ -78,7 +82,7 @@ namespace OdhApiImporter.Helpers
         }
 
         //Parsing the Data
-        public async Task<UpdateDetail> ImportDataSingle(XElement webcam)
+        public async Task<UpdateDetail> ImportDataSingle(XElement webcam, XElement link)
         {
             int updatecounter = 0;
             int newcounter = 0;
@@ -90,13 +94,13 @@ namespace OdhApiImporter.Helpers
 
             try
             {
-                //id
-                returnid = webcam.Element("id").Value;
+                //id generating by link id and panid from the cam
+                returnid = link.Attribute("id").Value + "_" + webcam.Attribute("panid").Value;
 
                 idlistinterface.Add("FERATEL_" + returnid);
 
                 //Parse Feratel Webcam Data
-                WebcamInfoLinked parsedobject = await ParseFeratelDataToWebcam("FERATEL_" + returnid, webcam);
+                WebcamInfoLinked parsedobject = await ParseFeratelDataToWebcam("FERATEL_" + returnid, webcam, link);
                 if (parsedobject == null)
                     throw new Exception();
 
@@ -156,7 +160,7 @@ namespace OdhApiImporter.Helpers
         }
 
         //Parse the feratel interface content
-        public async Task<WebcamInfoLinked?> ParseFeratelDataToWebcam(string odhid, XElement input)
+        public async Task<WebcamInfoLinked?> ParseFeratelDataToWebcam(string odhid, XElement input, XElement link)
         {         
             //Get the ODH Item
             var query = QueryFactory.Query(table)
@@ -166,7 +170,7 @@ namespace OdhApiImporter.Helpers
             var webcamindb = await query.GetObjectSingleAsync<WebcamInfoLinked>();
             var webcam = default(WebcamInfoLinked);
 
-            webcam = ParseFeratelToODH.ParseWebcamToWebcamInfo(webcamindb, input);
+            webcam = ParseFeratelToODH.ParseWebcamToWebcamInfo(webcamindb, input, link, odhid);
 
             return webcam;
         }

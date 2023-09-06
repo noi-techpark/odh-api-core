@@ -616,7 +616,7 @@ namespace OdhApiImporter.Controllers
             string operation = "Import PANOMAX Webcam";
             string updatetype = GetUpdateType(null);
             string source = "panomax";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
@@ -646,7 +646,7 @@ namespace OdhApiImporter.Controllers
             string operation = "Import PANOCLOUD Webcam";
             string updatetype = GetUpdateType(null);
             string source = "panocloud";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
@@ -676,7 +676,7 @@ namespace OdhApiImporter.Controllers
             string operation = "Import FERATEL Wecam";
             string updatetype = GetUpdateType(null);
             string source = "feratel";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
