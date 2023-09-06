@@ -10,7 +10,7 @@
     <PackageReference Include="JsonDiffPatch.Net" Version="2.3.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Npgsql" Version="6.0.0" />
+    <PackageReference Include="Npgsql" Version="7.0.4" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="SqlKata.Execution" Version="3.0.0-beta" />
     <PackageReference Include="System.Interactive.Async" Version="5.0.0" />
