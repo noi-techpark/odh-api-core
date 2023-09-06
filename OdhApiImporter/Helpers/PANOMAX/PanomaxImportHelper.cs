@@ -67,7 +67,7 @@ namespace OdhApiImporter.Helpers
 
             if (panomaxinput != null && panomaxinput.Count > 0)
             {                
-                //loop trough dss items
+                //loop trough panomax items
                 foreach (var webcam in panomaxinput[0])
                 {
                     var importresult = await ImportDataSingle(webcam, panomaxinput[1]);
@@ -109,15 +109,7 @@ namespace OdhApiImporter.Helpers
                 //Set Shortname
                 parsedobject.Shortname = parsedobject.Detail.Select(x => x.Value.Title).FirstOrDefault();
 
-                ////assign Videos
-                //dynamic videostoassign = null;
-                //foreach(var video in videolist.cams)
-                //{
-                //    if (video.id == webcam.camId)
-                //    {
-                //        videostoassign = video;
-                //    }
-                //}
+                //assign Videos
 
                 var videostoassign = ((IEnumerable<dynamic>)videolist.cams).Where(x => x.id == webcam.camId).FirstOrDefault();
 

@@ -16,7 +16,7 @@ namespace FERATEL
 {
     public class ParseFeratelToODH
     {
-        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked webcam, XDocument webcamtoparse)
+        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked? webcam, XElement webcamtoparse)
         {
             if (webcam == null)
                 webcam = new WebcamInfoLinked();
