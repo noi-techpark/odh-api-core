@@ -196,6 +196,14 @@ let parserTests =
                 let actual = run Filtering.statement "in(HasLanguage,'de','it')"
                 Expect.equal actual expected ""
             }
+            test "Condition with LIKEIN" {
+                let expected =
+                    Ok (
+                        LikeIn (Field [IdentifierSegment "OdhTags"], [Filtering.String "Ski"; Filtering.String "Winter"])
+                    )
+                let actual = run Filtering.statement "likein(OdhTags, 'Ski', 'Winter')"
+                Expect.equal actual expected ""
+            }
             test "Array syntax" {
                 let expected =
                     Ok (

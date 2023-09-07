@@ -121,5 +121,16 @@ module Filtering =
             |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->
             $"NOT {writeStatement jsonSerializer (Condition (In (field, values)))}"
+        | Condition (LikeIn (field, values)) ->
+            let writeValue (value: Value) =
+                match value with
+                | String value -> (String $"%%{value}%%")
+                | _ -> value
+                |> writeValue
+                |> sprintf "%s LIKE %s" (writeTextField field)
+            values
+            |> List.map writeValue
+            |> String.concat " OR "
+            |> sprintf "(%s)"
         | Condition (IsNull property) -> $"{writeTextField property} IS NULL"
         | Condition (IsNotNull property) -> $"{writeTextField property} IS NOT NULL"
