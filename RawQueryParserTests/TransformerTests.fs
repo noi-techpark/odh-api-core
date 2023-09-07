@@ -47,7 +47,7 @@ let transfomerTests =
                 Expect.equal actual expected ""
             }
             test "Simple like filter" {
-                let expected = "data#>>'\{Type\}' LIKE 'Wandern'"
+                let expected = "data#>>'\{Type\}' LIKE '%Wandern%'"
                 let actual = transformFilter "like(Type, 'Wandern')"
                 Expect.equal actual expected ""
             }
