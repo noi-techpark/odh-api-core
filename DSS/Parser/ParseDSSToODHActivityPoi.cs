@@ -389,6 +389,20 @@ namespace DSS.Parser
             var webcamurl = (string)dssitem["original-image"];
             mywebcaminfolinked.WebCamProperties.WebcamUrl = webcamurl;
 
+
+            mywebcaminfolinked.ImageGallery = new List<ImageGallery>();
+
+            //Add Image in ImageGallery
+            ImageGallery image = new ImageGallery();
+
+            image.ImageName = mywebcaminfolinked.Webcamname;
+            image.ImageUrl = webcamurl;
+            image.ImageSource = "dss";
+            image.IsInGallery = true;
+
+            mywebcaminfolinked.ImageGallery.Add(image);
+
+
             var webcamiframe = (string)dssitem["iframe"]["it"];
             if(!String.IsNullOrEmpty(webcamiframe))
                 mywebcaminfolinked.WebCamProperties.StreamUrl = webcamiframe;

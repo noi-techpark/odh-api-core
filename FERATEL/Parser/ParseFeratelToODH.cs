@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.Runtime.Internal.Util;
 using DataModel;
 using Helper;
 using Newtonsoft.Json;
@@ -50,12 +51,20 @@ namespace FERATEL
             contactinfo.CountryCode = linktoparse.Element("country").Attribute("ioc") != null ? linktoparse.Element("country").Attribute("ioc").Value : "";
             contactinfo.CountryName = linktoparse.Element("country").Value != null ? linktoparse.Element("country").Value : "";
 
+            foreach (var url in webcamtoparse.Element("urllist").Elements("durl")
+               .Where(x => x.Attribute("t").Value == "feratel.com")
+               )
+            {
+                //Add as URl for ContactInfo
+                contactinfo.Url = url.Attribute("v").Value;
+            }
+
             //Detail            
             Detail detail = new Detail();
             detail.Title = webcamtoparse.Attribute("l").Value;
             detail.Language = "de";
 
-            if(!String.IsNullOrEmpty(webcamtoparse.Element("keywords").Value))
+            if(linktoparse.Element("keywords") != null && !String.IsNullOrEmpty(linktoparse.Element("keywords").Value))
             {
                 var keywords = linktoparse.Element("keywords").Value.Split(',');
                 detail.Keywords = new List<string>();
@@ -70,11 +79,59 @@ namespace FERATEL
 
             //WebcamProperties
 
+            WebcamProperties wcprops = new WebcamProperties();
+
+
             //url types (MediaPlayer Thumbnails, MediaPlayer Thumbnails 38, MediaPlayer v4, MediaPlayer v4 360, MediaPlayer Thumbnail 360, feratel.com)
 
 
+            webcam.ImageGallery = new List<ImageGallery>();
+
+            foreach (var url in webcamtoparse.Element("urllist").Elements("durl")
+                .Where(x => x.Attribute("t").Value == "MediaPlayer Thumbnails" || 
+                            x.Attribute("t").Value == "MediaPlayer Thumbnails 38" || 
+                            x.Attribute("t").Value == "MediaPlayer Thumbnail 360")
+                )
+            {
+                //Add as ImageGallery
+
+                ImageGallery image = new ImageGallery();
+
+                image.ImageName = url.Attribute("t").Value;
+                image.ImageUrl = url.Attribute("v").Value;
+                image.ImageSource = "feratel";
+                image.IsInGallery = true;
+              
+                webcam.ImageGallery.Add(image);
+
+            }
+
+            //webcam.VideoItems = new Dictionary<string, ICollection<VideoItems>>();
+
+            foreach (var url in webcamtoparse.Element("urllist").Elements("durl")
+                .Where(x => x.Attribute("t").Value == "MediaPlayer v4" ||
+                            x.Attribute("t").Value == "MediaPlayer v4 360")
+                )
+            {                
+
+                //Add as WebcamUrl
+                if (url.Attribute("t").Value == "MediaPlayer v4")
+                {
+                    wcprops.WebcamUrl = url.Attribute("v").Value;
+                }
+                //Add as Streamurl
+                else if (url.Attribute("t").Value == "MediaPlayer v4")
+                {
+                    wcprops.StreamUrl = url.Attribute("v").Value;
+                }
+            }
+
+            webcam.WebCamProperties = wcprops;
+
             //Mapping
             webcam.Mapping.TryAddOrUpdate("feratel", new Dictionary<string, string>() { { "link_id", linktoparse.Attribute("id").Value }, { "panid", webcamtoparse.Attribute("panid").Value } });
+
+            //LicenseInfo
 
 
             return webcam;
