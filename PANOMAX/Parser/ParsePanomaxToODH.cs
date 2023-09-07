@@ -83,7 +83,7 @@ namespace PANOMAX
             webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "camId", (string)webcamtoparse.camId }, { "customerId", (string)webcamtoparse.customerId } });
 
             //HasLanguage
-            webcam.HasLanguage = webcam.Detail.Select(x => x.Key).Distinct().ToList();
+            webcam.HasLanguage = webcam.Detail.Select(x => x.Key).Distinct().ToList();            
 
             //LicenseInfo
 

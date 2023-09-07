@@ -27,6 +27,8 @@ namespace FERATEL
 
             webcam.Source = "feratel";
             webcam.Id = odhid;
+            webcam.Active = true;
+            webcam.WebcamId = webcam.WebcamId = webcamtoparse.Attribute("panid").Value;
 
             //Parse the Feratel XML
 
@@ -39,19 +41,40 @@ namespace FERATEL
             webcam.GpsInfo = new List<GpsInfo>() { gpsinfo };
 
             //ContactInfo
-
+            ContactInfos contactinfo = new ContactInfos();
+            contactinfo.Language = "de";
+            contactinfo.ZipCode = linktoparse.Element("location").Attribute("zip") != null ? linktoparse.Element("location").Attribute("zip").Value : "";
+            contactinfo.City = linktoparse.Element("location") != null ? linktoparse.Element("location").Value : "";
+            contactinfo.Area = linktoparse.Element("village") != null ? linktoparse.Element("village").Value : "";
+            contactinfo.Region = linktoparse.Element("region") != null ? linktoparse.Element("region").Value : "";
+            contactinfo.CountryCode = linktoparse.Element("country").Attribute("ioc") != null ? linktoparse.Element("country").Attribute("ioc").Value : "";
+            contactinfo.CountryName = linktoparse.Element("country").Value != null ? linktoparse.Element("country").Value : "";
 
             //Detail            
             Detail detail = new Detail();
             detail.Title = webcamtoparse.Attribute("l").Value;
             detail.Language = "de";
-            webcam.Detail.TryAddOrUpdate(detail.Language, detail);
+
+            if(!String.IsNullOrEmpty(webcamtoparse.Element("keywords").Value))
+            {
+                var keywords = linktoparse.Element("keywords").Value.Split(',');
+                detail.Keywords = new List<string>();
+                foreach (var keyword in keywords)
+                {
+                    detail.Keywords.Add(keyword.Trim());
+                }
+            }
+
+
+             webcam.Detail.TryAddOrUpdate(detail.Language, detail);
 
             //WebcamProperties
 
+            //url types (MediaPlayer Thumbnails, MediaPlayer Thumbnails 38, MediaPlayer v4, MediaPlayer v4 360, MediaPlayer Thumbnail 360, feratel.com)
+
 
             //Mapping
-            webcam.Mapping.TryAddOrUpdate("feratel", new Dictionary<string, string>() { { "link_id", webcamtoparse.Attribute("id").Value }, { "panid", webcamtoparse.Attribute("panid").Value } });
+            webcam.Mapping.TryAddOrUpdate("feratel", new Dictionary<string, string>() { { "link_id", linktoparse.Attribute("id").Value }, { "panid", webcamtoparse.Attribute("panid").Value } });
 
 
             return webcam;
