@@ -93,7 +93,11 @@ module Filtering =
             | DateTime _ -> $"({writeTextField comparison.Field})::timestamp"
             | Array -> $"({writeRawField comparison.Field})::jsonb"
         let operator = writeOperator comparison.Operator
-        let value = writeValue comparison.Value
+        let value =
+            match comparison.Operator, comparison.Value with
+            | Like, String value -> writeValue (String $"%%{value}%%")
+            | _, value -> writeValue value
+        let value = value
         $"{field} {operator} {value}"
 
     let rec writeStatement (jsonSerializer: obj -> string) = function 
