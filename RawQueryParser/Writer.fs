@@ -97,7 +97,6 @@ module Filtering =
             match comparison.Operator, comparison.Value with
             | Like, String value -> writeValue (String $"%%{value}%%")
             | _, value -> writeValue value
-        let value = value
         $"{field} {operator} {value}"
 
     let rec writeStatement (jsonSerializer: obj -> string) = function 
