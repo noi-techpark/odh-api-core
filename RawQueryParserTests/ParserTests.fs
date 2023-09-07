@@ -173,6 +173,15 @@ let parserTests =
                 let actual = run Filtering.statement "or(eq(Active, true), and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400)))"
                 Expect.equal actual expected ""
             }
+            test "LIKE" {
+                let expected = Ok <| Comp {
+                    Field = Field [IdentifierSegment "Title"]
+                    Operator = Filtering.Operator.Like
+                    Value = Filtering.String "Ski"
+                }
+                let actual = run Filtering.statement "like(Title, 'Ski')"
+                Expect.equal actual expected ""
+            }
             test "Condition with NULL check" {
                 let expected =
                     Ok (Cond (Filtering.IsNull (Field (List.map IdentifierSegment ["Detail"; "ru"; "Title"]))))

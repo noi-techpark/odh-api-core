@@ -46,6 +46,11 @@ let transfomerTests =
                 let actual = transformFilter "eq(Type, 'Wandern')"
                 Expect.equal actual expected ""
             }
+            test "Simple like filter" {
+                let expected = "data#>>'\{Type\}' LIKE 'Wandern'"
+                let actual = transformFilter "like(Type, 'Wandern')"
+                Expect.equal actual expected ""
+            }
             test "Simple datetime filter" {
                 let expected = "(data#>'\{ImageGallery\}')::jsonb = to_jsonb(array\[\]::varchar\[\])"
                 let actual = transformFilter "eq(ImageGallery, [])"
