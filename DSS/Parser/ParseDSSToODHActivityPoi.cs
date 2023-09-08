@@ -395,7 +395,7 @@ namespace DSS.Parser
             //Add Image in ImageGallery
             ImageGallery image = new ImageGallery();
 
-            image.ImageName = mywebcaminfolinked.Webcamname;
+            image.ImageName = mywebcaminfolinked.Webcamname.First().Value;
             image.ImageUrl = webcamurl;
             image.ImageSource = "dss";
             image.IsInGallery = true;
@@ -417,15 +417,7 @@ namespace DSS.Parser
             if (mywebcaminfolinked.FirstImport == null)
                 mywebcaminfolinked.FirstImport = DateTime.Now;
 
-
             mywebcaminfolinked.WebcamId = "dss_" + (string)dssitem.pid;
-
-
-
-
-
-
-
 
             return mywebcaminfolinked;
         }
