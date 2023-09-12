@@ -176,3 +176,4 @@ $RECYCLE.BIN/
 /OdhApiCore/wwwroot/json/swagger.json
 /OdhApiCore/wwwroot/json
 /OdhApiCore/.env
+/OdhApiImporter/.env
