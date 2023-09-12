@@ -37,4 +37,4 @@ services:
       ASPNETCORE_FCMConfig__noicommunityapp__ServerKey: ${NOICOMMUNITY_SERVERKEY}
       ASPNETCORE_FCMConfig__noicommunityapp__SenderId: ${NOICOMMUNITY_SENDERID}
     ports:
-      - "60209:80"
+      - "8001:80"
