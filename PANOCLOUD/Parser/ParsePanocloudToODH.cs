@@ -155,7 +155,7 @@ namespace PANOCLOUD
                     webcam.ImageGallery.Add(image);
                 }
 
-                webcam.ImageGallery = webcam.ImageGallery.OrderBy(x => x.ListPosition).ToList();
+                webcam.ImageGallery = webcam.ImageGallery.OrderByDescending(x => x.ListPosition).ToList();
             }
 
             //Videos

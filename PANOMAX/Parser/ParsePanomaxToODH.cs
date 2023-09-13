@@ -91,7 +91,7 @@ namespace PANOMAX
                 webcam.ImageGallery.Add(imagetoadd);
             }
 
-            webcam.ImageGallery = webcam.ImageGallery.OrderBy(x => x.ListPosition).ToList();
+            webcam.ImageGallery = webcam.ImageGallery.OrderByDescending(x => x.ListPosition).ToList();
 
             //Mapping
             webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "camId", (string)webcamtoparse.camId }, { "customerId", (string)webcamtoparse.customerId } });
