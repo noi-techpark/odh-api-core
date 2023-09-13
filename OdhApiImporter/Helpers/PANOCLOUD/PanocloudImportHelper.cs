@@ -87,7 +87,7 @@ namespace OdhApiImporter.Helpers
             try
             {
                 //id
-                returnid = "PANOCLOUD_" + (string)webcam["@attributes"]["locationId"] + "_" + (string)webcam["@attributes"]["lastModifiedUnix"];
+                returnid = "PANOCLOUD_" + (string)webcam["@attributes"]["locationId"] + "_" + (string)webcam["@attributes"]["geoAlt"];
 
                 idlistinterface.Add(returnid);
 

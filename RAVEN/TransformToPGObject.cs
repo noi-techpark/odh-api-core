@@ -339,6 +339,22 @@ namespace RAVEN
             if (sourcemeta == "content")
                 sourcemeta = "idm";
 
+            data.WebCamProperties = new WebcamProperties();
+            data.WebCamProperties.WebcamUrl = data.Webcamurl;
+            data.WebCamProperties.PreviewUrl = data.Previewurl;
+            data.WebCamProperties.StreamUrl = data.Streamurl;            
+
+            if (!String.IsNullOrEmpty(data.Webcamurl))
+            {
+                //Hack add as ImageGallery
+                data.ImageGallery = new List<ImageGallery>();
+                ImageGallery image = new ImageGallery();
+                image.ImageUrl = data.Webcamurl;
+
+                data.ImageGallery.Add(image);
+            }
+
+
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = sourcemeta;
             else
@@ -377,9 +393,20 @@ namespace RAVEN
             webcam.WebCamProperties.WebcamUrl = data.Webcamurl;
             webcam.WebCamProperties.PreviewUrl = data.Previewurl; 
             webcam.WebCamProperties.StreamUrl = data.Streamurl;
-       
+
+            //ImageGallery
+            if (!String.IsNullOrEmpty(data.Webcamurl))
+            {
+                //Hack add as ImageGallery
+                webcam.ImageGallery = new List<ImageGallery>();
+                ImageGallery image = new ImageGallery();
+                image.ImageUrl = data.Webcamurl;
+
+                webcam.ImageGallery.Add(image);
+            }
+
             //Detail
-            foreach(var kvp in data.Webcamname)
+            foreach (var kvp in data.Webcamname)
             {
                 Detail detail = new Detail();
                 detail.Language = kvp.Key;

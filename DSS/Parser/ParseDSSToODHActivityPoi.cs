@@ -350,7 +350,6 @@ namespace DSS.Parser
 
             mywebcaminfolinked.Id = "dss_" + (string)dssitem.pid;
 
-
             ////ADD MAPPING
             var dssidmap = new Dictionary<string, string>();
 
@@ -407,12 +406,10 @@ namespace DSS.Parser
             if(!String.IsNullOrEmpty(webcamiframe))
                 mywebcaminfolinked.WebCamProperties.StreamUrl = webcamiframe;
 
-
-
             //TODO showonSummer?
             mywebcaminfolinked.Active = true;
-            mywebcaminfolinked.SmgActive = true;
 
+            mywebcaminfolinked.SmgActive = mywebcaminfolinked.Active;
 
             if (mywebcaminfolinked.FirstImport == null)
                 mywebcaminfolinked.FirstImport = DateTime.Now;

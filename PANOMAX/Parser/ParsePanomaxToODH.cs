@@ -26,6 +26,9 @@ namespace PANOMAX
 
             webcam.Id = odhid;
             webcam.Active = true;
+
+            webcam.SmgActive = webcam.Active;
+
             webcam.WebcamId = webcamtoparse.camId;
 
             //Detail
@@ -84,8 +87,6 @@ namespace PANOMAX
 
             //HasLanguage
             webcam.HasLanguage = webcam.Detail.Select(x => x.Key).Distinct().ToList();            
-
-            //LicenseInfo
 
             return webcam;
         }

@@ -28,6 +28,8 @@ namespace PANOCLOUD
                 webcam.Active = true;
             else
                 webcam.Active = false;
+
+            webcam.SmgActive = webcam.Active;
         
             if ((string)webcamtoparse["@attributes"]["full360"] == "yes")
                 webcam.WebCamProperties.ViewAngleDegree = "360";

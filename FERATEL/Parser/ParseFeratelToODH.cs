@@ -29,6 +29,9 @@ namespace FERATEL
             webcam.Source = "feratel";
             webcam.Id = odhid;
             webcam.Active = true;
+
+            webcam.SmgActive = webcam.Active;
+
             webcam.WebcamId = webcam.WebcamId = webcamtoparse.Attribute("panid").Value;
 
             //Parse the Feratel XML
