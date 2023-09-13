@@ -43,4 +43,7 @@ COPY OdhApiCore/xml/BezirkWeather.xml xml/
 COPY OdhApiCore/xml/RequestInterceptor.xml xml/
 COPY OdhApiCore/appsettings.Production.json appsettings.json
 
+# Expose the API port
+EXPOSE 80
+
 ENTRYPOINT ["dotnet", "OdhApiCore.dll"]

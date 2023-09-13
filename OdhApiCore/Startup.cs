@@ -9,6 +9,7 @@ using Helper.Factories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -92,6 +94,10 @@ namespace OdhApiCore
             services.AddSingleton<CustomCacheKeyGenerator>();
 
             services.AddDistributedMemoryCache();
+
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())                
+                .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
 
             //TO Remove old Quota Config
 
@@ -508,6 +514,16 @@ namespace OdhApiCore
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");                
+            });
+
+            app.UseHealthChecks("/self", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
+
+            app.UseHealthChecks("/ready", new HealthCheckOptions
+            {
+                Predicate = r => r.Tags.Contains("services")
             });
         }
     }
