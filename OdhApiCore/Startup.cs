@@ -523,8 +523,7 @@ namespace OdhApiCore
 
             app.UseHealthChecks("/ready", new HealthCheckOptions
             {
-                //Predicate = r => r.Tags.Contains("services")
-                Predicate = r => r.Name.Contains("self")
+                Predicate = r => r.Tags.Contains("services")
             });
         }
     }
