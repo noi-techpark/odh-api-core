@@ -4,6 +4,7 @@
 
 using DataModel;
 using Helper;
+using Helper.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace PANOCLOUD
                 webcam.WebCamProperties.HasVR = false;
 
             webcam.WebCamProperties.ViewerType = (string)webcamtoparse["@attributes"]["viewerType"];       
-            webcam.WebCamProperties.WebcamUrl = (string)webcamtoparse["@attributes"]["url"];
+            webcam.WebCamProperties.WebcamUrl = ((string)webcamtoparse["@attributes"]["url"]).AddHttpsPrefixIfNotPresent();            
 
             webcam.LastChange = Convert.ToDateTime(webcamtoparse["@attributes"]["lastModified"]);
             webcam.Shortname = (string)webcamtoparse["@attributes"]["name"];
@@ -83,7 +84,7 @@ namespace PANOCLOUD
             {
                 if (webcamtoparse["Logos"]["0"] != null)
                 {
-                    contactinfo.LogoUrl = (string)webcamtoparse["Logos"]["0"]["@attributes"]["logoUrl"];
+                    contactinfo.LogoUrl = ((string)webcamtoparse["Logos"]["0"]["@attributes"]["logoUrl"]).AddHttpsPrefixIfNotPresent();
                 }
                 else if (webcamtoparse["Logos"]["Logo"] != null)
                 {
@@ -118,7 +119,7 @@ namespace PANOCLOUD
                     image.Width = (int)imagetoparse["@attributes"]["imgWidth"];
                     image.Height = (int)imagetoparse["@attributes"]["imgHeight"];
                     image.ImageName = (string)imagetoparse["@attributes"]["fileName"];
-                    image.ImageUrl = (string)imagetoparse["@attributes"]["fileUrl"];
+                    image.ImageUrl = ((string)imagetoparse["@attributes"]["fileUrl"]).AddHttpsPrefixIfNotPresent();
                     image.ImageSource = "panocloud";
                     image.IsInGallery = true;
                     //"panorama": "yes",
@@ -166,9 +167,11 @@ namespace PANOCLOUD
             {
                 if (webcamtoparse["Videos"]["0"] != null)
                 {
-                    VideoItems videoitem = new VideoItems();
-                    //"videoClipUrl": "alpenrose-haidersee.panocloud.webcam/clip_current_720p.mp4",
-                    videoitem.Url = (string)webcamtoparse["Videos"]["0"]["@attributes"]["videoClipUrl"];
+                    VideoItems videoitem = new VideoItems();                    
+                    videoitem.Url = ((string)webcamtoparse["Videos"]["0"]["@attributes"]["videoClipUrl"]).AddHttpsPrefixIfNotPresent();
+
+                    //TODO videoPlayerUrl ex. "videoPlayerUrl": "abcdefg-wms.com/wmsclipplayer.php"
+
                     videoitem.StreamingSource = "panocloud";
                     videoitem.Active = true;
 
@@ -216,7 +219,7 @@ namespace PANOCLOUD
             
 
             //Mapping
-            webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "locationId", (string)webcamtoparse["@attributes"]["locationId"] } });
+            webcam.Mapping.TryAddOrUpdate("panocloud", new Dictionary<string, string>() { { "locationId", (string)webcamtoparse["@attributes"]["locationId"] } });
 
             //HasLanguage
             webcam.HasLanguage = new List<string>() { defaultlanguage };
@@ -224,4 +227,5 @@ namespace PANOCLOUD
             return webcam;
         }
     }
+    
 }
