@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using DataModel;
 using Helper;
 using Newtonsoft.Json;
@@ -78,9 +79,19 @@ namespace PANOMAX
                 imagetoadd.ImageSource = "panomax";
                 imagetoadd.ImageUrl = imagetoparse.url;
                 imagetoadd.Width = imagetoparse.width;
-                imagetoadd.Height = imagetoparse.height;                
+                imagetoadd.Height = imagetoparse.height;           
+                
+                if(imagetoadd.ImageUrl.Contains("thumb"))
+                {
+                    imagetoadd.ListPosition = 0;
+
+                    imagetoadd.ImageTags = new List<string>() { "thumbnail" };                    
+                }
+
                 webcam.ImageGallery.Add(imagetoadd);
             }
+
+            webcam.ImageGallery = webcam.ImageGallery.OrderBy(x => x.ListPosition).ToList();
 
             //Mapping
             webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "camId", (string)webcamtoparse.camId }, { "customerId", (string)webcamtoparse.customerId } });

@@ -122,12 +122,19 @@ namespace PANOCLOUD
                     image.ImageUrl = ((string)imagetoparse["@attributes"]["fileUrl"]).AddHttpsPrefixIfNotPresent();
                     image.ImageSource = "panocloud";
                     image.IsInGallery = true;
-                    //"panorama": "yes",
-                    if((string)imagetoparse["@attributes"]["panorama"] == "yes")
-                    {
-                        if(image.ImageTags == null)
-                            image.ImageTags = new List<string>();
 
+                    if (image.ImageTags == null)
+                        image.ImageTags = new List<string>();
+
+                    image.ImageTags.Add((string)imagetoparse["@attributes"]["fileType"]);
+                    image.ImageTags.Add((string)imagetoparse["@attributes"]["mimeType"]);
+
+                    if ((string)imagetoparse["@attributes"]["fileType"] == "thumbnail")
+                        image.ListPosition = 0;
+
+                    //"panorama": "yes",
+                    if ((string)imagetoparse["@attributes"]["panorama"] == "yes")
+                    {                    
                         image.ImageTags.Add("panorama");
                     }
 
@@ -137,7 +144,8 @@ namespace PANOCLOUD
                         if (image.ImageTags == null)
                             image.ImageTags = new List<string>();
 
-                        image.ImageTags.Add((string)imagetoparse["@attributes"]["fileType"]);
+                        if(!image.ImageTags.Contains((string)imagetoparse["@attributes"]["fileType"]))
+                            image.ImageTags.Add((string)imagetoparse["@attributes"]["fileType"]);
                     }
 
                     //"fileTimeUnix": "1691568228",
@@ -146,6 +154,8 @@ namespace PANOCLOUD
 
                     webcam.ImageGallery.Add(image);
                 }
+
+                webcam.ImageGallery = webcam.ImageGallery.OrderBy(x => x.ListPosition).ToList();
             }
 
             //Videos
