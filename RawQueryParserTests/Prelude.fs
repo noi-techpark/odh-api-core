@@ -20,6 +20,8 @@ module TestHelpers =
     let Comp x = Cond (Filtering.Comparison x)
 
     let In x = Cond (Filtering.In x)
+    
+    let LikeIn x = Cond (Filtering.LikeIn x)
 
     let And x = Filtering.And x
 

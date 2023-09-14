@@ -46,6 +46,11 @@ let transfomerTests =
                 let actual = transformFilter "eq(Type, 'Wandern')"
                 Expect.equal actual expected ""
             }
+            test "Simple like filter" {
+                let expected = "data#>>'\{Type\}' LIKE '%Wandern%'"
+                let actual = transformFilter "like(Type, 'Wandern')"
+                Expect.equal actual expected ""
+            }
             test "Simple datetime filter" {
                 let expected = "(data#>'\{ImageGallery\}')::jsonb = to_jsonb(array\[\]::varchar\[\])"
                 let actual = transformFilter "eq(ImageGallery, [])"
@@ -89,6 +94,26 @@ let transfomerTests =
             test "IN with array" {
                 let expected = """(data @> '\{"Features":\[\{"Id":"a3067617-771a-4b84-b85e-206e5cf4402b"\}\]\}')"""
                 let actual = transformFilter "in(Features.[].Id,'a3067617-771a-4b84-b85e-206e5cf4402b')"
+                Expect.equal actual expected ""
+            }
+            test "LIKEIN with simple field" {
+                let expected = """(jsonb_path_exists(data, '$.OdhTags ?(@ like_regex "Ski" flag "q")'))"""
+                let actual = transformFilter "likein(OdhTags,'Ski')"
+                Expect.equal actual expected ""
+            }
+            test "LIKEIN with array" {
+                let expected = """(jsonb_path_exists(data, '$.OdhTags\[*\].Id ?(@ like_regex "Ski" flag "q")'))"""
+                let actual = transformFilter "likein(OdhTags.[*].Id,'Ski')"
+                Expect.equal actual expected ""
+            }
+            test "LIKEIN with nested fields" {
+                let expected = """(jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Ski" flag "q")'))"""
+                let actual = transformFilter "likein(Foo.OdhTags,'Ski')"
+                Expect.equal actual expected ""
+            }
+            test "LIKEIN with nested field and multiple values" {
+                let expected = """(jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Ski" flag "q")') OR jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Winter" flag "q")'))"""
+                let actual = transformFilter "likein(Foo.OdhTags,'Ski','Winter')"
                 Expect.equal actual expected ""
             }
         ]

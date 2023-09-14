@@ -72,6 +72,7 @@ module Filtering =
         | Comparison of Comparison
         | In of field: Field * values: Value list
         | NotIn of field: Field * values: Value list
+        | LikeIn of Field: Field * value: Value list
         | IsNull of Field
         | IsNotNull of Field
 
