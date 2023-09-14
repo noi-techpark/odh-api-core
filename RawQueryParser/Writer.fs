@@ -18,7 +18,15 @@ let writeRawField (Field fields) =
         | ArraySegment -> None) // Filter away array segment
     |> String.concat ","
     |> sprintf "data#>'\\{%s\\}'"
-
+    
+let writeJsonPathField (Field fields) =
+    fields
+    |> List.map (function
+        | IdentifierSegment x -> $".{x}" 
+        | ArraySegment -> "[*]")
+    |> String.concat ""
+    |> sprintf "$%s"
+    
 /// <summary>
 /// Write a field like
 /// <c>Field ["Detail"; "de"; "Title"]</c>
@@ -122,12 +130,12 @@ module Filtering =
         | Condition (NotIn (field, values)) ->
             $"NOT {writeStatement jsonSerializer (Condition (In (field, values)))}"
         | Condition (LikeIn (field, values)) ->
+            let field' = writeJsonPathField field
             let writeValue (value: Value) =
                 match value with
-                | String value -> (String $"%%{value}%%")
-                | _ -> value
-                |> writeValue
-                |> sprintf "%s LIKE %s" (writeTextField field)
+                | String s -> s
+                | _ -> failwith "Only strings are supported in a likein filter."
+                |> fun value -> sprintf $"jsonb_path_exists(data, '%s{field'} ?(@ like_regex \"%s{value}\")')"
             values
             |> List.map writeValue
             |> String.concat " OR "
