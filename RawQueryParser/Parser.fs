@@ -9,6 +9,10 @@ open FParsec
 /// Type alias to simplify the type annotation of a Parser.
 type Parser<'a> = Parser<'a, unit>
 
+/// <summary>
+/// Parse a field path.
+/// <c>Detail.de.Title => Field ["Detail"; "de"; "Title"]</c>
+/// </summary>
 let field =
     let lettersDigitsAndUnderscore c = isAsciiLetter c || isDigit c || c = '_' || c = '@'
     let options = IdentifierOptions(isAsciiIdStart = lettersDigitsAndUnderscore,
