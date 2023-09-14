@@ -23,7 +23,7 @@ let writeJsonPathField (Field fields) =
     fields
     |> List.map (function
         | IdentifierSegment x -> $".{x}" 
-        | ArraySegment -> "[*]")
+        | ArraySegment -> "\[*\]")
     |> String.concat ""
     |> sprintf "$%s"
     
