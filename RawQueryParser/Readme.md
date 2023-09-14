@@ -32,11 +32,15 @@ Usage: `?rawfilter=<filter(s)>`
 eq(<field>, <value>)
 eq(Active, true)                                               // all active entries
 eq(Type, 'Wandern')                                            // all entries of type 'Wandern'
+like(Type, 'ander')                                            // all entries of type like 'ander'
 eq(ODHTags, [])                                                // all entries where Array ODHTags is empty
 isnotnull(Detail.ru.Title)                                     // all entries with a russian title set
 and(ge(GpsInfo.0.Altitude, 200), le(GpsInfo.0.Altitude, 400))  // all entries with an altitude between 200 and 400 meters
 in(Features.[*].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")    // all entries in an Array with a specific feature ID
 in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries in an Array with a specific feature ID - alternative notation
+nin(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")    // all entries which not have a specific feature ID in an Array 
+likein(Tags.[].Id, "inter")                                    // all entries in an Array with a Tag Id like the passed value
+likein(Tags.[*].Id, "inter")                                   // all entries in an Array with a Tag Id like the passed value - alternative notation
 ```
 
 **Attention**: On the field _ImageGallery _if data is retrieved as anonymous there is a Transformer applied after getting the Result from the DB which cuts out all not CC0 license Images. So there the rawfilter possible can produce false results.  
@@ -45,7 +49,7 @@ in(Features.[].Id, "a3067617-771a-4b84-b85e-206e5cf4402b")     // all entries in
 > `<field>` is described [here](#Supported-value-types:)   
 > `<value>` is described [here](#Field-syntax:)
 
-Keywords/functions: `eq`, `ne`, `gt`, `ge`, `lt`, `le`, `and`, `or`, `isnull`, `isnotnull`, `in`, `nin`
+Keywords/functions: `eq`, `ne`, `gt`, `ge`, `lt`, `le`, `and`, `or`, `isnull`, `isnotnull`, `in`, `nin`, `like`, `likein`
 
 Precedence is archieved by nesting `and` and `or`.  
 You can chain multiple conditions inside `and` and `or`:
