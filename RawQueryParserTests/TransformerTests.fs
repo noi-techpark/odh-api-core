@@ -102,7 +102,7 @@ let transfomerTests =
                 Expect.equal actual expected ""
             }
             test "LIKEIN with array" {
-                let expected = """(jsonb_path_exists(data, '$.OdhTags[*].Id ?(@ like_regex "Ski" flag "q")'))"""
+                let expected = """(jsonb_path_exists(data, '$.OdhTags\[*\].Id ?(@ like_regex "Ski" flag "q")'))"""
                 let actual = transformFilter "likein(OdhTags.[*].Id,'Ski')"
                 Expect.equal actual expected ""
             }
