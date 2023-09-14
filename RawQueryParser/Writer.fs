@@ -15,6 +15,7 @@ let writeRawField (Field fields) =
     fields
     |> List.choose (function
         | IdentifierSegment x -> Some x
+        | IdentifierArraySegment x -> Some x
         | ArraySegment -> None) // Filter away array segment
     |> String.concat ","
     |> sprintf "data#>'\\{%s\\}'"
@@ -23,6 +24,7 @@ let writeJsonPathField (Field fields) =
     fields
     |> List.map (function
         | IdentifierSegment x -> $".{x}" 
+        | IdentifierArraySegment x -> $".{x}\[*\]"
         | ArraySegment -> "\[*\]")
     |> String.concat ""
     |> sprintf "$%s"
@@ -37,6 +39,7 @@ let writeTextField (Field fields) =
     fields
     |> List.choose (function
         | IdentifierSegment x -> Some x
+        | IdentifierArraySegment x -> Some x
         | ArraySegment -> None) // Filter away array segment
     |> String.concat ","
     |> sprintf "data#>>'\\{%s\\}'"

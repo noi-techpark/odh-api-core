@@ -10,6 +10,7 @@ namespace RawQueryParser
 type FieldSegment =
     | IdentifierSegment of string
     | ArraySegment
+    | IdentifierArraySegment of string
 
 /// <summary>
 /// Defines a field with hierarchical access fields.
@@ -22,7 +23,8 @@ with member self.ToNestedObject(value) =
         let rec loop m = function
             | [] ->
                 (box value)
-            | IdentifierSegment h::t ->
+            | IdentifierSegment h::t
+            | IdentifierArraySegment h::t ->
                 box (dict [h, box (loop m t)])
             | ArraySegment::t ->
                 box [loop m t]
