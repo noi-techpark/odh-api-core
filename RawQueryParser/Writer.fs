@@ -135,7 +135,7 @@ module Filtering =
                 match value with
                 | String s -> s
                 | _ -> failwith "Only strings are supported in a likein filter."
-                |> fun value -> sprintf $"jsonb_path_exists(data, '%s{field'} ?(@ like_regex \"%s{value}\")')"
+                |> fun value -> sprintf $"jsonb_path_exists(data, '%s{field'} ?(@ like_regex \"%s{value}\" flag \"q\")')"
             values
             |> List.map writeValue
             |> String.concat " OR "

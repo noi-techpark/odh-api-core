@@ -97,22 +97,22 @@ let transfomerTests =
                 Expect.equal actual expected ""
             }
             test "LIKEIN with simple field" {
-                let expected = """(jsonb_path_exists(data, '$.OdhTags ?(@ like_regex "Ski")'))"""
+                let expected = """(jsonb_path_exists(data, '$.OdhTags ?(@ like_regex "Ski" flag "q")'))"""
                 let actual = transformFilter "likein(OdhTags,'Ski')"
                 Expect.equal actual expected ""
             }
             test "LIKEIN with array" {
-                let expected = """(jsonb_path_exists(data, '$.OdhTags[*].Id ?(@ like_regex "Ski")'))"""
+                let expected = """(jsonb_path_exists(data, '$.OdhTags[*].Id ?(@ like_regex "Ski" flag "q")'))"""
                 let actual = transformFilter "likein(OdhTags.[*].Id,'Ski')"
                 Expect.equal actual expected ""
             }
             test "LIKEIN with nested fields" {
-                let expected = """(jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Ski")'))"""
+                let expected = """(jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Ski" flag "q")'))"""
                 let actual = transformFilter "likein(Foo.OdhTags,'Ski')"
                 Expect.equal actual expected ""
             }
             test "LIKEIN with nested field and multiple values" {
-                let expected = """(jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Ski")') OR jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Winter")'))"""
+                let expected = """(jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Ski" flag "q")') OR jsonb_path_exists(data, '$.Foo.OdhTags ?(@ like_regex "Winter" flag "q")'))"""
                 let actual = transformFilter "likein(Foo.OdhTags,'Ski','Winter')"
                 Expect.equal actual expected ""
             }
