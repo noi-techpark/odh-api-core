@@ -223,10 +223,11 @@ namespace OdhApiCore.Controllers
             return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew));          
         }
 
-
         protected async Task<IActionResult> DeleteData(string id, string table)
         {
             return Ok(await QueryFactory.DeleteData(id, table));            
         }
+
+        //TODO Upsert Data and push to all published Channels
     }    
 }
