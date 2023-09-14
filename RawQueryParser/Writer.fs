@@ -67,7 +67,7 @@ module Filtering =
         | Ge -> ">="
         | Lt -> "<"
         | Le -> "<="
-        | Like -> "Like"
+        | Like -> "LIKE"
 
     let writeRawValue = function
         | Boolean x -> box x
@@ -93,7 +93,10 @@ module Filtering =
             | DateTime _ -> $"({writeTextField comparison.Field})::timestamp"
             | Array -> $"({writeRawField comparison.Field})::jsonb"
         let operator = writeOperator comparison.Operator
-        let value = writeValue comparison.Value
+        let value =
+            match comparison.Operator, comparison.Value with
+            | Like, String value -> writeValue (String $"%%{value}%%")
+            | _, value -> writeValue value
         $"{field} {operator} {value}"
 
     let rec writeStatement (jsonSerializer: obj -> string) = function 
@@ -118,7 +121,16 @@ module Filtering =
             |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->
             $"NOT {writeStatement jsonSerializer (Condition (In (field, values)))}"
+        | Condition (LikeIn (field, values)) ->
+            let writeValue (value: Value) =
+                match value with
+                | String value -> (String $"%%{value}%%")
+                | _ -> value
+                |> writeValue
+                |> sprintf "%s LIKE %s" (writeTextField field)
+            values
+            |> List.map writeValue
+            |> String.concat " OR "
+            |> sprintf "(%s)"
         | Condition (IsNull property) -> $"{writeTextField property} IS NULL"
         | Condition (IsNotNull property) -> $"{writeTextField property} IS NOT NULL"
-        //| Condition (Like operator) ->  $"{writeTextField property} LIKE "
-
