@@ -44,4 +44,4 @@ services:
       ASPNETCORE_NotifierConfig__idm-marketplace__User: ${MARKETPLACE_PUSH_USER}
       ASPNETCORE_NotifierConfig__idm-marketplace__Password: ${MARKETPLACE_PUSH_PSWD}
     ports:
-      - "60210:80"
+      - "8002:80"

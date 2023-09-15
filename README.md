@@ -68,6 +68,8 @@ Custom Functions on DB
 * extract_tags
 * extract_tagkeys
 * is_valid_jsonb
+* json_2_tsrange_array
+* convert_tsrange_array_to_tsmultirange
 
 These custom functions are used for the generated Columns
 
@@ -110,10 +112,10 @@ Set the needed environment variables
 ### using Docker
 
 go into \OdhApiCore\ folder \
-`docker-compose up` starts the odh-api appliaction on http://localhost:60209/
+`docker-compose up` starts the odh-api appliaction on http://localhost:8001/
 
 go into \OdhApiImporter\ folder \
-`docker-compose up` starts the odh-api appliaction on http://localhost:60210/
+`docker-compose up` starts the odh-api appliaction on http://localhost:8002/
 
 ### using .Net Core CLI
 
@@ -137,6 +139,55 @@ CREATE EXTENSION earthdistance;
 ```
 CREATE EXTENSION pg_trgm;
 ```
+
+Create generated columns on Postgres
+
+* bool
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_bool bool GENERATED ALWAYS AS ((data#>'{Active}')::bool)stored;
+```
+
+*string
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_string text GENERATED ALWAYS AS ((data#>>'{Source}'))stored;
+```
+
+*double
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_double DOUBLE precision GENERATED ALWAYS AS ((data#>'{Latitude}')::DOUBLE precision) stored;
+```
+
+* array (simple)
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_array text[] GENERATED ALWAYS AS (json_array_to_pg_array(data#>'{HasLanguage}')) stored;
+```
+
+* array (object)
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_array text[] GENERATED ALWAYS AS (extract_keys_from_jsonb_object_array(data#>'{Features}','Id')) stored;
+```
+
+* date
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_date timestamp GENERATED ALWAYS AS (text2ts(data#>>'{LastChange}')::timestamp) stored;
+```
+
+* tsmultirange
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_tsmultirange tsmultirange GENERATED ALWAYS AS (convert_tsrange_array_to_tsmultirange(json_2_tsrange_array(data#>'{EventDate}'))) stored;
+```
+
+* jsonb
+```sql
+ALTER TABLE events ADD IF NOT EXISTS gen_jsonb jsonb GENERATED ALWAYS AS ((data#>'{SomeJsonB}')::jsonb) stored;
+```
+ 
 
 Custom functions for Postgres Generated Columns creation
 
@@ -208,6 +259,59 @@ exception
      return null;  
 end; $$ 
 LANGUAGE plpgsql IMMUTABLE;
+```
+
+* json_2_tsrange_array
+
+```sql
+CREATE OR REPLACE FUNCTION public.json_2_tsrange_array(jsonarray jsonb)
+ RETURNS tsrange[]
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$ begin if jsonarray <> 'null' then return (
+  select 
+    array(
+      select 
+        tsrange(
+          ( (event ->> 'From')::timestamp + (event ->> 'Begin')::time), 
+          ( (event ->> 'To')::timestamp + (event ->> 'End')::time)
+        ) 
+      from 
+        jsonb_array_elements(jsonarray) as event 
+      where 
+        (event ->> 'From')::timestamp + (event ->> 'Begin')::time < (event ->> 'To')::timestamp + (event ->> 'End')::time
+    )
+);
+else return null;
+end if;
+end;
+$function$
+```
+
+* convert_tsrange_array_to_tsmultirange
+
+```sql
+CREATE OR REPLACE FUNCTION convert_tsrange_array_to_tsmultirange(tsrange_array tsrange[])
+RETURNS tsmultirange
+LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $$
+DECLARE
+    result tsmultirange := tsmultirange();
+    tsr tsrange;
+BEGIN
+	IF tsrange_array IS NOT NULL THEN
+    -- Durchlaufen des tsrange-Arrays
+    FOREACH tsr IN ARRAY tsrange_array
+    LOOP
+        -- Hinzufügen des tsrange-Elements zum tsmultirange
+        result := result + tsmultirange(tsrange(tsr));
+    END LOOP;
+	END IF;
+
+    RETURN result;
+END;
+$$;
 ```
 
 ### REUSE
