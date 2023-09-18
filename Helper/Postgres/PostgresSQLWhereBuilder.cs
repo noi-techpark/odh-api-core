@@ -666,10 +666,10 @@ namespace Helper
                 .EventShortCommunityActiveFilter(communityactivefilter)
                 //.EventShortDateFilterEnd(start, end, !getbyrooms)
                 //.EventShortDateFilterBegin(start, end, !getbyrooms)
-                .EventShortDateFilterBeginEndWithInBehaviour(start, end, !getbyrooms)
+                .EventShortDateFilterBeginEndWithInBehaviour_GeneratedColumn(start, end, !getbyrooms)
                 //.EventShortDateFilterEndByRoom(start, end, getbyrooms)
                 //.EventShortDateFilterBeginByRoom(start, end, getbyrooms)
-                .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
+                .EventShortDateFilterBeginEndByRoom_GeneratedColumn(start, end, getbyrooms)
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .SearchFilter(EventShortTitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter_GeneratedColumn(lastchange)
