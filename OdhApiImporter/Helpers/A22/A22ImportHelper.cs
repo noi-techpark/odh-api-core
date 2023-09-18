@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OdhApiImporter.Helpers.A22
+namespace OdhApiImporter.Helpers
 {
     public class A22ImportHelper : ImportHelper, IImportHelper
     {

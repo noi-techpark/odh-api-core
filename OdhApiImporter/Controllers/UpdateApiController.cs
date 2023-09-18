@@ -696,6 +696,37 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region A22 DATA SYNC
+
+        //[Authorize(Roles = "DataPush")]
+        [HttpGet, Route("A22/{a22entity}/Update")]
+        public async Task<IActionResult> UpdateAllA22Data(string a22entity, CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import A22 " + a22entity;
+            string updatetype = GetUpdateType(null);
+            string source = "a22";
+            string otherinfo = "rawonly";
+
+            try
+            {
+                //TODO URLGeneratorStatic
+               A22ImportHelper a22importhelper = new A22ImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("A22/Wecam"));
+
+                updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        #endregion
+
 
         protected Func<string, string> UrlGeneratorStatic
         {
