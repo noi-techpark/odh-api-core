@@ -129,8 +129,11 @@ namespace NINJA.Parser
 
         public static EventLinked ParseNinjaEventToODHEvent(string id, NinjaEvent ninjaevent, NinjaData<NinjaPlaceRoom> place, NinjaData<NinjaPlaceRoom> room)
         {
-            if (id != "------" && place != null)
+            try
             {
+                if (id != "------" && place != null)
+                    throw new Exception("incomplete data, no id");
+
                 EventLinked myevent = new EventLinked();
                 myevent.Id = id.ToUpper();
 
@@ -208,7 +211,7 @@ namespace NINJA.Parser
 
                 //TODO PARSING FAILS IF format of datetime is not exactly as described
                 //TODO Resolve this "exception": "String '04/04/2022 9:00' was not recognized as a valid DateTime.",                
-                
+
 
                 //Date Info
                 //myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
@@ -217,7 +220,7 @@ namespace NINJA.Parser
                 myevent.DateBegin = TryParsingToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time);
                 myevent.DateEnd = TryParsingToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time);
 
-                
+
 
                 //DateTime.TryParse(ninjaevent.begin_date + " " + ninjaevent.begin_time, CultureInfo.InvariantCulture, out evendatebegin);
                 //DateTime.TryParse(ninjaevent.end_date + " " + ninjaevent.end_time, CultureInfo.InvariantCulture, out evendateend);
@@ -320,23 +323,26 @@ namespace NINJA.Parser
                 }
 
                 myevent.EventPublisher = new List<EventPublisher>()
-            {
-                new EventPublisher()
                 {
-                    Publish = 1,
-                    PublisherRID = ninjaevent.place,
-                    Ranc = 0
-                }
-            };
+                    new EventPublisher()
+                    {
+                        Publish = 1,
+                        PublisherRID = ninjaevent.place,
+                        Ranc = 0
+                    }
+                };
 
                 myevent.HasLanguage = languages;
 
                 myevent.ImageGallery = new List<ImageGallery>();
 
                 return myevent;
+
             }
-            else
+            catch (Exception e)
+            {
                 return null;
+            }
         }
 
         public static DateTime TryParsingToDateTime(string datetimetoparse)
