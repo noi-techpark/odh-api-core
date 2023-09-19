@@ -25,6 +25,16 @@ namespace OdhApiImporter
         private readonly EBMSConfig ebmsConfig;
         private readonly RavenConfig ravenConfig;
         private readonly DSSConfig dssConfig;
+
+        private readonly NinjaConfig ninjaConfig;
+        private readonly LoopTecConfig looptecConfig;
+        private readonly SuedtirolWeinConfig suedtirolweinConfig;
+        private readonly MusportConfig musportConfig;
+        private readonly FeratelConfig feratelConfig;
+        private readonly PanomaxConfig panomaxConfig;
+        private readonly PanocloudConfig panocloudConfig;
+        private readonly A22Config a22Config;
+
         private readonly List<NotifierConfig> notifierConfig;
 
         public Settings(IConfiguration configuration)
@@ -35,26 +45,43 @@ namespace OdhApiImporter
             this.mongoDBConnectionString = new Lazy<string>(() =>
             this.configuration.GetConnectionString("MongoDBConnection"));
             var mss = this.configuration.GetSection("MssConfig");
-            this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
+            this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""), mss.GetValue<string>("ServiceUrl", ""));
             var lcs = this.configuration.GetSection("LcsConfig");
-            this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""));
+            this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""), lcs.GetValue<string>("ServiceUrl", ""));
             var cdb = this.configuration.GetSection("CDBConfig");
-            this.cdbConfig = new CDBConfig(cdb.GetValue<string>("Username", ""), cdb.GetValue<string>("Password", ""), cdb.GetValue<string>("Url", ""));
+            this.cdbConfig = new CDBConfig(cdb.GetValue<string>("Username", ""), cdb.GetValue<string>("Password", ""), cdb.GetValue<string>("ServiceUrl", ""));
             var siag = this.configuration.GetSection("SiagConfig");
-            this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
+            this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""), siag.GetValue<string>("ServiceUrl", ""));
+            var ebms = this.configuration.GetSection("EBMSConfig");
+            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("User", ""), ebms.GetValue<string>("Password", ""), ebms.GetValue<string>("ServiceUrl", ""));
+            var raven = this.configuration.GetSection("RavenConfig");
+            this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
+            var dss = this.configuration.GetSection("DSSConfig");
+            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+
+            var suedtirolwein = this.configuration.GetSection("DSSConfig");
+            this.sued = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+
+            var dss = this.configuration.GetSection("DSSConfig");
+            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+
+            var dss = this.configuration.GetSection("DSSConfig");
+            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+
+            var dss = this.configuration.GetSection("DSSConfig");
+            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+
+            var dss = this.configuration.GetSection("DSSConfig");
+            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+
+
             var xml = this.configuration.GetSection("XmlConfig");
             this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
             var json = this.configuration.GetSection("JsonConfig");
             this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("DocUrl", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
-            var ebms = this.configuration.GetSection("EBMSConfig");
-            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
-            var raven = this.configuration.GetSection("RavenConfig");
-            this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
-            var dss = this.configuration.GetSection("DSSConfig");
-            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
-
+          
             var notifierconfiglist = this.configuration.GetSection("NotifierConfig").GetChildren();
             this.notifierConfig = new List<NotifierConfig>();
 
@@ -81,6 +108,16 @@ namespace OdhApiImporter
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
         public RavenConfig RavenConfig => this.ravenConfig;
         public DSSConfig DSSConfig => this.dssConfig;
+
+        public A22Config A22Config => this.a22Config;
+        public FeratelConfig FeratelConfig => this.feratelConfig;
+        public PanocloudConfig PanocloudConfig => this.panocloudConfig;
+        public PanomaxConfig PanomaxConfig => this.panomaxConfig;
+        public SuedtirolWeinConfig SuedtirolWeinConfig => this.suedtirolweinConfig;
+        public MusportConfig MusportConfig => this.musportConfig;
+        public NinjaConfig NinjaConfig => this.ninjaConfig;
+        public LoopTecConfig LoopTecConfig => this.looptecConfig;
+
         public List<NotifierConfig> NotifierConfig => this.notifierConfig;
 
         public List<Field2HideConfig> Field2HideConfig => throw new NotImplementedException();
@@ -88,7 +125,6 @@ namespace OdhApiImporter
         public List<RateLimitConfig> RateLimitConfig => throw new NotImplementedException();
         public NoRateLimitConfig NoRateLimitConfig => throw new NotImplementedException();
         public List<FCMConfig> FCMConfig => throw new NotImplementedException();
-
         public PushServerConfig PushServerConfig => throw new NotImplementedException();
     }
 }
