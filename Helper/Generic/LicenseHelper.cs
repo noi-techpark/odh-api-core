@@ -223,12 +223,32 @@ namespace Helper
 
             if(data.Source?.ToLower() == "content")
             {
+                isopendata = true;
                 licenseholder = @"https://www.idm-suedtirol.com";
             }
 
             if (data.Source?.ToLower() == "dss")
             {
+                isopendata = true;
                 licenseholder = @"https://www.dolomitisuperski.com";
+            }
+
+            if (data.Source?.ToLower() == "panomax")
+            {
+                isopendata = true;
+                licenseholder = @"https://panomax.com";
+            }
+
+            if (data.Source?.ToLower() == "panocloud")
+            {
+                isopendata = true;
+                licenseholder = @"https://panocloud.com";
+            }
+
+            if (data.Source?.ToLower() == "feratel")
+            {
+                isopendata = true;
+                licenseholder = @"https://feratel.com";
             }
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);

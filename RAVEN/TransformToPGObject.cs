@@ -339,6 +339,22 @@ namespace RAVEN
             if (sourcemeta == "content")
                 sourcemeta = "idm";
 
+            data.WebCamProperties = new WebcamProperties();
+            data.WebCamProperties.WebcamUrl = data.Webcamurl;
+            data.WebCamProperties.PreviewUrl = data.Previewurl;
+            data.WebCamProperties.StreamUrl = data.Streamurl;            
+
+            if (!String.IsNullOrEmpty(data.Webcamurl))
+            {
+                //Hack add as ImageGallery
+                data.ImageGallery = new List<ImageGallery>();
+                ImageGallery image = new ImageGallery();
+                image.ImageUrl = data.Webcamurl;
+
+                data.ImageGallery.Add(image);
+            }
+
+
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = sourcemeta;
             else
@@ -351,6 +367,76 @@ namespace RAVEN
 
             return data;
         }
+
+
+        public static WebcamInfoLinked GetWebcamInfoPGObject(WebcamInfoRaven data)
+        {
+            WebcamInfoLinked webcam = new WebcamInfoLinked();
+
+            webcam.Id = data.Id.ToUpper();
+
+            webcam.Active = data.Active;
+            webcam.AreaIds = data.AreaIds;
+            webcam.FirstImport = data.FirstImport;
+            webcam.GpsInfo = data.GpsInfo != null ? new List<GpsInfo>() { data.GpsInfo } : new List<GpsInfo>();
+            webcam.LastChange = data.LastChange;
+            webcam.LicenseInfo = data.LicenseInfo;
+            webcam.ListPosition = data.ListPosition;
+            webcam.Mapping = data.Mapping;
+            webcam.SmgActive = data.SmgActive;
+            webcam.Shortname = data.Shortname;
+            webcam.SmgTags = data.SmgTags;
+            webcam.WebcamAssignedOn = data.WebcamAssignedOn;
+            webcam.WebcamId = data.WebcamId;
+            //Webcamproperties
+            webcam.WebCamProperties = new WebcamProperties();
+            webcam.WebCamProperties.WebcamUrl = data.Webcamurl;
+            webcam.WebCamProperties.PreviewUrl = data.Previewurl; 
+            webcam.WebCamProperties.StreamUrl = data.Streamurl;
+
+            //ImageGallery
+            if (!String.IsNullOrEmpty(data.Webcamurl))
+            {
+                //Hack add as ImageGallery
+                webcam.ImageGallery = new List<ImageGallery>();
+                ImageGallery image = new ImageGallery();
+                image.ImageUrl = data.Webcamurl;
+
+                webcam.ImageGallery.Add(image);
+            }
+
+            //Detail
+            foreach (var kvp in data.Webcamname)
+            {
+                Detail detail = new Detail();
+                detail.Language = kvp.Key;
+                detail.Title = kvp.Value;
+
+                webcam.Detail.TryAddOrUpdate(kvp.Key, detail);
+            }
+
+            webcam.HasLanguage = webcam.Detail.Keys;
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                webcam.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            string sourcemeta = data.Source.ToLower();
+            if (sourcemeta == "content")
+                sourcemeta = "idm";
+
+            if (String.IsNullOrEmpty(data.Source))
+                webcam.Source = sourcemeta;
+            else
+                webcam.Source = data.Source.ToLower();
+
+            webcam._Meta = MetadataHelper.GetMetadataobject<WebcamInfoLinked>(webcam, MetadataHelper.GetMetadataforWebcam); //GetMetadata(data.Id, "webcam", sourcemeta, data.LastChange);
+            var webcampublished = data.WebcamAssignedOn != null && data.WebcamAssignedOn.Count > 0 ? true : false;
+
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("webcam", webcampublished);
+
+            return webcam;
+        }
+
 
         public static MeasuringpointLinked GetMeasuringpointPGObject(MeasuringpointLinked data)
         {

@@ -74,7 +74,7 @@ namespace LCS
                         mygpsinfolist.Add(mygpsinfo);
                     }
 
-                    webcam.GpsInfo = mygpsinfolist.FirstOrDefault();
+                    webcam.GpsInfo = mygpsinfolist;
                 }
             }
 
@@ -147,18 +147,19 @@ namespace LCS
             //Not yet implemented
             //webcam.GpsTrack = mygpstracklist.ToList();
 
-            //URls
-            webcam.Webcamurl = thewebcamde.URL != null ? thewebcamde.URL.InnerText : "";
-            webcam.Streamurl = thewebcamde.StreamURL != null ? thewebcamde.StreamURL.InnerText : "";
-            webcam.Previewurl = thewebcamde.PreviewURL != null ? thewebcamde.PreviewURL.InnerText : "";
+            //URls        
+            webcam.WebCamProperties.WebcamUrl = thewebcamde.URL != null ? thewebcamde.URL.InnerText : "";
+            webcam.WebCamProperties.StreamUrl = thewebcamde.StreamURL != null ? thewebcamde.StreamURL.InnerText : "";
+            webcam.WebCamProperties.PreviewUrl = thewebcamde.PreviewURL != null ? thewebcamde.PreviewURL.InnerText : "";
+
 
             //Name
             if (thewebcamde.Name != null)
-                webcam.Webcamname.TryAddOrUpdate("de", thewebcamde.Name.FirstOrDefault().InnerText);
+                webcam.Detail.TryAddOrUpdate("de", new Detail() { Language = "de", Title = thewebcamde.Name.FirstOrDefault().InnerText } );
             if (thewebcamit.Name != null)
-                webcam.Webcamname.TryAddOrUpdate("it", thewebcamit.Name.FirstOrDefault().InnerText);
+                webcam.Detail.TryAddOrUpdate("it", new Detail() { Language = "it", Title = thewebcamit.Name.FirstOrDefault().InnerText });
             if (thewebcamen.Name != null)
-                webcam.Webcamname.TryAddOrUpdate("en", thewebcamen.Name.FirstOrDefault().InnerText);
+                webcam.Detail.TryAddOrUpdate("en", new Detail() { Language = "en", Title = thewebcamen.Name.FirstOrDefault().InnerText });
 
             if (webcam.FirstImport == null)
                 webcam.FirstImport = DateTime.Now;
