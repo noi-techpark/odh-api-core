@@ -78,7 +78,7 @@ module Filtering =
         | Ge -> ">="
         | Lt -> "<"
         | Le -> "<="
-        | Like -> "LIKE"
+        | Like -> "ILIKE"
 
     let writeRawValue = function
         | Boolean x -> box x
