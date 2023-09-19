@@ -39,13 +39,13 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
         public async Task<IDictionary<string, XDocument>> ImportList(CancellationToken cancellationToken = default)
         {
-            var winedatalistde = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("de");
-            var winedatalistit = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("it");
-            var winedatalisten = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("en");
+            var winedatalistde = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "de");
+            var winedatalistit = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "it");
+            var winedatalisten = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "en");
             //New getting in jp and ru and us
-            var winedatalistjp = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("jp");
-            var winedatalistru = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("ru");
-            var winedatalistus = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("us");
+            var winedatalistjp = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "jp");
+            var winedatalistru = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "ru");
+            var winedatalistus = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "us");
 
             IDictionary<string, XDocument> mywinedata = new Dictionary<string, XDocument>();
             mywinedata.Add("de", winedatalistde);
