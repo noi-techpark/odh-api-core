@@ -13,11 +13,8 @@ using System.Xml.Linq;
 namespace SIAG
 {
     public class GetMuseumFromSIAG
-    {
-        //TODO Make BaseUrl configurable in settings
-        public const string serviceurl = @"https://musport.prov.bz.it/musport/services/MuseumsService/";
-
-        public static async Task<HttpResponseMessage> MuseumList()
+    {        
+        public static async Task<HttpResponseMessage> MuseumList(string serviceurl)
         {
 
             string requesturl = serviceurl + "getMuseums";
@@ -30,10 +27,10 @@ namespace SIAG
 
         }
 
-        public static async Task<XDocument> GetMuseumList()
+        public static async Task<XDocument> GetMuseumList(string serviceurl)
         {
 
-            var myresponse = MuseumList();
+            var myresponse = MuseumList(serviceurl);
 
             var myresponsecontent = await myresponse.Result.Content.ReadAsStringAsync();
 
@@ -43,7 +40,7 @@ namespace SIAG
 
         }
 
-        public static async Task<HttpResponseMessage> MuseumDetail(string museumid)
+        public static async Task<HttpResponseMessage> MuseumDetail(string serviceurl, string museumid)
         {
             try
             {
@@ -61,11 +58,11 @@ namespace SIAG
             }
         }
 
-        public static async Task<XDocument?> GetMuseumDetail(string museumid)
+        public static async Task<XDocument?> GetMuseumDetail(string serviceurl, string museumid)
         {
             try
             {
-                var myresponse = MuseumDetail(museumid);
+                var myresponse = MuseumDetail(serviceurl, museumid);
 
                 var myresponsecontent = await myresponse.Result.Content.ReadAsStringAsync();
 
