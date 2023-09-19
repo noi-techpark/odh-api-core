@@ -14,7 +14,7 @@ namespace LCS
     public class GetSnowReport
     {
         //Get Simple Snowreport for one Area
-        public static SnowReportBaseData GetLiveSnowReport(string lang, SkiArea myskiarea, string requestor, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static SnowReportBaseData GetLiveSnowReport(string lang, SkiArea myskiarea, string requestor, string serviceurl, string ltsuser, string ltspswd, string ltsmsgpswd)
         {
             List<string> myareas = myskiarea.AreaId.ToList();
 
@@ -41,11 +41,10 @@ namespace LCS
 
             //Detailinfos für Measuringpoints
 
-
             try
             {
 
-                GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
+                GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(serviceurl, ltsuser, ltspswd);
 
                 var myactivityresponse = myactivitysearch.GetActivitySearch(myactivityrequest);
                 var mysnowobservationresponse = myactivitysearch.GetWeatherSnowSearch(mysnowsearchrequest);

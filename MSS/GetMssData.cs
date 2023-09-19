@@ -29,7 +29,7 @@ namespace MSS
         /// <param name="departure">Abreisedatum</param>
         /// <param name="service">Verpflegungsart</param>
         /// <returns></returns>
-        public static async Task<MssResult?> GetMssResponse(HttpClient httpClient, string lang, List<string> idlist, string idsofchannel, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string requestsource, string version, string mssuser, string msspswd, bool withoutmssids = false)
+        public static async Task<MssResult?> GetMssResponse(HttpClient httpClient, string lang, List<string> idlist, string idsofchannel, string[] mybookingchannels, List<Tuple<string, string, List<string>>> myroomdata, DateTime arrival, DateTime departure, int service, string hgvservicecode, XElement offerdetails, XElement hoteldetails, int rooms, string requestsource, string version, string serviceurl, string mssuser, string msspswd, bool withoutmssids = false)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace MSS
 
                 XDocument myrequest = MssRequest.BuildPostData(myidlist, mychannels, myroomlist, arrival, departure, offerdetails, hoteldetails, mytyp, service, lang, idsofchannel, requestsource, version, mssuser, msspswd);
 
-                var myresponses = await MssRequest.RequestAsync(httpClient, myrequest);
+                var myresponses = await MssRequest.RequestAsync(serviceurl, httpClient, myrequest);
 
                 var activityresponsecontent = await myresponses.Content.ReadAsStringAsync();
 

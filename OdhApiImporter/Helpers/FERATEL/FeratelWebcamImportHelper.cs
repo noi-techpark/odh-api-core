@@ -17,10 +17,7 @@ using System.Xml.Linq;
 namespace OdhApiImporter.Helpers
 {
     public class FeratelWebcamImportHelper : ImportHelper, IImportHelper
-    {
-        //TODO Make BaseUrl configurable in settings
-        public const string serviceurl = @"http://wtvxmlp.feratel.com/xmlpan/x3/infoxml.jsp?pg=CDB9645D-E67B-44D2-9FC9-E1539FF9A6B7&lg=de&showKeywords=1&geoXY=1&xmlv3=1&nolg=1";
-
+    {       
         public List<string> idlistinterface { get; set; }
 
         public FeratelWebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
@@ -46,7 +43,7 @@ namespace OdhApiImporter.Helpers
         //Get Data from Source
         private async Task<XDocument> GetData(CancellationToken cancellationToken)
         {
-            return await GetFeratelData.GetWebcams(serviceurl);
+            return await GetFeratelData.GetWebcams(settings.FeratelConfig.ServiceUrl);
         }
 
         //Import the Data
@@ -152,7 +149,7 @@ namespace OdhApiImporter.Helpers
                             importdate = DateTime.Now,
                             license = "open",
                             sourceinterface = "webcams",
-                            sourceurl = serviceurl,
+                            sourceurl = settings.FeratelConfig.ServiceUrl,
                             type = "webcam",
                             sourceid = data.Key,
                             raw = data.Value.Value,

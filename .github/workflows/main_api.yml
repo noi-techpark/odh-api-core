@@ -55,14 +55,14 @@ jobs:
           X_PG_CONNECTION: ${{ secrets.PG_CONNECTION_TEST }}
           X_MSS_USER: ${{ secrets.MSS_USER_TEST }}
           X_MSS_PSWD: ${{ secrets.MSS_PSWD_TEST }}
-          X_MSS_SERVICEURL: ${{ secrets.MSS_URL_TEST }}
+          X_MSS_SERVICEURL: "https://www.easymailing.eu/mss/mss_service.php"
           X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
           X_LCS_PSWD: ${{ secrets.LCS_PSWD_TEST }}
           X_LCS_MSGPSWD: ${{ secrets.LCS_MSGPSWD_TEST }}
-          X_LCS_SERVICEURL: ${{ secrets.LCS_URL_TEST }}
+          X_LCS_SERVICEURL: "https://lcs.lts.it/api/data.svc"
           X_CDB_USER: ${{ secrets.CDB_USER_TEST }}
           X_CDB_PSWD: ${{ secrets.CDB_PSWD_TEST }}
-          X_CDB_SERVICEURL: ${{ secrets.CDB_URL_TEST }}       
+          X_CDB_SERVICEURL: "https://lcs.lts.it/data/cdbdata.asmx"       
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
           X_SIAG_SERVICEURL: ${{ secrets.SIAG_URL_TEST }}
@@ -135,14 +135,14 @@ jobs:
           X_PG_CONNECTION: ${{ secrets.PG_CONNECTION_PROD }}
           X_MSS_USER: ${{ secrets.MSS_USER_TEST }}
           X_MSS_PSWD: ${{ secrets.MSS_PSWD_TEST }}
-          X_MSS_SERVICEURL: ${{ secrets.MSS_URL_TEST }}
+          X_MSS_SERVICEURL: "https://www.easymailing.eu/mss/mss_service.php"
           X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
           X_LCS_PSWD: ${{ secrets.LCS_PSWD_TEST }}
           X_LCS_MSGPSWD: ${{ secrets.LCS_MSGPSWD_TEST }}
-          X_LCS_SERVICEURL: ${{ secrets.LCS_URL_TEST }}
+          X_LCS_SERVICEURL: "https://lcs.lts.it/api/data.svc"
           X_CDB_USER: ${{ secrets.CDB_USER_TEST }}
           X_CDB_PSWD: ${{ secrets.CDB_PSWD_TEST }}
-          X_CDB_SERVICEURL: ${{ secrets.CDB_URL_TEST }}
+          X_CDB_SERVICEURL: "https://lcs.lts.it/data/cdbdata.asmx"
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
           X_SIAG_SERVICEURL: ${{ secrets.SIAG_URL_TEST }}          

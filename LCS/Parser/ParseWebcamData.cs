@@ -17,7 +17,7 @@ namespace LCS
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Get the Webcam Detail Information
-        public static WebcamInfo GetWebcamDetailLTS(string rid, WebcamInfo webcam, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static WebcamInfo GetWebcamDetailLTS(string rid, WebcamInfo webcam, string serviceurl, string ltsuser, string ltspswd, string ltsmsgpswd)
         {
             List<string> mywebcamlist = new List<string>();
             mywebcamlist.Add(rid);
@@ -26,7 +26,7 @@ namespace LCS
             var mywebcamrequestit = GetLCSRequests.GetWebcamDetailRequest("it", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
             var mywebcamrequesten = GetLCSRequests.GetWebcamDetailRequest("en", "0", "0", "1", "1", "1", "1", "1", "1", "1", "1", "", "", "", mywebcamlist, "NOI", ltsmsgpswd);
 
-            GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
+            GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(serviceurl, ltsuser, ltspswd);
             var myactivityresponsede = myactivitysearch.GetWebcamDetail(mywebcamrequestde);
             var myactivityresponseit = myactivitysearch.GetWebcamDetail(mywebcamrequestit);
             var myactivityresponseen = myactivitysearch.GetWebcamDetail(mywebcamrequesten);

@@ -17,9 +17,7 @@ namespace OdhApiImporter.Helpers
 {
     public class PanocloudImportHelper : ImportHelper, IImportHelper
     {
-        //TODO Make BaseUrl configurable in settings
-        public const string serviceurl = @"https://backend.panocloud.com/partner-api/api.php?key=be39ad8114f6e9d99414151c62bc9a7fb83dbb69";
-        public List<string> idlistinterface { get; set; }
+         public List<string> idlistinterface { get; set; }
 
         //Constructor
         public PanocloudImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
@@ -46,7 +44,7 @@ namespace OdhApiImporter.Helpers
         private async Task<dynamic?> GetData(CancellationToken cancellationToken)
         {
             //Get Panomax webcam data
-            return await GetPanocloudData.GetWebcams(serviceurl); ;
+            return await GetPanocloudData.GetWebcams(settings.PanocloudConfig.ServiceUrl);
         }
 
         //Import the Data
@@ -145,7 +143,7 @@ namespace OdhApiImporter.Helpers
                             importdate = DateTime.Now,
                             license = "open",
                             sourceinterface = "webcams",
-                            sourceurl = serviceurl,
+                            sourceurl = settings.PanocloudConfig.ServiceUrl,
                             type = "webcam",
                             sourceid = data.Key,
                             raw = JsonConvert.SerializeObject(data.Value),

@@ -16,11 +16,7 @@ using System.Linq;
 namespace OdhApiImporter.Helpers
 {
     public class PanomaxImportHelper : ImportHelper, IImportHelper
-    {
-        //TODO Make BaseUrl configurable in settings
-        public const string serviceurl = @"https://api.panomax.com/1.0/instances/lists/public";
-        public const string serviceurlvideos = @"https://api.panomax.com/1.0/cams/videos/public";
-
+    {      
         public List<string> idlistinterface { get; set; }
 
         //Constructor
@@ -50,9 +46,9 @@ namespace OdhApiImporter.Helpers
             List<dynamic> panomaxdata = new List<dynamic>();
 
             //Get Panomax webcam data
-            panomaxdata.Add(await GetPanomaxData.GetWebcams(serviceurl));
+            panomaxdata.Add(await GetPanomaxData.GetWebcams(settings.PanomaxConfig.ServiceUrl));
             //Get Panomax video data
-            panomaxdata.Add(await GetPanomaxData.GetVideos(serviceurlvideos));
+            panomaxdata.Add(await GetPanomaxData.GetVideos(settings.PanomaxConfig.ServiceUrl));
 
             return panomaxdata;
         }
@@ -159,7 +155,7 @@ namespace OdhApiImporter.Helpers
                             importdate = DateTime.Now,
                             license = "open",
                             sourceinterface = "webcams",
-                            sourceurl = serviceurl,
+                            sourceurl = settings.PanocloudConfig.ServiceUrl,
                             type = "webcam",
                             sourceid = data.Key,
                             raw = JsonConvert.SerializeObject(data.Value),
