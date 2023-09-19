@@ -42,7 +42,7 @@ namespace OdhApiImporter.Helpers.LTSCDB
 
         private async Task<List<string>> ImportList(DateTime? lastchanged)
         {
-            var importlist = GetAccommodationDataCDB.GetHotelChangedfromCDB(lastchanged, "1", settings.CDBConfig.Username, settings.CDBConfig.Password, settings.CDBConfig.Url);
+            var importlist = GetAccommodationDataCDB.GetHotelChangedfromCDB(lastchanged, "1", settings.CDBConfig.Username, settings.CDBConfig.Password, settings.CDBConfig.ServiceUrl);
 
             var idlist = new List<string>();
 

@@ -58,22 +58,22 @@ namespace OdhApiImporter
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
             var dss = this.configuration.GetSection("DSSConfig");
             this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
-
-            var suedtirolwein = this.configuration.GetSection("DSSConfig");
-            this.sued = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
-
-            var dss = this.configuration.GetSection("DSSConfig");
-            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
-
-            var dss = this.configuration.GetSection("DSSConfig");
-            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
-
-            var dss = this.configuration.GetSection("DSSConfig");
-            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
-
-            var dss = this.configuration.GetSection("DSSConfig");
-            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
-
+            var suedtirolwein = this.configuration.GetSection("SuedtirolWeinConfig");
+            this.suedtirolweinConfig = new SuedtirolWeinConfig(suedtirolwein.GetValue<string>("Username", ""), suedtirolwein.GetValue<string>("Password", ""), suedtirolwein.GetValue<string>("ServiceUrl", ""));
+            var feratel = this.configuration.GetSection("FeratelConfig");
+            this.feratelConfig = new FeratelConfig(feratel.GetValue<string>("Username", ""), feratel.GetValue<string>("Password", ""), feratel.GetValue<string>("ServiceUrl", ""));
+            var panomax = this.configuration.GetSection("PanomaxConfig");
+            this.panomaxConfig = new PanomaxConfig(panomax.GetValue<string>("Username", ""), panomax.GetValue<string>("Password", ""), panomax.GetValue<string>("ServiceUrl", ""));
+            var panocloud = this.configuration.GetSection("PanocloudConfig");
+            this.panocloudConfig = new PanocloudConfig(panocloud.GetValue<string>("Username", ""), panocloud.GetValue<string>("Password", ""), panocloud.GetValue<string>("ServiceUrl", ""));
+            var a22 = this.configuration.GetSection("A22Config");
+            this.a22Config = new A22Config(a22.GetValue<string>("Username", ""), a22.GetValue<string>("Password", ""), a22.GetValue<string>("ServiceUrl", ""));
+            var musport = this.configuration.GetSection("MusportConfig");
+            this.musportConfig = new MusportConfig(musport.GetValue<string>("Username", ""), musport.GetValue<string>("Password", ""), musport.GetValue<string>("ServiceUrl", ""));
+            var ninja = this.configuration.GetSection("NinjaConfig");
+            this.ninjaConfig = new NinjaConfig(ninja.GetValue<string>("Username", ""), ninja.GetValue<string>("Password", ""), ninja.GetValue<string>("ServiceUrl", ""));
+            var looptec = this.configuration.GetSection("LoopTecConfig");
+            this.looptecConfig = new LoopTecConfig(looptec.GetValue<string>("Username", ""), looptec.GetValue<string>("Password", ""), looptec.GetValue<string>("ServiceUrl", ""));
 
             var xml = this.configuration.GetSection("XmlConfig");
             this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
