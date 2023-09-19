@@ -53,7 +53,7 @@ namespace OdhApiImporter
             var siag = this.configuration.GetSection("SiagConfig");
             this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""), siag.GetValue<string>("ServiceUrl", ""));
             var ebms = this.configuration.GetSection("EBMSConfig");
-            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("User", ""), ebms.GetValue<string>("Password", ""), ebms.GetValue<string>("ServiceUrl", ""));
+            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("Username", ""), ebms.GetValue<string>("Password", ""), ebms.GetValue<string>("ServiceUrl", ""));
             var raven = this.configuration.GetSection("RavenConfig");
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
             var dss = this.configuration.GetSection("DSSConfig");
