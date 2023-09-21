@@ -43,6 +43,7 @@ namespace RAVEN
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(data, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
 
+
             return data;
         }
 
@@ -721,6 +722,9 @@ namespace RAVEN
             if (data.PublishedOn == null)
                 data.PublishedOn = new List<string>();
 
+            //Adding LicenseInfo to ODHTag (not present on sinfo instance)                    
+            data.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHTagLinked>(data, Helper.LicenseHelper.GetLicenseforODHTag);
+
             //Change, Get the Publishedon directly from raven instance
 
             ////Hack Publishedon because ODHTag not implementing ISource
@@ -731,7 +735,7 @@ namespace RAVEN
 
             //    data.PublishedOn.TryAddOrUpdateOnList("idm-marketplace");
             //}
-           
+
             ////If Redactional Tag activate it
             //if (data.Source != null && data.Source.Contains("IDMRedactionalCategory"))
             //{

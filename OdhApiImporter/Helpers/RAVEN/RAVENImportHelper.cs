@@ -430,7 +430,9 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    //PublishedOn Logicadded on TransformToPGObject because ODHTag not implementing ISource
+
+                    //LicenseInfo Logic added on TransformToPGObject because on the sinfo instance there is no license info
+                    //PublishedOn Logic added on TransformToPGObject because ODHTag not implementing ISource
 
                     myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags", true);
 

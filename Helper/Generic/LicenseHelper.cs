@@ -372,6 +372,15 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
+        public static LicenseInfo GetLicenseforODHTag(SmgTags data)
+        {
+            var isopendata = true;
+            var licensetype = "CC0";
+            var licenseholder = "https://www.idm-suedtirol.com";
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
         public static LicenseInfo GetLicenseforWeather(string source)
         {
             var isopendata = true;
