@@ -233,22 +233,24 @@ namespace Helper
                 licenseholder = @"https://www.dolomitisuperski.com";
             }
 
+            if (data.Source?.ToLower() == "feratel")
+            {
+                licenseholder = @"https://www.feratel.com/";
+            }
+
             if (data.Source?.ToLower() == "panomax")
             {
-                isopendata = true;
-                licenseholder = @"https://panomax.com";
+                licenseholder = @"https://www.panomax.com/";
             }
 
             if (data.Source?.ToLower() == "panocloud")
             {
-                isopendata = true;
-                licenseholder = @"https://panocloud.com";
+                licenseholder = @"https://www.it-wms.com/";
             }
 
-            if (data.Source?.ToLower() == "feratel")
+            if (data.Source?.ToLower() == "a22")
             {
-                isopendata = true;
-                licenseholder = @"https://feratel.com";
+                licenseholder = @"https://www.autobrennero.it/";
             }
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
