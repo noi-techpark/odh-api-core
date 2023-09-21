@@ -235,7 +235,7 @@ namespace Helper
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
+        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table, bool casesensitive = true)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException(nameof(id), "No data");
@@ -244,7 +244,8 @@ namespace Helper
             var query =
                   QueryFactory.Query(table)
                       .Select("data")
-                      .Where("id", id);
+                      .When(casesensitive, x => x.Where("id", id))
+                      .When(!casesensitive, x => x.WhereLike("id", id));
 
             var deleteresult = 0;
             var errorresult = 0;
@@ -255,7 +256,9 @@ namespace Helper
             }
             else
             {
-                deleteresult = await QueryFactory.Query(table).Where("id", id)
+                deleteresult = await QueryFactory.Query(table)
+                        .When(casesensitive, x => x.Where("id", id))
+                        .When(!casesensitive, x => x.WhereLike("id", id))
                         .DeleteAsync();
             }
 
