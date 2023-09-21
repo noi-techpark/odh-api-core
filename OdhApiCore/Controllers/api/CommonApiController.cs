@@ -995,7 +995,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language, 
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
+                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1025,7 +1025,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language,
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
+                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -1066,7 +1066,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1096,7 +1096,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 

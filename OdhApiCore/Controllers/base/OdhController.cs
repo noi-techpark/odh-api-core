@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Schema.NET;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,10 @@ namespace OdhApiCore.Controllers
 
         protected QueryFactory QueryFactory { get; }
 
+
+        /// <summary>
+        /// When not in this role Images which does not have a CC0 License are filtered out maybe obsolete ?
+        /// </summary>
         protected bool FilterCC0License
         {
             get
@@ -79,6 +84,37 @@ namespace OdhApiCore.Controllers
                     "LTS"
                 };
                 return !roles.Any(User.IsInRole);
+            }
+        }
+
+        /// <summary>
+        /// ADD all relevant roles for data filtering
+        /// </summary>
+        protected IEnumerable<string> UserRolesToFilter
+        {
+            get
+            {               
+                var roles = new[] {
+                    "IDM",
+                    "LTS",
+                    "A22",
+                    "STA"
+                };
+
+                if (!roles.Any(User.IsInRole))
+                    return new List<string>() { "ANONYMOUS" };
+                else
+                {
+                    var userroles = new List<string>();
+
+                    foreach (var role in roles)
+                    {
+                        if(User.IsInRole(role))
+                            userroles.Add(role);
+                    }
+
+                    return userroles;
+                }                
             }
         }
 

@@ -180,7 +180,8 @@ namespace OdhApiCore.Controllers
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 //.When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
-                .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
+                //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
+                .FilterDataByAccessRoles(UserRolesToFilter)
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
                 .Limit(limitto ?? int.MaxValue);

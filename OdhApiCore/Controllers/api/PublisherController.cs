@@ -125,7 +125,7 @@ namespace OdhApiCore.Controllers
                         sourcelist: sourcelist,
                         searchfilter: searchfilter,
                         language: language,
-                        filterClosedData: FilterClosedData
+                        filterClosedData: FilterClosedData, userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'");

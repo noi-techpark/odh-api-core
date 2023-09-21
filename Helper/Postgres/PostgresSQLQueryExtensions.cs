@@ -1434,10 +1434,7 @@ namespace Helper
         public static Query EventDateFilterBeginEndArray_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
             query.When(
                 begin != DateTime.MinValue && end != DateTime.MaxValue,
-                query => 
-                
-
-                
+                query =>                                 
                 query.WhereRaw(
                     "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
                 )       
@@ -1557,32 +1554,46 @@ namespace Helper
         //anonymous -> where (closeddata = false and source != lts) OR (reduced = true and source = lts and cc0 = true)
         //logged -> where (source != lts) OR (reduced = true and source = lts)
         //idmuser -> where (source != lts) OR (reduced = false and source = lts)
-        public static Query Anonymous_Logged_UserRule_GeneratedColumn(this Query query, bool closeddatafilter, bool idmuser) =>
-            idmuser ? query.FilterSourceReducedLogged(false) : closeddatafilter ? query.FilterSourceReducedAnonymous() : query.FilterSourceReducedLogged(true);
+        //public static Query Anonymous_Logged_UserRule_GeneratedColumn(this Query query, bool closeddatafilter, bool idmuser) =>
+        //    idmuser ? query.FilterSourceReducedLogged(false) : closeddatafilter ? query.FilterSourceReducedAnonymous() : query.FilterSourceReducedLogged(true);
 
-        public static Query FilterSourceReducedLogged(this Query query, bool reduced) =>
-            query.Where(q =>
-                q.WhereRaw(
-                    "(gen_source <> 'lts')"
-                ).OrWhereRaw(
-                    "(gen_source = 'lts' AND gen_reduced = $$)", reduced
-                )
-            );
+        //public static Query FilterSourceReducedLogged(this Query query, bool reduced) =>
+        //    query.Where(q =>
+        //        q.WhereRaw(
+        //            "(gen_source <> 'lts')"
+        //        ).OrWhereRaw(
+        //            "(gen_source = 'lts' AND gen_reduced = $$)", reduced
+        //        )
+        //    );
 
-        public static Query FilterSourceReducedAnonymous(this Query query) =>
-            query.Where(q =>
-                q.WhereRaw(
-                    "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$))", false
-                ).OrWhereRaw(
-                    "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$)))", false
-                )
-            );
+        //public static Query FilterSourceReducedAnonymous(this Query query) =>
+        //    query.Where(q =>
+        //        q.WhereRaw(
+        //            "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$))", false
+        //        ).OrWhereRaw(
+        //            "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$)))", false
+        //        )
+        //    );
 
         #endregion
 
-        
+        #region Filter by Roles
+
+        public static Query FilterDataByAccessRoles(this Query query, IEnumerable<string> roles) =>
+            query.Where(q =>
+            {
+                foreach (var item in roles)
+                {
+                    q = q.OrWhereRaw(
+                        "gen_access_role @> array\\[$$\\]", item.ToUpper()
+                    );
+                }
+                return q;
+            });
+
+        #endregion
 
     }
 
-    
+
 }
