@@ -552,24 +552,28 @@ namespace OdhApiImporter.Helpers
 
                     deleteresult = await DeleteRavenObjectFromPG<AccommodationLinked>(id, "accommodations", true);
                     deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+                    //TODO DELETE also rooms
 
                     break;
 
                 case "gastronomy":
-                    
-                    deleteresult = await DeleteRavenObjectFromPG(id, "gastronomies", true, IdGenerator.GetIDStyle(typeof(GastronomyLinked)));
+
+                    //deleteresult = await DeleteRavenObjectFromPG(id, "gastronomies", true, IdGenerator.GetIDStyle(typeof(GastronomyLinked)));
+                    deleteresult = await DeleteRavenObjectFromPG<GastronomyLinked>(id, "gastronomies", true);
 
                     break;
 
                 case "activity":
-                    
-                    deleteresult = await DeleteRavenObjectFromPG(id, "activities", true, IdGenerator.GetIDStyle(typeof(LTSActivityLinked)));
+
+                    //deleteresult = await DeleteRavenObjectFromPG(id, "activities", true, IdGenerator.GetIDStyle(typeof(LTSActivityLinked)));
+                    deleteresult = await DeleteRavenObjectFromPG<LTSActivityLinked>(id, "activities", true);
 
                     break;
 
                 case "poi":
 
-                    deleteresult = await DeleteRavenObjectFromPG(id, "pois", true, IdGenerator.GetIDStyle(typeof(LTSPoiLinked)));
+                    //deleteresult = await DeleteRavenObjectFromPG(id, "pois", true, IdGenerator.GetIDStyle(typeof(LTSPoiLinked)));
+                    deleteresult = await DeleteRavenObjectFromPG<LTSPoiLinked>(id, "pois", true);
 
                     break;
 
@@ -753,7 +757,7 @@ namespace OdhApiImporter.Helpers
 
             var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult, compareimagechange);
             
-            //Delete the reduced data
+            //Delete the reduced data if available
             if(deletereduceddata)
                 await QueryFactory.DeleteData(datatosave.Id + "_reduced", table, false);
 
@@ -790,7 +794,6 @@ namespace OdhApiImporter.Helpers
             return pushresults;
         }
 
-
         private async Task<UpdateDetail> DeleteRavenObjectFromPG(string id, string table, bool deletereduced, IDStyle idstyle)
         {
             var result = await QueryFactory.DeleteData(IdGenerator.TransformIDbyIdStyle(id, idstyle), table);
@@ -817,7 +820,6 @@ namespace OdhApiImporter.Helpers
             };
 
         }
-
 
         private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(string id, string table, bool deletereduced) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
         {
@@ -858,7 +860,6 @@ namespace OdhApiImporter.Helpers
 
             return pushresults;
         }
-
 
         #endregion
     }
