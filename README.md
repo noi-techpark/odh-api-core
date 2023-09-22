@@ -210,6 +210,28 @@ end; $$
 LANGUAGE plpgsql IMMUTABLE;
 ```
 
+* calculate_access_array
+
+```sql
+CREATE OR REPLACE FUNCTION public.calculate_access_array(source text, closeddata bool, reduced bool)
+RETURNS text[]
+LANGUAGE plpgsql
+IMMUTABLE STRICT
+AS $function$
+begin
+if source = 'lts' and not reduced then return (array['IDM']);
+end if;
+if source = 'a22' then return (array['A22']);
+end if;
+if source = 'lts' and reduced and not closeddata then return (array['A22','ANONYMOUS','STA']);
+end if;
+if source <> 'lts' and source <> 'a22' and not closeddata then return (array['A22','ANONYMOUS','IDM','STA']);
+end if;
+return null;
+end;
+$function$
+```
+
 ### REUSE
 
 This project is [REUSE](https://reuse.software) compliant, more information about the usage of REUSE in NOI Techpark repositories can be found [here](https://github.com/noi-techpark/odh-docs/wiki/Guidelines-for-developers-and-licenses#guidelines-for-contributors-and-new-developers).
