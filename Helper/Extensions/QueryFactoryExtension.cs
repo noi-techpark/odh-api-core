@@ -275,6 +275,49 @@ namespace Helper
         }
 
         /// <summary>
+        /// Deletes the data if it exists, by passing id and table
+        /// </summary>
+        /// <param name="QueryFactory"></param>
+        /// <param name="id"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table, bool casesensitive = true)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentException(nameof(id), "No data");
+
+            //Check if data exists
+            var query =
+                  QueryFactory.Query(table)
+                      .Select("data")
+                      .When(casesensitive, x => x.Where("id", id))
+                      .When(!casesensitive, x => x.WhereLike("id", id));
+
+            var deleteresult = 0;
+            var errorresult = 0;
+
+            if (query == null)
+            {
+                throw new ArgumentNullException(nameof(query), "No data");
+            }
+            else
+            {
+                deleteresult = await QueryFactory.Query(table)
+                        .When(casesensitive, x => x.Where("id", id))
+                        .When(!casesensitive, x => x.WhereLike("id", id))
+                        .DeleteAsync();
+            }
+
+            if (deleteresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
+        }
+
+
+        /// <summary>
         /// Upsert Data and check if Object has changed
         /// </summary>
         /// <typeparam name="T"></typeparam>
