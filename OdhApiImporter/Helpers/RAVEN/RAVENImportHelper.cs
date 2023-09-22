@@ -490,7 +490,7 @@ namespace OdhApiImporter.Helpers
                     ((DDVenue)mypgdata).odhdata.PublishedOn = ((VenueLinked)mydata).PublishedOn.ToList();
 
                     //TODO Compare result
-                    myupdateresult = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueLinked)mydata, (DDVenue)mypgdata, "venues_v2");
+                    myupdateresult = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueLinked)mydata, (DDVenue)mypgdata, "venues_v2", true);
 
                     //Check if the Object has Changed and Push all infos to the channels
                     myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
@@ -501,7 +501,7 @@ namespace OdhApiImporter.Helpers
                         var reducedobject = ReduceDataTransformer.GetReducedObject((VenueLinked)mydata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
                         var reducedobjectdd = ReduceDataTransformer.GetReducedObject((DDVenue)mypgdata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
 
-                        updateresultreduced = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueReduced)reducedobject, (DDVenueReduced)reducedobjectdd, "venues_v2");
+                        updateresultreduced = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueReduced)reducedobject, (DDVenueReduced)reducedobjectdd, "venues_v2", false);
                     }
 
                     break;
@@ -708,7 +708,7 @@ namespace OdhApiImporter.Helpers
         /// <param name="datatosave"></param>
         /// <param name="table"></param>
         /// <returns></returns>
-        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool deletereduceddata) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, new()
+        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool deletereduceddata) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
         
@@ -716,7 +716,7 @@ namespace OdhApiImporter.Helpers
 
             //Delete the reduced data
             if (deletereduceddata)
-                await QueryFactory.DeleteData(datatosave.Id + "_reduced", table, false);
+                await QueryFactory.DeleteData<T>(datatosave.Id + "_reduced", table);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = 0, objectimagechanged = 0, comparedobjects = 0, pushchannels = result.pushchannels, changes = null };
         }
@@ -737,7 +737,7 @@ namespace OdhApiImporter.Helpers
 
             //Delete the reduced data
             if (deletereduceddata)
-                await QueryFactory.DeleteData(datatosave.Id + "_reduced", table, false);
+                await QueryFactory.DeleteData<T>(datatosave.Id + "_reduced", table);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = 0, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
         }
@@ -759,19 +759,24 @@ namespace OdhApiImporter.Helpers
             
             //Delete the reduced data if available
             if(deletereduceddata)
-                await QueryFactory.DeleteData(datatosave.Id + "_reduced", table, false);
+                await QueryFactory.DeleteData<T>(datatosave.Id + "_reduced", table);
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
         }
 
         //For Destinationdata Venue
-        private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table) 
+        private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table, bool deletereduceddata) 
             where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, IImageGalleryAware, new()
             where V : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
             var result = await QueryFactory.UpsertDataDestinationData<T,V>(datatosave, destinationdatatosave, table, false, false, true, true);
+
+            //Delete the reduced data if available
+            if (deletereduceddata)
+                await QueryFactory.DeleteData<T>(datatosave.Id + "_reduced", table);
+
 
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, pushchannels = result.pushchannels, changes = result.changes };
         }
@@ -793,34 +798,7 @@ namespace OdhApiImporter.Helpers
 
             return pushresults;
         }
-
-        private async Task<UpdateDetail> DeleteRavenObjectFromPG(string id, string table, bool deletereduced, IDStyle idstyle)
-        {
-            var result = await QueryFactory.DeleteData(IdGenerator.TransformIDbyIdStyle(id, idstyle), table);
-
-            var reducedresult = new PGCRUDResult() { changes = null, compareobject = false, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimageschanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
-
-            //Check if reduced object has to be deleted
-            if (deletereduced)
-            {
-                reducedresult = await QueryFactory.DeleteData(IdGenerator.TransformIDbyIdStyle(id + "_reduced", idstyle), table);
-            }
-
-            return new UpdateDetail()
-            {
-                created = result.created,
-                updated = result.updated,
-                deleted = result.deleted + reducedresult.deleted,
-                error = result.error + reducedresult.error,
-                objectchanged = result.objectchanged,
-                objectimagechanged = result.objectimageschanged,
-                comparedobjects = 0,
-                pushchannels = result.pushchannels,
-                changes = result.changes
-            };
-
-        }
-
+        
         private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(string id, string table, bool deletereduced) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
         {
             var result = await QueryFactory.DeleteData<T>(id, table);

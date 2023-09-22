@@ -2777,8 +2777,6 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
     }
 
     //BaseInfo Events
