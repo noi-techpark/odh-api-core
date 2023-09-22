@@ -2769,7 +2769,7 @@ namespace DataModel
         public Nullable<int> RepresentationRestriction { get; set; }
 
         //New published on List
-        public List<string>? PublishedOn { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
