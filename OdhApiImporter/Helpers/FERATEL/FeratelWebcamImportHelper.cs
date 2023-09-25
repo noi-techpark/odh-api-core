@@ -116,7 +116,7 @@ namespace OdhApiImporter.Helpers
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole(returnid, "dataimport", "single.feratel", new ImportLog() { sourceid = returnid, sourceinterface = "feratel.feratel", success = false, error = "feratel webcam could not be parsed" });
+                WriteLog.LogToConsole(returnid, "dataimport", "single.feratel", new ImportLog() { sourceid = returnid, sourceinterface = "feratel.webcam", success = false, error = "feratel webcam could not be parsed" });
 
                 errorcounter = errorcounter + 1;
             }

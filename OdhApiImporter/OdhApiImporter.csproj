@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\A22\A22.csproj" />
     <ProjectReference Include="..\CDB\CDB.csproj" />
     <ProjectReference Include="..\DSS\DSS.csproj" />
     <ProjectReference Include="..\EBMS\EBMS.csproj" />
