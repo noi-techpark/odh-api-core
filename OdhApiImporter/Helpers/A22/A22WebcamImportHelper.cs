@@ -15,11 +15,11 @@ using System.Xml.Linq;
 
 namespace OdhApiImporter.Helpers
 {
-    public class A22ImportHelper : ImportHelper, IImportHelper
+    public class A22WebcamImportHelper : ImportHelper, IImportHelper
     {
         public List<string> idlistinterface { get; set; }
 
-        public A22ImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public A22WebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
             idlistinterface = new List<string>();
         }

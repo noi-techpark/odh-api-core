@@ -710,13 +710,33 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                //TODO URLGeneratorStatic
-               A22ImportHelper a22importhelper = new A22ImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("A22/Wecam"));
+                IImportHelper a22importhelper;
 
-                updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+                switch (a22entity)
+                {
+                    
+
+                    case "webcam":
+                        a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("A22/Wecam"));
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                    case "servicestation":
+                        //a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("A22/Wecam"));
+                        //updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                    case "tollstation":
+                        //a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("A22/Wecam"));
+                        //updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                }
+
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
+
             }
             catch (Exception ex)
             {
