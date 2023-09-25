@@ -949,7 +949,7 @@ namespace OdhApiCore.Controllers
             //var skiareastring = await query.FirstOrDefaultAsync<string>();
             //var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
 
-            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea!, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
+            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea!, "SMG", settings.LcsConfig.ServiceUrl, settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
 
             mysnowreport.Id = mysnowreport.RID + "_SNOWREPORT";
 

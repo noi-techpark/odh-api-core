@@ -21,7 +21,7 @@ namespace LCS
     {
         ServiceReferenceLCS.DataClient lcs;
 
-        public GetGastronomicDataLCS(string user, string pswd)
+        public GetGastronomicDataLCS(string serviceurl, string user, string pswd)
         {
             //lcs = new ServiceReferenceLCS.DataClient();
             //lcs.ClientCredentials.UserName.UserName = ltsuser;
@@ -37,7 +37,7 @@ namespace LCS
             basicHttpBinding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
             basicHttpBinding.AllowCookies = true;
 
-            EndpointAddress endpointAddress = new EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
+            EndpointAddress endpointAddress = new EndpointAddress(serviceurl + "/soap");
 
             lcs = new ServiceReferenceLCS.DataClient(basicHttpBinding, endpointAddress);
             lcs.ClientCredentials.UserName.UserName = user;

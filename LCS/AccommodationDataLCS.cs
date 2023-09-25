@@ -16,7 +16,7 @@ namespace LCS
     {
         ServiceReferenceLCS.DataClient lcs;
 
-        public GetAccommodationDataLCS(string user, string pswd)
+        public GetAccommodationDataLCS(string serviceurl, string user, string pswd)
         {
         //https://medium.com/grensesnittet/integrating-with-soap-web-services-in-net-core-adebfad173fb
         //https://github.com/dotnet/wcf/issues/8
@@ -32,7 +32,7 @@ namespace LCS
             basicHttpBinding.AllowCookies = true;
 
 
-            EndpointAddress endpointAddress = new EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
+            EndpointAddress endpointAddress = new EndpointAddress(serviceurl + "/soap");
 
             lcs = new ServiceReferenceLCS.DataClient(basicHttpBinding, endpointAddress);
             lcs.ClientCredentials.UserName.UserName = user;

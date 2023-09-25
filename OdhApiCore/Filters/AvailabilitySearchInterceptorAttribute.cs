@@ -369,7 +369,7 @@ namespace OdhApiCore.Filters
                     lang: myhelper.mssrequestlanguage, idlist: myhelper.accoidlist, idsofchannel: myhelper.idsofchannel, mybookingchannels: myhelper.mybokchannels,
                     myroomdata: myhelper.myroomdata, arrival: myhelper.arrival, departure: myhelper.departure, service: myhelper.service,
                     hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,
-                    rooms: myhelper.rooms, requestsource: myhelper.requestsource, version: myhelper.mssversion, mssuser: settings.MssConfig.Username, msspswd: settings.MssConfig.Password, withoutmssids: withoutmssids
+                    rooms: myhelper.rooms, requestsource: myhelper.requestsource, version: myhelper.mssversion, serviceurl: settings.MssConfig.ServiceUrl, mssuser: settings.MssConfig.Username, msspswd: settings.MssConfig.Password, withoutmssids: withoutmssids
                     );
                
                 if (myparsedresponse != null)
@@ -397,7 +397,7 @@ namespace OdhApiCore.Filters
                     checkavailabilitystatus: "1", onlybookableresults: "0", mealplans: myhelper.service, accommodationrids: myhelper.accoidlist, tourismorg: new List<string>(), 
                     districts: new List<string>(), marketinggroups: new List<string>(), lcsroomstay: myhelper.myroomdata, requestor: requestsource, messagepswd: settings.LcsConfig.MessagePassword);
 
-                var myaccosearchlcs = new LCS.GetAccommodationDataLCS(settings.LcsConfig.Username, settings.LcsConfig.Password);
+                var myaccosearchlcs = new LCS.GetAccommodationDataLCS(settings.LcsConfig.ServiceUrl, settings.LcsConfig.Username, settings.LcsConfig.Password);
                 var response = await myaccosearchlcs.GetAccommodationDataSearchAsync(accosearchrequest);
                 var myparsedresponse = LCS.ParseAccoSearchResult.ParsemyLCSResponse(language, response, myhelper.rooms);
 

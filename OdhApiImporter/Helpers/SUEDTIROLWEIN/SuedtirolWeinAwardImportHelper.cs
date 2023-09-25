@@ -38,9 +38,9 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
         public async Task<IDictionary<string, XDocument>> ImportList(CancellationToken cancellationToken = default)
         {
-            var wineawarddatalistde = await GetSuedtirolWeinData.GetSueditrolWineAwardsAsync("de");
-            var wineawarddatalistit = await GetSuedtirolWeinData.GetSueditrolWineAwardsAsync("it");
-            var wineawarddatalisten = await GetSuedtirolWeinData.GetSueditrolWineAwardsAsync("en");
+            var wineawarddatalistde = await GetSuedtirolWeinData.GetSueditrolWineAwardsAsync(settings.SuedtirolWeinConfig.ServiceUrl, "de");
+            var wineawarddatalistit = await GetSuedtirolWeinData.GetSueditrolWineAwardsAsync(settings.SuedtirolWeinConfig.ServiceUrl, "it");
+            var wineawarddatalisten = await GetSuedtirolWeinData.GetSueditrolWineAwardsAsync(settings.SuedtirolWeinConfig.ServiceUrl, "en");
 
             IDictionary<string, XDocument> mywinedata = new Dictionary<string, XDocument>();
             mywinedata.Add("de", wineawarddatalistde);
@@ -160,7 +160,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var result = await DeleteOrDisableData(idtodelete, false);
+                    var result = await DeleteOrDisableData<WineLinked>(idtodelete, false);
 
                     updateresult = updateresult + result.Item1;
                     deleteresult = deleteresult + result.Item2;

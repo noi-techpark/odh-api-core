@@ -50,19 +50,17 @@ namespace OdhApiCore.Controllers
                 return !roles.Any(User.IsInRole);
             }
         }
-
-        //TODO EXTEND THIS ALSO TO ODHActivityPoiReader etc...
+        
         /// <summary>
-        /// If User has Role DataReader or Reader of this Entity set Filtercloseddata to false
+        /// If User is in Role IDM or A22 set FilterClosedData to false
         /// </summary>
         protected bool FilterClosedData
         {
             get
             {
                 var roles = new[] {
-                    "IDM"
-                    //"DataReader",
-                    //$"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
+                    "IDM",
+                    "A22"
                 };
                 return !roles.Any(User.IsInRole);
             }

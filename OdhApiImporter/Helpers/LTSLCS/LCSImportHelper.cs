@@ -35,7 +35,7 @@ namespace OdhApiImporter.Helpers.LTSLCS
 
         private async Task<List<string>> ImportList(DateTime? lastchanged, CancellationToken cancellationToken)
         {
-            var lcs = new LCS.GetGastronomicDataLCS(settings.LcsConfig.Username, settings.LcsConfig.Password);
+            var lcs = new LCS.GetGastronomicDataLCS(settings.LcsConfig.ServiceUrl, settings.LcsConfig.Username, settings.LcsConfig.Password);
 
             
             if(lastchanged != null)

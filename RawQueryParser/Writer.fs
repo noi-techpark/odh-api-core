@@ -78,7 +78,7 @@ module Filtering =
         | Ge -> ">="
         | Lt -> "<"
         | Le -> "<="
-        | Like -> "LIKE"
+        | Like -> "ILIKE"
 
     let writeRawValue = function
         | Boolean x -> box x
@@ -138,7 +138,7 @@ module Filtering =
                 match value with
                 | String s -> s
                 | _ -> failwith "Only strings are supported in a likein filter."
-                |> fun value -> sprintf $"jsonb_path_exists(data, '%s{field'} ?(@ like_regex \"%s{value}\" flag \"q\")')"
+                |> fun value -> sprintf $"jsonb_path_exists(data, '%s{field'} ?(@ like_regex \"%s{value}\" flag \"i\")')"
             values
             |> List.map writeValue
             |> String.concat " OR "

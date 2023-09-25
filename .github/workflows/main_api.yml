@@ -55,14 +55,17 @@ jobs:
           X_PG_CONNECTION: ${{ secrets.PG_CONNECTION_TEST }}
           X_MSS_USER: ${{ secrets.MSS_USER_TEST }}
           X_MSS_PSWD: ${{ secrets.MSS_PSWD_TEST }}
+          X_MSS_SERVICEURL: "https://www.easymailing.eu/mss/mss_service.php"
           X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
           X_LCS_PSWD: ${{ secrets.LCS_PSWD_TEST }}
           X_LCS_MSGPSWD: ${{ secrets.LCS_MSGPSWD_TEST }}
+          X_LCS_SERVICEURL: "https://lcs.lts.it/api/data.svc"
           X_CDB_USER: ${{ secrets.CDB_USER_TEST }}
           X_CDB_PSWD: ${{ secrets.CDB_PSWD_TEST }}
-          X_CDB_URL: ${{ secrets.CDB_URL_TEST }}       
+          X_CDB_SERVICEURL: "https://lcs.lts.it/data/cdbdata.asmx"       
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
+          X_SIAG_SERVICEURL: ${{ secrets.SIAG_URL_TEST }}
           X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
           X_IMG_URL: "https://images.tourism.testingmachine.eu/api/Image/GetImage?imageurl="
           X_DOC_URL: "https://images.tourism.testingmachine.eu/api/File/GetFile/"
@@ -72,9 +75,7 @@ jobs:
           X_OAUTH_AUTORITY: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/"
           X_ELK_URL: ${{ secrets.ELK_URL_TEST }}
           X_ELK_TOKEN: ${{ secrets.ELK_TOKEN_TEST }}
-          X_JSONPATH: "./wwwroot/json/"
-          X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
-          X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
+          X_JSONPATH: "./wwwroot/json/"          
           X_DATABROWSER_URL: "https://frontend.tourism.testingmachine.eu/"
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
@@ -134,14 +135,17 @@ jobs:
           X_PG_CONNECTION: ${{ secrets.PG_CONNECTION_PROD }}
           X_MSS_USER: ${{ secrets.MSS_USER_TEST }}
           X_MSS_PSWD: ${{ secrets.MSS_PSWD_TEST }}
+          X_MSS_SERVICEURL: "https://www.easymailing.eu/mss/mss_service.php"
           X_LCS_USER: ${{ secrets.LCS_USER_TEST }}
           X_LCS_PSWD: ${{ secrets.LCS_PSWD_TEST }}
           X_LCS_MSGPSWD: ${{ secrets.LCS_MSGPSWD_TEST }}
+          X_LCS_SERVICEURL: "https://lcs.lts.it/api/data.svc"
           X_CDB_USER: ${{ secrets.CDB_USER_TEST }}
           X_CDB_PSWD: ${{ secrets.CDB_PSWD_TEST }}
-          X_CDB_URL: ${{ secrets.CDB_URL_TEST }}
+          X_CDB_SERVICEURL: "https://lcs.lts.it/data/cdbdata.asmx"
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
+          X_SIAG_SERVICEURL: ${{ secrets.SIAG_URL_TEST }}          
           X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
           X_IMG_URL: "https://tourism.images.opendatahub.com/api/Image/GetImage?imageurl="
           X_DOC_URL: "https://tourism.images.opendatahub.com/api/File/GetFile/"
@@ -152,8 +156,6 @@ jobs:
           X_ELK_URL: ${{ secrets.ELK_URL_TEST }}
           X_ELK_TOKEN: ${{ secrets.ELK_TOKEN_TEST }}
           X_JSONPATH: "./wwwroot/json/"
-          X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
-          X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
           X_DATABROWSER_URL: "https://databrowser.opendatahub.com/"
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}

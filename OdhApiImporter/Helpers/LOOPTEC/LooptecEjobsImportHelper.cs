@@ -15,10 +15,7 @@ using System.Collections.Generic;
 namespace OdhApiImporter.Helpers.LOOPTEC
 {
     public class LooptecEjobsImportHelper : ImportHelper, IImportHelper
-    {
-        //TODO Make BaseUrl configurable in settings
-        public const string serviceurl = @"https://app.onboard-staging.org/exports/v1/jobs/open_data_hub.json";
-
+    {      
         public LooptecEjobsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
@@ -32,7 +29,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET Data and Deserialize to Json
-            var data = await GetEJobsData.GetEjobsDataAsync("", "", serviceurl);
+            var data = await GetEJobsData.GetEjobsDataAsync("", "", settings.LoopTecConfig.ServiceUrl);
 
             var newcounter = 0;
 
@@ -64,7 +61,7 @@ namespace OdhApiImporter.Helpers.LOOPTEC
                             importdate = DateTime.Now,
                             license = "open",
                             sourceinterface = "ejobs-onboard",
-                            sourceurl = serviceurl,
+                            sourceurl = settings.LoopTecConfig.ServiceUrl,
                             type = "ejob",
                             sourceid = ejob.identifier,
                             raw = JsonConvert.SerializeObject(ejob),

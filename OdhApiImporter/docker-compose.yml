@@ -14,13 +14,6 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:80
       ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
-      ASPNETCORE_MssConfig__Username: ${MSS_USER}
-      ASPNETCORE_MssConfig__Password: ${MSS_PSWD}
-      ASPNETCORE_LcsConfig__Username: ${LCS_USER}
-      ASPNETCORE_LcsConfig__Password: ${LCS_PSWD}
-      ASPNETCORE_LcsConfig__MessagePassword: ${LCS_MSGPSWD}
-      ASPNETCORE_SiagConfig__Username: ${SIAG_USER}
-      ASPNETCORE_SiagConfig__Password: ${SIAG_PSWD}
       ASPNETCORE_XmlConfig__XmldirWeather: ${XMLDIR}
       ASPNETCORE_Xmldir__Xmldir: ${XMLDIR}
       ASPNETCORE_S3ImageresizerConfig__Url: ${IMG_URL}
@@ -31,15 +24,50 @@ services:
       ASPNETCORE_ElasticSearchConfig__ElasticUrl: ${ELK_URL}
       ASPNETCORE_ElasticSearchConfig__ElasticAuthtoken: ${ELK_TOKEN}
       ASPNETCORE_JsonConfig__Jsondir: ${JSONPATH}
-      ASPNETCORE_EBMSConfig__EBMSUser: ${EBMS_USER}
-      ASPNETCORE_EBMSConfig__EBMSPassword: ${EBMS_PASS}
       ASPNETCORE_DataBrowserConfig__Url: ${DATABROWSER_URL}
+      ASPNETCORE_MssConfig__Username: ${MSS_USER}
+      ASPNETCORE_MssConfig__Password: ${MSS_PSWD}
+      ASPNETCORE_MssConfig__ServiceUrl: ${MSS_SERVICEURL}
+      ASPNETCORE_LcsConfig__Username: ${LCS_USER}
+      ASPNETCORE_LcsConfig__Password: ${LCS_PSWD}
+      ASPNETCORE_LcsConfig__MessagePassword: ${LCS_MSGPSWD}
+      ASPNETCORE_LcsConfig__ServiceUrl: ${LCS_SERVICEURL}
+      ASPNETCORE_SiagConfig__Username: ${SIAG_USER}
+      ASPNETCORE_SiagConfig__Password: ${SIAG_PSWD}      
+      ASPNETCORE_SiagConfig__ServiceUrl: ${SIAG_SERVICEURL} 
+      ASPNETCORE_EBMSConfig__Username: ${EBMS_USER}
+      ASPNETCORE_EBMSConfig__Password: ${EBMS_PASS}
+      ASPNETCORE_EBMSConfig__ServiceUrl: ${EBMS_SERVICEURL}      
       ASPNETCORE_RavenConfig__Username: ${RAVEN_USER}
       ASPNETCORE_RavenConfig__Password: ${RAVEN_PSWD}
-      ASPNETCORE_RavenConfig__MessagePassword: ${RAVEN_SERVICEURL}   
+      ASPNETCORE_RavenConfig__ServiceUrl: ${RAVEN_SERVICEURL}   
       ASPNETCORE_DSSConfig__Username: ${DSS_USER}
       ASPNETCORE_DSSConfig__Password: ${DSS_PSWD}
-      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}
+      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}      
+      ASPNETCORE_A22Config__Username: ${A22_USER}
+      ASPNETCORE_A22Config__Password: ${A22_PSWD}
+      ASPNETCORE_A22Config__ServiceUrl: ${A22_SERVICEURL}
+      ASPNETCORE_FeratelConfig__Username: ${FERATEL_USER}
+      ASPNETCORE_FeratelConfig__Password: ${FERATEL_PSWD}
+      ASPNETCORE_FeratelConfig__ServiceUrl: ${FERATEL_SERVICEURL}
+      ASPNETCORE_PanocloudConfig__Username: ${PANOCLOUD_USER}
+      ASPNETCORE_PanocloudConfig__Password: ${PANOCLOUD_PSWD}
+      ASPNETCORE_PanocloudConfig__ServiceUrl: ${PANOCLOUD_SERVICEURL}
+      ASPNETCORE_PanomaxConfig__Username: ${PANOMAX_USER}
+      ASPNETCORE_PanomaxConfig__Password: ${PANOMAX_PSWD}
+      ASPNETCORE_PanomaxConfig__ServiceUrl: ${PANOMAX_SERVICEURL}
+      ASPNETCORE_SuedtirolWeinConfig__Username: ${SUEDTIROLWEIN_USER}
+      ASPNETCORE_SuedtirolWeinConfig__Password: ${SUEDTIROLWEIN_PSWD}
+      ASPNETCORE_SuedtirolWeinConfig__ServiceUrl: ${SUEDTIROLWEIN_SERVICEURL}
+      ASPNETCORE_MusportConfig__Username: ${MUSPORT_USER}
+      ASPNETCORE_MusportConfig__Password: ${MUSPORT_PSWD}
+      ASPNETCORE_MusportConfig__ServiceUrl: ${MUSPORT_SERVICEURL}
+      ASPNETCORE_NinjaConfig__Username: ${NINJA_USER}
+      ASPNETCORE_NinjaConfig__Password: ${NINJA_PSWD}
+      ASPNETCORE_NinjaConfig__ServiceUrl: ${NINJA_SERVICEURL}
+      ASPNETCORE_LoopTecConfig__Username: ${LOOPTEC_USER}
+      ASPNETCORE_LoopTecConfig__Password: ${LOOPTEC_PSWD}
+      ASPNETCORE_LoopTecConfig__ServiceUrl: ${LOOPTEC_SERVICEURL}      
       ASPNETCORE_NotifierConfig__idm-marketplace__Url: ${MARKETPLACE_PUSH_URL}
       ASPNETCORE_NotifierConfig__idm-marketplace__User: ${MARKETPLACE_PUSH_USER}
       ASPNETCORE_NotifierConfig__idm-marketplace__Password: ${MARKETPLACE_PUSH_PSWD}
