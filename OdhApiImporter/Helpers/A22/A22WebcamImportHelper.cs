@@ -28,9 +28,10 @@ namespace OdhApiImporter.Helpers
         {
             //GET Data
             var data = await GetData(cancellationToken);
+            var gpsdata = await GetGpsData(cancellationToken);
 
             //UPDATE all data
-            var updateresult = await ImportData(data, cancellationToken);
+            var updateresult = await ImportData(data, gpsdata, cancellationToken);
 
             //Disable Data not in list
             var deleteresult = await SetDataNotinListToInactive(cancellationToken);
@@ -44,8 +45,14 @@ namespace OdhApiImporter.Helpers
             return await GetA22Data.GetWebcams(settings.A22Config.User, settings.A22Config.Password, settings.A22Config.ServiceUrl);
         }
 
+        //Get Data from Source
+        private async Task<XDocument> GetGpsData(CancellationToken cancellationToken)
+        {
+            return await GetA22Data.GetCoordinates(settings.A22Config.User, settings.A22Config.Password, settings.A22Config.ServiceUrl);
+        }
+
         //Import the Data
-        public async Task<UpdateDetail> ImportData(XDocument a22data, CancellationToken cancellationToken)
+        public async Task<UpdateDetail> ImportData(XDocument a22data, XDocument coordinates, CancellationToken cancellationToken)
         {
             int updatecounter = 0;
             int newcounter = 0;
@@ -57,7 +64,10 @@ namespace OdhApiImporter.Helpers
                 //loop trough a22 webcam items
                 foreach (var webcam in a22data.Root.Elements("WSOpenData_WebCam"))
                 {
-                    var importresult = await ImportDataSingle(webcam);
+                    //TODO GET The right coordinate Element
+                    var coordinate = coordinates.Root.Elements("WSOpenData_CoordinataMappa").FirstOrDefault();
+
+                    var importresult = await ImportDataSingle(webcam, coordinate);
 
                     newcounter = newcounter + importresult.created ?? newcounter;
                     updatecounter = updatecounter + importresult.updated ?? updatecounter;
@@ -69,7 +79,7 @@ namespace OdhApiImporter.Helpers
         }
 
         //Parsing the Data
-        public async Task<UpdateDetail> ImportDataSingle(XElement webcam)
+        public async Task<UpdateDetail> ImportDataSingle(XElement webcam, XElement coordinates)
         {
             int updatecounter = 0;
             int newcounter = 0;
@@ -87,7 +97,7 @@ namespace OdhApiImporter.Helpers
                 idlistinterface.Add("A22_" + returnid);
 
                 //Parse A22 Webcam Data
-                WebcamInfoLinked parsedobject = await ParseA22DataToWebcam("A22_" + returnid, webcam);
+                WebcamInfoLinked parsedobject = await ParseA22DataToWebcam("A22_" + returnid, webcam, coordinates);
                 if (parsedobject == null)
                     throw new Exception();
 
@@ -147,7 +157,7 @@ namespace OdhApiImporter.Helpers
         }
 
         //Parse the a22 interface content
-        public async Task<WebcamInfoLinked?> ParseA22DataToWebcam(string odhid, XElement input)
+        public async Task<WebcamInfoLinked?> ParseA22DataToWebcam(string odhid, XElement input, XElement coordinates)
         {
             //Get the ODH Item
             var query = QueryFactory.Query(table)
@@ -157,7 +167,7 @@ namespace OdhApiImporter.Helpers
             var webcamindb = await query.GetObjectSingleAsync<WebcamInfoLinked>();
             var webcam = default(WebcamInfoLinked);
 
-            webcam = ParseA22ToODH.ParseWebcamToWebcamInfo(webcamindb, input, odhid);
+            webcam = ParseA22ToODH.ParseWebcamToWebcamInfo(webcamindb, input, coordinates, odhid);
 
             return webcam;
         }

@@ -18,7 +18,7 @@ namespace A22
     {
         public static CultureInfo myculture = new CultureInfo("en");
 
-        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked? webcam, XElement webcamtoparse, string odhid)
+        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked? webcam, XElement webcamtoparse, XElement coordinates, string odhid)
         {
             if (webcam == null)
                 webcam = new WebcamInfoLinked();
@@ -54,6 +54,9 @@ namespace A22
 
             webcam.WebCamProperties = webcamproperties;            
 
+            //GPSInfo
+            //Parse out of Coordinates
+
             //Mapping
             webcam.Mapping.TryAddOrUpdate("a22", new Dictionary<string, string>() { { "km", webcamtoparse.Attribute("KM").Value } });
 
@@ -63,7 +66,7 @@ namespace A22
             return webcam;
         }
 
-        public static ODHActivityPoiLinked ParseServiceStationToODHActivityPoi(ODHActivityPoiLinked? poi, XElement poitoparse, string odhid)
+        public static ODHActivityPoiLinked ParseServiceStationToODHActivityPoi(ODHActivityPoiLinked? poi, XElement poitoparse, XElement coordinates, string odhid)
         {
             //<WSOpenData_AreaDiServizio>
             //<ID>34</ID>
