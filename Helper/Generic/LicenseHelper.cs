@@ -225,7 +225,7 @@ namespace Helper
             {
                 isopendata = true;
                 licenseholder = @"https://www.idm-suedtirol.com";
-            }
+            }            
 
             if (data.Source?.ToLower() == "dss")
             {
@@ -235,21 +235,25 @@ namespace Helper
 
             if (data.Source?.ToLower() == "feratel")
             {
+                isopendata = true;
                 licenseholder = @"https://www.feratel.com/";
             }
 
             if (data.Source?.ToLower() == "panomax")
             {
+                isopendata = true;
                 licenseholder = @"https://www.panomax.com/";
             }
 
             if (data.Source?.ToLower() == "panocloud")
             {
+                isopendata = true;
                 licenseholder = @"https://www.it-wms.com/";
             }
 
             if (data.Source?.ToLower() == "a22")
             {
+                isopendata = false;
                 licenseholder = @"https://www.autobrennero.it/";
             }
 

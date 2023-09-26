@@ -54,12 +54,17 @@ namespace A22
 
             webcam.WebCamProperties = webcamproperties;
 
-            //GPSInfo            
-            GpsInfo gpsinfo = new GpsInfo() { Gpstype = "position" };
-            gpsinfo.Latitude = Convert.ToDouble(coordinates.Element(coordinates.GetDefaultNamespace() + "Lat").Value);
-            gpsinfo.Longitude = Convert.ToDouble(coordinates.Element(coordinates.GetDefaultNamespace() + "Lng").Value);
+            if (coordinates != null)
+            {
+                webcam.GpsInfo = new List<GpsInfo>();
 
-            webcam.GpsInfo.Add(gpsinfo);
+                //Fill GPSInfo            
+                GpsInfo gpsinfo = new GpsInfo() { Gpstype = "position" };
+                gpsinfo.Latitude = Convert.ToDouble(coordinates.Element(coordinates.GetDefaultNamespace() + "Lat").Value, myculture);
+                gpsinfo.Longitude = Convert.ToDouble(coordinates.Element(coordinates.GetDefaultNamespace() + "Lng").Value, myculture);
+
+                webcam.GpsInfo.Add(gpsinfo);
+            }
 
             //Mapping
             webcam.Mapping.TryAddOrUpdate("a22", new Dictionary<string, string>() { { "km", webcamtoparse.Element(webcamtoparse.GetDefaultNamespace() + "KM").Value } });
