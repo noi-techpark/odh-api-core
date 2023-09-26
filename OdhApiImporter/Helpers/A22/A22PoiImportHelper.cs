@@ -180,7 +180,9 @@ namespace OdhApiImporter.Helpers
             var poi = default(ODHActivityPoiLinked);
 
             if(entity == "tollstation")
-                poi = ParseA22ToODH.ParseServiceStationToODHActivityPoi(poiindb, input, coordinates, odhid);
+                poi = ParseA22ToODH.ParseTollStationToODHActivityPoi(poiindb, input, coordinates, odhid);
+            if(entity == "servicearea")
+                poi = ParseA22ToODH.ParseServiceAreaToODHActivityPoi(poiindb, input, coordinates, odhid);
 
             return poi;
         }
