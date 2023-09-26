@@ -712,12 +712,11 @@ namespace OdhApiImporter.Controllers
             {
                 IImportHelper a22importhelper;
 
-                switch (a22entity)
-                {
-                    
-
+                switch (a22entity.ToLower())
+                {                    
                     case "webcam":
-                        a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("A22/Wecam"));
+                        
+                        a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("A22/Wecam"));
                         updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
 
                         break;

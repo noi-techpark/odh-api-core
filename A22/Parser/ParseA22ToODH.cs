@@ -30,8 +30,8 @@ namespace A22
             //Detail
             Detail detail = new Detail();
             detail.Language = "it";
-            detail.Title = webcamtoparse.Attribute("Titolo").Value;
-            detail.BaseText = webcamtoparse.Attribute("Descrizione").Value;
+            detail.Title = webcamtoparse.Element(webcamtoparse.GetDefaultNamespace() + "Titolo").Value;
+            detail.BaseText = webcamtoparse.Element(webcamtoparse.GetDefaultNamespace() + "Descrizione").Value;
 
             webcam.Detail.TryAddOrUpdate(detail.Language, detail);
 
@@ -40,9 +40,9 @@ namespace A22
             //Imagegallery
 
             ImageGallery imagegallery = new ImageGallery();
-            imagegallery.ImageUrl = webcamtoparse.Attribute("Immagine").Value;
+            imagegallery.ImageUrl = webcamtoparse.Element(webcamtoparse.GetDefaultNamespace() + "Immagine").Value;
             imagegallery.ImageSource = "a22";
-            imagegallery.ImageName = webcamtoparse.Attribute("Titolo").Value;
+            imagegallery.ImageName = webcamtoparse.Element(webcamtoparse.GetDefaultNamespace() + "Titolo").Value;
 
             webcam.ImageGallery = new List<ImageGallery>() { imagegallery };
 
@@ -50,15 +50,19 @@ namespace A22
 
             //Webcamproperties
             WebcamProperties webcamproperties = new WebcamProperties();
-            webcamproperties.WebcamUrl = webcamtoparse.Attribute("Immagine").Value;
+            webcamproperties.WebcamUrl = webcamtoparse.Element(webcamtoparse.GetDefaultNamespace() + "Immagine").Value;
 
-            webcam.WebCamProperties = webcamproperties;            
+            webcam.WebCamProperties = webcamproperties;
 
-            //GPSInfo
-            //Parse out of Coordinates
+            //GPSInfo            
+            GpsInfo gpsinfo = new GpsInfo() { Gpstype = "position" };
+            gpsinfo.Latitude = Convert.ToDouble(coordinates.Element(coordinates.GetDefaultNamespace() + "Lat").Value);
+            gpsinfo.Longitude = Convert.ToDouble(coordinates.Element(coordinates.GetDefaultNamespace() + "Lng").Value);
+
+            webcam.GpsInfo.Add(gpsinfo);
 
             //Mapping
-            webcam.Mapping.TryAddOrUpdate("a22", new Dictionary<string, string>() { { "km", webcamtoparse.Attribute("KM").Value } });
+            webcam.Mapping.TryAddOrUpdate("a22", new Dictionary<string, string>() { { "km", webcamtoparse.Element(webcamtoparse.GetDefaultNamespace() + "KM").Value } });
 
             //LicenseInfo
 

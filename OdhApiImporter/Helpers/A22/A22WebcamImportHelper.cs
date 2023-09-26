@@ -5,6 +5,7 @@
 using A22;
 using DataModel;
 using Helper;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -42,13 +43,13 @@ namespace OdhApiImporter.Helpers
         //Get Data from Source
         private async Task<XDocument> GetData(CancellationToken cancellationToken)
         {
-            return await GetA22Data.GetWebcams(settings.A22Config.User, settings.A22Config.Password, settings.A22Config.ServiceUrl);
+            return await GetA22Data.GetWebcams(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
         }
 
         //Get Data from Source
         private async Task<XDocument> GetGpsData(CancellationToken cancellationToken)
         {
-            return await GetA22Data.GetCoordinates(settings.A22Config.User, settings.A22Config.Password, settings.A22Config.ServiceUrl);
+            return await GetA22Data.GetCoordinates(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
         }
 
         //Import the Data
@@ -59,15 +60,17 @@ namespace OdhApiImporter.Helpers
             int deletecounter = 0;
             int errorcounter = 0;
 
-            if (a22data != null)
+            if (a22data != null && a22data.Root != null)
             {
-                //loop trough a22 webcam items
-                foreach (var webcam in a22data.Root.Elements("WSOpenData_WebCam"))
-                {
-                    //TODO GET The right coordinate Element
-                    var coordinate = coordinates.Root.Elements("WSOpenData_CoordinataMappa").FirstOrDefault();
+                XNamespace df = a22data.Root.Name.Namespace;
 
-                    var importresult = await ImportDataSingle(webcam, coordinate);
+                //loop trough a22 webcam items
+                foreach (var webcam in a22data.Root.Elements(df + "WSOpenData_WebCam"))
+                {
+                    var matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
+                        .Where(x => x.Element(x.GetDefaultNamespace() + "KM").Value == webcam.Element(webcam.GetDefaultNamespace() + "KM").Value).FirstOrDefault();
+
+                    var importresult = await ImportDataSingle(webcam, matchedcoordinate);
 
                     newcounter = newcounter + importresult.created ?? newcounter;
                     updatecounter = updatecounter + importresult.updated ?? updatecounter;
@@ -92,7 +95,7 @@ namespace OdhApiImporter.Helpers
             try
             {
                 //id generating by link id and panid from the cam
-                returnid = webcam.Attribute("KM").Value;
+                returnid = webcam.Element(webcam.GetDefaultNamespace() + "KM").Value;
 
                 idlistinterface.Add("A22_" + returnid);
 
