@@ -9,6 +9,7 @@ using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,12 +70,26 @@ namespace OdhApiImporter.Helpers
             if (a22data != null && a22data.Root != null)
             {
                 XNamespace df = a22data.Root.Name.Namespace;
+                CultureInfo myculture = new CultureInfo("en");
 
                 //loop trough a22 webcam items
                 foreach (var poi in a22data.Root.Elements(df + "ArchieCasello"))
                 {
-                    var matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
-                        .Where(x => x.Element(x.GetDefaultNamespace() + "KM").Value == poi.Element(poi.GetDefaultNamespace() + "KM").Value).FirstOrDefault();
+                    XElement matchedcoordinate = default(XElement);
+
+                    if(entity == "tollstation")
+                    {
+                        matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
+                        .Where(x => x.Element(x.GetDefaultNamespace() + "KM").Value == poi.Element(df + "KM").Value).FirstOrDefault();
+                    }
+                    else if(entity == "servicearea")
+                    {
+                        double distance = Convert.ToDouble(poi.Element(df + "Distanza").Value, myculture);
+
+                        matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
+                        .Where(x => Convert.ToDouble(x.Element(x.GetDefaultNamespace() + "KM").Value, myculture) >= distance).FirstOrDefault();
+                    }
+                    
 
                     var importresult = await ImportDataSingle(poi, matchedcoordinate);
 
@@ -106,10 +121,10 @@ namespace OdhApiImporter.Helpers
                 else if(entity == "servicearea")
                     returnid = webcam.Element(webcam.GetDefaultNamespace() + "ID").Value;
 
-                idlistinterface.Add("A22_" + returnid);
+                idlistinterface.Add("A22_"+ entity + "_" + returnid);
 
                 //Parse A22 Webcam Data
-                ODHActivityPoiLinked parsedobject = await ParseA22DataToODHActivityPoi("A22_" + returnid, webcam, coordinates);
+                ODHActivityPoiLinked parsedobject = await ParseA22DataToODHActivityPoi("A22_" + entity + "_" + returnid, webcam, coordinates);
                 if (parsedobject == null)
                     throw new Exception();
 

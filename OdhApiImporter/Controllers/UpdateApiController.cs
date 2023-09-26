@@ -706,7 +706,7 @@ namespace OdhApiImporter.Controllers
             string operation = "Import A22 " + a22entity;
             string updatetype = GetUpdateType(null);
             string source = "a22";
-            string otherinfo = "rawonly";
+            string otherinfo = a22entity;
 
             try
             {
@@ -716,18 +716,20 @@ namespace OdhApiImporter.Controllers
                 {                    
                     case "webcam":
                         
-                        a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("A22/Wecam"));
+                        a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("A22/Webcam"));
                         updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
 
                         break;
-                    case "servicestation":
-                        //a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("A22/Wecam"));
-                        //updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+                    case "servicearea":
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/ServiceArea"));
+                        ((A22PoiImportHelper)a22importhelper).entity = a22entity.ToLower();
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
 
                         break;
                     case "tollstation":
-                        //a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("A22/Wecam"));
-                        //updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/Tollstation"));
+                        ((A22PoiImportHelper)a22importhelper).entity = a22entity.ToLower();
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
 
                         break;
                 }

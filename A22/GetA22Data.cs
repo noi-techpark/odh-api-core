@@ -18,14 +18,14 @@ namespace A22
 
         public static async Task<XDocument> GetServiceAreas(string url, string user, string pass)
         {
-            GetData getdata = new GetData(url + "/GetCaselli", user, pass, null, GetDataAuthenticationOptions.Basic);
+            GetData getdata = new GetData(url + "/GetAreeDiServizio", user, pass, null, GetDataAuthenticationOptions.Basic);
 
             return await getdata.GetDataAsXmlAsync();
         }
 
         public static async Task<XDocument> GetTollStations(string url, string user, string pass)
         {
-            GetData getdata = new GetData(url + "/GetAreeDiServizio", user, pass, null, GetDataAuthenticationOptions.Basic);
+            GetData getdata = new GetData(url + "/GetCaselli", user, pass, null, GetDataAuthenticationOptions.Basic);
 
             return await getdata.GetDataAsXmlAsync();
         }

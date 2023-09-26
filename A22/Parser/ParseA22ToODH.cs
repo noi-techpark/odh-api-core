@@ -83,13 +83,52 @@ namespace A22
         {
             var ns = poitoparse.GetDefaultNamespace();
 
-            //<WSOpenData_AreaDiServizio>
+            if (poi == null)
+                poi = new ODHActivityPoiLinked();
+
+            poi.Source = "a22";
+            poi.Id = odhid;
+            poi.Active = true;
+
+            poi.HasLanguage = new List<string>() { "it" };
+
+            //GPSInfo
+            //<Distanza>1.300</Distanza>
+            if (coordinates != null)
+            {
+                var coordinatesns = coordinates.GetDefaultNamespace();
+
+                poi.GpsInfo = new List<GpsInfo>();
+
+                //Fill GPSInfo            
+                GpsInfo gpsinfo = new GpsInfo() { Gpstype = "position" };
+                gpsinfo.Latitude = Convert.ToDouble(coordinates.Element(coordinatesns + "Lat").Value, myculture);
+                gpsinfo.Longitude = Convert.ToDouble(coordinates.Element(coordinatesns + "Lng").Value, myculture);
+
+                poi.GpsInfo.Add(gpsinfo);
+            }
+
             //<ID>34</ID>
-            //<Direzione>Sud</Direzione>
+            //Mapping
+            poi.Mapping.TryAddOrUpdate("a22", new Dictionary<string, string>() {
+                { "id", poitoparse.Element(ns + "ID").Value }
+            });
+
+            //Detail
             //<Titolo>Brennero (ex dogana)</Titolo>
             //<Descrizione>Area esterna ad A22. Accessibille da entrame le carreggiate.</Descrizione>
+
+            Detail detailit = new Detail();
+            detailit.Language = "it";
+            detailit.Title = poitoparse.Element(ns + "Titolo").Value;
+            detailit.BaseText = poitoparse.Element(ns + "Descrizione").Value;
+            detailit.AdditionalText = poitoparse.Element(ns + "Direzione").Value;
+
+            poi.Detail.TryAddOrUpdate(detailit.Language, detailit);
+
+
+            //<Direzione>Sud</Direzione>
             //<Gestori/>
-            //<Distanza>1.300</Distanza>
             //<Offset>-1</Offset>
             //<MezziPesanti>true</MezziPesanti>
             //<ISAreaDiServizio>false</ISAreaDiServizio>
@@ -97,6 +136,44 @@ namespace A22
             //<ChargerMultiStandard>0</ChargerMultiStandard>
             //<ChargerAC>0</ChargerAC>
             //<ChargerUF>0</ChargerUF>
+
+            List<PoiProperty> poipropertylist = new List<PoiProperty>();
+            poipropertylist.Add(new PoiProperty() { Name = "direction", Value = poitoparse.Element(ns + "Direzione").Value });
+            poipropertylist.Add(new PoiProperty() { Name = "operator", Value = poitoparse.Element(ns + "Gestori").Value });
+            poipropertylist.Add(new PoiProperty() { Name = "offset", Value = poitoparse.Element(ns + "Offset").Value });
+            poipropertylist.Add(new PoiProperty() { Name = "heavyVehicles", Value = poitoparse.Element(ns + "MezziPesanti").Value });
+            poipropertylist.Add(new PoiProperty() { Name = "isServicearea", Value = poitoparse.Element(ns + "ISAreaDiServizio").Value });
+            poipropertylist.Add(new PoiProperty() { Name = "chargerTesla", Value = poitoparse.Element(ns + "ColonnineTesla").Value });
+            poipropertylist.Add(new PoiProperty() { Name = "chargerMultistandard", Value = poitoparse.Element(ns + "ChargerMultiStandard").Value });
+            poipropertylist.Add(new PoiProperty() { Name = "chargerAC", Value = poitoparse.Element(ns + "ChargerAC").Value });
+            poipropertylist.Add(new PoiProperty() { Name = "chargerUF", Value = poitoparse.Element(ns + "ChargerUF").Value });
+
+            poi.PoiProperty.TryAddOrUpdate("de", poipropertylist);
+            poi.PoiProperty.TryAddOrUpdate("it", poipropertylist);
+            poi.PoiProperty.TryAddOrUpdate("en", poipropertylist);
+
+
+            //Imagegallery
+            poi.ImageGallery = new List<ImageGallery>();
+            poi.PoiServices = new List<string>();
+
+            foreach(var service in poitoparse.Elements(ns + "Servizi").Elements(ns + "WSOpenData_ServizioAreaDiServizio"))
+            {
+                ImageGallery imageGallery = new ImageGallery();
+                imageGallery.ImageUrl = service.Element(ns + "Immagine").Value;
+                imageGallery.ImageName = service.Element(ns + "Titolo").Value;
+                imageGallery.ImageSource = "a22";
+                imageGallery.ImageTags.Add(service.Element(ns + "Categoria").Value);
+
+                poi.ImageGallery.Add(imageGallery);
+
+                poi.PoiServices.Add(service.Element(ns + "IDServizio").Value);
+            }
+
+
+
+
+
             //<Servizi>
             //<WSOpenData_ServizioAreaDiServizio>
             //<IDServizio>28</IDServizio>
@@ -113,24 +190,14 @@ namespace A22
             //</Servizi>
             //</WSOpenData_AreaDiServizio>
 
-            if (poi == null)
-                poi = new ODHActivityPoiLinked();
 
-            poi.Source = "a22";
-            poi.Id = odhid;
-            poi.Active = true;
 
-            //Detail
-        
-            //Imagegallery
 
             //ContactInfos
 
             //Mapping
-            
-            //LicenseInfo
 
-            //GPSInfo
+            //LicenseInfo            
 
             return poi;
         }
@@ -256,38 +323,38 @@ namespace A22
 
             var drivingroutesouth_de = new PoiProperty() { 
                 Name = "drivingroute_south", 
-                Value = poitoparse.Element(poitoparse.GetDefaultNamespace() + "ItinerariSUD_DE") != null ? 
-                    string.Format(",", poitoparse.Element(ns + "ItinerariSUD_DE").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
+                Value = poitoparse.Element(ns + "ItinerariSUD_DE") != null ? 
+                    string.Join(",", poitoparse.Element(ns + "ItinerariSUD_DE").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
             };
             var drivingroutenorth_de = new PoiProperty() { 
                 Name = "drivingroute_north", 
                 Value = poitoparse.Element(ns + "ItinerariNORD_DE") != null ? 
-                    string.Format(",", poitoparse.Element(ns + "ItinerariNORD_DE").Elements(ns + "string").Select(x => x.Value).ToList()) : "" };
+                    string.Join(",", poitoparse.Element(ns + "ItinerariNORD_DE").Elements(ns + "string").Select(x => x.Value).ToList()) : "" };
 
             var drivingroutesouth_it = new PoiProperty()
             {
                 Name = "drivingroute_south",
-                Value = poitoparse.Element(poitoparse.GetDefaultNamespace() + "ItinerariSUD_IT") != null ?
-                  string.Format(",", poitoparse.Element(ns + "ItinerariSUD_IT").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
+                Value = poitoparse.Element(ns + "ItinerariSUD_IT") != null ?
+                  string.Join(",", poitoparse.Element(ns + "ItinerariSUD_IT").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
             };
             var drivingroutenorth_it = new PoiProperty()
             {
                 Name = "drivingroute_north",
                 Value = poitoparse.Element(ns + "ItinerariNORD_IT") != null ?
-                    string.Format(",", poitoparse.Element(ns + "ItinerariNORD_IT").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
+                    string.Join(",", poitoparse.Element(ns + "ItinerariNORD_IT").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
             };
 
             var drivingroutesouth_en = new PoiProperty()
             {
                 Name = "drivingroute_south",
                 Value = poitoparse.Element(poitoparse.GetDefaultNamespace() + "ItinerariSUD_EN") != null ?
-                  string.Format(",", poitoparse.Element(ns + "ItinerariSUD_EN").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
+                  string.Join(",", poitoparse.Element(ns + "ItinerariSUD_EN").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
             };
             var drivingroutenorth_en = new PoiProperty()
             {
                 Name = "drivingroute_north",
                 Value = poitoparse.Element(ns + "ItinerariNORD_EN") != null ?
-                    string.Format(",", poitoparse.Element(ns + "ItinerariNORD_EN").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
+                    string.Join(",", poitoparse.Element(ns + "ItinerariNORD_EN").Elements(ns + "string").Select(x => x.Value).ToList()) : ""
             };
 
 

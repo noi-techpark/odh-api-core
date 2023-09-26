@@ -68,7 +68,7 @@ namespace OdhApiImporter.Helpers
                 foreach (var webcam in a22data.Root.Elements(df + "WSOpenData_WebCam"))
                 {
                     var matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
-                        .Where(x => x.Element(x.GetDefaultNamespace() + "KM").Value == webcam.Element(webcam.GetDefaultNamespace() + "KM").Value).FirstOrDefault();
+                        .Where(x => x.Element(x.GetDefaultNamespace() + "KM").Value == webcam.Element(df + "KM").Value).FirstOrDefault();
 
                     var importresult = await ImportDataSingle(webcam, matchedcoordinate);
 
