@@ -1651,11 +1651,26 @@ namespace Helper
         #region DateTime_Query_Helpers_tsmultirange
 
         //Both Begin and Enddate given IN Behaviour
+
         public static Query DateFilter_GeneratedColumn(this Query query, DateTime? start, DateTime? end, string gen_tsrangecolumn) =>
-            query.When(
-                start != DateTime.MinValue && end != DateTime.MaxValue,
+            query
+            .When(
+                //Both given, Adds a Day to End, if Endday has no time given add a day
+                start != null && end != null,
                 query => query.WhereRaw(
-                    String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", end))
+                    String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", end.Value.TimeOfDay == TimeSpan.Zero ? end.Value.AddDays(1) : end))
+                )
+            .When(
+                //Only End given setting start to datetime min, if Endday has no time given add a day
+                start == null && end != null,
+                query => query.WhereRaw(
+                    String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.MinValue), String.Format("{0:yyyy-MM-dd HH:mm}", end.Value.TimeOfDay == TimeSpan.Zero ? end.Value.AddDays(1) : end))
+                )
+            .When(
+                //Addds a Day to End
+                start != null && end == null,
+                query => query.WhereRaw(
+                    String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.MaxValue))
                 )
             );
 
