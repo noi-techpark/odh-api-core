@@ -1659,20 +1659,19 @@ namespace Helper
                 start != null && end != null,
                 query => query.WhereRaw(
                     String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", end.Value.TimeOfDay == TimeSpan.Zero ? end.Value.AddDays(1) : end))
-                )
+                ))
             .When(
                 //Only End given setting start to datetime min, if Endday has no time given add a day
                 start == null && end != null,
                 query => query.WhereRaw(
                     String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.MinValue), String.Format("{0:yyyy-MM-dd HH:mm}", end.Value.TimeOfDay == TimeSpan.Zero ? end.Value.AddDays(1) : end))
-                )
+                ))
             .When(
                 //Addds a Day to End
                 start != null && end == null,
                 query => query.WhereRaw(
                     String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.MaxValue))
-                )
-            );
+                ));
 
 
         #endregion
