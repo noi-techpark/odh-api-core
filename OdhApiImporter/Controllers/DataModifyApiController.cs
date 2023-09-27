@@ -331,5 +331,32 @@ namespace OdhApiImporter.Controllers
         }
 
         #endregion
+
+        #region ODHTag
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ModifyODHTags")]
+        public async Task<IActionResult> ModifyODHTags(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateAllODHTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify ODHTags",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = 0,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+
+        #endregion
     }
 }

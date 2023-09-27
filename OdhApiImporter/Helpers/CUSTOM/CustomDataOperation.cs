@@ -655,6 +655,32 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> UpdateAllODHTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("smgtags");
+
+            var data = await query.GetObjectListAsync<ODHTagLinked>();
+            int i = 0;
+
+            foreach (var odhtag in data)
+            {
+                //Setting LicenseInfo
+                //Adding LicenseInfo to ODHTag (not present on sinfo instance)                    
+                odhtag.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHTagLinked>(odhtag, Helper.LicenseHelper.GetLicenseforODHTag);
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("smgtags").Where("id", odhtag.Id)
+                    .UpdateAsync(new JsonBData() { id = odhtag.Id?.ToLower() ?? "", data = new JsonRaw(odhtag) });
+
+                i++;
+            }
+
+            return i;
+        }
 
     }
 
