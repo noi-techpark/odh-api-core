@@ -1615,50 +1615,64 @@ namespace Helper
         //    );
 
         //Both Begin and Enddate given which allows Today Query (In behaviour)
-        public static Query EventShortDateFilterInBehaviourWithTime_GeneratedColumn(this Query query, DateTime? start, DateTime? end) =>
-            query.When(
-                start != DateTime.MinValue && end != DateTime.MaxValue,
+        public static Query EventShortDateFilter_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool inbehaviour, bool checktime) =>
+            query
+            //begindate and enddate given normal behaviour
+            .When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && !inbehaviour && checktime,
+                query => query.WhereRaw(
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+                )
+            )
+            //begindate and enddate given IN behaviour
+            .When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && inbehaviour && checktime,
                 query => query.WhereRaw(
                     "((gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (gen_begindate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
                 )
+            )
+            //only begindate given normal + IN behaviour is the same
             .When(
-                start != DateTime.MinValue && end == DateTime.MaxValue,
+                start != DateTime.MinValue && end == DateTime.MaxValue && checktime,
                 query => query.WhereRaw(
                     "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
                 )
             )
-            //only enddate
+            //only enddate given normal + IN behaviour is the same
             .When(
-                start == DateTime.MinValue && end != DateTime.MaxValue,
+                start == DateTime.MinValue && end != DateTime.MaxValue && checktime,
                 query => query.WhereRaw(
                     "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
                 )
-            );
-
-        //Both Begin and Enddate given
-        public static Query EventShortDateFilterInBehaviourOnlyDate_GeneratedColumn(this Query query, DateTime? start, DateTime? end) =>
-            query
-            //begindate and enddate given
+            )
+            //begindate and enddate given normal behaviour without time check
             .When(
-                start != DateTime.MinValue && end != DateTime.MaxValue,
+                start != DateTime.MinValue && end != DateTime.MaxValue && !inbehaviour && !checktime,
+                query => query.WhereRaw(
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "') AND (gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                )
+            )
+            //begindate and enddate given IN behaviour without time check
+            .When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && inbehaviour && !checktime,
                 query => query.WhereRaw(
                     "((gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "') AND (gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
                 )
             )
             //only begindate given
             .When(
-                start != DateTime.MinValue && end == DateTime.MaxValue,
+                start != DateTime.MinValue && end == DateTime.MaxValue && !checktime,
                 query => query.WhereRaw(
                     "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
                 )
             )
             //only enddate given
             .When(
-                start == DateTime.MinValue && end != DateTime.MaxValue,
+                start == DateTime.MinValue && end != DateTime.MaxValue && !checktime,
                 query => query.WhereRaw(
                     "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
                 )
-            );
+            );        
 
         #endregion
 
