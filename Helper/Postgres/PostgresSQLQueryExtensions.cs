@@ -1594,14 +1594,7 @@ namespace Helper
                 )
             );
 
-        //Both Begin and Enddate given which allows Today Query (In behaviour)
-        public static Query EventShortDateFilterBeginEndWithInBehaviour_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start != DateTime.MinValue && end != DateTime.MaxValue && active,
-                query => query.WhereRaw(
-                    "((gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (gen_begindate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
-                )
-            );
+
 
         ////Only Begindate given
         //public static Query EventShortDateFilterBeginByRoom_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
@@ -1621,26 +1614,47 @@ namespace Helper
         //        )
         //    );
 
+        //Both Begin and Enddate given which allows Today Query (In behaviour)
+        public static Query EventShortDateFilterInBehaviourWithTime_GeneratedColumn(this Query query, DateTime? start, DateTime? end) =>
+            query.When(
+                start != DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (gen_begindate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+                )
+            .When(
+                start != DateTime.MinValue && end == DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
+                )
+            )
+            //only enddate
+            .When(
+                start == DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+                )
+            );
+
         //Both Begin and Enddate given
-        public static Query EventShortDateFilterBeginEndByRoom_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
+        public static Query EventShortDateFilterInBehaviourOnlyDate_GeneratedColumn(this Query query, DateTime? start, DateTime? end) =>
             query
             //begindate and enddate given
             .When(
-                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+                start != DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
                     "((gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "') AND (gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
                 )
             )
             //only begindate given
             .When(
-                start != DateTime.MinValue && end == DateTime.MaxValue && active,
+                start != DateTime.MinValue && end == DateTime.MaxValue,
                 query => query.WhereRaw(
                     "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
                 )
             )
             //only enddate given
             .When(
-                start == DateTime.MinValue && end != DateTime.MaxValue && active,
+                start == DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
                     "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
                 )
