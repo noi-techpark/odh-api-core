@@ -1635,14 +1635,14 @@ namespace Helper
             .When(
                 start != DateTime.MinValue && end == DateTime.MaxValue && checktime,
                 query => query.WhereRaw(
-                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "')"
                 )
             )
             //only enddate given normal + IN behaviour is the same
             .When(
                 start == DateTime.MinValue && end != DateTime.MaxValue && checktime,
                 query => query.WhereRaw(
-                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "')"
                 )
             )
             //begindate and enddate given normal behaviour without time check
@@ -1663,14 +1663,14 @@ namespace Helper
             .When(
                 start != DateTime.MinValue && end == DateTime.MaxValue && !checktime,
                 query => query.WhereRaw(
-                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "')"
                 )
             )
             //only enddate given
             .When(
                 start == DateTime.MinValue && end != DateTime.MaxValue && !checktime,
                 query => query.WhereRaw(
-                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
                 )
             );        
 
