@@ -418,7 +418,9 @@ namespace Helper
                 .EventTopicFilter_GeneratedColumn(topiclist)
                 //.EventDateFilterEnd_GeneratedColumn(begindate, enddate)
                 //.EventDateFilterBegin_GeneratedColumn(begindate, enddate)
-                .EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
+                //.EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
+                //TEST TSMULTIRANGE
+                .DateFilter_GeneratedColumn(begindate, enddate, "")
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)

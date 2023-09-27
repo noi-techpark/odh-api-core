@@ -1655,7 +1655,7 @@ namespace Helper
             query.When(
                 start != DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
-                    String.Format("gen_eventdates && tsrange('[{0},{1}]');", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", end))
+                    String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", end))
                 )
             );
 
