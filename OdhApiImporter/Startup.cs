@@ -39,17 +39,18 @@ namespace OdhApiImporter
         public IWebHostEnvironment CurrentEnvironment { get; }
 
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddHealthChecks()
-              .AddCheck("self", () => HealthCheckResult.Healthy())
-              .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
-
+        {     
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
             services.AddScoped<IOdhPushNotifier, OdhPushNotifier>();
             services.AddSingleton<IMongoDBFactory, MongoDBFactory>();
-       
-            //CONFIGURATION for Keycloak
+
+            //Adding HealthChecks
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
+
+            //Logging Config
             services.AddLogging(options =>
             {
                 options.ClearProviders();
@@ -90,12 +91,13 @@ namespace OdhApiImporter
             });
 
             //Initialize JWT Authentication
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                    .AddJwtBearer(jwtBearerOptions =>
+            services
+                .AddAuthentication(options =>
+                    {
+                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+                .AddJwtBearer(jwtBearerOptions =>
                     {
                         jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");
                         //jwtBearerOptions.Audience = "account";                
@@ -123,10 +125,10 @@ namespace OdhApiImporter
                         };
                     });
 
-            services.AddMvc();
+            services.AddMvc();           
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        {            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -145,7 +147,7 @@ namespace OdhApiImporter
 
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);
-
+            
             app.UseEndpoints(endpoints =>
             {
                 //endpoints.MapGet("/", async context =>
@@ -157,7 +159,8 @@ namespace OdhApiImporter
                 //    await context.Response.WriteAsync("Importing tourism data...");
                 //        // call import
                 //});
-                endpoints.MapControllers();                
+                //endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();                       
             });
 
             app.UseHealthChecks("/self", new HealthCheckOptions
