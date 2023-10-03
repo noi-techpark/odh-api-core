@@ -6,10 +6,12 @@ using Helper;
 using Helper.Factories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -38,13 +40,16 @@ namespace OdhApiImporter
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks()
+              .AddCheck("self", () => HealthCheckResult.Healthy())
+              .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
+
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
             services.AddScoped<IOdhPushNotifier, OdhPushNotifier>();
             services.AddSingleton<IMongoDBFactory, MongoDBFactory>();
-
-            //TODO CONFIGURATION for Keycloak
-
+       
+            //CONFIGURATION for Keycloak
             services.AddLogging(options =>
             {
                 options.ClearProviders();
@@ -152,7 +157,17 @@ namespace OdhApiImporter
                 //    await context.Response.WriteAsync("Importing tourism data...");
                 //        // call import
                 //});
-                endpoints.MapControllers();
+                endpoints.MapControllers();                
+            });
+
+            app.UseHealthChecks("/self", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
+
+            app.UseHealthChecks("/ready", new HealthCheckOptions
+            {
+                Predicate = r => r.Tags.Contains("services")
             });
         }
     }
