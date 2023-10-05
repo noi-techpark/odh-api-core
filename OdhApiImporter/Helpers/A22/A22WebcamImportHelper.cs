@@ -155,7 +155,7 @@ namespace OdhApiImporter.Helpers
                             sourceurl = settings.A22Config.ServiceUrl,
                             type = "webcam",
                             sourceid = data.Key,
-                            raw = data.Value.Value,
+                            raw = data.Value.ToString(),
                         });
         }
 
