@@ -163,9 +163,9 @@ namespace OdhApiCore.Controllers.api
 
             this.arealist = arealist.ToList();
 
-            smgtaglist = Helper.CommonListCreator.CreateIdList(smgtags);
+            smgtaglist = Helper.CommonListCreator.CreateStringListFromStringParameter(smgtags);
 
-            smgtaglistand = Helper.CommonListCreator.CreateIdList(smgtagsand);
+            smgtaglistand = Helper.CommonListCreator.CreateStringListFromStringParameter(smgtagsand);
 
             tourismvereinlist = new();
             regionlist = new();

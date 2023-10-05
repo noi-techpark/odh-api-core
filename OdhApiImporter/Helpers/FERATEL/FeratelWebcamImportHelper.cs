@@ -152,7 +152,7 @@ namespace OdhApiImporter.Helpers
                             sourceurl = settings.FeratelConfig.ServiceUrl,
                             type = "webcam",
                             sourceid = data.Key,
-                            raw = data.Value.Value,
+                            raw = data.Value.ToString(),
                         });
         }
 
