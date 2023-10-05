@@ -88,6 +88,11 @@ namespace PANOMAX
                     imagetoadd.ImageTags = new List<string>() { "thumbnail" };                    
                 }
 
+                if (imagetoadd.ImageUrl.Contains("small"))
+                {
+                    imagetoadd.ListPosition = 0;                    
+                }
+
                 webcam.ImageGallery.Add(imagetoadd);
             }
 
