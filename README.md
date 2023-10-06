@@ -185,7 +185,12 @@ ALTER TABLE tablename ADD IF NOT EXISTS gen_tsmultirange tsmultirange GENERATED 
 
 * jsonb
 ```sql
-ALTER TABLE events ADD IF NOT EXISTS gen_jsonb jsonb GENERATED ALWAYS AS ((data#>'{SomeJsonB}')::jsonb) stored;
+ALTER TABLE tablename ADD IF NOT EXISTS gen_jsonb jsonb GENERATED ALWAYS AS ((data#>'{SomeJsonB}')::jsonb) stored;
+```
+
+* access_based
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_access_role text[] GENERATED ALWAYS AS (calculate_access_array(data#>>'{_Meta,Source}',(data#>'{LicenseInfo,ClosedData}')::bool,(data#>'{_Meta,Reduced}')::bool)) stored;
 ```
  
 
