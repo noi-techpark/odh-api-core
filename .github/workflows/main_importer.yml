@@ -107,7 +107,7 @@ jobs:
           X_DSS_USER: ${{ secrets.DSS_USER_TEST }}
           X_DSS_PSWD: ${{ secrets.DSS_PSWD_TEST }}
           X_A22_USER: ${{ secrets.A22_USER_TEST }}
-          X_A22_PASS: ${{ secrets.A22_PASS_TEST }}
+          X_A22_PASS: ${{ secrets.A22_PSWD_TEST }}
           X_A22_SERVICEURL: ${{ secrets.A22_URL_TEST }}
           X_FERATEL_USER: ${{ secrets.FERATEL_USER_TEST }}
           X_FERATEL_PASS: ${{ secrets.FERATEL_PASS_TEST }}
@@ -217,7 +217,7 @@ jobs:
           X_DSS_USER: ${{ secrets.DSS_USER_TEST }}
           X_DSS_PSWD: ${{ secrets.DSS_PSWD_TEST }}
           X_A22_USER: ${{ secrets.A22_USER_TEST }}
-          X_A22_PASS: ${{ secrets.A22_PASS_TEST }}
+          X_A22_PASS: ${{ secrets.A22_PSWD_TEST }}
           X_A22_SERVICEURL: ${{ secrets.A22_URL_TEST }}
           X_FERATEL_USER: ${{ secrets.FERATEL_USER_TEST }}
           X_FERATEL_PASS: ${{ secrets.FERATEL_PASS_TEST }}
