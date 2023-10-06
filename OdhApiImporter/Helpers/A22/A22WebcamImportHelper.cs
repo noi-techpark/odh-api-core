@@ -1,40 +1,40 @@
-// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+﻿// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using A22;
 using DataModel;
+using Helper;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using FERATEL;
-using Newtonsoft.Json;
-using Helper;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace OdhApiImporter.Helpers
 {
-    public class FeratelWebcamImportHelper : ImportHelper, IImportHelper
-    {       
+    public class A22WebcamImportHelper : ImportHelper, IImportHelper
+    {
         public List<string> idlistinterface { get; set; }
 
-        public FeratelWebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public A22WebcamImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
             idlistinterface = new List<string>();
         }
-       
 
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET Data
             var data = await GetData(cancellationToken);
+            var gpsdata = await GetGpsData(cancellationToken);
 
             //UPDATE all data
-            var updateresult = await ImportData(data, cancellationToken);
+            var updateresult = await ImportData(data, gpsdata, cancellationToken);
 
-            //Disable Data not in feratel list
+            //Disable Data not in list
             var deleteresult = await SetDataNotinListToInactive(cancellationToken);
 
             return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
@@ -43,35 +43,38 @@ namespace OdhApiImporter.Helpers
         //Get Data from Source
         private async Task<XDocument> GetData(CancellationToken cancellationToken)
         {
-            return await GetFeratelData.GetWebcams(settings.FeratelConfig.ServiceUrl);
+            return await GetA22Data.GetWebcams(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
+        }
+
+        //Get Data from Source
+        private async Task<XDocument> GetGpsData(CancellationToken cancellationToken)
+        {
+            return await GetA22Data.GetCoordinates(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
         }
 
         //Import the Data
-        public async Task<UpdateDetail> ImportData(XDocument ferateldata, CancellationToken cancellationToken)
+        public async Task<UpdateDetail> ImportData(XDocument a22data, XDocument coordinates, CancellationToken cancellationToken)
         {
             int updatecounter = 0;
             int newcounter = 0;
             int deletecounter = 0;
             int errorcounter = 0;
 
-            if (ferateldata != null &&
-                    ferateldata.Root.Element("content") != null &&
-                    ferateldata.Root.Element("content").Element("portal") != null &&
-                    ferateldata.Root.Element("content").Element("portal").Element("links") != null &&
-                    ferateldata.Root.Element("content").Element("portal").Element("links").Elements("link").Count() > 0)
+            if (a22data != null && a22data.Root != null)
             {
-                //loop trough feratel items
-                foreach (var link in ferateldata.Root.Element("content").Element("portal").Element("links").Elements("link"))
-                {
-                    //Special case feratel has more cams on a link
-                    foreach(var webcam in link.Element("cams").Elements("cam"))
-                    {
-                        var importresult = await ImportDataSingle(webcam, link);
+                XNamespace df = a22data.Root.Name.Namespace;
 
-                        newcounter = newcounter + importresult.created ?? newcounter;
-                        updatecounter = updatecounter + importresult.updated ?? updatecounter;
-                        errorcounter = errorcounter + importresult.error ?? errorcounter;
-                    }                                                        
+                //loop trough a22 webcam items
+                foreach (var webcam in a22data.Root.Elements(df + "WSOpenData_WebCam"))
+                {
+                    var matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
+                        .Where(x => x.Element(x.GetDefaultNamespace() + "KM").Value == webcam.Element(df + "KM").Value).FirstOrDefault();
+
+                    var importresult = await ImportDataSingle(webcam, matchedcoordinate);
+
+                    newcounter = newcounter + importresult.created ?? newcounter;
+                    updatecounter = updatecounter + importresult.updated ?? updatecounter;
+                    errorcounter = errorcounter + importresult.error ?? errorcounter;
                 }
             }
 
@@ -79,7 +82,7 @@ namespace OdhApiImporter.Helpers
         }
 
         //Parsing the Data
-        public async Task<UpdateDetail> ImportDataSingle(XElement webcam, XElement link)
+        public async Task<UpdateDetail> ImportDataSingle(XElement webcam, XElement coordinates)
         {
             int updatecounter = 0;
             int newcounter = 0;
@@ -92,31 +95,31 @@ namespace OdhApiImporter.Helpers
             try
             {
                 //id generating by link id and panid from the cam
-                returnid = link.Attribute("id").Value + "_" + webcam.Attribute("panid").Value;
+                returnid = webcam.Element(webcam.GetDefaultNamespace() + "KM").Value;
 
-                idlistinterface.Add("FERATEL_" + returnid);
+                idlistinterface.Add("A22_" + returnid);
 
-                //Parse Feratel Webcam Data
-                WebcamInfoLinked parsedobject = await ParseFeratelDataToWebcam("FERATEL_" + returnid, webcam, link);
+                //Parse A22 Webcam Data
+                WebcamInfoLinked parsedobject = await ParseA22DataToWebcam("A22_" + returnid, webcam, coordinates);
                 if (parsedobject == null)
                     throw new Exception();
 
                 //Get Areas to Assign (Areas is a LTS only concept and will be removed in future)
 
                 //Set Shortname
-                parsedobject.Shortname = parsedobject.Detail.Select(x => x.Value.Title).FirstOrDefault();              
-                
+                parsedobject.Shortname = parsedobject.Detail.Select(x => x.Value.Title).FirstOrDefault();
+
                 //Save parsedobject to DB + Save Rawdata to DB
                 var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, XElement>(returnid, webcam));
 
                 newcounter = newcounter + pgcrudresult.created ?? 0;
                 updatecounter = updatecounter + pgcrudresult.updated ?? 0;
 
-                WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.feratel", new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "feratel.webcam", success = true, error = "" });                
+                WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.a22", new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "a22.webcam", success = true, error = "" });
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole(returnid, "dataimport", "single.feratel", new ImportLog() { sourceid = returnid, sourceinterface = "feratel.webcam", success = false, error = "feratel webcam could not be parsed" });
+                WriteLog.LogToConsole(returnid, "dataimport", "single.a22", new ImportLog() { sourceid = returnid, sourceinterface = "a22.webcam", success = false, error = "a22 webcam could not be parsed" });
 
                 errorcounter = errorcounter + 1;
             }
@@ -125,16 +128,16 @@ namespace OdhApiImporter.Helpers
         }
 
         //Inserting into DB
-        private async Task<PGCRUDResult> InsertDataToDB(WebcamInfoLinked webcam, KeyValuePair<string, XElement> ferateldata)
-        {                     
-            var rawdataid = await InsertInRawDataDB(ferateldata);
+        private async Task<PGCRUDResult> InsertDataToDB(WebcamInfoLinked webcam, KeyValuePair<string, XElement> a22data)
+        {
+            var rawdataid = await InsertInRawDataDB(a22data);
 
             webcam.Id = webcam.Id?.ToUpper();
 
             //Set LicenseInfo
             webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
 
-            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "feratel.webcam.import", importerURL);
+            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "a22.webcam.import", importerURL);
 
             return pgcrudresult;
         }
@@ -144,21 +147,21 @@ namespace OdhApiImporter.Helpers
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
-                            datasource = "feratel",
+                            datasource = "a22",
                             rawformat = "xml",
                             importdate = DateTime.Now,
                             license = "open",
                             sourceinterface = "webcams",
-                            sourceurl = settings.FeratelConfig.ServiceUrl,
+                            sourceurl = settings.A22Config.ServiceUrl,
                             type = "webcam",
                             sourceid = data.Key,
                             raw = data.Value.ToString(),
                         });
         }
 
-        //Parse the feratel interface content
-        public async Task<WebcamInfoLinked?> ParseFeratelDataToWebcam(string odhid, XElement input, XElement link)
-        {         
+        //Parse the a22 interface content
+        public async Task<WebcamInfoLinked?> ParseA22DataToWebcam(string odhid, XElement input, XElement coordinates)
+        {
             //Get the ODH Item
             var query = QueryFactory.Query(table)
               .Select("data")
@@ -167,7 +170,7 @@ namespace OdhApiImporter.Helpers
             var webcamindb = await query.GetObjectSingleAsync<WebcamInfoLinked>();
             var webcam = default(WebcamInfoLinked);
 
-            webcam = ParseFeratelToODH.ParseWebcamToWebcamInfo(webcamindb, input, link, odhid);
+            webcam = ParseA22ToODH.ParseWebcamToWebcamInfo(webcamindb, input, coordinates, odhid);
 
             return webcam;
         }
@@ -182,7 +185,7 @@ namespace OdhApiImporter.Helpers
             try
             {
                 //Begin SetDataNotinListToInactive
-                var idlistdb = await GetAllDataBySource(new List<string>() { "feratel" });
+                var idlistdb = await GetAllDataBySource(new List<string>() { "a22" });
 
                 var idstodelete = idlistdb.Where(p => !idlistinterface.Any(p2 => p2 == p));
 
@@ -196,7 +199,7 @@ namespace OdhApiImporter.Helpers
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "deactivate.feratel", new ImportLog() { sourceid = "", sourceinterface = "feratel.webcam", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "deactivate.a22.webcam", new ImportLog() { sourceid = "", sourceinterface = "a22.webcam", success = false, error = ex.Message });
 
                 errorresult = errorresult + 1;
             }

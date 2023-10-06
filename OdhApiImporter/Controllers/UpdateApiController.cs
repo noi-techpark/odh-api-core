@@ -696,6 +696,58 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region A22 DATA SYNC
+
+        //[Authorize(Roles = "DataPush")]
+        [HttpGet, Route("A22/{a22entity}/Update")]
+        public async Task<IActionResult> UpdateAllA22Data(string a22entity, CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import A22 " + a22entity;
+            string updatetype = GetUpdateType(null);
+            string source = "a22";
+            string otherinfo = a22entity;
+
+            try
+            {
+                IImportHelper a22importhelper;
+
+                switch (a22entity.ToLower())
+                {                    
+                    case "webcam":
+                        
+                        a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("A22/Webcam"));
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                    case "servicearea":
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/ServiceArea"));
+                        ((A22PoiImportHelper)a22importhelper).entity = a22entity.ToLower();
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                    case "tollstation":
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/Tollstation"));
+                        ((A22PoiImportHelper)a22importhelper).entity = a22entity.ToLower();
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                }
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        #endregion
+
 
         protected Func<string, string> UrlGeneratorStatic
         {
