@@ -3085,7 +3085,7 @@ namespace DataModel
         //}       
     }
     
-    public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags
+    public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags, IVideoItemsAware
     {
         public WebcamInfo()
         {
@@ -3121,7 +3121,7 @@ namespace DataModel
         public ICollection<ImageGallery> ImageGallery { get; set; }
 
         //Video Items
-        public IDictionary<string, ICollection<VideoItems>> VideoItems { get; set; }
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
 
