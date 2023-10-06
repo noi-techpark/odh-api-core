@@ -1,4 +1,8 @@
-﻿CREATE OR REPLACE FUNCTION public.calculate_access_array(source text, closeddata bool, reduced bool)
+﻿// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+CREATE OR REPLACE FUNCTION public.calculate_access_array(source text, closeddata bool, reduced bool)
 RETURNS text[]
 LANGUAGE plpgsql
 IMMUTABLE
