@@ -839,9 +839,9 @@ namespace Helper
                 .When(typelist != null, q => query.WhereIn("type", typelist))
                 .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist))
                  .When(idlist != null, q => query.WhereIn("id", idlist))
-                //.When(latest, )
-                //.When(filterClosedData, q => q.FilterClosedData_Raw());
-                .FilterDataByAccessRoles(userroles);
+                 //.When(latest, )
+                 //.When(filterClosedData, q => q.FilterClosedData_Raw());
+                 .FilterDataByAccessRoles(userroles);
             //TODO future opendata rules on 
             //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
         }

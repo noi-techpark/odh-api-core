@@ -104,11 +104,10 @@ namespace FERATEL
                 image.ImageUrl = url.Attribute("v").Value;
                 image.ImageSource = "feratel";
                 image.IsInGallery = true;
-                if(url.Attribute("t").Value == "MediaPlayer Thumbnails")
+                if(url.Attribute("t").Value == "MediaPlayer Thumbnails 38")
                     image.ListPosition = 0;
               
                 webcam.ImageGallery.Add(image);
-
             }
 
             webcam.ImageGallery = webcam.ImageGallery.OrderByDescending(x => x.ListPosition).ToList();
