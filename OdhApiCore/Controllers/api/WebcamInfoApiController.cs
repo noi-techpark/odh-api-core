@@ -143,7 +143,7 @@ namespace OdhApiCore.Controllers
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
-                            languagelist: new List<string>(), filterClosedData: FilterClosedData, reducedData: ReducedData)
+                            languagelist: new List<string>(), filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -183,7 +183,8 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                         .Where("id", id.ToUpper())
                         //.When(FilterClosedData, q => q.FilterClosedData());
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var fieldsTohide = FieldsToHide;
 

@@ -734,7 +734,7 @@ namespace OdhApiCore.Controllers
                         .WeatherHistoryWhereExpression(
                             languagelist: myweatherhelper.languagelist, idlist: myweatherhelper.idlist, sourcelist: new List<string>(), begindate: myweatherhelper.datefrom,
                             enddate: myweatherhelper.dateto, searchfilter: searchfilter, language: language, lastchange: myweatherhelper.lastchange,
-                            filterClosedData: false)
+                            filterClosedData: false, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
                 //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//
@@ -840,7 +840,7 @@ namespace OdhApiCore.Controllers
                             activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper.publishedonlist,
                             sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData)
+                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -904,8 +904,9 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("measuringpoints")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
                         //.When(FilterClosedData, q => q.FilterClosedData());
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var fieldsTohide = FieldsToHide;
 

@@ -108,8 +108,9 @@ namespace OdhApiCore.Controllers
                         .From(table)
                         .ApplyRawFilter(rawfilter)
                         //.ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort)
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-                
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
+
                 //Get as Text
                 var mainquery =
                     QueryFactory.Query()

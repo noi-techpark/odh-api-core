@@ -185,7 +185,12 @@ ALTER TABLE tablename ADD IF NOT EXISTS gen_tsmultirange tsmultirange GENERATED 
 
 * jsonb
 ```sql
-ALTER TABLE events ADD IF NOT EXISTS gen_jsonb jsonb GENERATED ALWAYS AS ((data#>'{SomeJsonB}')::jsonb) stored;
+ALTER TABLE tablename ADD IF NOT EXISTS gen_jsonb jsonb GENERATED ALWAYS AS ((data#>'{SomeJsonB}')::jsonb) stored;
+```
+
+* access_based
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_access_role text[] GENERATED ALWAYS AS (calculate_access_array(data#>>'{_Meta,Source}',(data#>'{LicenseInfo,ClosedData}')::bool,(data#>'{_Meta,Reduced}')::bool)) stored;
 ```
  
 
@@ -312,6 +317,32 @@ BEGIN
     RETURN result;
 END;
 $$;
+```
+
+* calculate_access_array
+
+```sql
+CREATE OR REPLACE FUNCTION public.calculate_access_array(source text, closeddata bool, reduced bool)
+RETURNS text[]
+LANGUAGE plpgsql
+IMMUTABLE
+AS $function$
+begin
+-- if data is from source lts and not reduced IDM only access --
+if source = 'lts' and not reduced then return (array['IDM']);
+end if;
+-- If data is from source a22 only access A22 --
+if source = 'a22' then return (array['A22']);
+end if;
+-- if data is from source LTS and reduced give access to all others --
+if source = 'lts' and reduced and not closeddata then return (array['A22','ANONYMOUS','STA']);
+end if;
+-- if data is not from source lts and a22 and not closed data give all access --
+if source <> 'lts' and source <> 'a22' and not closeddata then return (array['A22','ANONYMOUS','IDM','STA']);
+end if;
+return (array['A22','ANONYMOUS','IDM','STA']);
+end;
+$function$
 ```
 
 ### REUSE

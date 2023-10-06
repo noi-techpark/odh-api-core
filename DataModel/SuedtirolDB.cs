@@ -2696,7 +2696,7 @@ namespace DataModel
     //}
 
     //BaseInfo Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2769,7 +2769,7 @@ namespace DataModel
         public Nullable<int> RepresentationRestriction { get; set; }
 
         //New published on List
-        public List<string>? PublishedOn { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 

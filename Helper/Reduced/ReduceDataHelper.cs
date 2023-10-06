@@ -556,6 +556,10 @@ namespace Helper
             reduced.Source = webcam.Source;
             //TO ASK? Webcamname?
 
+            reduced.Detail = webcam.Detail;
+            reduced.ImageGallery = webcam.ImageGallery;
+            reduced.ContactInfos = webcam.ContactInfos;
+
             //License + Meta
             reduced.LicenseInfo = webcam.LicenseInfo;
             reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "webcam", "lts", reduced.LastChange, true);
