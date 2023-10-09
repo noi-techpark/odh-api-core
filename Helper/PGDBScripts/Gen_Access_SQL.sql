@@ -24,6 +24,24 @@ return (array['A22','ANONYMOUS','IDM','STA']);
 end;
 $function$
 
+--TODO license is not used....
+CREATE OR REPLACE FUNCTION public.calculate_access_array_rawdata(source text, license text)
+RETURNS text[]
+LANGUAGE plpgsql
+IMMUTABLE
+AS $function$
+begin
+-- if data is from source lts and not reduced IDM only access --
+if source = 'lts' then return (array['IDM']);
+end if;
+-- If data is from source a22 only access A22 --
+if source = 'a22' then return (array['A22']);
+end if;
+-- if data is not from source lts and a22 and not closed data give all access --
+return (array['A22','ANONYMOUS','IDM','STA']);
+end;
+$function$
+
 
 alter table smgpois drop column gen_access_role 
 
@@ -194,3 +212,8 @@ alter table tags drop column gen_access_role
 ALTER TABLE tags
 ADD IF NOT EXISTS gen_access_role text[]
 GENERATED ALWAYS AS (calculate_access_array('all',(data#>'{LicenseInfo,ClosedData}')::bool,(data#>'{_Meta,Reduced}')::bool)) stored;
+
+
+ALTER TABLE rawdata  
+ADD IF NOT EXISTS gen_access_role text[] 
+GENERATED ALWAYS AS (calculate_access_array_rawdata(datasource,license)) stored;

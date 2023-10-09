@@ -150,7 +150,7 @@ namespace OdhApiImporter.Helpers
                             datasource = "a22",
                             rawformat = "xml",
                             importdate = DateTime.Now,
-                            license = "open",
+                            license = "closed",
                             sourceinterface = "webcams",
                             sourceurl = settings.A22Config.ServiceUrl,
                             type = "webcam",
