@@ -157,21 +157,23 @@ namespace A22
 
 
             //Imagegallery
-            poi.ImageGallery = new List<ImageGallery>();
+            //poi.ImageGallery = new List<ImageGallery>();
             poi.PoiServices = new List<string>();
 
             foreach(var service in poitoparse.Elements(ns + "Servizi").Elements(ns + "WSOpenData_ServizioAreaDiServizio"))
             {
-                ImageGallery imageGallery = new ImageGallery();
-                imageGallery.ImageUrl = service.Element(ns + "Immagine").Value;
-                imageGallery.ImageName = service.Element(ns + "Titolo").Value;
-                imageGallery.ImageSource = "a22";
-                imageGallery.ImageTags = new List<string>();
-                imageGallery.ImageTags.Add(service.Element(ns + "Categoria").Value);
+                //ImageGallery imageGallery = new ImageGallery();
+                //imageGallery.ImageUrl = service.Element(ns + "Immagine").Value;
+                //imageGallery.ImageName = service.Element(ns + "Titolo").Value;
+                //imageGallery.ImageSource = "a22";
+                //imageGallery.ImageTags = new List<string>();
+                //imageGallery.ImageTags.Add(service.Element(ns + "Categoria").Value);
 
-                poi.ImageGallery.Add(imageGallery);
+                //poi.ImageGallery.Add(imageGallery);
 
-                poi.PoiServices.Add(service.Element(ns + "IDServizio").Value);
+                poi.PoiServices.Add(service.Element(ns + "Titolo").Value);
+
+                //TO CHECK, image is always 0 bytes, category + IDServizio maybe of interest
             }
 
 
