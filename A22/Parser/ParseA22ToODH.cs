@@ -87,6 +87,9 @@ namespace A22
                 poi = new ODHActivityPoiLinked();
 
             poi.Source = "a22";
+            poi.SyncSourceInterface = "serviceareas";
+            poi.SyncUpdateMode = "full";
+
             poi.Id = odhid;
             poi.Active = true;
 
@@ -211,6 +214,7 @@ namespace A22
                 poi = new ODHActivityPoiLinked();
 
             poi.Source = "a22";
+            poi.SyncSourceInterface = "tollstations";
             poi.Id = odhid;
             poi.Active = true;
             poi.HasLanguage = new List<string>() { "de","it","en" };

@@ -200,9 +200,9 @@ namespace OdhApiImporter.Helpers
             var poiindb = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
             var poi = default(ODHActivityPoiLinked);
 
-            if(a22poiinfo.entitytype == "tollstation")
+            if (a22poiinfo.entitytype == "tollstation")
                 poi = ParseA22ToODH.ParseTollStationToODHActivityPoi(poiindb, input, coordinates, odhid);
-            if(a22poiinfo.entitytype == "servicearea")
+            if (a22poiinfo.entitytype == "servicearea")
                 poi = ParseA22ToODH.ParseServiceAreaToODHActivityPoi(poiindb, input, coordinates, odhid);
 
             return poi;
@@ -260,6 +260,11 @@ namespace OdhApiImporter.Helpers
         {
             throw new NotImplementedException();
         }
+
+        public virtual ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class A22Tollstation: A22Poi
@@ -289,6 +294,11 @@ namespace OdhApiImporter.Helpers
         {
             return await GetA22Data.GetTollStations(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
         }
+
+        public virtual ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
+        {
+            return ParseA22ToODH.ParseTollStationToODHActivityPoi(poiindb, input, coordinate, odhid);
+        }        
     }
 
     public class A22ServiceArea: A22Poi
@@ -319,6 +329,11 @@ namespace OdhApiImporter.Helpers
         public override async Task<XDocument> GetData(ISettings settings)
         {
             return await GetA22Data.GetServiceAreas(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
+        }
+
+        public virtual ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
+        {
+            return ParseA22ToODH.ParseServiceAreaToODHActivityPoi(poiindb, input, coordinate, odhid);
         }
     }
 }
