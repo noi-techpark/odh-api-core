@@ -721,14 +721,12 @@ namespace OdhApiImporter.Controllers
 
                         break;
                     case "servicearea":
-                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/ServiceArea"));
-                        ((A22PoiImportHelper)a22importhelper).entity = a22entity.ToLower();
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/ServiceArea"), a22entity.ToLower());                        
                         updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
 
                         break;
                     case "tollstation":
-                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/Tollstation"));
-                        ((A22PoiImportHelper)a22importhelper).entity = a22entity.ToLower();
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/Tollstation"), a22entity.ToLower());                        
                         updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
 
                         break;

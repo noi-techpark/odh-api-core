@@ -163,6 +163,7 @@ namespace A22
                 imageGallery.ImageUrl = service.Element(ns + "Immagine").Value;
                 imageGallery.ImageName = service.Element(ns + "Titolo").Value;
                 imageGallery.ImageSource = "a22";
+                imageGallery.ImageTags = new List<string>();
                 imageGallery.ImageTags.Add(service.Element(ns + "Categoria").Value);
 
                 poi.ImageGallery.Add(imageGallery);
