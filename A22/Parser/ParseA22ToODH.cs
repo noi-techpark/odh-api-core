@@ -176,26 +176,19 @@ namespace A22
 
 
 
+            //ODHTags
+            if (poi.SmgTags == null)
+                poi.SmgTags = new List<string>();
 
+            if (!poi.SmgTags.Contains("autobahnraststaette"))
+                poi.SmgTags.Add("autobahnraststaette");
 
-            //<Servizi>
-            //<WSOpenData_ServizioAreaDiServizio>
-            //<IDServizio>28</IDServizio>
-            //<Titolo>Servizi igienici</Titolo>
-            //<Immagine>https://example/icona-WC.png</Immagine>
-            //<Categoria>a</Categoria>
-            //</WSOpenData_ServizioAreaDiServizio>
-            //<WSOpenData_ServizioAreaDiServizio>
-            //<IDServizio>27</IDServizio>
-            //<Titolo>Sosta mezzi pesanti</Titolo>
-            //<Immagine>https://example/icona-Pcamion.png</Immagine>
-            //<Categoria>p</Categoria>
-            //</WSOpenData_ServizioAreaDiServizio>
-            //</Servizi>
-            //</WSOpenData_AreaDiServizio>
+            //Tags            
+            if (poi.Tags == null)
+                poi.Tags = new List<Tags>();
 
-
-
+            if (!poi.Tags.Any(x => x.Id == "servicearea"))
+                poi.Tags.Add(new Tags() { Id = "servicearea", Source = "a22" });
 
             //ContactInfos
 
@@ -378,6 +371,18 @@ namespace A22
             //ContactInfos
 
             //ODHTAgs
+            if(poi.SmgTags == null)
+                poi.SmgTags = new List<string>();
+
+            if (!poi.SmgTags.Contains("mautstellen"))
+                poi.SmgTags.Add("mautstellen");
+
+            //Tags
+            if (poi.Tags == null)
+                poi.Tags = new List<Tags>();
+            
+            if(!poi.Tags.Any(x => x.Id == "tollstation"))
+                poi.Tags.Add(new Tags() { Id = "tollstation", Source = "a22" });
 
             //LicenseInfo
 
