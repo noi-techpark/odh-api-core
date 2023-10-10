@@ -162,7 +162,7 @@ namespace OdhApiImporter.Helpers
         {
             var rawdataid = await InsertInRawDataDB(a22data);
 
-            odhactivitypoi.Id = odhactivitypoi.Id?.ToUpper();
+            odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
 
             //Set LicenseInfo
             odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoiLinked>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
