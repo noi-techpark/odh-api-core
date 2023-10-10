@@ -182,6 +182,8 @@ namespace A22
 
             if (!poi.SmgTags.Contains("autobahnraststaette"))
                 poi.SmgTags.Add("autobahnraststaette");
+            if (!poi.SmgTags.Contains("mobilität"))
+                poi.SmgTags.Add("mobilität");
 
             //Tags            
             if (poi.Tags == null)
@@ -189,6 +191,8 @@ namespace A22
 
             if (!poi.Tags.Any(x => x.Id == "servicearea"))
                 poi.Tags.Add(new Tags() { Id = "servicearea", Source = "a22" });
+            if (!poi.Tags.Any(x => x.Id == "mobility"))
+                poi.Tags.Add(new Tags() { Id = "mobility", Source = "idm" });
 
             //ContactInfos
 
@@ -374,8 +378,10 @@ namespace A22
             if(poi.SmgTags == null)
                 poi.SmgTags = new List<string>();
 
-            if (!poi.SmgTags.Contains("mautstellen"))
-                poi.SmgTags.Add("mautstellen");
+            if (!poi.SmgTags.Contains("mautstelle"))
+                poi.SmgTags.Add("mautstelle");
+            if (!poi.SmgTags.Contains("mobilität"))
+                poi.SmgTags.Add("mobilität");
 
             //Tags
             if (poi.Tags == null)
@@ -383,6 +389,8 @@ namespace A22
             
             if(!poi.Tags.Any(x => x.Id == "tollstation"))
                 poi.Tags.Add(new Tags() { Id = "tollstation", Source = "a22" });
+            if (!poi.Tags.Any(x => x.Id == "mobility"))
+                poi.Tags.Add(new Tags() { Id = "mobility", Source = "idm" });
 
             //LicenseInfo
 
