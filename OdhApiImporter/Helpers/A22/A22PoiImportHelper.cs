@@ -127,10 +127,10 @@ namespace OdhApiImporter.Helpers
                 //id generating by link id and panid from the cam
                 returnid = a22poiinfo.GetReturnid(poi);
 
-                idlistinterface.Add("A22_"+ a22poiinfo.entitytype + "_" + returnid);
+                idlistinterface.Add("a22_"+ a22poiinfo.entitytype + "_" + returnid);
 
                 //Parse A22 Data
-                ODHActivityPoiLinked parsedobject = await ParseA22DataToODHActivityPoi("A22_" + a22poiinfo.entitytype + "_" + returnid, poi, coordinates);
+                ODHActivityPoiLinked parsedobject = await ParseA22DataToODHActivityPoi("a22_" + a22poiinfo.entitytype + "_" + returnid, poi, coordinates);
                 if (parsedobject == null)
                     throw new Exception();
 
@@ -297,7 +297,7 @@ namespace OdhApiImporter.Helpers
             return await GetA22Data.GetTollStations(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
         }
 
-        public virtual ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
+        public override ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
         {
             return ParseA22ToODH.ParseTollStationToODHActivityPoi(poiindb, input, coordinate, odhid);
         }        
@@ -333,7 +333,7 @@ namespace OdhApiImporter.Helpers
             return await GetA22Data.GetServiceAreas(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
         }
 
-        public virtual ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
+        public override ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
         {
             return ParseA22ToODH.ParseServiceAreaToODHActivityPoi(poiindb, input, coordinate, odhid);
         }
