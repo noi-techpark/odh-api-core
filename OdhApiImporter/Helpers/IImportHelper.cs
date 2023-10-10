@@ -75,12 +75,13 @@ namespace OdhApiImporter.Helpers
         }
 
         //Helper get all data from source
-        public async Task<List<string>> GetAllDataBySource(List<string> syncsourceinterfacelist)
+        public async Task<List<string>> GetAllDataBySource(List<string> syncsourcelist, List<string>? syncsourceinterfacelist = null)
         {
             var query =
                QueryFactory.Query(table)
                    .Select("id")                   
-                   .SourceFilter_GeneratedColumn(syncsourceinterfacelist);
+                   .SourceFilter_GeneratedColumn(syncsourcelist)
+                   .When(syncsourceinterfacelist != null, x => x.SyncSourceInterfaceFilter_GeneratedColumn(syncsourceinterfacelist));
 
             var idlist = await query.GetAsync<string>();
 

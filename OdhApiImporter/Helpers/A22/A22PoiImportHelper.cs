@@ -81,7 +81,7 @@ namespace OdhApiImporter.Helpers
                 XNamespace df = a22data.Root.Name.Namespace;
                 CultureInfo myculture = new CultureInfo("en");                
 
-                //loop trough a22 webcam items
+                //loop trough a22 items
                 foreach (var poi in a22data.Root.Elements(df + a22poiinfo.rootelement))
                 {
                     XElement matchedcoordinate = a22poiinfo.GetMatchedGPS(a22data, coordinates, poi);
@@ -129,7 +129,7 @@ namespace OdhApiImporter.Helpers
 
                 idlistinterface.Add("A22_"+ a22poiinfo.entitytype + "_" + returnid);
 
-                //Parse A22 Webcam Data
+                //Parse A22 Data
                 ODHActivityPoiLinked parsedobject = await ParseA22DataToODHActivityPoi("A22_" + a22poiinfo.entitytype + "_" + returnid, poi, coordinates);
                 if (parsedobject == null)
                     throw new Exception();
@@ -200,10 +200,12 @@ namespace OdhApiImporter.Helpers
             var poiindb = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
             var poi = default(ODHActivityPoiLinked);
 
-            if (a22poiinfo.entitytype == "tollstation")
-                poi = ParseA22ToODH.ParseTollStationToODHActivityPoi(poiindb, input, coordinates, odhid);
-            if (a22poiinfo.entitytype == "servicearea")
-                poi = ParseA22ToODH.ParseServiceAreaToODHActivityPoi(poiindb, input, coordinates, odhid);
+            //if (a22poiinfo.entitytype == "tollstation")
+            //    poi = ParseA22ToODH.ParseTollStationToODHActivityPoi(poiindb, input, coordinates, odhid);
+            //if (a22poiinfo.entitytype == "servicearea")
+            //    poi = ParseA22ToODH.ParseServiceAreaToODHActivityPoi(poiindb, input, coordinates, odhid);
+
+            poi = a22poiinfo.ParsePoi(poiindb, input, coordinates, odhid);
 
             return poi;
         }
@@ -218,13 +220,13 @@ namespace OdhApiImporter.Helpers
             try
             {
                 //Begin SetDataNotinListToInactive
-                var idlistdb = await GetAllDataBySource(new List<string>() { "a22" });
+                var idlistdb = await GetAllDataBySource(new List<string>() { "a22" }, new List<string>() { a22poiinfo.entitytype });
 
                 var idstodelete = idlistdb.Where(p => !idlistinterface.Any(p2 => p2 == p));
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var result = await DeleteOrDisableData<WebcamInfoLinked>(idtodelete, false);
+                    var result = await DeleteOrDisableData<ODHActivityPoiLinked>(idtodelete, false);
 
                     updateresult = updateresult + result.Item1;
                     deleteresult = deleteresult + result.Item2;
