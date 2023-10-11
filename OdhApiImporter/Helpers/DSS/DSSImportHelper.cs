@@ -364,12 +364,12 @@ namespace OdhApiImporter.Helpers.DSS
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+                    var deletedisableresult = await DeleteOrDisableData<ODHActivityPoiLinked>(idtodelete, false);
 
                     if (deletedisableresult.Item1 > 0)
-                        WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
+                        WriteLog.LogToConsole(idtodelete, "dataimport", "deactivate.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
                     else if (deletedisableresult.Item2 > 0)
-                        WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
+                        WriteLog.LogToConsole(idtodelete, "dataimport", "deactivate.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
 
 
                     deleteresult = deleteresult + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -377,7 +377,7 @@ namespace OdhApiImporter.Helpers.DSS
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "deactivate.dss" + entitytype, new ImportLog() { sourceid = "", sourceinterface = "dss." + entitytype, success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "deactivate.dss." + entitytype, new ImportLog() { sourceid = "", sourceinterface = "dss." + entitytype, success = false, error = ex.Message });
 
                 errorresult = errorresult + 1;
             }

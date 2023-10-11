@@ -12,14 +12,18 @@ namespace PANOMAX
     {
         public static async Task<dynamic?> GetWebcams(string url)
         {
-            GetData getdata = new GetData(url, null, null, null, GetDataAuthenticationOptions.None);
+            string requesturl = url + "instances/lists/public";
+
+            GetData getdata = new GetData(requesturl, null, null, null, GetDataAuthenticationOptions.None);
 
             return await getdata.GetDataAsJsonAsync();
         }
 
         public static async Task<dynamic?> GetVideos(string url)
         {
-            GetData getdata = new GetData(url, null, null, null, GetDataAuthenticationOptions.None);
+            string requesturl = url + "cams/videos/public";
+
+            GetData getdata = new GetData(requesturl, null, null, null, GetDataAuthenticationOptions.None);
 
             return await getdata.GetDataAsJsonAsync();
         }

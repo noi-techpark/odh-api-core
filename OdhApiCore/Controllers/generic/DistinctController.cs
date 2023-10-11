@@ -103,8 +103,8 @@ namespace OdhApiCore.Controllers
                         .Distinct()
                         .SelectRaw(select)
                         .From(table)
-                        .ApplyRawFilter(rawfilter)
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .ApplyRawFilter(rawfilter);
+                        // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
                 
                 var data = await query.GetAsync();
                 

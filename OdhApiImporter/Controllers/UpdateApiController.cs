@@ -616,11 +616,11 @@ namespace OdhApiImporter.Controllers
             string operation = "Import PANOMAX Webcam";
             string updatetype = GetUpdateType(null);
             string source = "panomax";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
-                PanomaxImportHelper panomaximporthelper = new PanomaxImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("PANOMAX/Webcam"));
+                PanomaxImportHelper panomaximporthelper = new PanomaxImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("PANOMAX/Webcam"));
 
                 updatedetail = await panomaximporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import PANOMAX Webcam succeeded", otherinfo, updatedetail, true);
@@ -646,11 +646,11 @@ namespace OdhApiImporter.Controllers
             string operation = "Import PANOCLOUD Webcam";
             string updatetype = GetUpdateType(null);
             string source = "panocloud";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
-                PanocloudImportHelper panocloudimporthelper = new PanocloudImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("PANOCLOUD/Webcam"));
+                PanocloudImportHelper panocloudimporthelper = new PanocloudImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("PANOCLOUD/Webcam"));
 
                 updatedetail = await panocloudimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import PANOCLOUD Webcam succeeded", otherinfo, updatedetail, true);
@@ -676,11 +676,11 @@ namespace OdhApiImporter.Controllers
             string operation = "Import FERATEL Wecam";
             string updatetype = GetUpdateType(null);
             string source = "feratel";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
-                FeratelWebcamImportHelper feratelwebcamimporthelper = new FeratelWebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("FERATEL/Wecam"));
+                FeratelWebcamImportHelper feratelwebcamimporthelper = new FeratelWebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("FERATEL/Wecam"));
 
                 updatedetail = await feratelwebcamimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam succeeded", otherinfo, updatedetail, true);
@@ -690,6 +690,56 @@ namespace OdhApiImporter.Controllers
             catch (Exception ex)
             {
                 var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        #endregion
+
+        #region A22 DATA SYNC
+
+        //[Authorize(Roles = "DataPush")]
+        [HttpGet, Route("A22/{a22entity}/Update")]
+        public async Task<IActionResult> UpdateAllA22Data(string a22entity, CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import A22 " + a22entity;
+            string updatetype = GetUpdateType(null);
+            string source = "a22";
+            string otherinfo = a22entity;
+
+            try
+            {
+                IImportHelper a22importhelper;
+
+                switch (a22entity.ToLower())
+                {                    
+                    case "webcam":
+                        
+                        a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("A22/Webcam"));
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                    case "servicearea":
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/ServiceArea"), a22entity.ToLower());                        
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                    case "tollstation":
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/Tollstation"), a22entity.ToLower());                        
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                }
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }

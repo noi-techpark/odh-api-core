@@ -21,14 +21,19 @@ let parserTests =
                 let actual = run field "Detail.de.Title"
                 Expect.equal actual expected ""
             }
-            test "Field with [] array syntax" {
+            test "Field with .[] array syntax" {
                 let expected = Ok (Field [IdentifierSegment "Features"; ArraySegment; IdentifierSegment "Id"])
                 let actual = run field "Features.[].Id"
                 Expect.equal actual expected ""
             }
-            test "Field with [*] array syntax" {
+            test "Field with .[*] array syntax" {
                 let expected = Ok (Field [IdentifierSegment "Features"; ArraySegment; IdentifierSegment "Id"])
                 let actual = run field "Features.[*].Id"
+                Expect.equal actual expected ""
+            }
+            test "Field with [*] array syntax (JSON path syntax)" {
+                let expected = Ok (Field [IdentifierArraySegment "Features"; IdentifierSegment "Id"])
+                let actual = run field "Features[*].Id"
                 Expect.equal actual expected ""
             }
         ]
@@ -173,6 +178,15 @@ let parserTests =
                 let actual = run Filtering.statement "or(eq(Active, true), and(ge(Geo.Altitude, 200), le(Geo.Altitude, 400)))"
                 Expect.equal actual expected ""
             }
+            test "LIKE" {
+                let expected = Ok <| Comp {
+                    Field = Field [IdentifierSegment "Title"]
+                    Operator = Filtering.Operator.Like
+                    Value = Filtering.String "Ski"
+                }
+                let actual = run Filtering.statement "like(Title, 'Ski')"
+                Expect.equal actual expected ""
+            }
             test "Condition with NULL check" {
                 let expected =
                     Ok (Cond (Filtering.IsNull (Field (List.map IdentifierSegment ["Detail"; "ru"; "Title"]))))
@@ -185,6 +199,14 @@ let parserTests =
                         In (Field [IdentifierSegment "HasLanguage"], [Filtering.String "de"; Filtering.String "it"])
                     )
                 let actual = run Filtering.statement "in(HasLanguage,'de','it')"
+                Expect.equal actual expected ""
+            }
+            test "Condition with LIKEIN" {
+                let expected =
+                    Ok (
+                        LikeIn (Field [IdentifierSegment "OdhTags"], [Filtering.String "Ski"; Filtering.String "Winter"])
+                    )
+                let actual = run Filtering.statement "likein(OdhTags, 'Ski', 'Winter')"
                 Expect.equal actual expected ""
             }
             test "Array syntax" {

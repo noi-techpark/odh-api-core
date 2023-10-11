@@ -642,7 +642,7 @@ namespace OdhApiCore.Controllers
                             activefilter: myhelper.active, smgactivefilter: myhelper.smgactive, publishedonlist: myhelper.publishedonlist,
                             sourcelist: myhelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: myhelper.languagelist,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData)
+                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -704,7 +704,8 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodations")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 var fieldsTohide = FieldsToHide;
@@ -721,7 +722,8 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodations")
                         .Select("data")
                         .Where("gen_hgvid", "ILIKE", id)
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 var fieldsTohide = FieldsToHide;
@@ -736,7 +738,8 @@ namespace OdhApiCore.Controllers
                 QueryFactory.Query("accommodations")
                     .Select("id")
                     .Where("gen_hgvid", "ILIKE", id)
-                    .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                    //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                    .FilterDataByAccessRoles(UserRolesToFilter);
 
             var data = await query.FirstOrDefaultAsync<string?>();
 
@@ -773,7 +776,8 @@ namespace OdhApiCore.Controllers
                         .SearchFilter(PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort)
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.GetAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 var fieldsTohide = FieldsToHide;
@@ -805,7 +809,8 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodationrooms")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 var fieldsTohide = FieldsToHide;
@@ -912,7 +917,7 @@ namespace OdhApiCore.Controllers
 
         private IActionResult GetFeatureListXML(CancellationToken cancellationToken)
         {
-            XDocument mytins = GetAccommodationDataCDB.GetTinfromCDB("1", settings.CDBConfig.Username, settings.CDBConfig.Password, settings.CDBConfig.Url);
+            XDocument mytins = GetAccommodationDataCDB.GetTinfromCDB("1", settings.CDBConfig.Username, settings.CDBConfig.Password, settings.CDBConfig.ServiceUrl);
 
             //return new ContentResult { Content = mytins.ToString(), ContentType = "text/xml", StatusCode = 200 };
 

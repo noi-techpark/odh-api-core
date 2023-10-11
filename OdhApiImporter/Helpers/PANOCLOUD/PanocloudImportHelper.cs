@@ -11,50 +11,129 @@ using PANOCLOUD;
 using Newtonsoft.Json;
 using Helper;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OdhApiImporter.Helpers
 {
     public class PanocloudImportHelper : ImportHelper, IImportHelper
     {
-        //TODO Make BaseUrl configurable in settings
-        public const string serviceurl = @"https://backend.panocloud.com/partner-api/api.php?key=be39ad8114f6e9d99414151c62bc9a7fb83dbb69";
+         public List<string> idlistinterface { get; set; }
 
+        //Constructor
         public PanocloudImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
-
+            idlistinterface = new List<string>();
         }
 
-        public async Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete)
-        {
-            throw new NotImplementedException();
-        }
-
+        //Main Method, Gets the data (Webcams) from source, Imports and Parses the data, Sets Data no more on the interface to inactive
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //GET Data and Deserialize to Json
-            var data = await GetPanocloudData.GetWebcams(serviceurl);
+            var data = await GetData(cancellationToken);
 
-            var newcounter = 0;
+            //UPDATE all data
+            var updateresult = await ImportData(data, cancellationToken);
 
-            if(data != null)
+            //Disable Data not in panomax list
+            var deleteresult = await SetDataNotinListToInactive(cancellationToken);
+
+            return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });            
+        }
+
+        //Get Data from Source
+        private async Task<dynamic?> GetData(CancellationToken cancellationToken)
+        {
+            //Get Panomax webcam data
+            return await GetPanocloudData.GetWebcams(settings.PanocloudConfig.ServiceUrl);
+        }
+
+        //Import the Data
+        public async Task<UpdateDetail> ImportData(dynamic? panomaxinput, CancellationToken cancellationToken)
+        {
+            int updatecounter = 0;
+            int newcounter = 0;
+            int deletecounter = 0;
+            int errorcounter = 0;
+
+            if (panomaxinput != null)
             {
-                //Save to RAWTABLE
-                foreach (var webcam in data.LiveCam)
+                //loop trough dss items
+                foreach (var webcam in panomaxinput.LiveCam)
                 {
-                    var rawdataid = await InsertInRawDataDB(webcam);
-                    newcounter++;
+                    var importresult = await ImportDataSingle(webcam);
 
-                    //Because a dynamic is passed to the method a dynamic is returned also if int is defined!!! strange behavior of c#
-                    string rawdataidstr = rawdataid.ToString();
-
-                    WriteLog.LogToConsole(rawdataidstr, "dataimport", "single.panocloud", new ImportLog() { sourceid = rawdataidstr, sourceinterface = "panocloud.webcam", success = true, error = "" });
+                    newcounter = newcounter + importresult.created ?? newcounter;
+                    updatecounter = updatecounter + importresult.updated ?? updatecounter;
+                    errorcounter = errorcounter + importresult.error ?? errorcounter;
                 }
-            }            
+            }
 
-            return new UpdateDetail() { created = newcounter, updated = 0, deleted = 0, error = 0 };
-        }        
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
+        }
 
-        private async Task<int> InsertInRawDataDB(dynamic webcam)
+        //Parsing the Data
+        public async Task<UpdateDetail> ImportDataSingle(dynamic webcam)
+        {
+            int updatecounter = 0;
+            int newcounter = 0;
+            int deletecounter = 0;
+            int errorcounter = 0;
+
+            //id
+            string returnid = "";
+
+            try
+            {
+                //id
+                returnid = "PANOCLOUD_" + (string)webcam["@attributes"]["locationId"] + "_" + (string)webcam["@attributes"]["geoAlt"];
+
+                idlistinterface.Add(returnid);
+
+                //Parse Panomax Webcam Data
+                WebcamInfoLinked parsedobject = await ParsePanocloudDataToWebcam(returnid, webcam);
+                if (parsedobject == null)
+                    throw new Exception();
+
+                //Get Areas to Assign (Areas is a LTS only concept and will be removed in future)
+
+                //Set Shortname
+                parsedobject.Shortname = parsedobject.Detail.Select(x => x.Value.Title).FirstOrDefault();
+
+                //Save parsedobject to DB + Save Rawdata to DB
+                var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, dynamic>(returnid, webcam));
+
+                newcounter = newcounter + pgcrudresult.created ?? 0;
+                updatecounter = updatecounter + pgcrudresult.updated ?? 0;
+
+                WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.panocloud", new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "panocloud.webcam", success = true, error = "" });
+            }
+            catch (Exception ex)
+            {
+                WriteLog.LogToConsole(returnid, "dataimport", "single.panocloud", new ImportLog() { sourceid = returnid, sourceinterface = "panocloud.webcam", success = false, error = "panocloud webcam could not be parsed" });
+
+                errorcounter = errorcounter + 1;
+            }
+
+            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
+        }
+
+        //Inserting into DB
+        private async Task<PGCRUDResult> InsertDataToDB(WebcamInfoLinked webcam, KeyValuePair<string, dynamic> panomaxdata)
+        {
+            var rawdataid = await InsertInRawDataDB(panomaxdata);
+
+            webcam.Id = webcam.Id?.ToUpper();
+
+            //Set LicenseInfo
+            webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
+
+            var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "panocloud.webcam.import", importerURL);
+
+            return pgcrudresult;
+        }
+
+        //Inserting into RawDB
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, dynamic> data)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
@@ -64,11 +143,59 @@ namespace OdhApiImporter.Helpers
                             importdate = DateTime.Now,
                             license = "open",
                             sourceinterface = "webcams",
-                            sourceurl = serviceurl,
+                            sourceurl = settings.PanocloudConfig.ServiceUrl,
                             type = "webcam",
-                            sourceid = "panomax" + (string)webcam["@attributes"]["locationId"] + "_" + (string)webcam["@attributes"]["lastModifiedUnix"],
-                            raw = JsonConvert.SerializeObject(webcam),
+                            sourceid = data.Key,
+                            raw = JsonConvert.SerializeObject(data.Value),
                         });
+        }
+
+        //Parse the panocloud interface content
+        public async Task<WebcamInfoLinked?> ParsePanocloudDataToWebcam(string odhid, dynamic input)
+        {
+            //Get the ODH Item
+            var query = QueryFactory.Query(table)
+              .Select("data")
+              .Where("id", odhid);
+
+            var webcamindb = await query.GetObjectSingleAsync<WebcamInfoLinked>();
+            var webcam = default(WebcamInfoLinked);
+
+            webcam = ParsePanocloudToODH.ParseWebcamToWebcamInfo(webcamindb, input, odhid);
+
+            return webcam;
+        }
+
+        //Deactivates all data that is no more on the interface
+        private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
+        {
+            int updateresult = 0;
+            int deleteresult = 0;
+            int errorresult = 0;
+
+            try
+            {
+                //Begin SetDataNotinListToInactive
+                var idlistdb = await GetAllDataBySource(new List<string>() { "panocloud" });
+
+                var idstodelete = idlistdb.Where(p => !idlistinterface.Any(p2 => p2 == p));
+
+                foreach (var idtodelete in idstodelete)
+                {
+                    var result = await DeleteOrDisableData<WebcamInfoLinked>(idtodelete, false);
+
+                    updateresult = updateresult + result.Item1;
+                    deleteresult = deleteresult + result.Item2;
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog.LogToConsole("", "dataimport", "deactivate.panocloud", new ImportLog() { sourceid = "", sourceinterface = "panocloud.webcam", success = false, error = ex.Message });
+
+                errorresult = errorresult + 1;
+            }
+
+            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult, error = errorresult };
         }
     }
 }

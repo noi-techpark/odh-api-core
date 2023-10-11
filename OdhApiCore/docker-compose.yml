@@ -16,11 +16,14 @@ services:
       ASPNETCORE_ConnectionStrings__PgConnection: ${PG_CONNECTION}
       ASPNETCORE_MssConfig__Username: ${MSS_USER}
       ASPNETCORE_MssConfig__Password: ${MSS_PSWD}
+      ASPNETCORE_MssConfig__ServiceUrl: ${MSS_SERVICEURL}
       ASPNETCORE_LcsConfig__Username: ${LCS_USER}
       ASPNETCORE_LcsConfig__Password: ${LCS_PSWD}
       ASPNETCORE_LcsConfig__MessagePassword: ${LCS_MSGPSWD}
+      ASPNETCORE_LcsConfig__ServiceUrl: ${LCS_SERVICEURL}
       ASPNETCORE_SiagConfig__Username: ${SIAG_USER}
       ASPNETCORE_SiagConfig__Password: ${SIAG_PSWD}
+      ASPNETCORE_SiagConfig__ServiceUrl: ${SIAG_SERVICEURL}
       ASPNETCORE_XmlConfig__XmldirWeather: ${XMLDIR}
       ASPNETCORE_Xmldir__Xmldir: ${XMLDIR}
       ASPNETCORE_S3ImageresizerConfig__Url: ${IMG_URL}
@@ -31,8 +34,6 @@ services:
       ASPNETCORE_ElasticSearchConfig__ElasticUrl: ${ELK_URL}
       ASPNETCORE_ElasticSearchConfig__ElasticAuthtoken: ${ELK_TOKEN}
       ASPNETCORE_JsonConfig__Jsondir: ${JSONPATH}
-      ASPNETCORE_EBMSConfig__EBMSUser: ${EBMS_USER}
-      ASPNETCORE_EBMSConfig__EBMSPassword: ${EBMS_PASS}
       ASPNETCORE_DataBrowserConfig__Url: ${DATABROWSER_URL}
       ASPNETCORE_FCMConfig__noicommunityapp__ServerKey: ${NOICOMMUNITY_SERVERKEY}
       ASPNETCORE_FCMConfig__noicommunityapp__SenderId: ${NOICOMMUNITY_SENDERID}

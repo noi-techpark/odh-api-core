@@ -96,7 +96,7 @@ namespace OdhApiCore
             services.AddDistributedMemoryCache();
 
             services.AddHealthChecks()
-                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddCheck("self", () => HealthCheckResult.Healthy())                
                 .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
 
             //TO Remove old Quota Config

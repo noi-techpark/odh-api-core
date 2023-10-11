@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,15 +15,9 @@ namespace Helper
     {
         string PostgresConnectionString { get; }
         string MongoDBConnectionString { get; }
-        MssConfig MssConfig { get; }
-        LcsConfig LcsConfig { get; }
-        CDBConfig CDBConfig { get; }
-        SiagConfig SiagConfig { get; }
-        XmlConfig XmlConfig { get; }
+         XmlConfig XmlConfig { get; }
         JsonConfig JsonConfig { get; }
         S3ImageresizerConfig S3ImageresizerConfig { get; }
-        EBMSConfig EbmsConfig { get; }
-        RavenConfig RavenConfig { get; }
         PushServerConfig PushServerConfig { get; }
         //FCMConfig FCMConfig { get; }
         List<Field2HideConfig> Field2HideConfig { get; }
@@ -30,65 +25,26 @@ namespace Helper
         List<RateLimitConfig> RateLimitConfig { get; }
         NoRateLimitConfig NoRateLimitConfig { get; }
         List<FCMConfig> FCMConfig { get; }
-        DSSConfig DSSConfig { get; }
-
         List<NotifierConfig> NotifierConfig { get; }
-    }    
+
+        MssConfig MssConfig { get; }
+        LcsConfig LcsConfig { get; }
+        CDBConfig CDBConfig { get; }
+        SiagConfig SiagConfig { get; }
+        DSSConfig DSSConfig { get; }
+        EBMSConfig EbmsConfig { get; }
+        RavenConfig RavenConfig { get; }
+        A22Config A22Config { get; }
+        FeratelConfig FeratelConfig { get; }
+        PanocloudConfig PanocloudConfig { get; }
+        PanomaxConfig PanomaxConfig { get; }
+        NinjaConfig NinjaConfig { get; }
+        MusportConfig MusportConfig { get; }
+        SuedtirolWeinConfig SuedtirolWeinConfig { get; }
+        LoopTecConfig LoopTecConfig { get; }
+    }
 
     //Classes for Settings shared between Projects
-    public class MssConfig
-    {
-        public MssConfig(string username, string password)
-        {
-            this.Username = username;
-            this.Password = password;
-        }
-
-        public string Username { get; private set; }
-        public string Password { get; private set; }
-    }
-
-    public class LcsConfig
-    {
-        public LcsConfig(string username, string password, string messagepassword)
-        {
-            this.Username = username;
-            this.Password = password;
-            this.MessagePassword = messagepassword;
-        }
-
-        public string Username { get; private set; }
-        public string Password { get; private set; }
-
-        public string MessagePassword { get; private set; }
-    }   
-
-    public class CDBConfig
-    {
-        public CDBConfig(string username, string password, string url)
-        {
-            this.Username = username;
-            this.Password = password;
-            this.Url = url;
-        }
-
-        public string Username { get; private set; }
-        public string Password { get; private set; }
-
-        public string Url { get; private set; }
-    }
-
-    public class SiagConfig
-    {
-        public SiagConfig(string username, string password)
-        {
-            this.Username = username;
-            this.Password = password;
-        }
-
-        public string Username { get; private set; }
-        public string Password { get; private set; }
-    }
 
     public class XmlConfig
     {
@@ -129,46 +85,6 @@ namespace Helper
         public string AccessKey { get; private set; }
         public string SecretKey { get; private set; }
     }
-
-    public class EBMSConfig
-    {
-        public EBMSConfig(string user, string password)
-        {
-            this.User = user;
-            this.Password = password;
-        }
-
-        public string User { get; private set; }
-        public string Password { get; private set; }
-    }
-
-    public class RavenConfig
-    {
-        public RavenConfig(string user, string password, string serviceurl)
-        {
-            this.User = user;
-            this.Password = password;
-            this.ServiceUrl = serviceurl;
-        }
-
-        public string User { get; private set; }
-        public string Password { get; private set; }
-        public string ServiceUrl { get; private set; }
-    }
-
-    public class DSSConfig
-    {
-        public DSSConfig(string user, string password, string serviceurl)
-        {
-            this.User = user;
-            this.Password = password;
-            this.ServiceUrl = serviceurl;
-        }
-
-        public string User { get; private set; }
-        public string Password { get; private set; }
-        public string ServiceUrl { get; private set; }
-    }      
 
     public class Field2HideConfig
     {
@@ -272,6 +188,223 @@ namespace Helper
         public string User { get; private set; }
         public string Password { get; private set; }
     }
+
+    #region Data Importer Config
+
+    public class MssConfig
+    {
+        public MssConfig(string username, string password, string serviceurl)
+        {
+            this.Username = username;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string Username { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class LcsConfig
+    {
+        public LcsConfig(string username, string password, string messagepassword, string serviceurl)
+        {
+            this.Username = username;
+            this.Password = password;
+            this.MessagePassword = messagepassword;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string Username { get; private set; }
+        public string Password { get; private set; }
+        public string MessagePassword { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class CDBConfig
+    {
+        public CDBConfig(string username, string password, string serviceurl)
+        {
+            this.Username = username;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string Username { get; private set; }
+        public string Password { get; private set; }
+
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class SiagConfig
+    {
+        public SiagConfig(string username, string password, string serviceurl)
+        {
+            this.Username = username;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string Username { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class SuedtirolWeinConfig
+    {
+        public SuedtirolWeinConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class MusportConfig
+    {
+        public MusportConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class EBMSConfig
+    {
+        public EBMSConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class RavenConfig
+    {
+        public RavenConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class DSSConfig
+    {
+        public DSSConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class A22Config
+    {
+        public A22Config(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class FeratelConfig
+    {
+        public FeratelConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class PanocloudConfig
+    {
+        public PanocloudConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class PanomaxConfig
+    {
+        public PanomaxConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class NinjaConfig
+    {
+        public NinjaConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    public class LoopTecConfig
+    {
+        public LoopTecConfig(string user, string password, string serviceurl)
+        {
+            this.User = user;
+            this.Password = password;
+            this.ServiceUrl = serviceurl;
+        }
+
+        public string User { get; private set; }
+        public string Password { get; private set; }
+        public string ServiceUrl { get; private set; }
+    }
+
+    #endregion
 
 
     public class NotifyMeta

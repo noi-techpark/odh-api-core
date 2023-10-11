@@ -225,46 +225,7 @@ namespace Helper
 
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
-
-        /// <summary>
-        /// Deletes the data if it exists, by passing id and table
-        /// </summary>
-        /// <param name="QueryFactory"></param>
-        /// <param name="id"></param>
-        /// <param name="table"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table)
-        {
-            if (string.IsNullOrEmpty(id))
-                throw new ArgumentException(nameof(id), "No data");
-
-            //Check if data exists
-            var query =
-                  QueryFactory.Query(table)
-                      .Select("data")
-                      .Where("id", id);
-
-            var deleteresult = 0;
-            var errorresult = 0;
-
-            if (query == null)
-            {
-                throw new ArgumentNullException(nameof(query), "No data");
-            }
-            else
-            {
-                deleteresult = await QueryFactory.Query(table).Where("id", id)
-                        .DeleteAsync();
-            }
-
-            if (deleteresult == 0)
-                errorresult = 1;
-
-            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
-        }
-
+      
         /// <summary>
         /// Deletes the data if it exists by passing the Type the IdStyle (lowercase, uppercase) is derterminated and a check if the data can be converted to this entity
         /// </summary>
@@ -312,6 +273,49 @@ namespace Helper
 
             return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
         }
+
+        /// <summary>
+        /// Deletes the data if it exists, by passing id and table
+        /// </summary>
+        /// <param name="QueryFactory"></param>
+        /// <param name="id"></param>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table, bool casesensitive = true)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentException(nameof(id), "No data");
+
+            //Check if data exists
+            var query =
+                  QueryFactory.Query(table)
+                      .Select("data")
+                      .When(casesensitive, x => x.Where("id", id))
+                      .When(!casesensitive, x => x.WhereLike("id", id));
+
+            var deleteresult = 0;
+            var errorresult = 0;
+
+            if (query == null)
+            {
+                throw new ArgumentNullException(nameof(query), "No data");
+            }
+            else
+            {
+                deleteresult = await QueryFactory.Query(table)
+                        .When(casesensitive, x => x.Where("id", id))
+                        .When(!casesensitive, x => x.WhereLike("id", id))
+                        .DeleteAsync();
+            }
+
+            if (deleteresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE" };
+        }
+
 
         /// <summary>
         /// Upsert Data and check if Object has changed

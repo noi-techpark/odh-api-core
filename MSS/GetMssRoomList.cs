@@ -14,14 +14,14 @@ namespace MSS
 {
     public class GetMssRoomlist
     {
-        public static async Task<List<AccoRoom>> GetMssRoomlistAsync(HttpClient httpClient, string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string mssuser, string msspswd)
+        public static async Task<List<AccoRoom>> GetMssRoomlistAsync(HttpClient httpClient, string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string serviceurl, string mssuser, string msspswd)
         {
             try
             {
 
 
                 XDocument myrequest = MssRequest.BuildRoomlistPostData(roomdetails, hotelid, hotelidofchannel, lang, source, version, mssuser, msspswd);
-                var myresponses = MssRequest.RequestRoomAsync(httpClient, myrequest);
+                var myresponses = MssRequest.RequestRoomAsync(serviceurl, httpClient, myrequest);
 
                 await Task.WhenAll(myresponses);
 
@@ -43,14 +43,14 @@ namespace MSS
             }
         }
 
-        public static List<AccoRoom> GetMssRoomlistSync(HttpClient httpClient, string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string mssuser, string msspswd)
+        public static List<AccoRoom> GetMssRoomlistSync(HttpClient httpClient, string lang, string hotelid, string hotelidofchannel, XElement roomdetails, XDocument roomamenities, string source, string version, string serviceurl, string mssuser, string msspswd)
         {
             try
             {
 
 
                 XDocument myrequest = MssRequest.BuildRoomlistPostData(roomdetails, hotelid, hotelidofchannel, lang, source, version, mssuser, msspswd);
-                var myresponses = MssRequest.RequestRoom(httpClient, myrequest);
+                var myresponses = MssRequest.RequestRoom(serviceurl, httpClient, myrequest);
 
                 string roomresponsecontent = myresponses.Content.ReadAsStringAsync().Result;
 

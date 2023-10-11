@@ -630,8 +630,7 @@ namespace DataModel
         //Generic Mapping Object
         //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
-
-
+    
     public class LTSTaggingInfo
     {
         //NEW LTS RID
@@ -2697,7 +2696,7 @@ namespace DataModel
     //}
 
     //BaseInfo Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2770,7 +2769,7 @@ namespace DataModel
         public Nullable<int> RepresentationRestriction { get; set; }
 
         //New published on List
-        public List<string>? PublishedOn { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
@@ -2997,11 +2996,13 @@ namespace DataModel
         }
 
         public string? WebcamId { get; set; }
+
         public IDictionary<string, string> Webcamname { get; set; }
+
         public string? Webcamurl { get; set; }
 
-        [SwaggerDeprecated("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
+        [Obsolete("Use Publishedon")]
         public int? ListPosition { get; set; }
         public string? Streamurl { get; set; }
         public string? Previewurl { get; set; }
@@ -3019,9 +3020,9 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
+    public class WebcamInfoRaven : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
     {
-        public WebcamInfo()
+        public WebcamInfoRaven()
         {
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
@@ -3030,14 +3031,18 @@ namespace DataModel
 
         //NEW Webcam Properties
         public string? Id { get; set; }
-        public new string? Streamurl { get; set; }
-        public new string? Previewurl { get; set; }
+
+        //public new string? Streamurl { get; set; }
+
+        //public new string? Previewurl { get; set; }
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
         public string? Shortname { get; set; }
         public bool Active { get; set; }
+
+        [Obsolete("Use Publishedon")]
         public bool SmgActive { get; set; }
-        public new string? Source { get; set; }
+       // public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 
         public ICollection<string>? AreaIds { get; set; }
@@ -3063,21 +3068,97 @@ namespace DataModel
                     };
                 }
             }
-        }
+        }        
 
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        //Temporary Hack because GpsInfo here is a object instead of object list
-        public ICollection<GpsInfo> GpsInfos
+
+        ////Temporary Hack because GpsInfo here is a object instead of object list
+        //public ICollection<GpsInfo> GpsInfos
+        //{
+        //    get
+        //    {
+        //        return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
+        //    }
+        //}       
+    }
+    
+    public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags, IVideoItemsAware
+    {
+        public WebcamInfo()
+        {
+            WebCamProperties = new WebcamProperties();
+            Detail = new Dictionary<string, Detail>();
+            ContactInfos = new Dictionary<string, ContactInfos>();
+        }
+
+        public new ICollection<GpsInfo> GpsInfo { get; set; }
+
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new IDictionary<string, GpsInfo> GpsPoints
         {
             get
             {
-                return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
+                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
+                {
+                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
             }
         }
+
+        //New Webcam fields Feratel, Panomax, Panocloud Integration
+
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+
+        public ICollection<ImageGallery> ImageGallery { get; set; }
+
+        //Video Items
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
+
+        public IDictionary<string, Detail> Detail { get; set; }
+
+        public WebcamProperties WebCamProperties { get; set; }
+
+
+        [Obsolete("Use Detail.Title")]
+        public new IDictionary<string, string> Webcamname { get { return this.Detail.ToDictionary(x => x.Key, x => x.Value.Title); } }
+
+        [Obsolete("Use WebcamProperties.Webcamurl")]
+        public new string? Webcamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.WebcamUrl : null; } }
+
+        [Obsolete("Use WebcamProperties.Streamurl")]
+        public new string? Streamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.StreamUrl : null; } }
+
+        [Obsolete("Use WebcamProperties.Previewurl")]
+        public new string? Previewurl { get { return this.WebCamProperties != null ? this.WebCamProperties.PreviewUrl : null; } }
+
+        public ICollection<string> HasLanguage { get; set; }
     }
+
+
+    //New WebcamProperties
+    public class WebcamProperties
+    {
+        public string? WebcamUrl { get; set; }
+        public string? StreamUrl { get; set; }
+        public string? PreviewUrl { get; set; }
+
+        public string? ViewAngleDegree { get; set; }
+        public string? ZeroDirection { get; set; }
+        public string? HtmlEmbed { get; set; }
+        public bool? TourCam { get; set; }
+        public bool? HasVR { get; set; }
+        public string? ViewerType { get; set; }
+    }
+
 
     public class PublishedonObject
     {
@@ -3131,11 +3212,29 @@ namespace DataModel
         public string? License { get; set; }
         public string? LicenseHolder { get; set; }
         public string? Language { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
+
+        //NEW
+        public string? Definition { get; set; }
+        public double? Duration { get; set; }
+        public int? Resolution { get; set; }
+        public int? Bitrate { get; set; }
     }
 
     public class ContactInfos : IContactInfos, ILanguage
     {
+        [SwaggerSchema(Description = "Street Address")]
         public string? Address { get; set; }
+        
+        [SwaggerSchema(Description = "Region (Province / State / Departement / Canton etc...")] 
+        public string? Region { get; set; }
+        
+        [SwaggerSchema(Description = "Regioncode")]
+        public string? RegionCode { get; set; }
+
+        [SwaggerSchema(Description = "Area (Additional Area Name)")] 
+        public string? Area { get; set; }
         public string? City { get; set; }
         public string? ZipCode { get; set; }
         public string? CountryCode { get; set; }

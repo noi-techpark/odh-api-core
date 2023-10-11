@@ -120,8 +120,9 @@ namespace OdhApiCore.Controllers.api
                   QueryFactory.Query(table)
                       .Select("data")
                       .Where("id", Id.ToUpper())
-                      .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-            //.When(FilterClosedData, q => q.FilterClosedData());
+                      //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                      //.When(FilterClosedData, q => q.FilterClosedData());
+                      .FilterDataByAccessRoles(UserRolesToFilter);
 
             var myobject = await query.FirstOrDefaultAsync<JsonRaw?>();
 

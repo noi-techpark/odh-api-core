@@ -223,12 +223,38 @@ namespace Helper
 
             if(data.Source?.ToLower() == "content")
             {
+                isopendata = true;
                 licenseholder = @"https://www.idm-suedtirol.com";
-            }
+            }            
 
             if (data.Source?.ToLower() == "dss")
             {
+                isopendata = true;
                 licenseholder = @"https://www.dolomitisuperski.com";
+            }
+
+            if (data.Source?.ToLower() == "feratel")
+            {
+                isopendata = true;
+                licenseholder = @"https://www.feratel.com/";
+            }
+
+            if (data.Source?.ToLower() == "panomax")
+            {
+                isopendata = true;
+                licenseholder = @"https://www.panomax.com/";
+            }
+
+            if (data.Source?.ToLower() == "panocloud")
+            {
+                isopendata = true;
+                licenseholder = @"https://www.it-wms.com/";
+            }
+
+            if (data.Source?.ToLower() == "a22")
+            {
+                isopendata = false;
+                licenseholder = @"https://www.autobrennero.it/";
             }
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
@@ -346,6 +372,15 @@ namespace Helper
                 isopendata = true;
                 licensetype = "CC0";
             }
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
+        public static LicenseInfo GetLicenseforODHTag(SmgTags data)
+        {
+            var isopendata = true;
+            var licensetype = "CC0";
+            var licenseholder = "https://www.idm-suedtirol.com";
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }

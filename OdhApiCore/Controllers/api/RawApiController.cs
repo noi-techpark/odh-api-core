@@ -130,7 +130,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query()
                     .When(latest, q => q.SelectRaw("max(id)"))
                     .From("rawdata")
-                    .RawdataWhereExpression(sourceidlist, idlist, typelist, sourcelist, true)
+                    .RawdataWhereExpression(idlist, sourceidlist, typelist, sourcelist, true, userroles: UserRolesToFilter)
                     .ApplyRawFilter(rawfilter)
                     .OrderOnlyByRawSortIfNotNull(rawsort)
                     .When(latest, q => q.GroupBy("sourceid"));

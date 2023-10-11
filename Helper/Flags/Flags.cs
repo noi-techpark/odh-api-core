@@ -746,6 +746,10 @@ namespace Helper
         Fahrradbox = 1 << 12,        
         [Description("Verkaufstellen Ticket Oeffentliche Verkehrsmittel")]
         VerkaufstellenTicketOeffentlicheVerkehrsmittel = 1 << 13,
+        [Description("Mautstelle")]
+        Mautstelle = 1 << 14,
+        [Description("Autobahnraststaette")]
+        Autobahnraststaette = 1 << 15
     }
 
     [Flags]

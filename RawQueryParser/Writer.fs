@@ -15,10 +15,20 @@ let writeRawField (Field fields) =
     fields
     |> List.choose (function
         | IdentifierSegment x -> Some x
+        | IdentifierArraySegment x -> Some x
         | ArraySegment -> None) // Filter away array segment
     |> String.concat ","
     |> sprintf "data#>'\\{%s\\}'"
-
+    
+let writeJsonPathField (Field fields) =
+    fields
+    |> List.map (function
+        | IdentifierSegment x -> $".{x}" 
+        | IdentifierArraySegment x -> $".{x}\[*\]"
+        | ArraySegment -> "\[*\]")
+    |> String.concat ""
+    |> sprintf "$%s"
+    
 /// <summary>
 /// Write a field like
 /// <c>Field ["Detail"; "de"; "Title"]</c>
@@ -29,6 +39,7 @@ let writeTextField (Field fields) =
     fields
     |> List.choose (function
         | IdentifierSegment x -> Some x
+        | IdentifierArraySegment x -> Some x
         | ArraySegment -> None) // Filter away array segment
     |> String.concat ","
     |> sprintf "data#>>'\\{%s\\}'"
@@ -67,7 +78,7 @@ module Filtering =
         | Ge -> ">="
         | Lt -> "<"
         | Le -> "<="
-        | Like -> "Like"
+        | Like -> "ILIKE"
 
     let writeRawValue = function
         | Boolean x -> box x
@@ -93,7 +104,10 @@ module Filtering =
             | DateTime _ -> $"({writeTextField comparison.Field})::timestamp"
             | Array -> $"({writeRawField comparison.Field})::jsonb"
         let operator = writeOperator comparison.Operator
-        let value = writeValue comparison.Value
+        let value =
+            match comparison.Operator, comparison.Value with
+            | Like, String value -> writeValue (String $"%%{value}%%")
+            | _, value -> writeValue value
         $"{field} {operator} {value}"
 
     let rec writeStatement (jsonSerializer: obj -> string) = function 
@@ -118,7 +132,16 @@ module Filtering =
             |> sprintf "(%s)"
         | Condition (NotIn (field, values)) ->
             $"NOT {writeStatement jsonSerializer (Condition (In (field, values)))}"
+        | Condition (LikeIn (field, values)) ->
+            let field' = writeJsonPathField field
+            let writeValue (value: Value) =
+                match value with
+                | String s -> s
+                | _ -> failwith "Only strings are supported in a likein filter."
+                |> fun value -> sprintf $"jsonb_path_exists(data, '%s{field'} ?(@ like_regex \"%s{value}\" flag \"i\")')"
+            values
+            |> List.map writeValue
+            |> String.concat " OR "
+            |> sprintf "(%s)"
         | Condition (IsNull property) -> $"{writeTextField property} IS NULL"
         | Condition (IsNotNull property) -> $"{writeTextField property} IS NOT NULL"
-        //| Condition (Like operator) ->  $"{writeTextField property} LIKE "
-
