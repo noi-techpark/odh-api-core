@@ -62,15 +62,13 @@ namespace OdhApiCore.Controllers
             PageSize pagesize = null!,
             string? odhtype = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            string? field = null,
             string? seed = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool getasarray = false,            
             CancellationToken cancellationToken = default)
         {
-            var fieldstodisplay = fields ?? Array.Empty<string>();
-            
             return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay, seed, rawfilter, rawsort, getasarray, null, cancellationToken);
         }
 
@@ -79,24 +77,21 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetDistinct(uint? pagenumber, int? pagesize,
-            string odhtype, string[] fields, string? seed, string? rawfilter, string? rawsort, bool? getasarray,
+            string odhtype, string field, string? seed, string? rawfilter, string? rawsort, bool? getasarray,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                if (field == null)
+                    return BadRequest("please add a field");
+
                 if (odhtype == null)
                     return BadRequest("odhtype missing");
 
-                if (fields.Count() == 0)
-                    return BadRequest("please add a field");
-
                 var table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
-                var select = string.Join(
-                    ", ",
-                    fields.Select(field => field.Replace("[", "\\[").Replace("]", "\\]"))
-                          .Select(field => $@"jsonb_path_query(data, '$.{field}')#>>'\{{\}}' as ""{field}""")
-                );
+                string kataField = field.Replace("[", "\\[").Replace("]", "\\]");
+                string select = $@"jsonb_path_query(data, '$.{kataField}')#>>'\{{\}}' as ""{kataField}""";
 
                 var query =
                     QueryFactory.Query()
