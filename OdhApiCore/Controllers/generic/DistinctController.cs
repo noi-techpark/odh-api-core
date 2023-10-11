@@ -77,7 +77,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetDistinct(uint? pagenumber, int? pagesize,
-            string odhtype, string field, string? seed, string? rawfilter, string? rawsort, bool? getasarray,
+            string? odhtype, string? field, string? seed, string? rawfilter, string? rawsort, bool? getasarray,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
