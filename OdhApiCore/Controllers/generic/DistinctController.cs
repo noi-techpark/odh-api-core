@@ -99,18 +99,38 @@ namespace OdhApiCore.Controllers
                 );
 
                 var query =
-                        QueryFactory.Query()
+                    QueryFactory.Query()
                         .Distinct()
                         .SelectRaw(select)
                         .From(table)
-                        .ApplyRawFilter(rawfilter);
-                        // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .ApplyRawFilter(rawfilter)
+                        // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
+                        .OrderByRawIfNotNull(rawsort)
+                        .FilterDataByAccessRoles(UserRolesList);
                 
-                var data = await query.GetAsync();
-                
-                Console.WriteLine(JsonConvert.SerializeObject(data));
+                if (!pagenumber.HasValue || getasarray.HasValue)
+                {
+                    return await query.GetAsync(cancellationToken: cancellationToken);
+                }
+                else
+                {
+                    var data = await query.PaginateAsync(
+                        page: (int)pagenumber,
+                        perPage: pagesize ?? 25,
+                        cancellationToken: cancellationToken);
+                    
+                    uint totalpages = (uint)data.TotalPages;
+                    uint totalcount = (uint)data.Count;
 
-                return data;
+                    return ResponseHelpers.GetResult<dynamic>(
+                        pagenumber.Value,
+                        totalpages,
+                        totalcount,
+                        seed,
+                        data.List,
+                        Url
+                    );
+                }
             });
         }
         
