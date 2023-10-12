@@ -66,7 +66,8 @@ namespace OdhApiCore.Controllers
             string? seed = null,
             string? rawfilter = null,
             string? rawsort = null,
-            bool getasarray = false,            
+            bool getasarray = false,
+            bool excludenulloremptyvalues = false,
             CancellationToken cancellationToken = default)
         {
             var fieldstodisplay = fields ?? Array.Empty<string>();
@@ -77,7 +78,7 @@ namespace OdhApiCore.Controllers
             if (fieldstodisplay.Count() > 1)
                 return BadRequest("Only one field is supported");
 
-            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay.FirstOrDefault(), seed, rawfilter, rawsort, getasarray, null, cancellationToken);
+            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay.FirstOrDefault(), seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
         }
 
         #endregion
@@ -85,7 +86,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetDistinct(uint? pagenumber, int? pagesize,
-            string? odhtype, string field, string? seed, string? rawfilter, string? rawsort, bool? getasarray,
+            string? odhtype, string field, string? seed, string? rawfilter, string? rawsort, bool? getasarray,bool? excludenullvalues,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -98,14 +99,18 @@ namespace OdhApiCore.Controllers
 
                 var table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
+                string nullexclude = "";
+                if (excludenullvalues.Value)
+                    nullexclude = " ? (@ <> null && @ <> \"\")";
+
                 //Fix support also .[*] and .[] Notation
-                if(field.Contains(".[*]") || field.Contains(".[]"))
+                if (field.Contains(".[*]") || field.Contains(".[]"))
                 {
                     field = field.Replace(".[*]", "[*]").Replace(".[]", "[*]");
                 }
 
                 string kataField = field.Replace("[", "\\[").Replace("]", "\\]");
-                string select = $@"jsonb_path_query(data, '$.{kataField}')#>>'\{{\}}' as ""{kataField}""";
+                string select = $@"jsonb_path_query(data, '$.{kataField}{nullexclude}')#>>'\{{\}}' as ""{kataField}""";
 
                 //TODO filter out null values?
 
