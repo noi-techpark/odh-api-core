@@ -43,7 +43,7 @@ namespace OdhApiCore.Controllers
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="odhtype">Mandatory search trough Entities (metadata, accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
-        /// <param name="field">Mandatory Select a field for the Distinct Query, example field=Source, arrays are selected with a [*] example HasLanguage[*] / Features[*].Id  (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="fields">Mandatory Select a field for the Distinct Query, example fields=Source, arrays are selected with a [*] example HasLanguage[*] / Features[*].Id  (Only one field supported). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
         /// <param name="getasarray">Get only first selected field as simple string Array</param>        
@@ -62,14 +62,22 @@ namespace OdhApiCore.Controllers
             PageSize pagesize = null!,
             string? odhtype = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string? field = null,
+            string[]? fields = null,
             string? seed = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool getasarray = false,            
             CancellationToken cancellationToken = default)
         {
-            return await GetDistinct(pagenumber, pagesize, odhtype, field, seed, rawfilter, rawsort, getasarray, null, cancellationToken);
+            var fieldstodisplay = fields ?? Array.Empty<string>();
+
+            if (fieldstodisplay.Count() == 0)
+                return BadRequest("please add a field");
+
+            if (fieldstodisplay.Count() > 1)
+                return BadRequest("Only one field is supported");
+
+            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay.FirstOrDefault(), seed, rawfilter, rawsort, getasarray, null, cancellationToken);
         }
 
         #endregion
@@ -77,7 +85,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetDistinct(uint? pagenumber, int? pagesize,
-            string? odhtype, string? field, string? seed, string? rawfilter, string? rawsort, bool? getasarray,
+            string? odhtype, string field, string? seed, string? rawfilter, string? rawsort, bool? getasarray,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
