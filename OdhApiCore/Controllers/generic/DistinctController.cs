@@ -98,8 +98,16 @@ namespace OdhApiCore.Controllers
 
                 var table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
+                //Fix support also .[*] and .[] Notation
+                if(field.Contains(".[*]") || field.Contains(".[]"))
+                {
+                    field = field.Replace(".[*]", "[*]").Replace(".[]", "[*]");
+                }
+
                 string kataField = field.Replace("[", "\\[").Replace("]", "\\]");
                 string select = $@"jsonb_path_query(data, '$.{kataField}')#>>'\{{\}}' as ""{kataField}""";
+
+                //TODO filter out null values?
 
                 var query =
                     QueryFactory.Query()
