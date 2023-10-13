@@ -75,10 +75,11 @@ namespace OdhApiCore.Controllers
             if (fieldstodisplay.Count() == 0)
                 return BadRequest("please add a field");
 
-            if (fieldstodisplay.Count() > 1)
-                return BadRequest("Only one field is supported");
-
-            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay.FirstOrDefault(), seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
+            //To check, let more non array fields pass, if arrays are selected then only one field is allowed
+            if (fieldstodisplay.Count() > 1 && (fieldstodisplay.Any(x => x.Contains("[*]")) || fieldstodisplay.Any(x => x.Contains("[]"))))
+                return BadRequest("On Distinct to Array fields, currently only one field supported");
+      
+            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay, seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
         }
 
         #endregion
@@ -86,13 +87,12 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetDistinct(uint? pagenumber, int? pagesize,
-            string? odhtype, string field, string? seed, string? rawfilter, string? rawsort, bool? getasarray,bool? excludenullvalues,
+            string? odhtype, string[] fields, string? seed, string? rawfilter, string? rawsort, bool? getasarray,bool? excludenullvalues,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
-                if (field == null)
-                    return BadRequest("please add a field");
+
 
                 if (odhtype == null)
                     return BadRequest("odhtype missing");
@@ -103,21 +103,22 @@ namespace OdhApiCore.Controllers
                 if (excludenullvalues.Value)
                     nullexclude = " ? (@ <> null && @ <> \"\")";
 
-                //Fix support also .[*] and .[] Notation
-                if (field.Contains(".[*]") || field.Contains(".[]"))
-                {
-                    field = field.Replace(".[*]", "[*]").Replace(".[]", "[*]");
+                List<string> selects = new List<string>();
+
+                var fieldschecked = JsonPathCompatibilitycheck(fields);
+
+                foreach (var field in fieldschecked)
+                {               
+                    string kataField = field.Replace("[", "\\[").Replace("]", "\\]");
+                    string select = $@"jsonb_path_query(data, '$.{kataField}{nullexclude}')#>>'\{{\}}' as ""{kataField}""";
+
+                    selects.Add(select);
                 }
-
-                string kataField = field.Replace("[", "\\[").Replace("]", "\\]");
-                string select = $@"jsonb_path_query(data, '$.{kataField}{nullexclude}')#>>'\{{\}}' as ""{kataField}""";
-
-                //TODO filter out null values?
 
                 var query =
                     QueryFactory.Query()
                         .Distinct()
-                        .SelectRaw(select)
+                        .SelectRaw(String.Join(",", selects))
                         .From(table)
                         .ApplyRawFilter(rawfilter)
                         // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
@@ -148,6 +149,22 @@ namespace OdhApiCore.Controllers
                     );
                 }
             });
+        }
+
+        public static List<string> JsonPathCompatibilitycheck(string[] fields)
+        {
+            List<string> result = new List<string>();
+
+            foreach(var field in fields)
+            {
+                //Fix support also .[*] and .[] Notation
+                if (field.Contains(".[*]") || field.Contains(".[]"))
+                    result.Add(field.Replace(".[*]", "[*]").Replace(".[]", "[*]"));
+                else
+                    result.Add(field);                
+            }
+
+            return result;
         }
         
         #endregion
