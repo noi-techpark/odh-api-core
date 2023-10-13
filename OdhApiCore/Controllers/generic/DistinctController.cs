@@ -75,9 +75,12 @@ namespace OdhApiCore.Controllers
             if (fieldstodisplay.Count() == 0)
                 return BadRequest("please add a field");
 
-            //To check, let more non array fields pass, if arrays are selected then only one field is allowed
+            if (fieldstodisplay.Count() > 1 && getasarray)
+                return BadRequest("Get As Array only possible with 1 selected field");
+
+            //let more non array fields pass, if arrays are selected then only one field is allowed
             if (fieldstodisplay.Count() > 1 && (fieldstodisplay.Any(x => x.Contains("[*]")) || fieldstodisplay.Any(x => x.Contains("[]"))))
-                return BadRequest("On Distinct to Array fields, currently only one field supported");
+                return BadRequest("On Array fields, currently only one field supported");
       
             return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay, seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
         }
@@ -130,7 +133,8 @@ namespace OdhApiCore.Controllers
                 if (getasarray.HasValue && getasarray.Value)
                 {
                     //TODOS GetAsarray returns values simple
-
+                    var data = await query.GetAsync<string>();
+                    return data;
                 }
                 else
                 {
