@@ -124,29 +124,39 @@ namespace OdhApiCore.Controllers
                         // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
                         .OrderByRawIfNotNull(rawsort)
                         .FilterDataByAccessRoles(UserRolesList);
-                
-                if (!pagenumber.HasValue || getasarray.HasValue)
+
+                //TODOS Metadata api support
+           
+                if (getasarray.HasValue && getasarray.Value)
                 {
-                    return await query.GetAsync(cancellationToken: cancellationToken);
+                    //TODOS GetAsarray returns values simple
+
                 }
                 else
                 {
-                    var data = await query.PaginateAsync(
-                        page: (int)pagenumber,
-                        perPage: pagesize ?? 25,
-                        cancellationToken: cancellationToken);
-                    
-                    uint totalpages = (uint)data.TotalPages;
-                    uint totalcount = (uint)data.Count;
+                    if (!pagenumber.HasValue || getasarray.HasValue)
+                    {
+                        return await query.GetAsync(cancellationToken: cancellationToken);
+                    }
+                    else
+                    {
+                        var data = await query.PaginateAsync(
+                            page: (int)pagenumber,
+                            perPage: pagesize ?? 25,
+                            cancellationToken: cancellationToken);
 
-                    return ResponseHelpers.GetResult<dynamic>(
-                        pagenumber.Value,
-                        totalpages,
-                        totalcount,
-                        seed,
-                        data.List,
-                        Url
-                    );
+                        uint totalpages = (uint)data.TotalPages;
+                        uint totalcount = (uint)data.Count;
+
+                        return ResponseHelpers.GetResult<dynamic>(
+                            pagenumber.Value,
+                            totalpages,
+                            totalcount,
+                            seed,
+                            data.List,
+                            Url
+                        );
+                    }
                 }
             });
         }
