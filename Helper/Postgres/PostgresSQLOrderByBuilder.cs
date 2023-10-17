@@ -39,18 +39,35 @@ namespace Helper
             return query.OrderByRaw(orderby);
         }
 
-        public static Query OrderByRawIfNotNull(this Query query, string? sortbyraw)
+        public static Query OrderByRawIfNotNull(this Query query, string? rawsort)
         {
-            if (!string.IsNullOrEmpty(sortbyraw))
-                return query.OrderByRaw(sortbyraw);
+            if (!string.IsNullOrEmpty(rawsort))
+            {
+                var splitted = rawsort.Split(",");
+
+                var returnvalue = "";
+
+                foreach(var split in splitted)
+                {                     
+                    string direction = "ASC";
+                    if (split.StartsWith("-"))
+                        direction = "DESC";
+                    
+                    returnvalue = returnvalue + "\"" + split.Replace("-", "") + "\" " + direction + ",";
+                }
+
+                returnvalue = returnvalue.Substring(0, returnvalue.Length -1);
+
+                return query.OrderByRaw(returnvalue);
+            }                
             else
                 return query;
         }
 
         public static Query OrderOnlyByRawSortIfNotNull(this Query query, string? rawsort)
         {
-            if (!string.IsNullOrEmpty(rawsort))
-                return query.OrderByRaw(RawQueryParser.Transformer.TransformSort(rawsort));
+            if (!string.IsNullOrEmpty(rawsort))                   
+                return query.OrderByRaw(RawQueryParser.Transformer.TransformSort(rawsort));                            
             else
                 return query;
         }

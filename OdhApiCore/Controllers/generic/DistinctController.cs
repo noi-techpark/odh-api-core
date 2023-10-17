@@ -116,7 +116,7 @@ namespace OdhApiCore.Controllers
                     string select = $@"jsonb_path_query(data, '$.{kataField}{nullexclude}')#>>'\{{\}}' as ""{kataField}""";
 
                     selects.Add(select);
-                }
+                }            
 
                 var query =
                     QueryFactory.Query()

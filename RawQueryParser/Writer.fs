@@ -20,6 +20,15 @@ let writeRawField (Field fields) =
     |> String.concat ","
     |> sprintf "data#>'\\{%s\\}'"
     
+let writeFieldEscaped (Field fields) =
+    fields
+    |> List.choose (function
+        | IdentifierSegment x -> Some x
+        | IdentifierArraySegment x -> Some x
+        | ArraySegment -> None) // Filter away array segment
+    |> String.concat ","
+    |> sprintf "'\\{%s\\}'"
+
 let writeJsonPathField (Field fields) =
     fields
     |> List.map (function
