@@ -253,7 +253,7 @@ namespace OdhApiCore.Controllers
                             searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange, 
                             filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
                          .ApplyRawFilter(rawfilter)
-                         .OrderByRawIfNotNull(sortifseednull)
+                         //.OrderByRawIfNotNull(sortifseednull)
                          .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
                          //.ApplyOrdering(ref seed, geosearchresult, rawsort, sortifseednull);
 
