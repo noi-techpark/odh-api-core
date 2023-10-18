@@ -47,6 +47,7 @@ namespace OdhApiCore.Controllers
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
         /// <param name="getasarray">Get only first selected field as simple string Array</param>        
+        /// <param name="excludenulloremptyvalues">Exclude empty and null values from output</param>
         /// <returns>Array of string/object</returns>        
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
