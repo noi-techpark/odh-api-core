@@ -90,20 +90,18 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> GetDistinct(uint? pagenumber, int? pagesize,
-            string? odhtype, string[] fields, string? seed, string? rawfilter, string? rawsort, bool? getasarray,bool? excludenullvalues,
+            string? odhtype, string[] fields, string? seed, string? rawfilter, string? rawsort, bool? getasarray,bool excludenullvalues,
             PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
-
-
                 if (odhtype == null)
                     return BadRequest("odhtype missing");
 
                 var table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
                 string nullexclude = "";
-                if (excludenullvalues.Value)
+                if (excludenullvalues)
                     nullexclude = " ? (@ <> null && @ <> \"\")";
 
                 List<string> selects = new List<string>();
@@ -112,8 +110,10 @@ namespace OdhApiCore.Controllers
 
                 foreach (var field in fieldschecked)
                 {               
-                    string kataField = field.Replace("[", "\\[").Replace("]", "\\]");
-                    string select = $@"jsonb_path_query(data, '$.{kataField}{nullexclude}')#>>'\{{\}}' as ""{kataField}""";
+                    string kataField = field.Item1.Replace("[", "\\[").Replace("]", "\\]");
+                    string asField = field.Item2.Replace("[", "\\[").Replace("]", "\\]");
+
+                    string select = $@"jsonb_path_query(data, '$.{kataField}{nullexclude}')#>>'\{{\}}' as ""{asField}""";
 
                     selects.Add(select);
                 }            
@@ -167,17 +167,21 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        public static List<string> JsonPathCompatibilitycheck(string[] fields)
+        public static List<Tuple<string,string>> JsonPathCompatibilitycheck(string[] fields)
         {
-            List<string> result = new List<string>();
+            List<Tuple<string, string>> result = new List<Tuple<string, string>>();
 
             foreach(var field in fields)
             {
+                Tuple<string,string> tp = default(Tuple<string,string>);
+
                 //Fix support also .[*] and .[] Notation
                 if (field.Contains(".[*]") || field.Contains(".[]"))
-                    result.Add(field.Replace(".[*]", "[*]").Replace(".[]", "[*]"));
+                    tp = Tuple.Create(field.Replace(".[*]", "[*]").Replace(".[]", "[*]"), field);
                 else
-                    result.Add(field);                
+                    tp = Tuple.Create(field, field);     
+                
+                result.Add(tp);
             }
 
             return result;

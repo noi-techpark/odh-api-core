@@ -53,7 +53,7 @@ namespace Helper
                     if (split.StartsWith("-"))
                         direction = "DESC";
                     
-                    returnvalue = returnvalue + "\"" + split.Replace("-", "") + "\" " + direction + ",";
+                    returnvalue = returnvalue + "\"" + split.Replace("-", "").Replace("[", "\\[").Replace("]", "\\]") + "\" " + direction + ",";
                 }
 
                 returnvalue = returnvalue.Substring(0, returnvalue.Length -1);
