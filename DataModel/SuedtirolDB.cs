@@ -712,6 +712,8 @@ namespace DataModel
 
         [SwaggerSchema("Id on the primary data Source")]
         public string? CustomId { get; set; }
+
+        [SwaggerDeprecated("Use Related Content")]
         public ICollection<Webcam>? Webcam { get; set; }
 
         public IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }
@@ -740,6 +742,41 @@ namespace DataModel
                 return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
+    }
+
+
+    //new to check
+    public class ODHActivityPoiProperties
+    {
+        public int? AgeFrom { get; set; }
+        public int? AgeTo { get; set; }
+
+        public double? AltitudeDifference { get; set; }
+        public double? AltitudeHighestPoint { get; set; }
+        public double? AltitudeLowestPoint { get; set; }
+        public double? AltitudeSumUp { get; set; }
+        public double? AltitudeSumDown { get; set; }
+
+        public double? DistanceDuration { get; set; }
+        public double? DistanceLength { get; set; }
+
+        public bool? IsOpen { get; set; }
+        public bool? IsPrepared { get; set; }
+        public bool? RunToValley { get; set; }
+        public bool? IsWithLigth { get; set; }
+        public bool? HasRentals { get; set; }
+        public bool? HasFreeEntrance { get; set; }
+        public bool? LiftAvailable { get; set; }
+        public bool? FeetClimb { get; set; }
+
+        public bool? BikeTransport { get; set; }
+
+        public Ratings? Ratings { get; set; }
+        public ICollection<string>? Exposition { get; set; }
+     
+        public int? WayNumber { get; set; }
+
+        public string? Number { get; set; }
     }
 
     public class PoiProperty
