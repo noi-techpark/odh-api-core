@@ -56,8 +56,7 @@ namespace Helper
                 Weather or WeatherLinked => "weather",
                 BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
                 TourismMetaData => "odhmetadata",
-                TagLinked => "tag",
-                //BezirksWeather or DistrictWeatherLinked => "weatherdistrict",
+                TagLinked => "tag",                
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -286,50 +285,7 @@ namespace Helper
 
         #endregion
 
-        #region Type2Endpoint
-
-        /// <summary>
-        /// Translates Type (Metadata) as String to PG Table Name
-        /// </summary>
-        /// <param name="odhtype"></param>
-        /// <returns></returns>
-        public static string TranslateTypeString2EndPoint(string odhtype)
-        {
-            return odhtype switch
-            {
-                "accommodation" => "Accommodation",
-                "accommodationroom" => "AccommodationRoom",
-                "ltsactivity" => "Activity",
-                "ltspoi" => "Poi",
-                "ltsgastronomy" => "Gastronomy",
-                "event" => "Event",
-                "odhactivitypoi" => "ODHActivityPoi",
-                "package" => "Package",
-                "measuringpoint" => "Weather/Measuringpoint",
-                "webcam" => "WebcamInfo",
-                "article" => "Article",
-                "venue" => "Venue",
-                "eventshort" => "EventShort",
-                "experiencearea" => "ExperienceArea",
-                "metaregion" => "MetaRegion",
-                "region" => "Region",
-                "tourismassociation" => "TourismAssociation",
-                "municipality" => "Municipality",
-                "district" => "District",
-                "skiarea" => "SkiArea",
-                "skiregion" => "SkiRegion",
-                "area" => "Area",
-                "wineaward" => "WineAward",
-                "odhtag" => "ODHTag",
-                "publisher" => "Publisher",
-                "weatherhistory" => "Weather/History",
-                "odhmetadata" => "MetaData",
-                "tag" => "Tag",
-                _ => throw new Exception("not known odh type")
-            };
-        }
-
-        #endregion
+       
 
         #region TypeIdConverter
 

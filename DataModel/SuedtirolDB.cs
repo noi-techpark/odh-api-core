@@ -375,7 +375,7 @@ namespace DataModel
 
     #region District Municipality Region
 
-    public class Region : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class Region : BaseInfos, IImageGalleryAware, IGpsPolygon, IPublishedOn
     {
         public Region()
         {
@@ -384,14 +384,18 @@ namespace DataModel
         public IDictionary<string, DetailThemed> DetailThemed { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
+        
         public bool VisibleInSearch { get; set; }
+        
         public ICollection<string>? SkiareaIds { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
+    public class MetaRegion : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public MetaRegion()
         {
@@ -402,8 +406,9 @@ namespace DataModel
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<string>? TourismvereinIds { get; set; }
         public ICollection<string>? RegionIds { get; set; }
-        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }        
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
@@ -418,19 +423,20 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
+    public class Tourismverein : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public string? RegionId { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
+    public class Municipality : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public string? Plz { get; set; }
 
@@ -439,7 +445,8 @@ namespace DataModel
         public string? SiagId { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
         public int Inhabitants { get; set; }
@@ -448,7 +455,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class District : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
+    public class District : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public Nullable<bool> IsComune { get; set; }
         public string? RegionId { get; set; }
@@ -456,7 +463,8 @@ namespace DataModel
         public string? MunicipalityId { get; set; }
         public string? SiagId { get; set; }
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
@@ -495,7 +503,7 @@ namespace DataModel
 
     }
 
-    public class SkiArea : BaseInfos, IImageGalleryAware, IWebcamAware, IContactInfosAware
+    public class SkiArea : BaseInfos, IImageGalleryAware, IContactInfosAware
     {
         public SkiArea()
         {
@@ -527,7 +535,8 @@ namespace DataModel
         [GetOnlyJsonProperty]
         public ICollection<string>? AreaIds { get { return AreaId; } }
 
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
 
         public LocationInfo? LocationInfo { get; set; }
 
@@ -545,11 +554,12 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IWebcamAware
+    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware
     {
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
@@ -703,7 +713,7 @@ namespace DataModel
         }
     }
 
-    public class ODHActivityPoi : PoiBaseInfos, IWebcamAware, ILicenseInfo, IGPSPointsAware
+    public class ODHActivityPoi : PoiBaseInfos, ILicenseInfo, IGPSPointsAware
     {
         public ODHActivityPoi()
         {
@@ -714,7 +724,8 @@ namespace DataModel
         public string? CustomId { get; set; }
 
         [SwaggerDeprecated("Use Related Content")]
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
 
         public IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }
         public ICollection<string>? PoiServices { get; set; }
@@ -798,52 +809,22 @@ namespace DataModel
 
         [SwaggerDeprecated("Use the name of the referenced data")]
         public string? Name { get; set; }
+        
         public string? Type { get; set; }
 
-        public string? Link
-        {
-            get
-            {
-                if (!String.IsNullOrEmpty(this.Type))
-                {
-                    switch (this.Type.ToLower())
-                    {
-                        case "event":
-                            return "Event/" + this.Id;
-                        case "wineaward":
-                            return "Common/WineAward/" + this.Id;
-                        case "accommodation":
-                            return "Accommodation/" + this.Id;
-                        case "acco":
-                            return "Accommodation/" + this.Id;
-                        default:
-                            return "ODHActivityPoi/" + this.Id;
-                    }
-                }
-                else return "ODHActivityPoi/" + this.Id;
-            }
-        }
+        //public string? Link
+        //public string? Link
+        //{
+        //    get
+        //    {
+        //        return DataModelHelpers.TranslateTypeString2EndPoint(this.OdhType.ToLower()) + "/" + this.Id;
+        //    }
+        //}
 
         public string Self {
             get
             {
-                if (!String.IsNullOrEmpty(this.Type))
-                {
-                    switch (this.Type.ToLower())
-                    {
-                        case "event":
-                            return "Event/" + this.Id;
-                        case "wineaward":
-                            return "Common/WineAward/" + this.Id;
-                        case "accommodation":
-                            return "Accommodation/" + this.Id;
-                        case "acco":
-                            return "Accommodation/" + this.Id;
-                        default:
-                            return "ODHActivityPoi/" + this.Id;
-                    }
-                }
-                else return "ODHActivityPoi/" + this.Id;
+                return DataModelHelpers.TranslateTypeString2EndPoint(this.Type.ToLower()) + "/" + this.Id;
             }
         }
     }
@@ -3676,6 +3657,54 @@ namespace DataModel
         public IDictionary<string, string>? Name { get; set; }
     }
 
-    #endregion    
+    #endregion
+
+    #region Type2Endpoint
+
+    public class DataModelHelpers
+    {
+        /// <summary>
+        /// Translates Type (Metadata) as String to PG Table Name
+        /// </summary>
+        /// <param name="odhtype"></param>
+        /// <returns></returns>
+        public static string TranslateTypeString2EndPoint(string odhtype)
+        {
+            return odhtype switch
+            {
+                "accommodation" => "Accommodation",
+                "accommodationroom" => "AccommodationRoom",
+                "ltsactivity" => "Activity",
+                "ltspoi" => "Poi",
+                "ltsgastronomy" => "Gastronomy",
+                "event" => "Event",
+                "odhactivitypoi" => "ODHActivityPoi",
+                "package" => "Package",
+                "measuringpoint" => "Weather/Measuringpoint",
+                "webcam" => "WebcamInfo",
+                "article" => "Article",
+                "venue" => "Venue",
+                "eventshort" => "EventShort",
+                "experiencearea" => "ExperienceArea",
+                "metaregion" => "MetaRegion",
+                "region" => "Region",
+                "tourismassociation" => "TourismAssociation",
+                "municipality" => "Municipality",
+                "district" => "District",
+                "skiarea" => "SkiArea",
+                "skiregion" => "SkiRegion",
+                "area" => "Area",
+                "wineaward" => "WineAward",
+                "odhtag" => "ODHTag",
+                "publisher" => "Publisher",
+                "weatherhistory" => "Weather/History",
+                "odhmetadata" => "MetaData",
+                "tag" => "Tag",
+                _ => throw new Exception("not known odh type")
+            };
+        }        
+    }
     
+
+    #endregion
 }

@@ -256,7 +256,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                     List<RelatedContent> myrelatedcontentlist = new List<RelatedContent>();
 
                     var mywines = wineawardreducelist
-                        .Where(x => x.CompanyId == dataid)
+                        .Where(x => x.CompanyId == dataid)                        
                        .ToList();
 
                     foreach (var mywine in mywines)

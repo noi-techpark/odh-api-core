@@ -63,6 +63,9 @@ namespace RAVEN
             if (!String.IsNullOrEmpty(data.CustomId))
                 data.CustomId = data.CustomId.ToUpper();
 
+            //TODO
+            //Write Webcam Objects to Related Content
+
             //Related Content
             if (data.RelatedContent != null)
             {
