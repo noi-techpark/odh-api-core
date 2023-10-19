@@ -74,7 +74,7 @@ namespace RAVEN
                 {
                     RelatedContent relatedcontenttotransform = relatedcontent;
 
-                    if (relatedcontent.Type == "acco" || relatedcontent.Type == "event")
+                    if (relatedcontent.Type == "acco" || relatedcontent.Type == "event" || relatedcontent.Type == "webcam")
                     {
                         relatedcontenttotransform.Id = relatedcontenttotransform.Id.ToUpper();
                     }
@@ -330,6 +330,7 @@ namespace RAVEN
         public static WebcamInfoLinked GetWebcamInfoPGObject(WebcamInfoLinked data)
         {
             data.Id = data.Id.ToUpper();
+
             if (data.SmgTags != null && data.SmgTags.Count > 0)
                 data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
 
