@@ -349,12 +349,12 @@ namespace RAVEN
             data.WebCamProperties.PreviewUrl = data.Previewurl;
             data.WebCamProperties.StreamUrl = data.Streamurl;            
 
-            if (!String.IsNullOrEmpty(data.Webcamurl))
+            if (!String.IsNullOrEmpty(data.WebCamProperties.WebcamUrl))
             {
                 //Hack add as ImageGallery
                 data.ImageGallery = new List<ImageGallery>();
                 ImageGallery image = new ImageGallery();
-                image.ImageUrl = data.Webcamurl;
+                image.ImageUrl = data.WebCamProperties.WebcamUrl;
 
                 data.ImageGallery.Add(image);
             }
