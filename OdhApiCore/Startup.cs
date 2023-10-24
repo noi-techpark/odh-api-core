@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -417,6 +418,8 @@ namespace OdhApiCore
             });
             services.AddSwaggerGenNewtonsoftSupport();
 
+            services.Replace(ServiceDescriptor.Transient<ISwaggerProvider, CachingSwaggerProvider>());
+
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;                
@@ -449,6 +452,12 @@ namespace OdhApiCore
             {
                 OnPrepareResponse = ctx =>
                 {
+                    //Activate Browser Cache of the swagger file for 1 day
+                    //not working
+                    //if (ctx.File.Name.ToLower() == "swagger.json")
+                    //{
+                    //    ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=86400");
+                    //}
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 },                
