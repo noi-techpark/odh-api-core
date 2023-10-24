@@ -27,7 +27,16 @@ namespace OdhApiCore.Swagger
 
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
         {
-            return _cache.GetOrAdd(documentName, (_) => _swaggerGenerator.GetSwagger(documentName, host, basePath));
+            //bool isincache = false;
+            //if (_cache.ContainsKey("v1"))
+            //    isincache = true;
+
+            var doc = _cache.GetOrAdd(documentName, (_) => _swaggerGenerator.GetSwagger(documentName, host, basePath));
+
+            //if (!isincache)
+            //    this.SaveSwaggerJson("haslo");
+
+            return doc;
         }
     }
 }

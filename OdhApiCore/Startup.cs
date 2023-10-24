@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
@@ -414,16 +415,17 @@ namespace OdhApiCore
                 //            }
                 //        }, new List<string>()
                 //    }
-                //});
+                //});                
             });
             services.AddSwaggerGenNewtonsoftSupport();
-
+            
+            //Use server side caching of the swagger doc
             services.Replace(ServiceDescriptor.Transient<ISwaggerProvider, CachingSwaggerProvider>());
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;                
-            });
+            });            
 
             //services.AddHttpContextAccessor();
         }
@@ -452,12 +454,11 @@ namespace OdhApiCore
             {
                 OnPrepareResponse = ctx =>
                 {
-                    //Activate Browser Cache of the swagger file for 1 day
-                    //not working
-                    //if (ctx.File.Name.ToLower() == "swagger.json")
-                    //{
-                    //    ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=86400");
-                    //}
+                    //Activate Browser Cache of the swagger file for 1 day                                        
+                    if (ctx.File.Name.ToLower() == "swagger.json")
+                        {
+                            ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=86400");
+                        }
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 },                
@@ -476,16 +477,19 @@ namespace OdhApiCore
             app.UseSwagger(c =>
             {
                 c.PreSerializeFilters.Add((swagger, httpReq) =>
-                {
-                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
-                });                
+                {                    
+                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };                    
+                });
             });
 
+            app.ApplicationServices.SaveSwaggerJson("https://api.tourism.testingmachine.eu");
+            
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Open Data Hub Tourism API V1");
-                c.RoutePrefix = "swagger";
+                //c.SwaggerEndpoint("/json/swagger.json", "Open Data Hub Tourism API V1");
+                c.RoutePrefix = "swagger";               
                 c.OAuthClientSecret("");
                 c.OAuthRealm("noi");
                 c.EnableDeepLinking();
@@ -500,7 +504,6 @@ namespace OdhApiCore
 
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);
-
 
             //REWRITE, REDIRECT RULES
             //var rwoptions = new RewriteOptions()
