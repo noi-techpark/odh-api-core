@@ -482,7 +482,8 @@ namespace OdhApiCore
                 });
             });
 
-            app.ApplicationServices.SaveSwaggerJson("https://api.tourism.testingmachine.eu");
+            app.ApplicationServices.SaveSwaggerJson(Configuration.GetSection("ApiConfig").GetValue<string>("Url"), Configuration.GetSection("JsonConfig").GetValue<string>("Jsondir"));
+            //app.UseSaveSwaggerJson(Configuration);
             
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>

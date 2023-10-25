@@ -18,17 +18,23 @@ using System.Text.Json.Nodes;
 namespace OdhApiCore.Swagger
 {
     public static class SwaggerExtensions
-    {        
-        public static void SaveSwaggerJson(this IServiceProvider provider, string servername)
+    {
+        //public static IApplicationBuilder UseSaveSwaggerJson(this IApplicationBuilder builder, IConfiguration configuration)
+        //{
+        //    return builder.Use(async (context, next) =>
+        //    {
+        //        builder.ApplicationServices.SaveSwaggerJson()
+        //    });
+        //}
+
+
+        public static void SaveSwaggerJson(this IServiceProvider provider, string servername, string swaggerdir)
         {
             ISwaggerProvider sw = provider.GetRequiredService<ISwaggerProvider>();
           
             OpenApiDocument doc = sw.GetSwagger("v1", null, servername);
             string swaggerFile = doc.SerializeAsJson(Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
-
-            //Save json
-            var swaggerdir = ".\\wwwroot\\json\\";
-
+            
             string fileName = Path.Combine(swaggerdir, "swagger.json");
             File.WriteAllText(fileName, swaggerFile);
         }
