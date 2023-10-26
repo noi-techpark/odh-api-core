@@ -824,7 +824,7 @@ namespace DataModel
         public string Self {
             get
             {
-                return DataModelHelpers.TranslateTypeString2EndPoint(this.Type.ToLower()) + "/" + this.Id;
+                return DataModelHelpers.TranslateTypeString2EndPointForRelatedContent(this.Type.ToLower()) + "/" + this.Id;
             }
         }
     }
@@ -3673,6 +3673,7 @@ namespace DataModel
             return odhtype switch
             {
                 "accommodation" => "Accommodation",
+                "acco" => "Accommodation",
                 "accommodationroom" => "AccommodationRoom",
                 "ltsactivity" => "Activity",
                 "ltspoi" => "Poi",
@@ -3702,7 +3703,23 @@ namespace DataModel
                 "tag" => "Tag",
                 _ => throw new Exception("not known odh type")
             };
-        }        
+        }
+
+        //Temporary Hack for Related Content Exceptions
+        public static string TranslateTypeString2EndPointForRelatedContent(string odhtype)
+        {
+            try
+            {
+                if (odhtype == "acco")
+                    odhtype = "accommodation";
+
+                return TranslateTypeString2EndPoint(odhtype);
+            }
+            catch(Exception ex)
+            {
+                return "ODHActivityPoi";
+            }
+        }
     }
     
     #endregion
