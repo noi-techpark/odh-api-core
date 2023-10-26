@@ -10,10 +10,12 @@ using System.Threading.Tasks;
 
 namespace DataModel
 {
-    public class EventsV2 : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IImportDateassigneable, IMetaData, IMappingAware, ISource, IDetailInfosAware, ILicenseInfo, IGPSPointsAware, IPublishedOn
+    public class EventsV2 : IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IGPSPointsAware, IPublishedOn
     {
+        //MetaData Information, Contains Source, LastUpdate, 
         public Metadata? _Meta { get; set; }
 
+        //Self Link to this Data
         public string Self
         {
             get
@@ -23,19 +25,17 @@ namespace DataModel
         }
         public string? Id { get; set; }
         public string? Shortname { get; set; }
-        public bool Active { get; set; }
-        public DateTime? FirstImport { get; set; }
-        public DateTime? LastChange { get; set; }
+        public bool Active { get; set; }        
         public LicenseInfo? LicenseInfo { get; set; }
-        public string Source { get; set; }
-
+        
 
         public IDictionary<string, Detail> Detail { get; set; }
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
-        public new LocationInfoLinked? LocationInfo { get; set; }
+        public LocationInfoLinked? LocationInfo { get; set; }
         public IDictionary<string, GpsInfo> GpsPoints { get; set; }
 
+        public ICollection<string>? HasLanguage { get; set; }
 
 
         public ICollection<string>? PublishedOn { get; set; }
@@ -53,8 +53,18 @@ namespace DataModel
         //TODO Add EventDates
 
         //TODO Properties LIST
+        public IDictionary<string,string>? Properties { get; set; }
 
         //TODO Properties Language Based LIST
+        public IDictionary<string, IDictionary<string,string>>? PropertiesLocalized { get; set; }
+
+    }
+
+    public class DateRanges
+    {
+        public DateTime Begin { get; set; }
+        public DateTime End { get; set; }
+
 
     }
 

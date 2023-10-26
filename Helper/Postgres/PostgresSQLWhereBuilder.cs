@@ -446,6 +446,7 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterClosedData())
                 .FilterDataByAccessRoles(userroles);
         }
 
