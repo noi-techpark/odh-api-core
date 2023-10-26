@@ -60,6 +60,13 @@ namespace Helper.Generic
                     if (!sourcelistnew.Contains("none"))
                         sourcelistnew.Add("none");
                 }
+                else if (source == "a22")
+                {
+                    if (!sourcelistnew.Contains("tollstations"))
+                        sourcelistnew.Add("tollstations");
+                    if (!sourcelistnew.Contains("serviceareas"))
+                        sourcelistnew.Add("serviceareas");
+                }
             }
 
             return sourcelistnew;
