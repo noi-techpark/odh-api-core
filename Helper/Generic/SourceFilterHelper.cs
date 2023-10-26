@@ -62,10 +62,10 @@ namespace Helper.Generic
                 }
                 else if (source == "a22")
                 {
-                    if (!sourcelistnew.Contains("tollstations"))
-                        sourcelistnew.Add("tollstations");
-                    if (!sourcelistnew.Contains("serviceareas"))
-                        sourcelistnew.Add("serviceareas");
+                    if (!sourcelistnew.Contains("tollstation"))
+                        sourcelistnew.Add("tollstation");
+                    if (!sourcelistnew.Contains("servicearea"))
+                        sourcelistnew.Add("servicearea");
                 }
             }
 
