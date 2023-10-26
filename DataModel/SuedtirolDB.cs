@@ -375,7 +375,7 @@ namespace DataModel
 
     #region District Municipality Region
 
-    public class Region : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon, IPublishedOn
+    public class Region : BaseInfos, IImageGalleryAware, IGpsPolygon, IPublishedOn
     {
         public Region()
         {
@@ -384,14 +384,18 @@ namespace DataModel
         public IDictionary<string, DetailThemed> DetailThemed { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
+        
         public bool VisibleInSearch { get; set; }
+        
         public ICollection<string>? SkiareaIds { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class MetaRegion : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
+    public class MetaRegion : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public MetaRegion()
         {
@@ -402,8 +406,9 @@ namespace DataModel
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<string>? TourismvereinIds { get; set; }
         public ICollection<string>? RegionIds { get; set; }
-        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }        
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
@@ -418,19 +423,20 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class Tourismverein : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
+    public class Tourismverein : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public string? RegionId { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class Municipality : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
+    public class Municipality : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public string? Plz { get; set; }
 
@@ -439,7 +445,8 @@ namespace DataModel
         public string? SiagId { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
         public int Inhabitants { get; set; }
@@ -448,7 +455,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class District : BaseInfos, IImageGalleryAware, IWebcamAware, IGpsPolygon
+    public class District : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public Nullable<bool> IsComune { get; set; }
         public string? RegionId { get; set; }
@@ -456,7 +463,8 @@ namespace DataModel
         public string? MunicipalityId { get; set; }
         public string? SiagId { get; set; }
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
@@ -495,7 +503,7 @@ namespace DataModel
 
     }
 
-    public class SkiArea : BaseInfos, IImageGalleryAware, IWebcamAware, IContactInfosAware
+    public class SkiArea : BaseInfos, IImageGalleryAware, IContactInfosAware
     {
         public SkiArea()
         {
@@ -527,7 +535,8 @@ namespace DataModel
         [GetOnlyJsonProperty]
         public ICollection<string>? AreaIds { get { return AreaId; } }
 
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
 
         public LocationInfo? LocationInfo { get; set; }
 
@@ -545,11 +554,12 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IWebcamAware
+    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware
     {
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
-        public ICollection<Webcam>? Webcam { get; set; }
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
@@ -630,8 +640,7 @@ namespace DataModel
         //Generic Mapping Object
         //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
-
-
+    
     public class LTSTaggingInfo
     {
         //NEW LTS RID
@@ -704,7 +713,7 @@ namespace DataModel
         }
     }
 
-    public class ODHActivityPoi : PoiBaseInfos, IWebcamAware, ILicenseInfo, IGPSPointsAware
+    public class ODHActivityPoi : PoiBaseInfos, ILicenseInfo, IGPSPointsAware
     {
         public ODHActivityPoi()
         {
@@ -713,7 +722,10 @@ namespace DataModel
 
         [SwaggerSchema("Id on the primary data Source")]
         public string? CustomId { get; set; }
-        public ICollection<Webcam>? Webcam { get; set; }
+
+        [SwaggerDeprecated("Use Related Content")]
+        //Logic shifted to RelatedContent
+        //public ICollection<Webcam>? Webcam { get; set; }
 
         public IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }
         public ICollection<string>? PoiServices { get; set; }
@@ -743,6 +755,41 @@ namespace DataModel
         }
     }
 
+
+    //new to check
+    public class ODHActivityPoiProperties
+    {
+        public int? AgeFrom { get; set; }
+        public int? AgeTo { get; set; }
+
+        public double? AltitudeDifference { get; set; }
+        public double? AltitudeHighestPoint { get; set; }
+        public double? AltitudeLowestPoint { get; set; }
+        public double? AltitudeSumUp { get; set; }
+        public double? AltitudeSumDown { get; set; }
+
+        public double? DistanceDuration { get; set; }
+        public double? DistanceLength { get; set; }
+
+        public bool? IsOpen { get; set; }
+        public bool? IsPrepared { get; set; }
+        public bool? RunToValley { get; set; }
+        public bool? IsWithLigth { get; set; }
+        public bool? HasRentals { get; set; }
+        public bool? HasFreeEntrance { get; set; }
+        public bool? LiftAvailable { get; set; }
+        public bool? FeetClimb { get; set; }
+
+        public bool? BikeTransport { get; set; }
+
+        public Ratings? Ratings { get; set; }
+        public ICollection<string>? Exposition { get; set; }
+     
+        public int? WayNumber { get; set; }
+
+        public string? Number { get; set; }
+    }
+
     public class PoiProperty
     {
         public string? Name { get; set; }
@@ -762,52 +809,22 @@ namespace DataModel
 
         [SwaggerDeprecated("Use the name of the referenced data")]
         public string? Name { get; set; }
+        
         public string? Type { get; set; }
 
-        public string? Link
-        {
-            get
-            {
-                if (!String.IsNullOrEmpty(this.Type))
-                {
-                    switch (this.Type.ToLower())
-                    {
-                        case "event":
-                            return "Event/" + this.Id;
-                        case "wineaward":
-                            return "Common/WineAward/" + this.Id;
-                        case "accommodation":
-                            return "Accommodation/" + this.Id;
-                        case "acco":
-                            return "Accommodation/" + this.Id;
-                        default:
-                            return "ODHActivityPoi/" + this.Id;
-                    }
-                }
-                else return "ODHActivityPoi/" + this.Id;
-            }
-        }
+        //public string? Link
+        //public string? Link
+        //{
+        //    get
+        //    {
+        //        return DataModelHelpers.TranslateTypeString2EndPoint(this.OdhType.ToLower()) + "/" + this.Id;
+        //    }
+        //}
 
         public string Self {
             get
             {
-                if (!String.IsNullOrEmpty(this.Type))
-                {
-                    switch (this.Type.ToLower())
-                    {
-                        case "event":
-                            return "Event/" + this.Id;
-                        case "wineaward":
-                            return "Common/WineAward/" + this.Id;
-                        case "accommodation":
-                            return "Accommodation/" + this.Id;
-                        case "acco":
-                            return "Accommodation/" + this.Id;
-                        default:
-                            return "ODHActivityPoi/" + this.Id;
-                    }
-                }
-                else return "ODHActivityPoi/" + this.Id;
+                return DataModelHelpers.TranslateTypeString2EndPoint(this.Type.ToLower()) + "/" + this.Id;
             }
         }
     }
@@ -2697,7 +2714,7 @@ namespace DataModel
     //}
 
     //BaseInfo Gastronomy
-    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo
+    public abstract class GastronomyBaseInfos : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2770,7 +2787,7 @@ namespace DataModel
         public Nullable<int> RepresentationRestriction { get; set; }
 
         //New published on List
-        public List<string>? PublishedOn { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
@@ -2997,11 +3014,13 @@ namespace DataModel
         }
 
         public string? WebcamId { get; set; }
+
         public IDictionary<string, string> Webcamname { get; set; }
+
         public string? Webcamurl { get; set; }
 
-        [SwaggerDeprecated("Use GpsPoints instead")]
         public GpsInfo? GpsInfo { get; set; }
+        [Obsolete("Use Publishedon")]
         public int? ListPosition { get; set; }
         public string? Streamurl { get; set; }
         public string? Previewurl { get; set; }
@@ -3019,9 +3038,9 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamInfo : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
+    public class WebcamInfoRaven : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
     {
-        public WebcamInfo()
+        public WebcamInfoRaven()
         {
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
@@ -3030,14 +3049,18 @@ namespace DataModel
 
         //NEW Webcam Properties
         public string? Id { get; set; }
-        public new string? Streamurl { get; set; }
-        public new string? Previewurl { get; set; }
+
+        //public new string? Streamurl { get; set; }
+
+        //public new string? Previewurl { get; set; }
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
         public string? Shortname { get; set; }
         public bool Active { get; set; }
+
+        [Obsolete("Use Publishedon")]
         public bool SmgActive { get; set; }
-        public new string? Source { get; set; }
+       // public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 
         public ICollection<string>? AreaIds { get; set; }
@@ -3063,21 +3086,97 @@ namespace DataModel
                     };
                 }
             }
-        }
+        }        
 
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        //Temporary Hack because GpsInfo here is a object instead of object list
-        public ICollection<GpsInfo> GpsInfos
+
+        ////Temporary Hack because GpsInfo here is a object instead of object list
+        //public ICollection<GpsInfo> GpsInfos
+        //{
+        //    get
+        //    {
+        //        return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
+        //    }
+        //}       
+    }
+    
+    public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags, IVideoItemsAware
+    {
+        public WebcamInfo()
+        {
+            WebCamProperties = new WebcamProperties();
+            Detail = new Dictionary<string, Detail>();
+            ContactInfos = new Dictionary<string, ContactInfos>();
+        }
+
+        public new ICollection<GpsInfo> GpsInfo { get; set; }
+
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new IDictionary<string, GpsInfo> GpsPoints
         {
             get
             {
-                return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
+                if (this.GpsInfo != null && this.GpsInfo.Count > 0)
+                {
+                    return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
+                }
+                else
+                {
+                    return new Dictionary<string, GpsInfo>
+                    {
+                    };
+                }
             }
         }
+
+        //New Webcam fields Feratel, Panomax, Panocloud Integration
+
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+
+        public ICollection<ImageGallery> ImageGallery { get; set; }
+
+        //Video Items
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
+
+        public IDictionary<string, Detail> Detail { get; set; }
+
+        public WebcamProperties WebCamProperties { get; set; }
+
+
+        [Obsolete("Use Detail.Title")]
+        public new IDictionary<string, string> Webcamname { get { return this.Detail.ToDictionary(x => x.Key, x => x.Value.Title); } }
+
+        [Obsolete("Use WebcamProperties.Webcamurl")]
+        public new string? Webcamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.WebcamUrl : null; } }
+
+        [Obsolete("Use WebcamProperties.Streamurl")]
+        public new string? Streamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.StreamUrl : null; } }
+
+        [Obsolete("Use WebcamProperties.Previewurl")]
+        public new string? Previewurl { get { return this.WebCamProperties != null ? this.WebCamProperties.PreviewUrl : null; } }
+
+        public ICollection<string> HasLanguage { get; set; }
     }
+
+
+    //New WebcamProperties
+    public class WebcamProperties
+    {
+        public string? WebcamUrl { get; set; }
+        public string? StreamUrl { get; set; }
+        public string? PreviewUrl { get; set; }
+
+        public string? ViewAngleDegree { get; set; }
+        public string? ZeroDirection { get; set; }
+        public string? HtmlEmbed { get; set; }
+        public bool? TourCam { get; set; }
+        public bool? HasVR { get; set; }
+        public string? ViewerType { get; set; }
+    }
+
 
     public class PublishedonObject
     {
@@ -3131,11 +3230,29 @@ namespace DataModel
         public string? License { get; set; }
         public string? LicenseHolder { get; set; }
         public string? Language { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
+
+        //NEW
+        public string? Definition { get; set; }
+        public double? Duration { get; set; }
+        public int? Resolution { get; set; }
+        public int? Bitrate { get; set; }
     }
 
     public class ContactInfos : IContactInfos, ILanguage
     {
+        [SwaggerSchema(Description = "Street Address")]
         public string? Address { get; set; }
+        
+        [SwaggerSchema(Description = "Region (Province / State / Departement / Canton etc...")] 
+        public string? Region { get; set; }
+        
+        [SwaggerSchema(Description = "Regioncode")]
+        public string? RegionCode { get; set; }
+
+        [SwaggerSchema(Description = "Area (Additional Area Name)")] 
+        public string? Area { get; set; }
         public string? City { get; set; }
         public string? ZipCode { get; set; }
         public string? CountryCode { get; set; }
@@ -3540,6 +3657,53 @@ namespace DataModel
         public IDictionary<string, string>? Name { get; set; }
     }
 
-    #endregion    
+    #endregion
+
+    #region Type2Endpoint
+
+    public class DataModelHelpers
+    {
+        /// <summary>
+        /// Translates Type (Metadata) as String to PG Table Name
+        /// </summary>
+        /// <param name="odhtype"></param>
+        /// <returns></returns>
+        public static string TranslateTypeString2EndPoint(string odhtype)
+        {
+            return odhtype switch
+            {
+                "accommodation" => "Accommodation",
+                "accommodationroom" => "AccommodationRoom",
+                "ltsactivity" => "Activity",
+                "ltspoi" => "Poi",
+                "ltsgastronomy" => "Gastronomy",
+                "event" => "Event",
+                "odhactivitypoi" => "ODHActivityPoi",
+                "package" => "Package",
+                "measuringpoint" => "Weather/Measuringpoint",
+                "webcam" => "WebcamInfo",
+                "article" => "Article",
+                "venue" => "Venue",
+                "eventshort" => "EventShort",
+                "experiencearea" => "ExperienceArea",
+                "metaregion" => "MetaRegion",
+                "region" => "Region",
+                "tourismassociation" => "TourismAssociation",
+                "municipality" => "Municipality",
+                "district" => "District",
+                "skiarea" => "SkiArea",
+                "skiregion" => "SkiRegion",
+                "area" => "Area",
+                "wineaward" => "WineAward",
+                "odhtag" => "ODHTag",
+                "publisher" => "Publisher",
+                "weatherhistory" => "Weather/History",
+                "odhmetadata" => "MetaData",
+                "tag" => "Tag",
+                _ => throw new Exception("not known odh type")
+            };
+        }        
+    }
     
+    #endregion
 }

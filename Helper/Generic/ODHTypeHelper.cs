@@ -37,7 +37,7 @@ namespace Helper
                 Measuringpoint or MeasuringpointLinked => "measuringpoint",
                 WebcamInfo or WebcamInfoLinked => "webcam",
                 Article or ArticlesLinked => "article",
-                DDVenue => "venue",
+                //DDVenue => "venue",
                 Venue or VenueLinked => "venue",
                 EventShort or EventShortLinked => "eventshort",
                 ExperienceArea or ExperienceAreaLinked => "experiencearea",
@@ -50,13 +50,13 @@ namespace Helper
                 SkiRegion or SkiRegionLinked => "skiregion",
                 Area or AreaLinked => "area",
                 Wine or WineLinked => "wineaward",
-                SmgTags or ODHTagLinked => "odhtag",
+                ODHTags or ODHTagLinked => "odhtag",
                 Publisher or PublisherLinked => "publisher",
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
                 Weather or WeatherLinked => "weather",
                 BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
                 TourismMetaData => "odhmetadata",
-                //BezirksWeather or DistrictWeatherLinked => "weatherdistrict",
+                TagLinked => "tag",                
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -82,8 +82,8 @@ namespace Helper
                 Measuringpoint or MeasuringpointLinked => "measuringpoints",
                 WebcamInfo or WebcamInfoLinked => "webcams",
                 Article or ArticlesLinked => "articles",
-                DDVenue => "venues",
-                Venue or VenueLinked => "venues",
+                //DDVenue => "venues",
+                Venue or VenueLinked => "venues_v2",
                 EventShort or EventShortLinked => "eventeuracnoi",
                 ExperienceArea or ExperienceAreaLinked => "experienceareas",
                 MetaRegion or MetaRegionLinked => "metaregions",
@@ -99,6 +99,7 @@ namespace Helper
                 Publisher or PublisherLinked => "publishers",
                 WeatherHistory or WeatherHistoryLinked => "weatherdatahistory",
                 TourismMetaData => "metadata",
+                TagLinked => "tags",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -127,7 +128,7 @@ namespace Helper
                 "measuringpoint" => "measuringpoints",
                 "webcam" => "webcams",
                 "article" => "articles",
-                "venue" => "venues",
+                "venue" => "venues_v2",
                 "eventshort" => "eventeuracnoi",
                 "experiencearea" => "experienceareas",
                 "metaregion" => "metaregions",
@@ -143,6 +144,7 @@ namespace Helper
                 "publisher" => "publishers",
                 "weatherhistory" => "weatherdatahistory",
                 "odhmetadata" => "metadata",
+                "tag" => "tags",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -167,7 +169,7 @@ namespace Helper
                 "measuringpoint" => typeof(MeasuringpointLinked),
                 "webcam" => typeof(WebcamInfoLinked),
                 "article" => typeof(ArticlesLinked),
-                "venue" => typeof(DDVenue),
+                "venue" => typeof(VenueLinked),
                 "eventshort" => typeof(EventShortLinked),
                 "experiencearea" => typeof(ExperienceAreaLinked),
                 "metaregion" => typeof(MetaRegionLinked),
@@ -183,6 +185,7 @@ namespace Helper
                 "publisher" => typeof(PublisherLinked),
                 "weatherhistory" => typeof(WeatherHistoryLinked),
                 "odhmetadata" => typeof(TourismMetaData),
+                "tag" => typeof(TagLinked),
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -211,7 +214,7 @@ namespace Helper
                 "measuringpoints" => "measuringpoint",
                 "webcams" => "webcam",
                 "articles" => "article",
-                "venues" => "venue",
+                "venues_v2" => "venue",
                 "eventeuracnoi" => "eventshort",
                 "experienceareas" => "experiencearea",
                 "metaregions" => "metaregion",
@@ -227,6 +230,7 @@ namespace Helper
                 "publishers" => "publisher",
                 "weatherdatahistory" => "weatherhistory",
                 "metadata" => "odhmetadata",
+                "tags" => "tag",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -251,7 +255,8 @@ namespace Helper
                 "measuringpoints" => typeof(MeasuringpointLinked),
                 "webcams" => typeof(WebcamInfoLinked),
                 "articles" => typeof(ArticlesLinked),
-                "venues" => typeof(DDVenue),
+                "venues" => typeof(VenueLinked),
+                "venues_v2" => typeof(VenueLinked),
                 "eventeuracnoi" => typeof(EventShortLinked),
                 "experienceareas" => typeof(ExperienceAreaLinked),
                 "metaregions" => typeof(MetaRegionLinked),
@@ -267,6 +272,7 @@ namespace Helper
                 "publishers" => typeof(PublisherLinked),
                 "weatherdatahistory" => typeof(WeatherHistoryLinked),
                 "metadata" => typeof(TourismMetaData),
+                "tags" => typeof(TagLinked),
                 _ => throw new Exception("not known table name")
             };
         }
@@ -278,6 +284,8 @@ namespace Helper
         //TODO Migrate from Metagenerator
 
         #endregion
+
+       
 
         #region TypeIdConverter
 
@@ -312,6 +320,8 @@ namespace Helper
                 "odhtag" => id.ToLower(),
                 "weatherhistory" => id,
                 "odhmetadata" => id.ToLower(),
+                "tag" => id.ToLower(),
+                "publisher" => id.ToLower(),
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -335,7 +345,7 @@ namespace Helper
                 "measuringpoint" => JsonConvert.DeserializeObject<MeasuringpointLinked>(raw.Value)!,
                 "webcam" => JsonConvert.DeserializeObject<WebcamInfoLinked>(raw.Value)!,
                 "article" => JsonConvert.DeserializeObject<ArticlesLinked>(raw.Value)!,
-                "venue" => JsonConvert.DeserializeObject<DDVenue>(raw.Value)!,
+                "venue" => JsonConvert.DeserializeObject<VenueLinked>(raw.Value)!,
                 "eventshort" => JsonConvert.DeserializeObject<EventShortLinked>(raw.Value)!,
                 "experiencearea" => JsonConvert.DeserializeObject<ExperienceAreaLinked>(raw.Value)!,
                 "metaregion" => JsonConvert.DeserializeObject<MetaRegionLinked>(raw.Value)!,
@@ -351,6 +361,7 @@ namespace Helper
                 "publisher" => JsonConvert.DeserializeObject<PublisherLinked>(raw.Value)!,
                 "weatherhistory" => JsonConvert.DeserializeObject<WeatherHistoryLinked>(raw.Value)!,
                 "odhmetadata" => JsonConvert.DeserializeObject<TourismMetaData>(raw.Value)!,
+                "tag" => JsonConvert.DeserializeObject<TagLinked>(raw.Value)!,
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -399,7 +410,6 @@ namespace Helper
             return odhtypes.ToArray();
         }
 
-
         public static Func<string, string[]> TranslateTypeToSearchField(string odhtype)
         {
             return odhtype switch
@@ -421,7 +431,6 @@ namespace Helper
 
         #endregion
 
-
         //public static Func<string, string[]> TranslateTypeToSearchField(string odhtype, bool searchontext = false)
         //{
         //    return odhtype switch
@@ -440,8 +449,6 @@ namespace Helper
         //        _ => throw new Exception("not known odh type")
         //    };
         //}
-
-
 
         public static string TranslateTypeToTitleField(string odhtype, string language)
         {

@@ -34,6 +34,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET MetaRegion List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -129,6 +131,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Experiencearea List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -224,6 +228,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Region List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -317,6 +323,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET TourismAssociation List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -411,6 +419,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Municipality List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -507,6 +517,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET District List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -604,6 +616,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Area List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -691,6 +705,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET SkiRegion List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -780,6 +796,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET SkiArea List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -877,6 +895,8 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Wine Awards List
         /// </summary>
+        /// <param name="pagenumber">Pagenumber</param>
+        /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of data IDs), (default:'null')</param>
         /// <param name="odhtagfilter">Taglist Filter (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=common'), (default:'null')</param>
         /// <param name="active">Active data Filter (possible Values: 'true' only Active data, 'false' only Disabled data), (default:'null')</param>
@@ -975,7 +995,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language, 
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
+                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1005,7 +1025,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language,
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData)
+                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -1046,7 +1066,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1076,7 +1096,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData)
+                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 

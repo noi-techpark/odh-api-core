@@ -9,13 +9,17 @@ using Helper.Factories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -92,6 +96,10 @@ namespace OdhApiCore
             services.AddSingleton<CustomCacheKeyGenerator>();
 
             services.AddDistributedMemoryCache();
+
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())                
+                .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
 
             //TO Remove old Quota Config
 
@@ -407,14 +415,17 @@ namespace OdhApiCore
                 //            }
                 //        }, new List<string>()
                 //    }
-                //});
+                //});                
             });
             services.AddSwaggerGenNewtonsoftSupport();
+            
+            //Use server side caching of the swagger doc
+            services.Replace(ServiceDescriptor.Transient<ISwaggerProvider, CachingSwaggerProvider>());
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;                
-            });
+            });            
 
             //services.AddHttpContextAccessor();
         }
@@ -443,6 +454,11 @@ namespace OdhApiCore
             {
                 OnPrepareResponse = ctx =>
                 {
+                    //Activate Browser Cache of the swagger file for 1 day                                        
+                    if (ctx.File.Name.ToLower() == "swagger.json")
+                        {
+                            ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=86400");
+                        }
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 },                
@@ -461,16 +477,20 @@ namespace OdhApiCore
             app.UseSwagger(c =>
             {
                 c.PreSerializeFilters.Add((swagger, httpReq) =>
-                {
-                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
-                });                
+                {                    
+                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };                    
+                });
             });
 
+            app.ApplicationServices.SaveSwaggerJson(Configuration.GetSection("ApiConfig").GetValue<string>("Url"), Configuration.GetSection("JsonConfig").GetValue<string>("Jsondir"));
+            //app.UseSaveSwaggerJson(Configuration);
+            
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Open Data Hub Tourism API V1");
-                c.RoutePrefix = "swagger";
+                //c.SwaggerEndpoint("/json/swagger.json", "Open Data Hub Tourism API V1");
+                c.RoutePrefix = "swagger";               
                 c.OAuthClientSecret("");
                 c.OAuthRealm("noi");
                 c.EnableDeepLinking();
@@ -485,7 +505,6 @@ namespace OdhApiCore
 
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);
-
 
             //REWRITE, REDIRECT RULES
             //var rwoptions = new RewriteOptions()
@@ -508,6 +527,16 @@ namespace OdhApiCore
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");                
+            });
+
+            app.UseHealthChecks("/self", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
+
+            app.UseHealthChecks("/ready", new HealthCheckOptions
+            {
+                Predicate = r => r.Tags.Contains("services")
             });
         }
     }

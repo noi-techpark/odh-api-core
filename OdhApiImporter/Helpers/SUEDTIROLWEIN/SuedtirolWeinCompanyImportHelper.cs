@@ -39,13 +39,13 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
         public async Task<IDictionary<string, XDocument>> ImportList(CancellationToken cancellationToken = default)
         {
-            var winedatalistde = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("de");
-            var winedatalistit = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("it");
-            var winedatalisten = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("en");
+            var winedatalistde = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "de");
+            var winedatalistit = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "it");
+            var winedatalisten = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "en");
             //New getting in jp and ru and us
-            var winedatalistjp = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("jp");
-            var winedatalistru = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("ru");
-            var winedatalistus = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("us");
+            var winedatalistjp = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "jp");
+            var winedatalistru = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "ru");
+            var winedatalistus = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "us");
 
             IDictionary<string, XDocument> mywinedata = new Dictionary<string, XDocument>();
             mywinedata.Add("de", winedatalistde);
@@ -256,7 +256,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                     List<RelatedContent> myrelatedcontentlist = new List<RelatedContent>();
 
                     var mywines = wineawardreducelist
-                        .Where(x => x.CompanyId == dataid)
+                        .Where(x => x.CompanyId == dataid)                        
                        .ToList();
 
                     foreach (var mywine in mywines)
@@ -362,7 +362,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var result = await DeleteOrDisableData(idtodelete, false);
+                    var result = await DeleteOrDisableData<ODHActivityPoiLinked>(idtodelete, false);
 
                     updateresult = updateresult + result.Item1;
                     deleteresult = deleteresult + result.Item2;

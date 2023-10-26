@@ -175,3 +175,5 @@ $RECYCLE.BIN/
 /OdhApiCore/GenericTags.json
 /OdhApiCore/wwwroot/json/swagger.json
 /OdhApiCore/wwwroot/json
+/OdhApiCore/.env
+/OdhApiImporter/.env

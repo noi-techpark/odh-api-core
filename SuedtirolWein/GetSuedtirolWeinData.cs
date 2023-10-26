@@ -12,15 +12,11 @@ namespace SuedtirolWein
 {
     public class GetSuedtirolWeinData
     {
-        //TODO Make BaseUrl configurable in settings
-        public const string serviceurlcompanies = @"https://suedtirolwein.secure.consisto.net/companies.ashx";
-        public const string serviceurlawards = @"https://suedtirolwein.secure.consisto.net/awards.ashx";
-
-        private static async Task<HttpResponseMessage> RequestCompaniesAsync(string lang)
+        private static async Task<HttpResponseMessage> RequestCompaniesAsync(string serviceurl, string lang)
         {
             try
             {
-                string requesturl = serviceurlcompanies + "?lang=" + lang;
+                string requesturl = serviceurl + "companies.ashx?lang=" + lang;
 
                 using (var client = new HttpClient())
                 {
@@ -36,11 +32,11 @@ namespace SuedtirolWein
 
         }
 
-        private static async Task<HttpResponseMessage> RequestAwardsAsync(string lang)
+        private static async Task<HttpResponseMessage> RequestAwardsAsync(string serviceurl, string lang)
         {
             try
             {
-                string requesturl = serviceurlawards + "?lang=" + lang;
+                string requesturl = serviceurl + "awards.ashx?lang=" + lang;
 
                 using (var client = new HttpClient())
                 {
@@ -56,10 +52,10 @@ namespace SuedtirolWein
             }
         }
 
-        public static async Task<XDocument> GetSueditrolWineCompaniesAsync(string lang)
+        public static async Task<XDocument> GetSueditrolWineCompaniesAsync(string serviceurl, string lang)
         {
             //make Request
-            HttpResponseMessage response = await RequestCompaniesAsync(lang);
+            HttpResponseMessage response = await RequestCompaniesAsync(serviceurl, lang);
             //Read Content and parse to XDocument
             var responsetask = await response.Content.ReadAsStringAsync();
             XDocument myweatherresponse = XDocument.Parse(responsetask);
@@ -67,10 +63,10 @@ namespace SuedtirolWein
             return myweatherresponse;
         }
 
-        public static async Task<XDocument> GetSueditrolWineAwardsAsync(string lang)
+        public static async Task<XDocument> GetSueditrolWineAwardsAsync(string serviceurl, string lang)
         {
             //make Request
-            HttpResponseMessage response = await RequestAwardsAsync(lang);
+            HttpResponseMessage response = await RequestAwardsAsync(serviceurl, lang);
             //Read Content and parse to XDocument
             var responsetask = await response.Content.ReadAsStringAsync();
             XDocument myweatherresponse = XDocument.Parse(responsetask);

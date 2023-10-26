@@ -544,8 +544,9 @@ namespace Helper
             reduced.Id = webcam.Id + "_REDUCED";
 
             //URL, StreamURL
-            reduced.Webcamurl = webcam.Webcamurl;
-            reduced.Streamurl = webcam.Streamurl;
+            reduced.WebCamProperties = new WebcamProperties();
+            reduced.WebCamProperties.WebcamUrl = webcam.WebCamProperties.WebcamUrl;
+            reduced.WebCamProperties.StreamUrl = webcam.WebCamProperties.StreamUrl;
 
             //ODH Fields            
             reduced.Active = webcam.Active;
@@ -554,6 +555,10 @@ namespace Helper
             reduced.FirstImport = webcam.FirstImport;
             reduced.Source = webcam.Source;
             //TO ASK? Webcamname?
+
+            reduced.Detail = webcam.Detail;
+            reduced.ImageGallery = webcam.ImageGallery;
+            reduced.ContactInfos = webcam.ContactInfos;
 
             //License + Meta
             reduced.LicenseInfo = webcam.LicenseInfo;

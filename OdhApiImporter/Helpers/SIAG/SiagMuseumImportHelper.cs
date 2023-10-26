@@ -38,7 +38,7 @@ namespace OdhApiImporter.Helpers
 
         private async Task<XDocument> ImportList(CancellationToken cancellationToken)
         {
-            var myxml = await SIAG.GetMuseumFromSIAG.GetMuseumList();
+            var myxml = await SIAG.GetMuseumFromSIAG.GetMuseumList(settings.MusportConfig.ServiceUrl);
 
             XDocument mymuseumlist = new XDocument();
             XElement mymuseums = new XElement("Museums");
@@ -124,7 +124,7 @@ namespace OdhApiImporter.Helpers
                 string plz = mymuseumelement.Attribute("PLZ")?.Value ?? "";
 
                 //Import Museum data from Siag
-                var mymuseumdata = await SIAG.GetMuseumFromSIAG.GetMuseumDetail(museumid);
+                var mymuseumdata = await SIAG.GetMuseumFromSIAG.GetMuseumDetail(settings.MusportConfig.ServiceUrl, museumid);
                 var mymuseumxml = mymuseumdata?.Root?.Element(ns + "return");
 
                 //Improve Performance this query is very slow!!!!
@@ -441,7 +441,7 @@ namespace OdhApiImporter.Helpers
              
                 foreach (var idtodelete in idstodelete)
                 {
-                    var result = await DeleteOrDisableData(idtodelete, false);
+                    var result = await DeleteOrDisableData<ODHActivityPoiLinked>(idtodelete, false);
 
                     updateresult = updateresult + result.Item1;
                     deleteresult = deleteresult + result.Item2;
@@ -483,7 +483,7 @@ namespace OdhApiImporter.Helpers
                             raw = siagmuseumdata.Value.ToString(),
                             sourceinterface = "museumdata",
                             sourceid = siagmuseumdata.Key,
-                            sourceurl = "https://musport.prov.bz.it/musport/services/MuseumsService/",
+                            sourceurl = settings.MusportConfig.ServiceUrl,
                             type = "odhactivitypoi.museum",
                             license = "open",
                             rawformat = "xml"

@@ -62,9 +62,7 @@ namespace OdhApiImporter.Helpers.DSS
             int newcounter = 0;
             int deletecounter = 0;
             int errorcounter = 0;
-
-            List<string> idlistdssinterface = new List<string>();
-
+        
             if (dssinput != null && dssinput.Count > 0)
             {
                 string lastupdatestr = dssinput[0].lastUpdate;
@@ -75,7 +73,7 @@ namespace OdhApiImporter.Helpers.DSS
                 foreach (var item in dssinput[0].items)
                 {
                     var importresult = await ImportDataSingle(item);
-
+                  
                     newcounter = newcounter + importresult.created ?? newcounter;
                     updatecounter = updatecounter + importresult.updated ?? updatecounter;
                     errorcounter = errorcounter + importresult.error ?? errorcounter;
@@ -154,7 +152,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+                    var deletedisableresult = await DeleteOrDisableData<WebcamInfoLinked>(idtodelete, false);
 
                     if (deletedisableresult.Item1 > 0)
                         WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
@@ -179,7 +177,7 @@ namespace OdhApiImporter.Helpers.DSS
         public async Task<WebcamInfoLinked?> ParseDSSDataToWebcam(dynamic dssinput)
         {
             //id
-            string odhdssid = "dss_" + dssinput.pid;
+            string odhdssid = "DSS_" + dssinput.pid;
 
             //Get the ODH Item
             var mydssquery = QueryFactory.Query(table)
@@ -189,7 +187,9 @@ namespace OdhApiImporter.Helpers.DSS
             var webcamindb = await mydssquery.GetObjectSingleAsync<WebcamInfoLinked>();
             var webcam = default(WebcamInfoLinked);
             
-            webcam = ParseDSSToODH.ParseDSSWebcamToWebcamInfoLinked(webcamindb, dssinput);            
+            webcam = ParseDSSToODH.ParseDSSWebcamToWebcamInfoLinked(webcamindb, dssinput);
+
+            idlistdssinterface.Add(odhdssid);
 
             return webcam;
         }
@@ -198,7 +198,7 @@ namespace OdhApiImporter.Helpers.DSS
         {
             var rawdataid = await InsertInRawDataDB(dssdata);
 
-            webcam.Id = webcam.Id?.ToLower();
+            webcam.Id = webcam.Id?.ToUpper();
 
             //Set LicenseInfo
             webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);

@@ -194,264 +194,334 @@ namespace SuedtirolWein.Parser
             List<PoiProperty> mypropertylist = new List<PoiProperty>();
             if (companydata.Element("openingtimeswineshop") != null)
             {
-                PoiProperty myprop = new PoiProperty();
-                myprop.Name = "openingtimeswineshop";
-                myprop.Value = companydata.Element("openingtimeswineshop").Value;
-                mypropertylist.Add(myprop);
+                PoiProperty mypropopeningtimeswineshop = new PoiProperty();
+                mypropopeningtimeswineshop.Name = "openingtimeswineshop";
+                mypropopeningtimeswineshop.Value = companydata.Element("openingtimeswineshop").Value;
+                mypropertylist.Add(mypropopeningtimeswineshop);
             }
             if (companydata.Element("openingtimesguides") != null)
             {
-                PoiProperty myprop2 = new PoiProperty();
-                myprop2.Name = "openingtimesguides";
-                myprop2.Value = companydata.Element("openingtimesguides").Value;
-                mypropertylist.Add(myprop2);
+                PoiProperty mypropopeningtimesguides = new PoiProperty();
+                mypropopeningtimesguides.Name = "openingtimesguides";
+                mypropopeningtimesguides.Value = companydata.Element("openingtimesguides").Value;
+                mypropertylist.Add(mypropopeningtimesguides);
             }
             if (companydata.Element("openingtimesgastronomie") != null)
             {
-                PoiProperty myprop3 = new PoiProperty();
-                myprop3.Name = "openingtimesgastronomie";
-                myprop3.Value = companydata.Element("openingtimesgastronomie").Value;
-                mypropertylist.Add(myprop3);
+                PoiProperty mypropopeningtimesgastronomie = new PoiProperty();
+                mypropopeningtimesgastronomie.Name = "openingtimesgastronomie";
+                mypropopeningtimesgastronomie.Value = companydata.Element("openingtimesgastronomie").Value;
+                mypropertylist.Add(mypropopeningtimesgastronomie);
             }
             if (companydata.Element("companyholiday") != null)
             {
-                PoiProperty myprop4 = new PoiProperty();
-                myprop4.Name = "companyholiday";
-                myprop4.Value = companydata.Element("companyholiday").Value;
-                mypropertylist.Add(myprop4);
+                PoiProperty mypropcompanyholiday = new PoiProperty();
+                mypropcompanyholiday.Name = "companyholiday";
+                mypropcompanyholiday.Value = companydata.Element("companyholiday").Value;
+                mypropertylist.Add(mypropcompanyholiday);
             }
-            
+
             if (companydata.Element("hasvisits") != null)
             {
-                PoiProperty myprop5 = new PoiProperty();
-                myprop5.Name = "hasvisits";
-          
-                myprop5.Value = companydata.Element("hasvisits").Value;
-                mypropertylist.Add(myprop5);
+                PoiProperty myprophasvisits = new PoiProperty();
+                myprophasvisits.Name = "hasvisits";
+
+                myprophasvisits.Value = companydata.Element("hasvisits").Value;
+                mypropertylist.Add(myprophasvisits);
             }
             if (companydata.Element("hasovernights") != null)
             {
-                PoiProperty myprop6 = new PoiProperty();
-                myprop6.Name = "hasovernights";
+                PoiProperty myprophasovernights = new PoiProperty();
+                myprophasovernights.Name = "hasovernights";
 
-                myprop6.Value = companydata.Element("hasovernights").Value;
-                mypropertylist.Add(myprop6);
+                myprophasovernights.Value = companydata.Element("hasovernights").Value;
+                mypropertylist.Add(myprophasovernights);
             }
             if (companydata.Element("hasbiowine") != null)
             {
-                PoiProperty myprop7 = new PoiProperty();
-                myprop7.Name = "hasbiowine";
+                PoiProperty myprophasbiowine = new PoiProperty();
+                myprophasbiowine.Name = "hasbiowine";
 
-                myprop7.Value = companydata.Element("hasbiowine").Value;
-                mypropertylist.Add(myprop7);
+                myprophasbiowine.Value = companydata.Element("hasbiowine").Value;
+                mypropertylist.Add(myprophasbiowine);
             }
             if (companydata.Element("wines") != null)
             {
-                PoiProperty myprop8 = new PoiProperty();
-                myprop8.Name = "wines";
-                myprop8.Value = companydata.Element("wines").Value;
-                mypropertylist.Add(myprop8);
+                PoiProperty mypropwines = new PoiProperty();
+                mypropwines.Name = "wines";
+                mypropwines.Value = companydata.Element("wines").Value;
+                mypropertylist.Add(mypropwines);
             }
             if (companydata.Element("hasaccomodation") != null)
             {
-                PoiProperty myprop9 = new PoiProperty();
-                myprop9.Name = "hasaccomodation";
+                PoiProperty myprophasaccomodation = new PoiProperty();
+                myprophasaccomodation.Name = "hasaccomodation";
 
-                myprop9.Value = companydata.Element("hasaccomodation").Value;
-                mypropertylist.Add(myprop9);
+                myprophasaccomodation.Value = companydata.Element("hasaccomodation").Value;
+                mypropertylist.Add(myprophasaccomodation);
             }
             if (companydata.Element("isvinumhotel") != null)
             {
-                PoiProperty myprop10 = new PoiProperty();
-                myprop10.Name = "isvinumhotel";
+                PoiProperty mypropisvinumhotel = new PoiProperty();
+                mypropisvinumhotel.Name = "isvinumhotel";
 
-                myprop10.Value = companydata.Element("isvinumhotel").Value;
-                mypropertylist.Add(myprop10);
+                mypropisvinumhotel.Value = companydata.Element("isvinumhotel").Value;
+                mypropertylist.Add(mypropisvinumhotel);
             }
             if (companydata.Element("isanteprima") != null)
             {
-                PoiProperty myprop11 = new PoiProperty();
-                myprop11.Name = "isanteprima";
+                PoiProperty mypropisanteprima = new PoiProperty();
+                mypropisanteprima.Name = "isanteprima";
 
-                myprop11.Value = companydata.Element("isanteprima").Value;
-                mypropertylist.Add(myprop11);
+                mypropisanteprima.Value = companydata.Element("isanteprima").Value;
+                mypropertylist.Add(mypropisanteprima);
             }
             if (companydata.Element("iswinestories") != null)
             {
-                PoiProperty myprop12 = new PoiProperty();
-                myprop12.Name = "iswinestories";
+                PoiProperty mypropiswinestories = new PoiProperty();
+                mypropiswinestories.Name = "iswinestories";
 
-                myprop12.Value = companydata.Element("iswinestories").Value;
-                mypropertylist.Add(myprop12);
+                mypropiswinestories.Value = companydata.Element("iswinestories").Value;
+                mypropertylist.Add(mypropiswinestories);
             }
             if (companydata.Element("iswinesummit") != null)
             {
-                PoiProperty myprop13 = new PoiProperty();
-                myprop13.Name = "iswinesummit";
+                PoiProperty mypropiswinesummit = new PoiProperty();
+                mypropiswinesummit.Name = "iswinesummit";
 
-                myprop13.Value = companydata.Element("iswinesummit").Value;
-                mypropertylist.Add(myprop13);
+                mypropiswinesummit.Value = companydata.Element("iswinesummit").Value;
+                mypropertylist.Add(mypropiswinesummit);
             }
             if (companydata.Element("issparklingwineassociation") != null)
             {
-                PoiProperty myprop14 = new PoiProperty();
-                myprop14.Name = "issparklingwineassociation";
+                PoiProperty mypropissparklingwineassociation = new PoiProperty();
+                mypropissparklingwineassociation.Name = "issparklingwineassociation";
 
-                myprop14.Value = companydata.Element("issparklingwineassociation").Value;
-                mypropertylist.Add(myprop14);
+                mypropissparklingwineassociation.Value = companydata.Element("issparklingwineassociation").Value;
+                mypropertylist.Add(mypropissparklingwineassociation);
             }
             if (companydata.Element("iswinery") != null)
             {
-                PoiProperty myprop15 = new PoiProperty();
-                myprop15.Name = "iswinery";
+                PoiProperty mypropiswinery = new PoiProperty();
+                mypropiswinery.Name = "iswinery";
 
-                myprop15.Value = companydata.Element("iswinery").Value;
-                mypropertylist.Add(myprop15);
+                mypropiswinery.Value = companydata.Element("iswinery").Value;
+                mypropertylist.Add(mypropiswinery);
             }
             if (companydata.Element("iswineryassociation") != null)
             {
-                PoiProperty myprop16 = new PoiProperty();
-                myprop16.Name = "iswineryassociation";
+                PoiProperty mypropiswineryassociation = new PoiProperty();
+                mypropiswineryassociation.Name = "iswineryassociation";
 
-                myprop16.Value = companydata.Element("iswineryassociation").Value;
-                mypropertylist.Add(myprop16);
+                mypropiswineryassociation.Value = companydata.Element("iswineryassociation").Value;
+                mypropertylist.Add(mypropiswineryassociation);
             }
 
-            //hasonlineshop
+            //new hasonlineshop
             if (companydata.Element("hasonlineshop") != null)
             {
-                PoiProperty myprop17 = new PoiProperty();
-                myprop17.Name = "hasonlineshop";
+                PoiProperty myprophasonlineshop = new PoiProperty();
+                myprophasonlineshop.Name = "hasonlineshop";
 
-                myprop17.Value = companydata.Element("hasonlineshop").Value;
-                mypropertylist.Add(myprop17);
+                myprophasonlineshop.Value = companydata.Element("hasonlineshop").Value;
+                mypropertylist.Add(myprophasonlineshop);
             }
 
-            //hasdeliveryservice
+            //new hasdeliveryservice
             if (companydata.Element("hasdeliveryservice") != null)
             {
-                PoiProperty myprop18 = new PoiProperty();
-                myprop18.Name = "hasdeliveryservice";
+                PoiProperty myprophasdeliveryservice = new PoiProperty();
+                myprophasdeliveryservice.Name = "hasdeliveryservice";
 
-                myprop18.Value = companydata.Element("hasdeliveryservice").Value;
-                mypropertylist.Add(myprop18);
+                myprophasdeliveryservice.Value = companydata.Element("hasdeliveryservice").Value;
+                mypropertylist.Add(myprophasdeliveryservice);
             }
 
-            //onlineshopurl
+            //new onlineshopurl
             if (companydata.Element("onlineshopurl") != null)
             {
-                PoiProperty myprop19 = new PoiProperty();
-                myprop19.Name = "onlineshopurl";
+                PoiProperty myproponlineshopurl = new PoiProperty();
+                myproponlineshopurl.Name = "onlineshopurl";
 
-                myprop19.Value = companydata.Element("onlineshopurl").Value;
-                mypropertylist.Add(myprop19);
+                myproponlineshopurl.Value = companydata.Element("onlineshopurl").Value;
+                mypropertylist.Add(myproponlineshopurl);
             }
-            //deliveryserviceurl
+            // new deliveryserviceurl
             if (companydata.Element("deliveryserviceurl") != null)
             {
-                PoiProperty myprop20 = new PoiProperty();
-                myprop20.Name = "deliveryserviceurl";
+                PoiProperty mypropdeliveryserviceurl = new PoiProperty();
+                mypropdeliveryserviceurl.Name = "deliveryserviceurl";
 
-                myprop20.Value = companydata.Element("deliveryserviceurl").Value;
-                mypropertylist.Add(myprop20);
+                mypropdeliveryserviceurl.Value = companydata.Element("deliveryserviceurl").Value;
+                mypropertylist.Add(mypropdeliveryserviceurl);
             }
-            //h1
+            //new h1
             if (companydata.Element("h1") != null)
             {
-                PoiProperty myprop21 = new PoiProperty();
-                myprop21.Name = "h1";
+                PoiProperty myproph1 = new PoiProperty();
+                myproph1.Name = "h1";
 
-                myprop21.Value = companydata.Element("h1").Value;
-                mypropertylist.Add(myprop21);
+                myproph1.Value = companydata.Element("h1").Value;
+                mypropertylist.Add(myproph1);
             }
-            //h2
+            //new h2
             if (companydata.Element("h2") != null)
             {
-                PoiProperty myprop22 = new PoiProperty();
-                myprop22.Name = "h2";
+                PoiProperty myproph2 = new PoiProperty();
+                myproph2.Name = "h2";
 
-                myprop22.Value = companydata.Element("h2").Value;
-                mypropertylist.Add(myprop22);
+                myproph2.Value = companydata.Element("h2").Value;
+                mypropertylist.Add(myproph2);
             }
-       
-            //quote
+
+            //new quote
             if (companydata.Element("quote") != null)
             {
-                PoiProperty myprop23 = new PoiProperty();
-                myprop23.Name = "quote";
+                PoiProperty mypropquote = new PoiProperty();
+                mypropquote.Name = "quote";
 
-                myprop23.Value = companydata.Element("quote").Value;
-                mypropertylist.Add(myprop23);
+                mypropquote.Value = companydata.Element("quote").Value;
+                mypropertylist.Add(mypropquote);
             }
 
-            //quote author
+            //new quote author
             if (companydata.Element("quoteauthor") != null)
             {
-                PoiProperty myprop24 = new PoiProperty();
-                myprop24.Name = "quoteauthor";
+                PoiProperty mypropquoteauthor = new PoiProperty();
+                mypropquoteauthor.Name = "quoteauthor";
 
-                myprop24.Value = companydata.Element("quoteauthor").Value;
-                mypropertylist.Add(myprop24);
+                mypropquoteauthor.Value = companydata.Element("quoteauthor").Value;
+                mypropertylist.Add(mypropquoteauthor);
             }
 
-            //descriptionsparklingwineproducer
+            //new descriptionsparklingwineproducer
             if (companydata.Element("descriptionsparklingwineproducer") != null)
             {
-                PoiProperty myprop25 = new PoiProperty();
-                myprop25.Name = "descriptionsparklingwineproducer";
+                PoiProperty mypropdescriptionsparklingwineproducer = new PoiProperty();
+                mypropdescriptionsparklingwineproducer.Name = "descriptionsparklingwineproducer";
 
-                myprop25.Value = companydata.Element("descriptionsparklingwineproducer").Value;
-                mypropertylist.Add(myprop25);
+                mypropdescriptionsparklingwineproducer.Value = companydata.Element("descriptionsparklingwineproducer").Value;
+                mypropertylist.Add(mypropdescriptionsparklingwineproducer);
             }
 
-            //h1sparklingwineproducer
+            //new h1sparklingwineproducer
             if (companydata.Element("h1sparklingwineproducer") != null)
             {
-                PoiProperty myprop26 = new PoiProperty();
-                myprop26.Name = "h1sparklingwineproducer";
+                PoiProperty myproph1sparklingwineproducer = new PoiProperty();
+                myproph1sparklingwineproducer.Name = "h1sparklingwineproducer";
 
-                myprop26.Value = companydata.Element("h1sparklingwineproducer").Value;
-                mypropertylist.Add(myprop26);
+                myproph1sparklingwineproducer.Value = companydata.Element("h1sparklingwineproducer").Value;
+                mypropertylist.Add(myproph1sparklingwineproducer);
             }
 
-            //h2sparklingwineproducer
+            //new h2sparklingwineproducer
             if (companydata.Element("h2sparklingwineproducer") != null)
             {
-                PoiProperty myprop27 = new PoiProperty();
-                myprop27.Name = "h2sparklingwineproducer";
+                PoiProperty myproph2sparklingwineproducer = new PoiProperty();
+                myproph2sparklingwineproducer.Name = "h2sparklingwineproducer";
 
-                myprop27.Value = companydata.Element("h2sparklingwineproducer").Value;
-                mypropertylist.Add(myprop27);
+                myproph2sparklingwineproducer.Value = companydata.Element("h2sparklingwineproducer").Value;
+                mypropertylist.Add(myproph2sparklingwineproducer);
             }
 
-            //<imagesparklingwineproducer>
+            //new <imagesparklingwineproducer>
             if (companydata.Element("imagesparklingwineproducer") != null)
             {
-                PoiProperty myprop28 = new PoiProperty();
-                myprop28.Name = "imagesparklingwineproducer";
+                PoiProperty mypropimagesparklingwineproducer = new PoiProperty();
+                mypropimagesparklingwineproducer.Name = "imagesparklingwineproducer";
 
-                myprop28.Value = companydata.Element("imagesparklingwineproducer").Value;
-                mypropertylist.Add(myprop28);
+                mypropimagesparklingwineproducer.Value = companydata.Element("imagesparklingwineproducer").Value;
+                mypropertylist.Add(mypropimagesparklingwineproducer);
             }
 
-            //<hasdirectsales>
+            //new <hasdirectsales>
             if (companydata.Element("hasdirectsales") != null)
             {
-                PoiProperty myprop29 = new PoiProperty();
-                myprop29.Name = "hasdirectsales";
+                PoiProperty myprophasdirectsales = new PoiProperty();
+                myprophasdirectsales.Name = "hasdirectsales";
 
-                myprop29.Value = companydata.Element("hasdirectsales").Value;
-                mypropertylist.Add(myprop29);
+                myprophasdirectsales.Value = companydata.Element("hasdirectsales").Value;
+                mypropertylist.Add(myprophasdirectsales);
             }
 
             //isskyalpspartner
             if (companydata.Element("isskyalpspartner") != null)
             {
-                PoiProperty myprop30 = new PoiProperty();
-                myprop30.Name = "isskyalpspartner";
+                PoiProperty mypropisskyalpspartner = new PoiProperty();
+                mypropisskyalpspartner.Name = "isskyalpspartner";
 
-                myprop30.Value = companydata.Element("isskyalpspartner").Value;
-                mypropertylist.Add(myprop30);
+                mypropisskyalpspartner.Value = companydata.Element("isskyalpspartner").Value;
+                mypropertylist.Add(mypropisskyalpspartner);
+            }
+
+            //socialsinstagram
+            if (companydata.Element("socialsinstagram") != null)
+            {
+                PoiProperty mypropsocialsinstagram = new PoiProperty();
+                mypropsocialsinstagram.Name = "socialsinstagram";
+
+                mypropsocialsinstagram.Value = companydata.Element("socialsinstagram").Value;
+                mypropertylist.Add(mypropsocialsinstagram);
+            }
+
+            //socialsfacebook
+            if (companydata.Element("socialsfacebook") != null)
+            {
+                PoiProperty mypropisskyalpspartner = new PoiProperty();
+                mypropisskyalpspartner.Name = "socialsfacebook";
+
+                mypropisskyalpspartner.Value = companydata.Element("socialsfacebook").Value;
+                mypropertylist.Add(mypropisskyalpspartner);
+            }
+
+            //socialslinkedIn
+            if (companydata.Element("socialslinkedIn") != null)
+            {
+                PoiProperty mypropsocialslinkedIn = new PoiProperty();
+                mypropsocialslinkedIn.Name = "socialslinkedIn";
+
+                mypropsocialslinkedIn.Value = companydata.Element("socialslinkedIn").Value;
+                mypropertylist.Add(mypropsocialslinkedIn);
+            }
+
+            //socialspinterest
+            if (companydata.Element("socialspinterest") != null)
+            {
+                PoiProperty mypropsocialspinterest = new PoiProperty();
+                mypropsocialspinterest.Name = "socialspinterest";
+
+                mypropsocialspinterest.Value = companydata.Element("socialspinterest").Value;
+                mypropertylist.Add(mypropsocialspinterest);
+            }
+
+            //socialstiktok
+            if (companydata.Element("socialstiktok") != null)
+            {
+                PoiProperty mypropsocialstiktok = new PoiProperty();
+                mypropsocialstiktok.Name = "socialstiktok";
+
+                mypropsocialstiktok.Value = companydata.Element("socialstiktok").Value;
+                mypropertylist.Add(mypropsocialstiktok);
+            }
+
+            //socialsyoutube
+            if (companydata.Element("socialsyoutube") != null)
+            {
+                PoiProperty mypropsocialsyoutube = new PoiProperty();
+                mypropsocialsyoutube.Name = "socialsyoutube";
+
+                mypropsocialsyoutube.Value = companydata.Element("socialsyoutube").Value;
+                mypropertylist.Add(mypropsocialsyoutube);
+            }
+
+            //socialstwitter
+            if (companydata.Element("socialstwitter") != null)
+            {
+                PoiProperty mypropsocialstwitter = new PoiProperty();
+                mypropsocialstwitter.Name = "socialstwitter";
+
+                mypropsocialstwitter.Value = companydata.Element("socialstwitter").Value;
+                mypropertylist.Add(mypropsocialstwitter);
             }
 
             mywinecompany.PoiProperty.TryAddOrUpdate(language, mypropertylist);

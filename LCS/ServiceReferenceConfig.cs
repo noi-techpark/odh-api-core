@@ -44,11 +44,11 @@ namespace LCS
         //    return httpsBinding;
         //}
 
-        private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration)
+        private static System.ServiceModel.EndpointAddress GetEndpointAddress(EndpointConfiguration endpointConfiguration, string serviceurl)
         {
             if ((endpointConfiguration == EndpointConfiguration.BasicHttpBinding_ISimpleService))
             {
-                return new System.ServiceModel.EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
+                return new System.ServiceModel.EndpointAddress(serviceurl + "/soap");
             }
             throw new System.InvalidOperationException(string.Format("Could not find endpoint with name \'{0}\'.", endpointConfiguration));
         }

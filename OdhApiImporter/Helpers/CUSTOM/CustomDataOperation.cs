@@ -115,13 +115,15 @@ namespace OdhApiImporter.Helpers
 
                 //metadata.SwaggerUrl = swaggerurl;
 
-                //add domain
-                if (host.StartsWith("localhost"))
-                    metadata.BaseUrl = "https://localhost:5001";
-                if (host.StartsWith("importer.tourism"))
-                    metadata.BaseUrl = "https://api.tourism.testingmachine.eu";
-                else
-                    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+                ////add domain
+                //if (host.StartsWith("localhost"))
+                //    metadata.BaseUrl = "https://localhost:5001";
+                //if (host.StartsWith("importer.tourism"))
+                //    metadata.BaseUrl = "https://api.tourism.testingmachine.eu";
+                //else
+                //    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+
+                metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
 
 
                 //Save tp DB                 
@@ -653,6 +655,32 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> UpdateAllODHTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("smgtags");
+
+            var data = await query.GetObjectListAsync<ODHTagLinked>();
+            int i = 0;
+
+            foreach (var odhtag in data)
+            {
+                //Setting LicenseInfo
+                //Adding LicenseInfo to ODHTag (not present on sinfo instance)                    
+                odhtag.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHTagLinked>(odhtag, Helper.LicenseHelper.GetLicenseforODHTag);
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("smgtags").Where("id", odhtag.Id)
+                    .UpdateAsync(new JsonBData() { id = odhtag.Id?.ToLower() ?? "", data = new JsonRaw(odhtag) });
+
+                i++;
+            }
+
+            return i;
+        }
 
     }
 

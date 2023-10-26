@@ -170,7 +170,6 @@ namespace OdhApiCore.Controllers
             return await GetWeatherHistorySingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
         }
 
-
         /// <summary>
         /// GET District Weather LIVE
         /// </summary>
@@ -734,7 +733,7 @@ namespace OdhApiCore.Controllers
                         .WeatherHistoryWhereExpression(
                             languagelist: myweatherhelper.languagelist, idlist: myweatherhelper.idlist, sourcelist: new List<string>(), begindate: myweatherhelper.datefrom,
                             enddate: myweatherhelper.dateto, searchfilter: searchfilter, language: language, lastchange: myweatherhelper.lastchange,
-                            filterClosedData: false)
+                            filterClosedData: false, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
                 //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//
@@ -840,7 +839,7 @@ namespace OdhApiCore.Controllers
                             activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper.publishedonlist,
                             sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData)
+                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -904,8 +903,9 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("measuringpoints")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
                         //.When(FilterClosedData, q => q.FilterClosedData());
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var fieldsTohide = FieldsToHide;
 
@@ -942,6 +942,26 @@ namespace OdhApiCore.Controllers
 
             var skiarea = JsonConvert.DeserializeObject<SkiArea>(skiarearaw.Value);
 
+            List<WebcamInfo> webcamlist = new List<WebcamInfo>();
+
+            if(skiarea.RelatedContent != null && skiarea.RelatedContent.Where(x => x.Type == "webcam").Count() > 0)
+            {
+                var webcamidlist = skiarea.RelatedContent.Where(x => x.Type == "webcam").Select(x => x.Id).ToList();
+
+                var webcamquery = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("webcams")
+                   .IdUpperFilter(webcamidlist);
+
+                var webcamsraw = await query.GetAsync<JsonRaw>();
+
+                foreach(var webcamraw in webcamsraw)
+                {
+                    webcamlist.Add(JsonConvert.DeserializeObject<WebcamInfo>(webcamraw.Value));
+                }                 
+            }
+
+
             //Schoffts net afn SkiArea object zu bringen kriag do ollm a laars object
             //var skiarea2 = await query.FirstOrDefaultAsync<SkiArea>();
 
@@ -949,7 +969,7 @@ namespace OdhApiCore.Controllers
             //var skiareastring = await query.FirstOrDefaultAsync<string>();
             //var skiareaobject = JsonConvert.DeserializeObject<SkiArea>(skiareastring);
 
-            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea!, "SMG", settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
+            var mysnowreport = GetSnowReport.GetLiveSnowReport(lang, skiarea!, webcamlist, "SMG", settings.LcsConfig.ServiceUrl, settings.LcsConfig.Username, settings.LcsConfig.Password, settings.LcsConfig.MessagePassword);
 
             mysnowreport.Id = mysnowreport.RID + "_SNOWREPORT";
 

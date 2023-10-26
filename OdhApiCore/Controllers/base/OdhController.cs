@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Schema.NET;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,10 @@ namespace OdhApiCore.Controllers
 
         protected QueryFactory QueryFactory { get; }
 
+
+        /// <summary>
+        /// When not in this role Images which does not have a CC0 License are filtered out maybe obsolete ?
+        /// </summary>
         protected bool FilterCC0License
         {
             get
@@ -50,19 +55,17 @@ namespace OdhApiCore.Controllers
                 return !roles.Any(User.IsInRole);
             }
         }
-
-        //TODO EXTEND THIS ALSO TO ODHActivityPoiReader etc...
+        
         /// <summary>
-        /// If User has Role DataReader or Reader of this Entity set Filtercloseddata to false
+        /// If User is in Role IDM or A22 set FilterClosedData to false
         /// </summary>
         protected bool FilterClosedData
         {
             get
             {
                 var roles = new[] {
-                    "IDM"
-                    //"DataReader",
-                    //$"{this.ControllerContext.ActionDescriptor.ControllerName}Reader"
+                    "IDM",
+                    "A22"
                 };
                 return !roles.Any(User.IsInRole);
             }
@@ -81,6 +84,37 @@ namespace OdhApiCore.Controllers
                     "LTS"
                 };
                 return !roles.Any(User.IsInRole);
+            }
+        }
+
+        /// <summary>
+        /// ADD all relevant roles for data filtering
+        /// </summary>
+        protected IEnumerable<string> UserRolesToFilter
+        {
+            get
+            {               
+                var roles = new[] {
+                    "IDM",
+                    "LTS",
+                    "A22",
+                    "STA"
+                };
+
+                if (!roles.Any(User.IsInRole))
+                    return new List<string>() { "ANONYMOUS" };
+                else
+                {
+                    var userroles = new List<string>();
+
+                    foreach (var role in roles)
+                    {
+                        if(User.IsInRole(role))
+                            userroles.Add(role);
+                    }
+
+                    return userroles;
+                }                
             }
         }
 
@@ -223,10 +257,11 @@ namespace OdhApiCore.Controllers
             return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew));          
         }
 
-
         protected async Task<IActionResult> DeleteData(string id, string table)
         {
             return Ok(await QueryFactory.DeleteData(id, table));            
         }
+
+        //TODO Upsert Data and push to all published Channels
     }    
 }

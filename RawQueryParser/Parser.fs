@@ -9,17 +9,16 @@ open FParsec
 /// Type alias to simplify the type annotation of a Parser.
 type Parser<'a> = Parser<'a, unit>
 
-/// <summary>
-/// Parse a field path.
-/// <c>Detail.de.Title => Field ["Detail"; "de"; "Title"]</c>
-/// </summary>
 let field =
     let lettersDigitsAndUnderscore c = isAsciiLetter c || isDigit c || c = '_' || c = '@'
     let options = IdentifierOptions(isAsciiIdStart = lettersDigitsAndUnderscore,
                                     isAsciiIdContinue = lettersDigitsAndUnderscore)
+    let fieldArraySegment =
+        identifier options .>>? skipString "[*]"
+        |>> (fun x -> IdentifierArraySegment x)
+    let arraySegment = skipString "[*]" <|> skipString "[]" >>% ArraySegment
     let identifierSegment = identifier options |>> IdentifierSegment
-    let arraySegment = skipString "[]" <|> skipString "[*]" >>% ArraySegment
-    sepBy (identifierSegment <|> arraySegment) (skipChar '.')
+    sepBy (fieldArraySegment <|> identifierSegment <|> arraySegment) (skipChar '.')
     |>> Field
     <?> "field"
 
@@ -74,6 +73,7 @@ module Filtering =
             skipString "ge" >>% Ge
             skipString "lt" >>% Lt
             skipString "le" >>% Le
+            skipString "like" >>% Like
         ]
 
     let boolean: Parser<Value> =
@@ -150,6 +150,7 @@ module Filtering =
             pstring "isnotnull" >>. betweenBrackets field |>> (IsNotNull >> Condition)
             pstring "in" >>. (betweenBrackets inParser |>> (In >> Condition))
             pstring "nin" >>. (betweenBrackets inParser |>> (NotIn >> Condition))
+            pstring "likein" >>. (betweenBrackets inParser |>> (LikeIn >> Condition))
             condition |>> (Comparison >> Condition)
         ]
 

@@ -621,8 +621,10 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.Type, Type = "Type" });
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.SubType, Type = "SubType" });
+                if (!String.IsNullOrEmpty(this.Type)) 
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.Type, Type = "Type" });
+                if (!String.IsNullOrEmpty(this.SubType)) 
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.SubType, Type = "SubType" });
                 if (!String.IsNullOrEmpty(this.PoiType))
                     returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.PoiType, Self = ODHConstant.ApplicationURL + "OdhActivityPoiTypes/" + this.PoiType, Type = "PoiType" });
 
@@ -1452,7 +1454,7 @@ namespace DataModel
     //Location??
 
 
-    public class TourismMetaData : IMetaData, IImportDateassigneable, IIdentifiable, IPublishedOn
+    public class TourismMetaData : IMetaData, IImportDateassigneable, IIdentifiable, IPublishedOn, ILicenseInfo
     {
         //openapi
         //Procudes non nullable string not required
@@ -1560,10 +1562,17 @@ namespace DataModel
             }
         }
 
+        public string? Dataspace { get; set; }
+
+        public ICollection<string>? Category { get; set; }
+
+        public ICollection<string>? DataProvider { get; set; }
+
+        public LicenseInfo? LicenseInfo { get; set; }
     }
 
     #endregion
-
+    
     public static class ODHConstant
     {
         public static string ApplicationURL

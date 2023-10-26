@@ -10,6 +10,7 @@ namespace RawQueryParser
 type FieldSegment =
     | IdentifierSegment of string
     | ArraySegment
+    | IdentifierArraySegment of string
 
 /// <summary>
 /// Defines a field with hierarchical access fields.
@@ -22,7 +23,8 @@ with member self.ToNestedObject(value) =
         let rec loop m = function
             | [] ->
                 (box value)
-            | IdentifierSegment h::t ->
+            | IdentifierSegment h::t
+            | IdentifierArraySegment h::t ->
                 box (dict [h, box (loop m t)])
             | ArraySegment::t ->
                 box [loop m t]
@@ -52,6 +54,7 @@ module Filtering =
         | Le
         | Gt
         | Ge
+        | Like
 
     /// Defines values of booleans, numbers and strings.
     type Value =
@@ -71,6 +74,7 @@ module Filtering =
         | Comparison of Comparison
         | In of field: Field * values: Value list
         | NotIn of field: Field * values: Value list
+        | LikeIn of Field: Field * value: Value list
         | IsNull of Field
         | IsNotNull of Field
 

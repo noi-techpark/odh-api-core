@@ -38,8 +38,8 @@ namespace OdhApiImporter.Helpers
 
         private async Task<Tuple<NinjaObject<NinjaEvent>,NinjaObject<NinjaPlaceRoom>>> ImportList(CancellationToken cancellationToken)
         {
-            var responseevents = await GetNinjaData.GetNinjaEvent();
-            var responseplaces = await GetNinjaData.GetNinjaPlaces();
+            var responseevents = await GetNinjaData.GetNinjaEvent(settings.NinjaConfig.ServiceUrl);
+            var responseplaces = await GetNinjaData.GetNinjaPlaces(settings.NinjaConfig.ServiceUrl);
 
             WriteLog.LogToConsole("", "dataimport", "list.mobilityculture", new ImportLog() { sourceid = "", sourceinterface = "mobility.culture", success = true, error = "" });
 

@@ -128,7 +128,7 @@ namespace LCS
             return mymeasuringpointlist;
         }
 
-        public static SnowReportBaseData ParseMySnowReportData(string lang, SkiArea skiarea, ServiceReferenceLCS.ActivitySearchRS snowdatalts, List<MeasuringpointReduced> measuringpoints)
+        public static SnowReportBaseData ParseMySnowReportData(string lang, SkiArea skiarea, IEnumerable<WebcamInfo> webcams, ServiceReferenceLCS.ActivitySearchRS snowdatalts, List<MeasuringpointReduced> measuringpoints)
         {
             SnowReportBaseData mysnowreport = new SnowReportBaseData();
 
@@ -159,7 +159,7 @@ namespace LCS
 
                 //Zufälliges webcam URL fischen muassi erst schaugn ob zuafällig
                 //var randomwebcam = new Random();
-                mysnowreport.WebcamUrl = skiarea.Webcam.Select(x => x.Webcamurl).ToList();
+                mysnowreport.WebcamUrl = webcams.Select(x => x.WebCamProperties.WebcamUrl).ToList();
 
 
                 //Lese Lift infos aus Summaries            

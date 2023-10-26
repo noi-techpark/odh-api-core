@@ -246,7 +246,7 @@ namespace OdhApiCore.Controllers.api
                             arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: myactivityhelper.languagelist,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData
+                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
@@ -296,7 +296,8 @@ namespace OdhApiCore.Controllers.api
                         .Select("data")
                         .Where("id", id.ToUpper())
                         //.When(FilterClosedData, q => q.FilterClosedData());
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

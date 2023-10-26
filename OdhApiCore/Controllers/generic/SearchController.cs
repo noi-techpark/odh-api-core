@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Responses;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(IEnumerable<SmgTags>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<JsonRaw>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
@@ -83,6 +84,7 @@ namespace OdhApiCore.Controllers
         }
 
         //TODO EXTEND THE FILTER with the possibility to add fields for search
+
 
         #endregion
 
@@ -178,7 +180,8 @@ namespace OdhApiCore.Controllers
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 //.When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
-                .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
+                //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
+                .FilterDataByAccessRoles(UserRolesToFilter)
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
                 .Limit(limitto ?? int.MaxValue);
@@ -193,6 +196,8 @@ namespace OdhApiCore.Controllers
                     .Select(json => json!);
         }
 
-        #endregion
+        #endregion       
     }
+
+    
 }

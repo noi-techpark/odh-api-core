@@ -727,32 +727,48 @@ namespace Helper
                )
            );
 
-        //Only Begindate given
-        public static Query EventShortDateFilterBegin(this Query query, DateTime? start, DateTime? end, bool active) =>
+        ////Only Begindate given
+        //public static Query EventShortDateFilterBegin(this Query query, DateTime? start, DateTime? end, bool active) =>
+        //    query.When(
+        //        start != DateTime.MinValue && end == DateTime.MaxValue && active,
+        //        query => query.WhereRaw(
+        //            "((to_timestamp(data ->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
+        //        )
+        //    );
+
+        ////Only Enddate given
+        //public static Query EventShortDateFilterEnd(this Query query, DateTime? start, DateTime? end, bool active) =>
+        //    query.When(
+        //        start == DateTime.MinValue && end != DateTime.MaxValue && active,
+        //        query => query.WhereRaw(
+        //            "((to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+        //        )
+        //    );
+
+        //Both Begin and Enddate given
+        public static Query EventShortDateFilterBeginEnd(this Query query, DateTime? start, DateTime? end, bool active) =>
+            //begin and enddate given
             query.When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "(((to_timestamp(data ->> 'StartDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "')))"
+                )
+            )
+            //only begindate given
+            .When(
                 start != DateTime.MinValue && end == DateTime.MaxValue && active,
                 query => query.WhereRaw(
                     "((to_timestamp(data ->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
                 )
-            );
-
-        //Only Enddate given
-        public static Query EventShortDateFilterEnd(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
+            )
+            //only enddate given
+            .When(
                 start == DateTime.MinValue && end != DateTime.MaxValue && active,
                 query => query.WhereRaw(
                     "((to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
                 )
             );
 
-        //Both Begin and Enddate given
-        public static Query EventShortDateFilterBeginEnd(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start != DateTime.MinValue && end != DateTime.MaxValue && active,
-                query => query.WhereRaw(
-                    "(((to_timestamp(data ->> 'StartDate', 'YYYY-MM-DD T HH24:MI:SS') >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (to_timestamp(data->> 'EndDate', 'YYYY-MM-DD T HH24:MI:SS') <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "')))"
-                )
-            );
 
         //Both Begin and Enddate given which allows Today Query (In behaviour)
         public static Query EventShortDateFilterBeginEndWithInBehaviour(this Query query, DateTime? start, DateTime? end, bool active) =>
@@ -763,30 +779,45 @@ namespace Helper
                 )
             );
 
-        //Only Begindate given
-        public static Query EventShortDateFilterBeginByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start != DateTime.MinValue && end == DateTime.MaxValue && active,
-                query => query.WhereRaw(
-                    "((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
-                )
-            );
+        ////Only Begindate given
+        //public static Query EventShortDateFilterBeginByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+        //    query.When(
+        //        start != DateTime.MinValue && end == DateTime.MaxValue && active,
+        //        query => query.WhereRaw(
+        //            "((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
+        //        )
+        //    );
 
-        //Only Enddate given
-        public static Query EventShortDateFilterEndByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start == DateTime.MinValue && end != DateTime.MaxValue && active,
-                query => query.WhereRaw(
-                    "((to_date(data->> 'EndDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
-                )
-            );
+        ////Only Enddate given
+        //public static Query EventShortDateFilterEndByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+        //    query.When(
+        //        start == DateTime.MinValue && end != DateTime.MaxValue && active,
+        //        query => query.WhereRaw(
+        //            "((to_date(data->> 'EndDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+        //        )
+        //    );
 
         //Both Begin and Enddate given
         public static Query EventShortDateFilterBeginEndByRoom(this Query query, DateTime? start, DateTime? end, bool active) =>
+            //begindate and enddate given
             query.When(
                 start != DateTime.MinValue && end != DateTime.MaxValue && active,
                 query => query.WhereRaw(
                     "(((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", start) + "') AND (to_date(data->> 'StartDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')))"
+                )
+            )
+            //only begindate given
+            .When(
+                start != DateTime.MinValue && end == DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((to_date(data ->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
+                )
+            )
+            //only enddate given
+            .When(
+                start == DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((to_date(data->> 'EndDate', 'YYYY-MM-DD') <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
                 )
             );
 
@@ -1402,46 +1433,64 @@ namespace Helper
         //Events
         //EVENTS Usecase to check
 
+        //Integrated in Query
         //Only Begindate given
-        public static Query EventDateFilterBegin_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-            query.When(
+        //public static Query EventDateFilterBegin_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        //    query.When(
+        //        begin != DateTime.MinValue && end == DateTime.MaxValue,
+        //        query => query.WhereRaw(
+        //            "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "'))"
+        //        )
+        //    );
+
+        //Integrated in Query
+        //Only Enddate given
+        //public static Query EventDateFilterEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        //    query.When(
+        //        begin == DateTime.MinValue && end != DateTime.MaxValue,
+        //        query => query.WhereRaw(
+        //            "((gen_begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+        //        )
+        //    );
+
+        //Both Begin and Enddate given
+        public static Query EventDateFilterBeginEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query
+            //Begin and enddate given
+            .When(
+                begin != DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+                )
+            )
+            //only Begindate given
+            .When(
                 begin != DateTime.MinValue && end == DateTime.MaxValue,
                 query => query.WhereRaw(
                     "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end) + "') OR(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "'))"
                 )
-            );
-
-        //Only Enddate given
-        public static Query EventDateFilterEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-            query.When(
+            )
+            //only enddate given
+            .When(
                 begin == DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
                     "((gen_begindate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate > '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
                 )
             );
 
-        //Both Begin and Enddate given
-        public static Query EventDateFilterBeginEnd_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-            query.When(
-                begin != DateTime.MinValue && end != DateTime.MaxValue,
-                query => query.WhereRaw(
-                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
-                )
-            );
-
-        //EVENT Array of Tuples(begindate, enddate)
-        //Both Begin and Enddate given
-        public static Query EventDateFilterBeginEndArray_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-            query.When(
-                begin != DateTime.MinValue && end != DateTime.MaxValue,
-                query => 
+        ////EVENT Array of Tuples(begindate, enddate)
+        ////Both Begin and Enddate given
+        //public static Query EventDateFilterBeginEndArray_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        //    query.When(
+        //        begin != DateTime.MinValue && end != DateTime.MaxValue,
+        //        query => 
                 
 
                 
-                query.WhereRaw(
-                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
-                )       
-            );
+        //        query.WhereRaw(
+        //            "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "') OR (gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_enddate < '" + String.Format("{0:yyyy-MM-dd}", end?.AddDays(1)) + "'))"
+        //        )       
+        //    );
 
         #endregion
 
@@ -1450,30 +1499,46 @@ namespace Helper
         //Article
         //NEWS Usecase: Begindate filter shows all News that ends after requested date, and all News which begin before the requested date 
 
-        //Only Begindate given
-        public static Query ArticleDateNewsFilterBeginWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-            query.When(
+        ////Only Begindate given
+        //public static Query ArticleDateNewsFilterBeginWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        //    query.When(
+        //        begin != DateTime.MinValue && end == DateTime.MaxValue,
+        //        query => query.WhereRaw(
+        //            "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", begin) + "')"
+        //        )
+        //    );
+
+        ////Only Enddate given
+        //public static Query ArticleDateNewsFilterEndWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+        //    query.When(
+        //        begin == DateTime.MinValue && end != DateTime.MaxValue,
+        //        query => query.WhereRaw(
+        //            "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", end) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
+        //        )
+        //    );
+
+        //Both Begindate and Enddate given
+        public static Query ArticleDateNewsFilterBeginEndWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
+            query
+            //begindate and enddate given
+            .When(
+                begin != DateTime.MinValue && end != DateTime.MaxValue,
+                query => query.WhereRaw(
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
+                )
+            )
+            //only begindate given
+            .When(
                 begin != DateTime.MinValue && end == DateTime.MaxValue,
                 query => query.WhereRaw(
                     "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", begin) + "')"
                 )
-            );
-
-        //Only Enddate given
-        public static Query ArticleDateNewsFilterEndWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-            query.When(
+            )
+            //only enddate given
+            .When(
                 begin == DateTime.MinValue && end != DateTime.MaxValue,
                 query => query.WhereRaw(
                     "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", end) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
-                )
-            );
-
-        //Both Begindate and Enddate given
-        public static Query ArticleDateNewsFilterBeginEndWithIN_GeneratedColumn(this Query query, DateTime? begin, DateTime? end) =>
-            query.When(
-                begin != DateTime.MinValue && end != DateTime.MaxValue,
-                query => query.WhereRaw(
-                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", begin) + "' AND gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
                 )
             );
 
@@ -1486,68 +1551,155 @@ namespace Helper
         //REGULAR Behaviour = all events that begins after(=) the startdate and ends before (=) the enddate
         //IN Behaviour = all events that ends after the startdate and begins before enddate (All events that are NOW)
 
-        //Only Begindate given
-        public static Query EventShortDateFilterBegin_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
+        ////Only Begindate given
+        //public static Query EventShortDateFilterBegin_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
+        //    query.When(
+        //        start != DateTime.MinValue && end == DateTime.MaxValue && active,
+        //        query => query.WhereRaw(
+        //            "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
+        //        )
+        //    );
+
+        ////Only Enddate given
+        //public static Query EventShortDateFilterEnd_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
+        //    query.When(
+        //        start == DateTime.MinValue && end != DateTime.MaxValue && active,
+        //        query => query.WhereRaw(
+        //            "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+        //        )
+        //    );
+
+        //Both Begin and Enddate given
+        public static Query EventShortDateFilterBeginEnd_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
+            query
+            //begindate and enddate
+            .When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+                query => query.WhereRaw(
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
+                )
+            )
+            //only begindate
+            .When(
                 start != DateTime.MinValue && end == DateTime.MaxValue && active,
                 query => query.WhereRaw(
                     "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "'))"
                 )
-            );
-
-        //Only Enddate given
-        public static Query EventShortDateFilterEnd_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
+            )
+            //only enddate
+            .When(
                 start == DateTime.MinValue && end != DateTime.MaxValue && active,
                 query => query.WhereRaw(
                     "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
                 )
             );
 
-        //Both Begin and Enddate given
-        public static Query EventShortDateFilterBeginEnd_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+
+
+        ////Only Begindate given
+        //public static Query EventShortDateFilterBeginByRoom_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
+        //    query.When(
+        //        start != DateTime.MinValue && end == DateTime.MaxValue && active,
+        //        query => query.WhereRaw(
+        //            "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
+        //        )
+        //    );
+
+        ////Only Enddate given
+        //public static Query EventShortDateFilterEndByRoom_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
+        //    query.When(
+        //        start == DateTime.MinValue && end != DateTime.MaxValue && active,
+        //        query => query.WhereRaw(
+        //            "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+        //        )
+        //    );
+
+        //Both Begin and Enddate given which allows Today Query (In behaviour)
+        public static Query EventShortDateFilter_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool inbehaviour, bool checktime) =>
+            query
+            //begindate and enddate given normal behaviour
+            .When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && !inbehaviour && checktime,
                 query => query.WhereRaw(
                     "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
                 )
-            );
-
-        //Both Begin and Enddate given which allows Today Query (In behaviour)
-        public static Query EventShortDateFilterBeginEndWithInBehaviour_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+            )
+            //begindate and enddate given IN behaviour
+            .When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && inbehaviour && checktime,
                 query => query.WhereRaw(
                     "((gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "') AND (gen_begindate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "'))"
                 )
-            );
-
-        //Only Begindate given
-        public static Query EventShortDateFilterBeginByRoom_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start != DateTime.MinValue && end == DateTime.MaxValue && active,
+            )
+            //only begindate given normal + IN behaviour is the same
+            .When(
+                start != DateTime.MinValue && end == DateTime.MaxValue && checktime,
                 query => query.WhereRaw(
-                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "'))"
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", start) + "')"
                 )
-            );
-
-        //Only Enddate given
-        public static Query EventShortDateFilterEndByRoom_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start == DateTime.MinValue && end != DateTime.MaxValue && active,
+            )
+            //only enddate given normal + IN behaviour is the same
+            .When(
+                start == DateTime.MinValue && end != DateTime.MaxValue && checktime,
                 query => query.WhereRaw(
-                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd HH:mm:ss}", end) + "')"
                 )
-            );
-
-        //Both Begin and Enddate given
-        public static Query EventShortDateFilterBeginEndByRoom_GeneratedColumn(this Query query, DateTime? start, DateTime? end, bool active) =>
-            query.When(
-                start != DateTime.MinValue && end != DateTime.MaxValue && active,
+            )
+            //begindate and enddate given normal behaviour without time check
+            .When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && !inbehaviour && !checktime,
+                query => query.WhereRaw(
+                    "((gen_begindate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "') AND (gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
+                )
+            )
+            //begindate and enddate given IN behaviour without time check
+            .When(
+                start != DateTime.MinValue && end != DateTime.MaxValue && inbehaviour && !checktime,
                 query => query.WhereRaw(
                     "((gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "') AND (gen_begindate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "'))"
                 )
-            );
+            )
+            //only begindate given
+            .When(
+                start != DateTime.MinValue && end == DateTime.MaxValue && !checktime,
+                query => query.WhereRaw(
+                    "(gen_enddate >= '" + String.Format("{0:yyyy-MM-dd}", start) + "')"
+                )
+            )
+            //only enddate given
+            .When(
+                start == DateTime.MinValue && end != DateTime.MaxValue && !checktime,
+                query => query.WhereRaw(
+                    "(gen_enddate <= '" + String.Format("{0:yyyy-MM-dd}", end) + "')"
+                )
+            );        
+
+        #endregion
+
+        #region DateTime_Query_Helpers_tsmultirange
+
+        //Both Begin and Enddate given IN Behaviour
+
+        public static Query DateFilter_GeneratedColumn(this Query query, DateTime? start, DateTime? end, string gen_tsrangecolumn) =>
+            query
+            .When(
+                //Both given, Adds a Day to End, if Endday has no time given add a day
+                start != null && end != null,
+                query => query.WhereRaw(
+                    String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", end.Value.TimeOfDay == TimeSpan.Zero ? end.Value.AddDays(1) : end))
+                ))
+            .When(
+                //Only End given setting start to datetime min, if Endday has no time given add a day
+                start == null && end != null,
+                query => query.WhereRaw(
+                    String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.MinValue), String.Format("{0:yyyy-MM-dd HH:mm}", end.Value.TimeOfDay == TimeSpan.Zero ? end.Value.AddDays(1) : end))
+                ))
+            .When(
+                //Addds a Day to End
+                start != null && end == null,
+                query => query.WhereRaw(
+                    String.Format("gen_eventdates && tsrange('\\[{0},{1}\\]')", String.Format("{0:yyyy-MM-dd HH:mm}", start), String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.MaxValue))
+                ));
 
 
         #endregion
@@ -1557,32 +1709,46 @@ namespace Helper
         //anonymous -> where (closeddata = false and source != lts) OR (reduced = true and source = lts and cc0 = true)
         //logged -> where (source != lts) OR (reduced = true and source = lts)
         //idmuser -> where (source != lts) OR (reduced = false and source = lts)
-        public static Query Anonymous_Logged_UserRule_GeneratedColumn(this Query query, bool closeddatafilter, bool idmuser) =>
-            idmuser ? query.FilterSourceReducedLogged(false) : closeddatafilter ? query.FilterSourceReducedAnonymous() : query.FilterSourceReducedLogged(true);
+        //public static Query Anonymous_Logged_UserRule_GeneratedColumn(this Query query, bool closeddatafilter, bool idmuser) =>
+        //    idmuser ? query.FilterSourceReducedLogged(false) : closeddatafilter ? query.FilterSourceReducedAnonymous() : query.FilterSourceReducedLogged(true);
 
-        public static Query FilterSourceReducedLogged(this Query query, bool reduced) =>
-            query.Where(q =>
-                q.WhereRaw(
-                    "(gen_source <> 'lts')"
-                ).OrWhereRaw(
-                    "(gen_source = 'lts' AND gen_reduced = $$)", reduced
-                )
-            );
+        //public static Query FilterSourceReducedLogged(this Query query, bool reduced) =>
+        //    query.Where(q =>
+        //        q.WhereRaw(
+        //            "(gen_source <> 'lts')"
+        //        ).OrWhereRaw(
+        //            "(gen_source = 'lts' AND gen_reduced = $$)", reduced
+        //        )
+        //    );
 
-        public static Query FilterSourceReducedAnonymous(this Query query) =>
-            query.Where(q =>
-                q.WhereRaw(
-                    "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$))", false
-                ).OrWhereRaw(
-                    "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$)))", false
-                )
-            );
+        //public static Query FilterSourceReducedAnonymous(this Query query) =>
+        //    query.Where(q =>
+        //        q.WhereRaw(
+        //            "(gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$))", false
+        //        ).OrWhereRaw(
+        //            "(gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$)))", false
+        //        )
+        //    );
 
         #endregion
 
-        
+        #region Filter by Roles
+
+        public static Query FilterDataByAccessRoles(this Query query, IEnumerable<string> roles) =>
+            query.Where(q =>
+            {
+                foreach (var item in roles)
+                {
+                    q = q.OrWhereRaw(
+                        "gen_access_role @> array\\[$$\\]", item.ToUpper()
+                    );
+                }
+                return q;
+            });
+
+        #endregion
 
     }
 
-    
+
 }
