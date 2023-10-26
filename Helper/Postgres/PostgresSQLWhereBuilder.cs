@@ -189,8 +189,9 @@ namespace Helper
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
                 .HighlightFilter(highlight)                
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -235,6 +236,7 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());                 //OK GENERATED COLUMNS   
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -279,6 +281,7 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -346,6 +349,7 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -390,6 +394,7 @@ namespace Helper
                 //.EventDateFilterBegin_GeneratedColumn(articledate, articledateto)                
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -446,7 +451,7 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
-                .When(userroles.Any(x => x == "IDM"), q => q.FilterClosedData())
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -501,6 +506,7 @@ namespace Helper
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -530,6 +536,7 @@ namespace Helper
                 .VisibleInSearchFilter(visibleinsearch)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -555,6 +562,7 @@ namespace Helper
                 .CompanyIdFilter(companyid)
                 .WineIdFilter(wineid)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -586,6 +594,7 @@ namespace Helper
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -613,6 +622,7 @@ namespace Helper
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .SearchFilter(WeatherHistoryFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -650,8 +660,9 @@ namespace Helper
                 .AreaFilterMeasuringpoints(arealist)
                 .SkiAreaFilterMeasuringpoints(skiarealist)
                 .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
-                                                                           //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                                                                           //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -698,6 +709,7 @@ namespace Helper
                 .SearchFilter(EventShortTitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -753,6 +765,7 @@ namespace Helper
                 //.When(filterClosedData, q => q.FilterClosedDataVenues());
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -799,6 +812,7 @@ namespace Helper
                 .ODHTagValidForEntityFilter(validforentitylist)
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 
@@ -819,6 +833,7 @@ namespace Helper
                 .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
                 .SourceFilter_GeneratedColumn(sourcelist)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 

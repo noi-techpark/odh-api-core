@@ -1748,7 +1748,7 @@ namespace Helper
 
         //Filter Out Reduced
         public static Query FilterReducedDataByRoles(this Query query) =>
-            query.WhereRaw("gen_reduced = true");
+            query.WhereRaw("gen_reduced = false");
 
         #endregion
 
