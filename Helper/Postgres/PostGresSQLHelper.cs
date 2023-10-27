@@ -48,6 +48,11 @@ namespace Helper
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((data#>>'\\{{GpsPoints,position,Latitude\\}}')::double precision, (data#>>'\\{{GpsPoints,position,Longitude\\}}')::double precision)) < {radius.ToString()}";
         }
 
+        public static string GetGeoWhereExtendedGpsInfo(double latitude, double longitude, int radius)
+        {
+            return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((data#>>'\\{{GpsInfo,0,Latitude\\}}')::double precision, (data#>>'\\{{GpsInfo,0,Longitude\\}}')::double precision)) < {radius.ToString()}";
+        }
+
         //public static string GetGeoWhereExtended(string latitude, string longitude, string radius)
         //{
         //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < " + radius;
