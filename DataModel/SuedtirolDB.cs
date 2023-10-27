@@ -2422,7 +2422,7 @@ namespace DataModel
     }
 
     //BaseInfos for Districts / Regions / Municipalities ...
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware, IPublishedOn
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware, IPublishedOn, IGPSInfoAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2439,15 +2439,15 @@ namespace DataModel
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
 
-        [SwaggerDeprecated("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public string? Gpstype { get; set; }
-        [SwaggerDeprecated("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public double Latitude { get; set; }
-        [SwaggerDeprecated("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public double Longitude { get; set; }
-        [SwaggerDeprecated("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public Nullable<double> Altitude { get; set; }
-        [SwaggerDeprecated("Deprecated, use GpsPoints")]
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -2486,6 +2486,9 @@ namespace DataModel
                 }
             }
         }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
 
         //New published on List
         public ICollection<string>? PublishedOn { get; set; }
