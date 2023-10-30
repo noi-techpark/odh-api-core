@@ -839,7 +839,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
+    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -912,34 +912,24 @@ namespace DataModel
         [SwaggerSchema("Independent Data <a href='https://www.independent.it/it/cooperativa-independent' target='_blank'>cooperative Independent</a>")]
         public IndependentData? IndependentData { get; set; }
 
-        public ICollection<AccoRoomInfo>? AccoRoomInfo { get; set; }
-
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                if (this.Latitude != 0 && this.Longitude != 0)
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
-                    };
-                }
-                else
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
-                }
-            }
-        }
+        public ICollection<AccoRoomInfo>? AccoRoomInfo { get; set; }       
 
         public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+    }
+
+    public class AccommodationRaven : Accommodation
+    {
+        public new ICollection<AccoFeatureLinked>? Features { get; set; }
+
+        //Overwrites The Features
+        public new ICollection<AccoRoomInfoLinked>? AccoRoomInfo { get; set; }
+
+        //Overwrites The LocationInfo
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class AccoRoomInfo

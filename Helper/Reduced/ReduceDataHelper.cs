@@ -284,12 +284,12 @@ namespace Helper
             reduced.AccoDetail = ReducedDataHelper.ReduceAccoDetail(myacco.AccoDetail ?? new Dictionary<string, AccoDetail>());
 
             //A1GEP, A1GNP, A0Alt
-            reduced.Gpstype = myacco.Gpstype;
-            reduced.Latitude = myacco.Latitude;
-            reduced.Longitude = myacco.Longitude;
-            reduced.Altitude = myacco.Altitude;
-            reduced.AltitudeUnitofMeasure = myacco.AltitudeUnitofMeasure;
-            //reduced.GpsPoints = myacco.GpsPoints; //Calculated
+            //reduced.Gpstype = myacco.Gpstype;
+            //reduced.Latitude = myacco.Latitude;
+            //reduced.Longitude = myacco.Longitude;
+            //reduced.Altitude = myacco.Altitude;
+            //reduced.AltitudeUnitofMeasure = myacco.AltitudeUnitofMeasure;
+            reduced.GpsInfo = myacco.GpsInfo;
 
             //A0Roo
             reduced.HasRoom = myacco.HasRoom;

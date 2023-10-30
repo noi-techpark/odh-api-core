@@ -55,6 +55,20 @@ namespace DataModel
             }           
         }
 
+        public static ICollection<GpsInfo> ConvertGpsInfoOnRootToGpsInfoArray(this IGpsInfo gpsinfo)
+        {
+            if (gpsinfo.Latitude != 0 && gpsinfo.Longitude != 0)
+            {
+                return new List<GpsInfo>
+                    {
+                        new GpsInfo(){ Gpstype = "position", Altitude = gpsinfo.Altitude, AltitudeUnitofMeasure = gpsinfo.AltitudeUnitofMeasure, Latitude = gpsinfo.Latitude, Longitude = gpsinfo.Longitude }
+                    };
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         //public IDictionary<string, GpsInfo> GpsPoints
         //{
