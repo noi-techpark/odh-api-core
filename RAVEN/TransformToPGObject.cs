@@ -386,6 +386,69 @@ namespace RAVEN
             return data;
         }
 
+        public static EventLinked GetEventPGObject(EventRaven data)
+        {
+            EventLinked eventlinked = new EventLinked();
+
+            eventlinked.Id = data.Id.ToUpper();
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                eventlinked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            eventlinked.Source = "lts";
+
+            eventlinked.Active = data.Active;
+            eventlinked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            eventlinked.ClassificationRID = data.ClassificationRID;
+            eventlinked.ContactInfos = data.ContactInfos;
+            eventlinked.DateBegin = data.DateBegin;
+            eventlinked.DateEnd = data.DateEnd;
+            eventlinked.Detail = data.Detail;
+            eventlinked.DistanceInfo = data.DistanceInfo;
+            eventlinked.DistrictId = data.DistrictId;
+            eventlinked.DistrictIds = data.DistrictIds;
+            eventlinked.EventAdditionalInfos = data.EventAdditionalInfos;
+            eventlinked.EventBenefit = data.EventBenefit;
+            eventlinked.EventBooking = data.EventBooking;
+            eventlinked.EventCrossSelling = data.EventCrossSelling;
+            eventlinked.EventDate = data.EventDate;
+            eventlinked.EventDescAdditional = data.EventDescAdditional;
+            eventlinked.EventOperationScheduleOverview = data.EventOperationScheduleOverview;
+            eventlinked.EventPrice = data.EventPrice;
+            eventlinked.EventPrices = data.EventPrices;
+            eventlinked.EventPublisher = data.EventPublisher;
+            eventlinked.FirstImport = data.FirstImport;
+            eventlinked.GrpEvent = data.GrpEvent;
+            eventlinked.Hashtag = data.Hashtag;
+            eventlinked.HasLanguage = data.HasLanguage;
+            eventlinked.ImageGallery = data.ImageGallery;
+            eventlinked.LastChange = data.LastChange;
+            eventlinked.LicenseInfo = data.LicenseInfo;
+            eventlinked.LocationInfo = data.LocationInfo;
+            eventlinked.LTSTags = data.LTSTags;
+            eventlinked.Mapping = data.Mapping;
+            eventlinked.NextBeginDate = data.NextBeginDate;
+            eventlinked.OrganizerInfos = data.OrganizerInfos;
+            eventlinked.OrgRID = data.OrgRID;
+            eventlinked.PayMet = data.PayMet;
+            eventlinked.Pdf = data.Pdf;
+            eventlinked.Ranc = data.Ranc;
+            eventlinked.Shortname = data.Shortname;
+            eventlinked.SignOn = data.SignOn;
+            eventlinked.SmgActive = data.SmgActive;
+            eventlinked.SmgTags = data.SmgTags;
+            eventlinked.Ticket = data.Ticket;
+            eventlinked.TopicRIDs = data.TopicRIDs;
+            eventlinked.Topics = data.Topics;
+            eventlinked.Type = data.Type;
+            
+            //TODO make some props obsolete
+
+            eventlinked._Meta = MetadataHelper.GetMetadataobject<EventLinked>(eventlinked, MetadataHelper.GetMetadataforEvent); //GetMetadata(data.Id, "event", "lts", data.LastChange);
+            
+            return eventlinked;
+        }
+
         public static GastronomyLinked GetGastronomyPGObject(GastronomyLinked data)
         {
             data.Id = data.Id.ToUpper();

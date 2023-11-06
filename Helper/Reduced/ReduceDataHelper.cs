@@ -336,11 +336,12 @@ namespace Helper
             reduced.Id = myevent.Id + "_REDUCED";
 
             //Definition/GEP, GNP
-            reduced.Gpstype = myevent.Gpstype;
-            reduced.Latitude = myevent.Latitude;
-            reduced.Longitude = myevent.Longitude;
-            reduced.Altitude = myevent.Altitude;
-            reduced.AltitudeUnitofMeasure = myevent.AltitudeUnitofMeasure;
+            //reduced.Gpstype = myevent.Gpstype;
+            //reduced.Latitude = myevent.Latitude;
+            //reduced.Longitude = myevent.Longitude;
+            //reduced.Altitude = myevent.Altitude;
+            //reduced.AltitudeUnitofMeasure = myevent.AltitudeUnitofMeasure;
+            reduced.GpsInfo = myevent.GpsInfo;
 
             //DefinitionLng/Title
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(myevent.Detail);

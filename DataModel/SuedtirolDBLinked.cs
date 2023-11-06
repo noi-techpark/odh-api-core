@@ -325,7 +325,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
-    public class AccommodationLinked : Accommodation, IMetaData, IGPSPointsAware, IGPSInfoAware
+    public class AccommodationLinked : Accommodation, IMetaData, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -460,7 +460,7 @@ namespace DataModel
     //    public int EventDateCounter { get; set; }
     //}
 
-    public class EventLinked : Event, IMetaData
+    public class EventLinked : Event, IMetaData, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -502,12 +502,6 @@ namespace DataModel
             }
         }
 
-        //public class DateRange
-        //{
-        //    public DateTime? From { get; set; }
-        //    public DateTime? To { get; set; }
-        //}
-
         public ICollection<DistrictLink> Districts
         {
             get
@@ -541,6 +535,29 @@ namespace DataModel
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
+
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
     public class VenueLinked : Venue, IMetaData

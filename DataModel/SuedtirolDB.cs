@@ -1104,9 +1104,120 @@ namespace DataModel
 
     #region Events
 
-    public class Event : EventBaseInfos
+    public class Event : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
+        public LicenseInfo? LicenseInfo { get; set; }
 
+        public Event()
+        {
+            Detail = new Dictionary<string, Detail>();
+            ContactInfos = new Dictionary<string, ContactInfos>();
+            OrganizerInfos = new Dictionary<string, ContactInfos>();
+            EventAdditionalInfos = new Dictionary<string, EventAdditionalInfos>();
+            EventPrice = new Dictionary<string, EventPrice>();
+            EventPrices = new Dictionary<string, ICollection<EventPrice>>();
+            //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
+            Hashtag = new Dictionary<string, ICollection<string>>();
+            EventDescAdditional = new Dictionary<string, EventDescAdditional>();
+            Mapping = new Dictionary<string, IDictionary<string, string>>();
+        }
+
+        public string? Id { get; set; }
+        public bool Active { get; set; }
+        public string? Shortname { get; set; }
+
+        public Nullable<DateTime> DateBegin { get; set; }
+        public Nullable<DateTime> DateEnd { get; set; }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+
+        //GPS Info
+        public string? Gpstype { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public Nullable<double> Altitude { get; set; }
+        public string? AltitudeUnitofMeasure { get; set; }
+
+        public string? OrgRID { get; set; }
+
+        [SwaggerDeprecated("Obsolete use EventPublisher List")]
+        public int? Ranc { get; set; }
+        public string? Ticket { get; set; }
+        public string? SignOn { get; set; }
+        public string? PayMet { get; set; }
+
+        [SwaggerDeprecated("Obsolete")]
+        public string? Type { get; set; }
+        public string Pdf { get; set; }
+
+        public string? DistrictId { get; set; }
+        public ICollection<string>? DistrictIds { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
+
+        public IDictionary<string, Detail> Detail { get; set; }
+
+        public ICollection<string>? TopicRIDs { get; set; }
+        public ICollection<Topic>? Topics { get; set; }
+
+
+        public ICollection<EventPublisher>? EventPublisher { get; set; }
+
+        public IDictionary<string, EventAdditionalInfos> EventAdditionalInfos { get; set; }
+        public IDictionary<string, EventPrice> EventPrice { get; set; }
+
+        public ICollection<EventDate>? EventDate { get; set; }
+
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+        public IDictionary<string, ContactInfos> OrganizerInfos { get; set; }
+
+        public LocationInfo? LocationInfo { get; set; }
+
+        public ICollection<string>? SmgTags { get; set; }
+        public bool SmgActive { get; set; }
+
+        public ICollection<string>? HasLanguage { get; set; }
+
+        public Nullable<DateTime> NextBeginDate { get; set; }
+
+        public string Source { get; set; }
+        public bool? GrpEvent { get; set; }
+        public bool? EventBenefit { get; set; }
+        public EventBooking? EventBooking { get; set; }
+        public ICollection<LTSTags> LTSTags { get; set; }
+
+        public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
+
+        //Only for LTS internal use
+        //public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
+
+        public IDictionary<string, ICollection<string>> Hashtag { get; set; }
+
+        public EventOperationScheduleOverview EventOperationScheduleOverview { get; set; }
+
+        public ICollection<string>? PublishedOn { get; set; }
+
+        public string ClassificationRID { get; set; }
+
+        public ICollection<EventCrossSelling> EventCrossSelling { get; set; }
+        public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
+
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public DistanceInfo? DistanceInfo { get; set; }
+    }
+
+    public class EventRaven : Event
+    {
+        //Overwrites The Features
+        public new ICollection<TopicLinked> Topics { get; set; }
+
+        //Overwrites The LocationInfo
+        public new LocationInfoLinked? LocationInfo { get; set; }
+
+        //Overwrites LTSTags
+        public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
     //TODO Migrate to new EventPricing class
@@ -2785,132 +2896,6 @@ namespace DataModel
         public string? Source { get; set; }
 
         //New Mapping
-        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
-
-        public DistanceInfo? DistanceInfo { get; set; }
-    }
-
-    //BaseInfo Events
-    public abstract class EventBaseInfos : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
-    {
-        public LicenseInfo? LicenseInfo { get; set; }
-
-        public EventBaseInfos()
-        {
-            Detail = new Dictionary<string, Detail>();
-            ContactInfos = new Dictionary<string, ContactInfos>();
-            OrganizerInfos = new Dictionary<string, ContactInfos>();
-            EventAdditionalInfos = new Dictionary<string, EventAdditionalInfos>();
-            EventPrice = new Dictionary<string, EventPrice>();
-            EventPrices = new Dictionary<string, ICollection<EventPrice>>();
-            //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
-            Hashtag = new Dictionary<string, ICollection<string>>();
-            EventDescAdditional = new Dictionary<string, EventDescAdditional>();
-            Mapping = new Dictionary<string, IDictionary<string, string>>();
-        }
-
-        public string? Id { get; set; }
-        public bool Active { get; set; }
-        public string? Shortname { get; set; }
-
-        public Nullable<DateTime> DateBegin { get; set; }
-        public Nullable<DateTime> DateEnd { get; set; }
-
-        public DateTime? FirstImport { get; set; }
-        public DateTime? LastChange { get; set; }
-
-
-        //GPS Info
-        public string? Gpstype { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public Nullable<double> Altitude { get; set; }
-        public string? AltitudeUnitofMeasure { get; set; }
-
-        public string? OrgRID { get; set; }
-
-        [SwaggerDeprecated("Obsolete use EventPublisher List")]
-        public int? Ranc { get; set; }
-        public string? Ticket { get; set; }
-        public string? SignOn { get; set; }
-        public string? PayMet { get; set; }
-
-        [SwaggerDeprecated("Obsolete")]
-        public string? Type { get; set; }
-        public string Pdf { get; set; }
-
-        public string? DistrictId { get; set; }
-        public ICollection<string>? DistrictIds { get; set; }
-        public ICollection<ImageGallery>? ImageGallery { get; set; }
-
-        public IDictionary<string, Detail> Detail { get; set; }
-
-        public ICollection<string>? TopicRIDs { get; set; }
-        public ICollection<Topic>? Topics { get; set; }
-
-
-        public ICollection<EventPublisher>? EventPublisher { get; set; }
-
-        public IDictionary<string, EventAdditionalInfos> EventAdditionalInfos { get; set; }
-        public IDictionary<string, EventPrice> EventPrice { get; set; }
-
-        public ICollection<EventDate>? EventDate { get; set; }
-
-        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
-        public IDictionary<string, ContactInfos> OrganizerInfos { get; set; }
-
-        public LocationInfo? LocationInfo { get; set; }
-
-        public ICollection<string>? SmgTags { get; set; }
-        public bool SmgActive { get; set; }
-
-        public ICollection<string>? HasLanguage { get; set; }
-
-        public Nullable<DateTime> NextBeginDate { get; set; }
-
-        public string Source { get; set; }
-        public bool? GrpEvent { get; set; }
-        public bool? EventBenefit { get; set; }
-        public EventBooking? EventBooking { get; set; }
-        public ICollection<LTSTags> LTSTags { get; set; }
-
-        public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
-
-        //Only for LTS internal use
-        //public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
-
-        public IDictionary<string, ICollection<string>> Hashtag { get; set; }
-
-        public EventOperationScheduleOverview EventOperationScheduleOverview { get; set; }
-
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                if (this.Latitude != 0 && this.Longitude != 0)
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
-                    };
-                }
-                else
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
-                }
-            }
-        }
-
-        public ICollection<string>? PublishedOn { get; set; }
-
-        public string ClassificationRID { get; set; }
-
-        public ICollection<EventCrossSelling> EventCrossSelling { get; set; }
-        public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
-
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }

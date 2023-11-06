@@ -241,7 +241,7 @@ namespace Helper
         }
 
         //For Events
-        public static void CheckMyInsertedLanguages(this EventBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Event mypoiactivity, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();

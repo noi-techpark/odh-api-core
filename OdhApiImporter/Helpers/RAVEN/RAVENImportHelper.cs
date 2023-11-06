@@ -220,9 +220,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "event":
-                    mydata = await GetDataFromRaven.GetRavenData<EventLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<EventRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<EventLinked, EventLinked>((EventLinked)mydata, TransformToPGObject.GetEventPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<EventRaven, EventLinked>((EventRaven)mydata, TransformToPGObject.GetEventPGObject);
                     else
                         throw new Exception("No data found!");
 

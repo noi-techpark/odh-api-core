@@ -162,9 +162,16 @@ namespace CDB.Parser
                     //Contactinfo
                     if (definitionde != null)
                     {
-                        myevent.Gpstype = "position";
-                        myevent.Latitude = Double.Parse(definitionde.Attribute("GNP").Value, myculture);
-                        myevent.Longitude = Double.Parse(definitionde.Attribute("GEP").Value, myculture);
+                        myevent.GpsInfo = new List<GpsInfo>();
+                        GpsInfo eventgpsinfo = new GpsInfo();
+
+                        eventgpsinfo.Gpstype = "position";
+                        eventgpsinfo.Latitude = Double.Parse(definitionde.Attribute("GNP").Value, myculture);
+                        eventgpsinfo.Longitude = Double.Parse(definitionde.Attribute("GEP").Value, myculture);
+                        eventgpsinfo.AltitudeUnitofMeasure = "m";
+
+                        myevent.GpsInfo.Add(eventgpsinfo);
+
                         myevent.SignOn = definitionde.Attribute("SignOn") != null ? definitionde.Attribute("SignOn").Value : "";
 
                         //PayMet types
