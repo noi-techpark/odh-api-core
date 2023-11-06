@@ -19,7 +19,7 @@ namespace DataModel
 
     public class AccoFeatureLinked : AccoFeature
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -30,7 +30,7 @@ namespace DataModel
 
     public class AccoRoomInfoLinked : AccoRoomInfo
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -41,7 +41,7 @@ namespace DataModel
 
     public class TopicLinked : Topic
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -52,7 +52,7 @@ namespace DataModel
 
     public class CategoryCodesLinked : CategoryCodes
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -63,7 +63,7 @@ namespace DataModel
 
     public class FacilitiesLinked : Facilities
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -74,7 +74,7 @@ namespace DataModel
 
     public class CapacityCeremonyLinked : CapacityCeremony
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -85,7 +85,7 @@ namespace DataModel
 
     public class DishRatesLinked : DishRates
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -96,7 +96,7 @@ namespace DataModel
 
     public class RegionInfoLinked : RegionInfo
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -107,7 +107,7 @@ namespace DataModel
 
     public class TvInfoLinked : TvInfo
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -118,7 +118,7 @@ namespace DataModel
 
     public class MunicipalityInfoLinked : MunicipalityInfo
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -129,7 +129,7 @@ namespace DataModel
 
     public class DistrictInfoLinked : DistrictInfo
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -140,7 +140,7 @@ namespace DataModel
 
     public class AreaInfoLinked : AreaInfo
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -160,7 +160,7 @@ namespace DataModel
 
     public class LTSTagsLinked : LTSTags
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -172,7 +172,7 @@ namespace DataModel
     public class ODHTags
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     //NEW Tags GENERIC
@@ -181,7 +181,7 @@ namespace DataModel
         public string Id { get; set; }
 
         public string Source { get; set; }
-        public string Self
+        public string? Self
         {
             get
             {
@@ -194,92 +194,92 @@ namespace DataModel
     public class ODHActivityPoiTypesLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
         public string Type { get; set; }
     }
 
     public class AccoCategory
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class AccoType
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class AccoBoards
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class AccoBadges
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class AccoThemes
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class AccoSpecialFeatures
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class DistrictLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class TourismAssociationLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class RegionLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class MunicipalityLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class AreaLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class SkiAreaLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class SkiRegionLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     public class CompanyLink
     {
         public string Id { get; set; }
-        public string Self { get; set; }
+        public string? Self { get; set; }
     }
 
     #endregion
@@ -290,7 +290,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -329,7 +329,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -416,7 +416,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -470,7 +470,7 @@ namespace DataModel
         }
 
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -521,7 +521,7 @@ namespace DataModel
 
     public class VenueLinked : Venue, IMetaData
     {
-        public string Self
+        public string? Self
         {
             get
             {
@@ -559,7 +559,7 @@ namespace DataModel
 
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -658,7 +658,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -716,7 +716,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -829,7 +829,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -882,7 +882,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -927,7 +927,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -972,7 +972,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1009,7 +1009,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1062,7 +1062,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1107,7 +1107,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1160,7 +1160,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1224,7 +1224,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1253,7 +1253,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1290,7 +1290,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1322,7 +1322,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1351,7 +1351,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1364,7 +1364,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1377,7 +1377,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1390,7 +1390,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1403,7 +1403,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1416,7 +1416,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1430,7 +1430,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        public string Self
+        public string? Self
         {
             get
             {
@@ -1492,7 +1492,7 @@ namespace DataModel
         //    set { swaggerUrl = value; }
         //}
 
-        public string Self
+        public string? Self
         {
             get
             {
