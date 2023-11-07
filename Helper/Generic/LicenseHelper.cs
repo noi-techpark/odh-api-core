@@ -85,7 +85,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforGastronomy(GastronomyBaseInfos data)
+        public static LicenseInfo GetLicenseforGastronomy(Gastronomy data)
         {
             var isopendata = false;
             var licensetype = "Closed";
@@ -260,7 +260,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforArticle(ArticleBaseInfos data)
+        public static LicenseInfo GetLicenseforArticle(Article data)
         {
             var isopendata = false;
             var licensetype = "Closed";

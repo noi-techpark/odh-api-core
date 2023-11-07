@@ -3098,9 +3098,6 @@ namespace DataModel
         public double Longitude { get; set; }
     }
 
-
-
-
     public class PublishedonObject
     {
         public string Type { get; set; }

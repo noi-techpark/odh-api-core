@@ -27,7 +27,7 @@ namespace JsonLDTransformer
                     objectlist.Add(TransformAccommodationToLD((Accommodation)(object)data, language));
                     break;
                 case "Gastronomy":
-                    objectlist.Add(TransformGastronomyToLD((GastronomyBaseInfos)(object)data, language));
+                    objectlist.Add(TransformGastronomyToLD((Gastronomy)(object)data, language));
                     break;
                 case "Event":
 
@@ -82,7 +82,7 @@ namespace JsonLDTransformer
             return myhotel;
         }
 
-        public static RestaurantLD TransformGastronomyToLD(GastronomyBaseInfos gastro, string language)
+        public static RestaurantLD TransformGastronomyToLD(Gastronomy gastro, string language)
         {
             RestaurantLD mygastro = new RestaurantLD();
 

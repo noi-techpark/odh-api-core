@@ -32,7 +32,7 @@ namespace Helper
         }
 
         //For Articles
-        public static void CheckMyInsertedLanguages(this ArticleBaseInfos myarticle, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Article myarticle, List<string> availablelanguages)
         {
             if (myarticle.HasLanguage == null)
                 myarticle.HasLanguage = new List<string>();
@@ -335,7 +335,7 @@ namespace Helper
         }
 
         //For Gastronomy
-        public static void CheckMyInsertedLanguages(this GastronomyBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Gastronomy mypoiactivity, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
