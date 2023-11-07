@@ -468,6 +468,54 @@ namespace RAVEN
             return data;
         }
 
+        public static GastronomyLinked GetGastronomyPGObject(GastronomyRaven data)
+        {
+            GastronomyLinked gastro = new GastronomyLinked();
+
+            gastro.Id = data.Id.ToUpper();
+            gastro.Active = data.Active;
+            gastro.CapacityCeremony = data.CapacityCeremony;
+            gastro.CategoryCodes = data.CategoryCodes;
+            gastro.ContactInfos = data.ContactInfos;
+            gastro.Detail = data.Detail;
+            gastro.DishRates = data.DishRates;
+            gastro.DistanceInfo = data.DistanceInfo;
+            gastro.DistrictId = data.DistrictId;
+            gastro.Facilities = data.Facilities;
+            gastro.FirstImport = data.FirstImport;
+            gastro.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            gastro.HasLanguage = data.HasLanguage;
+            gastro.ImageGallery = data.ImageGallery;
+            gastro.LastChange = data.LastChange;
+            gastro.LicenseInfo = data.LicenseInfo;
+            gastro.LocationInfo = data.LocationInfo;
+            gastro.Mapping = data.Mapping;
+            gastro.MarketinggroupId = data.MarketinggroupId;
+            gastro.MaxSeatingCapacity = data.MaxSeatingCapacity;
+            gastro.OperationSchedule = data.OperationSchedule;
+            gastro.RepresentationRestriction = data.RepresentationRestriction;
+            gastro.Shortname = data.Shortname;
+            gastro.SmgActive = data.SmgActive;
+            gastro.Source = data.Source;
+            gastro.SmgTags = data.SmgTags;
+            gastro.Type = data.Type;           
+
+            if (!String.IsNullOrEmpty(data.AccommodationId))
+                gastro.AccommodationId = data.AccommodationId.ToUpper();
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                gastro.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                gastro.Source = "lts";
+
+            gastro.PublishedOn = new List<string>();
+
+            gastro._Meta = MetadataHelper.GetMetadataobject<GastronomyLinked>(gastro, MetadataHelper.GetMetadataforGastronomy); //GetMetadata(data.Id, "ltsgastronomy", "lts", data.LastChange);
+
+            return gastro;
+        }
+
         public static WebcamInfoLinked GetWebcamInfoPGObject(WebcamInfoLinked data)
         {
             data.Id = data.Id.ToUpper();

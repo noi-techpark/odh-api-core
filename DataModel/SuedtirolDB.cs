@@ -1056,6 +1056,11 @@ namespace DataModel
 
     public class GastronomyRaven : GastronomyBaseInfos
     {
+        public new ICollection<CategoryCodesLinked>? CategoryCodes { get; set; }
+        public new ICollection<DishRatesLinked>? DishRates { get; set; }
+        public new ICollection<CapacityCeremonyLinked>? CapacityCeremony { get; set; }
+        public new ICollection<FacilitiesLinked>? Facilities { get; set; }        
+        public new LocationInfoLinked? LocationInfo { get; set; }
 
     }
 
@@ -3082,15 +3087,19 @@ namespace DataModel
         public WebcamProperties WebCamProperties { get; set; }
 
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [Obsolete("Use Detail.Title")]
         public new IDictionary<string, string> Webcamname { get { return this.Detail.ToDictionary(x => x.Key, x => x.Value.Title); } }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [Obsolete("Use WebcamProperties.Webcamurl")]
         public new string? Webcamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.WebcamUrl : null; } }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [Obsolete("Use WebcamProperties.Streamurl")]
         public new string? Streamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.StreamUrl : null; } }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [Obsolete("Use WebcamProperties.Previewurl")]
         public new string? Previewurl { get { return this.WebCamProperties != null ? this.WebCamProperties.PreviewUrl : null; } }
 

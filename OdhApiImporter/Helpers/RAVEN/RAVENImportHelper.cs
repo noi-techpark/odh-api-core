@@ -127,9 +127,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "gastronomy":
-                    mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<GastronomyRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<GastronomyLinked, GastronomyLinked>((GastronomyLinked)mydata, TransformToPGObject.GetGastronomyPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<GastronomyRaven, GastronomyLinked>((GastronomyRaven)mydata, TransformToPGObject.GetGastronomyPGObject);
                     else
                         throw new Exception("No data found!");
 
