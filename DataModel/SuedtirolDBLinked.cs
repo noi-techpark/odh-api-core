@@ -286,7 +286,7 @@ namespace DataModel
 
     #region Linked Main Classes
 
-    public class GastronomyLinked : GastronomyBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class GastronomyLinked : Gastronomy, IMetaData, IGPSInfoAware, IGPSPointsAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -493,14 +493,6 @@ namespace DataModel
         //Overwrites The Features
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
     }
-
-    //public class EventPG : Event
-    //{
-    //    public List<DateTime> EventDatesBegin { get; set; }
-    //    public List<DateTime> EventDatesEnd { get; set; }
-
-    //    public int EventDateCounter { get; set; }
-    //}
 
     public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware
     {
@@ -882,7 +874,7 @@ namespace DataModel
         }
     }
 
-    public class ArticlesLinked : ArticleBaseInfos, IMetaData
+    public class ArticlesLinked : Article, IMetaData
     {
         public Metadata? _Meta { get; set; }
 
