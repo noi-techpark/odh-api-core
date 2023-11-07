@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using Helper;
 using Helper.Extensions;
+using System.Runtime.CompilerServices;
 
 namespace RAVEN
 {
@@ -648,6 +649,44 @@ namespace RAVEN
             return data;
         }
 
+        public static MeasuringpointLinked GetMeasuringpointPGObject(MeasuringpointRaven data)
+        {
+            MeasuringpointLinked measuringpoint = new MeasuringpointLinked();
+
+            measuringpoint.Id = data.Id.ToUpper();
+
+            if (String.IsNullOrEmpty(data.Source))
+                measuringpoint.Source = "lts";
+            else
+                measuringpoint.Source = data.Source.ToLower();
+
+            measuringpoint.Active = data.Active;
+            measuringpoint.AreaIds = data.AreaIds;
+            measuringpoint.DistanceInfo = data.DistanceInfo;
+            measuringpoint.FirstImport = data.FirstImport;
+            measuringpoint.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            measuringpoint.LastChange = data.LastChange;
+            measuringpoint.LastSnowDate = data.LastSnowDate;
+            measuringpoint.LastUpdate = data.LastUpdate;
+            measuringpoint.LicenseInfo = data.LicenseInfo;
+            measuringpoint.LocationInfo = data.LocationInfo;
+            measuringpoint.Mapping = data.Mapping;
+            measuringpoint.newSnowHeight = data.newSnowHeight;
+            measuringpoint.OwnerId = data.OwnerId;
+            measuringpoint.Shortname = data.Shortname;
+            measuringpoint.SkiAreaIds = data.SkiAreaIds;
+            measuringpoint.SmgActive = data.SmgActive;
+            measuringpoint.SnowHeight = data.SnowHeight;
+            measuringpoint.Temperature = data.Temperature;
+            measuringpoint.WeatherObservation = data.WeatherObservation;            
+
+            measuringpoint._Meta = MetadataHelper.GetMetadataobject<MeasuringpointLinked>(measuringpoint, MetadataHelper.GetMetadataforMeasuringpoint); //GetMetadata(data.Id, "measuringpoint", "lts", data.LastChange);
+            
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("measuringpoint", data.SmgActive);
+
+            return measuringpoint;
+        }
+
         public static DDVenue GetVenuePGObject(DDVenue data)
         {
             data.Id = data.Id.ToUpper();
@@ -739,6 +778,48 @@ namespace RAVEN
             return data;
         }
 
+        public static MetaRegionLinked GetMetaRegionPGObject(MetaRegion data)
+        {
+            MetaRegionLinked linked = new MetaRegionLinked();
+
+            linked.Id = data.Id.ToUpper();
+
+            linked.Active = data.Active;
+            linked.ContactInfos = data.ContactInfos;
+            linked.CustomId = data.CustomId;
+            linked.Detail = data.Detail;
+            linked.DetailThemed = data.DetailThemed;
+            linked.DistanceInfo = data.DistanceInfo;
+            linked.DistrictIds = data.DistrictIds;
+            linked.FirstImport = data.FirstImport;
+            linked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            linked.GpsPolygon = data.GpsPolygon;
+            linked.HasLanguage = data.HasLanguage;
+            linked.ImageGallery = data.ImageGallery;
+            linked.LastChange = data.LastChange;
+            linked.LicenseInfo = data.LicenseInfo;
+            linked.Mapping = data.Mapping;
+            linked.RegionIds = data.RegionIds;
+            linked.RelatedContent = data.RelatedContent;
+            linked.Shortname = data.Shortname;
+            linked.SmgActive = data.SmgActive;
+            linked.SmgTags = data.SmgTags;
+            linked.Source = data.Source;
+            linked.TourismvereinIds = data.TourismvereinIds;
+            linked.VisibleInSearch = data.VisibleInSearch;            
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                linked.Source = "idm";
+
+            linked._Meta = MetadataHelper.GetMetadataobject<MetaRegionLinked>(linked, MetadataHelper.GetMetadataforMetaRegion); //GetMetadata(data.Id, "metaregion", "idm", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("metaregion", data.SmgActive);
+
+            return linked;
+        }
+
         public static RegionLinked GetRegionPGObject(RegionLinked data)
         {
             data.Id = data.Id.ToUpper();
@@ -752,6 +833,46 @@ namespace RAVEN
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("region", data.SmgActive);
 
             return data;
+        }
+
+        public static RegionLinked GetRegionPGObject(Region data)
+        {
+            RegionLinked linked = new RegionLinked();
+
+            linked.Id = data.Id.ToUpper();
+
+            linked.Active = data.Active;
+            linked.ContactInfos = data.ContactInfos;
+            linked.CustomId = data.CustomId;
+            linked.Detail = data.Detail;
+            linked.DetailThemed = data.DetailThemed;
+            linked.DistanceInfo = data.DistanceInfo;
+            linked.FirstImport = data.FirstImport;
+            linked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            linked.GpsPolygon = data.GpsPolygon;
+            linked.HasLanguage = data.HasLanguage;
+            linked.ImageGallery = data.ImageGallery;
+            linked.LastChange = data.LastChange;
+            linked.LicenseInfo = data.LicenseInfo;
+            linked.Mapping = data.Mapping;
+            linked.RelatedContent = data.RelatedContent;
+            linked.Shortname = data.Shortname;
+            linked.SmgActive = data.SmgActive;
+            linked.SmgTags = data.SmgTags;
+            linked.Source = data.Source;
+            linked.VisibleInSearch = data.VisibleInSearch;
+            linked.SkiareaIds = data.SkiareaIds;            
+            
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                linked.Source = "idm";
+
+            linked._Meta = MetadataHelper.GetMetadataobject<RegionLinked>(linked, MetadataHelper.GetMetadataforRegion); //GetMetadata(data.Id, "region", "idm", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("region", data.SmgActive);
+
+            return linked;
         }
 
         public static TourismvereinLinked GetTourismAssociationPGObject(TourismvereinLinked data)
@@ -769,6 +890,46 @@ namespace RAVEN
             return data;
         }
 
+        public static TourismvereinLinked GetTourismAssociationPGObject(Tourismverein data)
+        {
+            TourismvereinLinked linked = new TourismvereinLinked();
+
+            linked.Id = data.Id.ToUpper();
+
+            linked.Active = data.Active;
+            linked.ContactInfos = data.ContactInfos;
+            linked.CustomId = data.CustomId;
+            linked.Detail = data.Detail;
+            linked.DistanceInfo = data.DistanceInfo;
+            linked.FirstImport = data.FirstImport;
+            linked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            linked.GpsPolygon = data.GpsPolygon;
+            linked.HasLanguage = data.HasLanguage;
+            linked.ImageGallery = data.ImageGallery;
+            linked.LastChange = data.LastChange;
+            linked.LicenseInfo = data.LicenseInfo;
+            linked.Mapping = data.Mapping;
+            linked.RelatedContent = data.RelatedContent;
+            linked.Shortname = data.Shortname;
+            linked.SmgActive = data.SmgActive;
+            linked.SmgTags = data.SmgTags;
+            linked.Source = data.Source;
+            linked.VisibleInSearch = data.VisibleInSearch;
+            linked.RegionId = data.RegionId;
+            linked.SkiareaIds = data.SkiareaIds;            
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                linked.Source = "idm";
+
+            linked._Meta = MetadataHelper.GetMetadataobject<TourismvereinLinked>(linked, MetadataHelper.GetMetadataforTourismverein);  //GetMetadata(data.Id, "tourismassociation", "idm", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("tourismassociation", data.SmgActive);
+
+            return linked;
+        }
+
         public static MunicipalityLinked GetMunicipalityPGObject(MunicipalityLinked data)
         {
             data.Id = data.Id.ToUpper();
@@ -782,6 +943,50 @@ namespace RAVEN
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("municipality", data.SmgActive);
 
             return data;
+        }
+
+        public static MunicipalityLinked GetMunicipalityPGObject(Municipality data)
+        {
+            MunicipalityLinked linked = new MunicipalityLinked();
+
+            linked.Id = data.Id.ToUpper();
+
+            linked.Active = data.Active;
+            linked.ContactInfos = data.ContactInfos;
+            linked.CustomId = data.CustomId;
+            linked.Detail = data.Detail;
+            linked.DistanceInfo = data.DistanceInfo;
+            linked.FirstImport = data.FirstImport;
+            linked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            linked.GpsPolygon = data.GpsPolygon;
+            linked.HasLanguage = data.HasLanguage;
+            linked.ImageGallery = data.ImageGallery;
+            linked.LastChange = data.LastChange;
+            linked.LicenseInfo = data.LicenseInfo;
+            linked.Mapping = data.Mapping;
+            linked.RelatedContent = data.RelatedContent;
+            linked.Shortname = data.Shortname;
+            linked.SmgActive = data.SmgActive;
+            linked.SmgTags = data.SmgTags;
+            linked.Source = data.Source;
+            linked.VisibleInSearch = data.VisibleInSearch;
+            linked.Inhabitants = data.Inhabitants;
+            linked.IstatNumber = data.IstatNumber;
+            linked.Plz = data.Plz;
+            linked.RegionId = data.RegionId;
+            linked.SiagId = data.SiagId;
+            linked.TourismvereinId = data.TourismvereinId;            
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                linked.Source = "idm";
+
+            linked._Meta = MetadataHelper.GetMetadataobject<MunicipalityLinked>(linked, MetadataHelper.GetMetadataforMunicipality); //GetMetadata(data.Id, "municipality", "idm", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("municipality", data.SmgActive);
+
+            return linked;
         }
 
         public static DistrictLinked GetDistrictPGObject(DistrictLinked data)
@@ -799,6 +1004,49 @@ namespace RAVEN
             return data;
         }
 
+        public static DistrictLinked GetDistrictPGObject(District data)
+        {
+            DistrictLinked linked = new DistrictLinked();
+
+            linked.Id = data.Id.ToUpper();
+
+            linked.Active = data.Active;
+            linked.ContactInfos = data.ContactInfos;
+            linked.CustomId = data.CustomId;
+            linked.Detail = data.Detail;            
+            linked.DistanceInfo = data.DistanceInfo;
+            linked.FirstImport = data.FirstImport;
+            linked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            linked.GpsPolygon = data.GpsPolygon;
+            linked.HasLanguage = data.HasLanguage;
+            linked.ImageGallery = data.ImageGallery;
+            linked.LastChange = data.LastChange;
+            linked.LicenseInfo = data.LicenseInfo;
+            linked.Mapping = data.Mapping;
+            linked.RelatedContent = data.RelatedContent;
+            linked.Shortname = data.Shortname;
+            linked.SmgActive = data.SmgActive;
+            linked.SmgTags = data.SmgTags;
+            linked.Source = data.Source;
+            linked.VisibleInSearch = data.VisibleInSearch;
+            linked.IsComune = data.IsComune;
+            linked.MunicipalityId = data.MunicipalityId;
+            linked.RegionId = data.RegionId;
+            linked.SiagId = data.SiagId;
+            linked.TourismvereinId = data.TourismvereinId;            
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                data.Source = "idm";
+
+            linked._Meta = MetadataHelper.GetMetadataobject<DistrictLinked>(linked, MetadataHelper.GetMetadataforDistrict); //GetMetadata(data.Id, "district", "idm", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("district", data.SmgActive);
+
+            return linked;
+        }
+
         public static ExperienceAreaLinked GetExperienceAreaPGObject(ExperienceAreaLinked data)
         {
             data.Id = data.Id.ToUpper();
@@ -812,6 +1060,46 @@ namespace RAVEN
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("experiencearea", data.SmgActive);
 
             return data;
+        }
+
+        public static ExperienceAreaLinked GetExperienceAreaPGObject(ExperienceArea data)
+        {
+            ExperienceAreaLinked linked = new ExperienceAreaLinked();
+
+            linked.Id = data.Id.ToUpper();
+
+            linked.Active = data.Active;
+            linked.ContactInfos = data.ContactInfos;
+            linked.CustomId = data.CustomId;
+            linked.Detail = data.Detail;            
+            linked.DistanceInfo = data.DistanceInfo;
+            linked.DistrictIds = data.DistrictIds;
+            linked.FirstImport = data.FirstImport;
+            linked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            linked.GpsPolygon = data.GpsPolygon;
+            linked.HasLanguage = data.HasLanguage;
+            linked.ImageGallery = data.ImageGallery;
+            linked.LastChange = data.LastChange;
+            linked.LicenseInfo = data.LicenseInfo;
+            linked.Mapping = data.Mapping;
+            linked.RelatedContent = data.RelatedContent;
+            linked.Shortname = data.Shortname;
+            linked.SmgActive = data.SmgActive;
+            linked.SmgTags = data.SmgTags;
+            linked.Source = data.Source;
+            linked.TourismvereinIds = data.TourismvereinIds;
+            linked.VisibleInSearch = data.VisibleInSearch;            
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                linked.Source = "idm";
+
+            linked._Meta = MetadataHelper.GetMetadataobject<ExperienceAreaLinked>(linked, MetadataHelper.GetMetadataforExperienceArea); //GetMetadata(data.Id, "experiencearea", "idm", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("experiencearea", data.SmgActive);
+
+            return linked;
         }
 
         public static AreaLinked GetAreaPGObject(AreaLinked data)
@@ -837,6 +1125,61 @@ namespace RAVEN
             return data;
         }
 
+        public static SkiAreaLinked GetSkiAreaPGObject(SkiAreaRaven data)
+        {
+            SkiAreaLinked linked = new SkiAreaLinked();
+
+            linked.Id = data.Id.ToUpper();
+
+            linked.Active = data.Active;
+            linked.ContactInfos = data.ContactInfos;
+            linked.CustomId = data.CustomId;
+            linked.Detail = data.Detail;
+            linked.DistanceInfo = data.DistanceInfo;
+            linked.DistrictIds = data.DistrictIds;
+            linked.FirstImport = data.FirstImport;
+            linked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            linked.GpsPolygon = data.GpsPolygon;
+            linked.HasLanguage = data.HasLanguage;
+            linked.ImageGallery = data.ImageGallery;
+            linked.LastChange = data.LastChange;
+            linked.LicenseInfo = data.LicenseInfo;
+            linked.Mapping = data.Mapping;
+            linked.RegionIds = data.RegionIds;
+            linked.RelatedContent = data.RelatedContent;
+            linked.Shortname = data.Shortname;
+            linked.SmgActive = data.SmgActive;
+            linked.SmgTags = data.SmgTags;
+            linked.Source = data.Source;
+            linked.TourismvereinIds = data.TourismvereinIds;
+            linked.AltitudeFrom = data.AltitudeFrom;
+            linked.AltitudeTo = data.AltitudeTo;
+            linked.AreaId = data.AreaId;
+            linked.AreaRadius = data.AreaRadius;
+            linked.LiftCount = data.LiftCount;
+            linked.LocationInfo = data.LocationInfo;
+            linked.MunicipalityIds = data.MunicipalityIds;
+            linked.OperationSchedule = data.OperationSchedule;
+            linked.SkiAreaMapURL = data.SkiAreaMapURL;
+            linked.SkiRegionId = data.SkiRegionId;
+            linked.SkiRegionName = data.SkiRegionName;
+            linked.SlopeKmBlack = data.SlopeKmBlack;
+            linked.SlopeKmBlue  = data.SlopeKmBlue;
+            linked.SlopeKmRed = data.SlopeKmRed;
+            linked.TotalSlopeKm = data.TotalSlopeKm;            
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                linked.Source = "idm";
+
+            linked._Meta = MetadataHelper.GetMetadataobject<SkiAreaLinked>(linked, MetadataHelper.GetMetadataforSkiArea); //GetMetadata(data.Id, "skiarea", "idm", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiarea", data.SmgActive);
+
+            return linked;
+        }
+
         public static SkiRegionLinked GetSkiRegionPGObject(SkiRegionLinked data)
         {
             data.Id = data.Id.ToUpper();
@@ -851,6 +1194,43 @@ namespace RAVEN
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiregion", data.SmgActive);
 
             return data;
+        }
+
+        public static SkiRegionLinked GetSkiRegionPGObject(SkiRegion data)
+        {
+            SkiRegionLinked linked = new SkiRegionLinked();
+
+            linked.Id = data.Id.ToUpper();
+
+            linked.Active = data.Active;
+            linked.ContactInfos = data.ContactInfos;
+            linked.CustomId = data.CustomId;
+            linked.Detail = data.Detail;
+            linked.DistanceInfo = data.DistanceInfo;
+            linked.FirstImport = data.FirstImport;
+            linked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            linked.GpsPolygon = data.GpsPolygon;
+            linked.HasLanguage = data.HasLanguage;
+            linked.ImageGallery = data.ImageGallery;
+            linked.LastChange = data.LastChange;
+            linked.LicenseInfo = data.LicenseInfo;
+            linked.Mapping = data.Mapping;
+            linked.RelatedContent = data.RelatedContent;
+            linked.Shortname = data.Shortname;
+            linked.SmgActive = data.SmgActive;
+            linked.SmgTags = data.SmgTags;
+            linked.Source = data.Source;            
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            if (String.IsNullOrEmpty(data.Source))
+                linked.Source = "idm";
+
+            linked._Meta = MetadataHelper.GetMetadataobject<SkiRegionLinked>(linked, MetadataHelper.GetMetadataforSkiRegion); //GetMetadata(data.Id, "skiregion", "idm", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiregion", data.SmgActive);
+
+            return linked;
         }
 
         public static WineLinked GetWinePGObject(WineLinked data)

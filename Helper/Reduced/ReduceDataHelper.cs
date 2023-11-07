@@ -397,11 +397,12 @@ namespace Helper
             //Name
             reduced.Shortname = measuringpoint.Shortname;
             //GeoData/Position/Longitude,Latitude,Altitude
-            reduced.Gpstype = measuringpoint.Gpstype;
-            reduced.Latitude = measuringpoint.Latitude;
-            reduced.Longitude = measuringpoint.Longitude;
-            reduced.Altitude = measuringpoint.Altitude;
-            reduced.AltitudeUnitofMeasure = measuringpoint.AltitudeUnitofMeasure;
+            //reduced.Gpstype = measuringpoint.Gpstype;
+            //reduced.Latitude = measuringpoint.Latitude;
+            //reduced.Longitude = measuringpoint.Longitude;
+            //reduced.Altitude = measuringpoint.Altitude;
+            //reduced.AltitudeUnitofMeasure = measuringpoint.AltitudeUnitofMeasure;
+            reduced.GpsInfo = measuringpoint.GpsInfo;
 
             //Observation / Temperature
             reduced.Temperature = measuringpoint.Temperature;

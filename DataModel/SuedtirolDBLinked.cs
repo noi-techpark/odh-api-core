@@ -571,7 +571,8 @@ namespace DataModel
 
         public ICollection<GpsInfo> GpsInfo { get; set; }
 
-        //Overwrite Latitude/Longitude/
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
@@ -929,7 +930,7 @@ namespace DataModel
         }
     }
 
-    public class DistrictLinked : District, IMetaData
+    public class DistrictLinked : District, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -980,9 +981,43 @@ namespace DataModel
                 return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.TourismvereinId) };
             }
         }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
-    public class MunicipalityLinked : Municipality, IMetaData
+    public class MunicipalityLinked : Municipality, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -1025,9 +1060,43 @@ namespace DataModel
                 return String.IsNullOrEmpty(this.TourismvereinId) ? null : new TourismAssociationLink() { Id = this.TourismvereinId, Self = ODHConstant.ApplicationURL + "TourismAssociation/" + Uri.EscapeDataString(this.TourismvereinId) };
             }
         }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
-    public class TourismvereinLinked : Tourismverein, IMetaData
+    public class TourismvereinLinked : Tourismverein, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -1070,9 +1139,43 @@ namespace DataModel
                 return this.SkiareaIds != null ? this.SkiareaIds.Select(x => new SkiAreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "SkiArea/" + x }).ToList() : new List<SkiAreaLink>();
             }
         }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
-    public class RegionLinked : Region, IMetaData
+    public class RegionLinked : Region, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -1107,9 +1210,43 @@ namespace DataModel
                 return this.SkiareaIds != null ? this.SkiareaIds.Select(x => new SkiAreaLink() { Id = x, Self = ODHConstant.ApplicationURL + "SkiArea/" + x }).ToList() : new List<SkiAreaLink>();
             }
         }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
-    public class MetaRegionLinked : MetaRegion, IMetaData
+    public class MetaRegionLinked : MetaRegion, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -1160,9 +1297,43 @@ namespace DataModel
                 return this.RegionIds != null ? this.RegionIds.Select(x => new RegionLink() { Id = x, Self = ODHConstant.ApplicationURL + "Region/" + x }).ToList() : new List<RegionLink>();
             }
         }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
-    public class ExperienceAreaLinked : ExperienceArea, IMetaData
+    public class ExperienceAreaLinked : ExperienceArea, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -1203,6 +1374,40 @@ namespace DataModel
             get
             {
                 return this.DistrictIds != null ? this.DistrictIds.Select(x => new DistrictLink() { Id = x, Self = ODHConstant.ApplicationURL + "District/" + x }).ToList() : new List<DistrictLink>();
+            }
+        }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
     }
@@ -1260,7 +1465,7 @@ namespace DataModel
         }
     }
 
-    public class SkiAreaLinked : SkiArea, IMetaData
+    public class SkiAreaLinked : SkiArea, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -1320,11 +1525,44 @@ namespace DataModel
             }
         }
 
-        //Overwrites The LocationInfo
         public new LocationInfoLinked? LocationInfo { get; set; }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
-    public class SkiRegionLinked : SkiRegion, IMetaData
+    public class SkiRegionLinked : SkiRegion, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -1349,6 +1587,40 @@ namespace DataModel
             get
             {
                 return this.SmgActive;
+            }
+        }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
     }
@@ -1390,7 +1662,7 @@ namespace DataModel
         }
     }
 
-    public class MeasuringpointLinked : Measuringpoint, IMetaData
+    public class MeasuringpointLinked : Measuringpoint, IMetaData, IGPSPointsAware, IGPSInfoAware
     {
         public Metadata? _Meta { get; set; }
 
@@ -1420,6 +1692,40 @@ namespace DataModel
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked? LocationInfo { get; set; }
+
+        //GpsInfo
+        public ICollection<GpsInfo> GpsInfo { get; set; }
+
+        //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? Gpstype { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Gpstype : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Latitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Latitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new double Longitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Longitude : 0; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public new string? AltitudeUnitofMeasure { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().AltitudeUnitofMeasure : null; } }
+
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary();
+            }
+        }
     }
 
     public class WineLinked : Wine, IMetaData

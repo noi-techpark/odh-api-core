@@ -394,7 +394,7 @@ namespace DataModel
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
-
+   
     public class MetaRegion : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public MetaRegion()
@@ -413,7 +413,7 @@ namespace DataModel
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
-
+   
     public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public ICollection<string>? DistrictIds { get; set; }
@@ -422,7 +422,7 @@ namespace DataModel
         public bool VisibleInSearch { get; set; }
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
-
+    
     public class Tourismverein : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public string? RegionId { get; set; }
@@ -549,6 +549,11 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
+    public class SkiAreaRaven : SkiArea
+    {
+        public new LocationInfoLinked? LocationInfo { get; set; }
+    }
+
     public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware
     {
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
@@ -558,7 +563,7 @@ namespace DataModel
 
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
-   
+
     #endregion
 
     #region Activities & POIs      
@@ -1717,7 +1722,7 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
+    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public Measuringpoint()
         {
@@ -1757,28 +1762,7 @@ namespace DataModel
         public string? OwnerId { get; set; }
 
         public List<string>? AreaIds { get; set; }
-
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                if (this.Latitude != 0 && this.Longitude != 0)
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
-                    };
-                }
-                else
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
-                }
-            }
-        }
-
+        
         public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
@@ -1791,7 +1775,7 @@ namespace DataModel
 
     public class MeasuringpointRaven : Measuringpoint
     {
-
+        public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
     public class WeatherObservation
@@ -2823,7 +2807,7 @@ namespace DataModel
     }
   
     //BaseInfos for Districts / Regions / Municipalities ...
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSPointsAware, IPublishedOn, IGPSInfoAware
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2840,15 +2824,10 @@ namespace DataModel
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
 
-        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public string? Gpstype { get; set; }
-        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public double Latitude { get; set; }
-        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public double Longitude { get; set; }
-        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public Nullable<double> Altitude { get; set; }
-        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -2867,36 +2846,10 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
         public DateTime? FirstImport { get; set; }
 
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                if (this.Latitude != 0 && this.Longitude != 0)
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
-                    };
-                }
-                else
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
-                }
-            }
-        }
-
-        //GpsInfo
-        public ICollection<GpsInfo> GpsInfo { get; set; }
-
-        //New published on List
         public ICollection<string>? PublishedOn { get; set; }
 
         public string? Source { get; set; }
 
-        //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
