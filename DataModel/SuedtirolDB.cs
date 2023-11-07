@@ -687,31 +687,7 @@ namespace DataModel
 
     #endregion
 
-    #region Activities & POIs  
-
-    public class LTSPoi : PoiBaseInfos, IGPSPointsAware
-    {
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary(true);
-            }
-        }
-    }
-
-    public class LTSActivity : PoiBaseInfos, IGPSPointsAware
-    {
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary(true);
-            }
-        }
-    }
+    #region Activities & POIs      
 
     public class ODHActivityPoi : PoiBaseInfos, ILicenseInfo, IGPSPointsAware
     {
@@ -721,9 +697,10 @@ namespace DataModel
         }
 
         [SwaggerSchema("Id on the primary data Source")]
+        [SwaggerDeprecated("Obsolete use Mapping")]
         public string? CustomId { get; set; }
 
-        [SwaggerDeprecated("Use Related Content")]
+        //[SwaggerDeprecated("Use Related Content")]
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
 
@@ -745,6 +722,7 @@ namespace DataModel
 
         public IDictionary<string, List<AdditionalContact>>? AdditionalContact { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
@@ -1076,28 +1054,9 @@ namespace DataModel
 
     #region Gastronomy
 
-    public class Gastronomy : GastronomyBaseInfos, IGPSPointsAware
+    public class GastronomyRaven : GastronomyBaseInfos
     {
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public IDictionary<string, GpsInfo> GpsPoints
-        {
-            get
-            {
-                if (this.Latitude != 0 && this.Longitude != 0)
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                        { "position", new GpsInfo(){ Gpstype = "position", Altitude = this.Altitude, AltitudeUnitofMeasure = this.AltitudeUnitofMeasure, Latitude = this.Latitude, Longitude = this.Longitude } }
-                    };
-                }
-                else
-                {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
-                }
-            }
-        }
+
     }
 
     #endregion
@@ -1284,8 +1243,7 @@ namespace DataModel
         public int? RoomCount { get; set; }
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
