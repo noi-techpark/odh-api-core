@@ -807,9 +807,11 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Use the name of the referenced data")]
-        public string? Name { get; set; }
-        
+        //[SwaggerDeprecated("Use the name of the referenced data")]
+        //public string? Name { get; set; }
+
+        [SwaggerEnum(new[] { "accommodation", "event", "odhactivitypoi", "measuringpoint", "webcam", "article", "venue", "wineaward", "skiarea", "skiregion" })]
+
         public string? Type { get; set; }
 
         //public string? Link
