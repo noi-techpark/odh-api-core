@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Location;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -400,8 +401,12 @@ namespace OdhApiCore.Controllers.api
                 //GENERATE ID
                 odhactivitypoi.Id = Helper.IdGenerator.GenerateIDFromType(odhactivitypoi);
 
+                //GENERATE HasLanguage
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it","nl","cs","pl","ru","fr" });
-                
+
+                //POPULATE LocationInfo
+                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true);
             });
         }
@@ -422,9 +427,13 @@ namespace OdhApiCore.Controllers.api
             {
                 //Check ID uppercase lowercase
                 Helper.IdGenerator.CheckIdFromType(odhactivitypoi);
-
+                
+                //GENERATE HasLanguage
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
                 
+                //POPULATE LocationInfo
+                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true);
             });
         }

@@ -668,7 +668,6 @@ namespace DataModel
         //public string? Name { get; set; }
 
         [SwaggerEnum(new[] { "accommodation", "event", "odhactivitypoi", "measuringpoint", "webcam", "article", "venue", "wineaward", "skiarea", "skiregion" })]
-
         public string? Type { get; set; }
 
         //public string? Link
@@ -2660,6 +2659,7 @@ namespace DataModel
     public class Metadata
     {
         public string Id { get; set; }
+        [SwaggerEnum(new[] { "accommodation", "accommodationroom", "event", "odhactivitypoi", "measuringpoint", "webcam", "article", "venue", "eventshort", "experiencearea", "region", "metaregion", "tourismassociation", "municipality", "district", "area", "wineaward", "skiarea", "skiregion", "odhtag", "publisher", "tag", "weatherhistory", "weather", "weatherdistrict", "snowreport", "odhmetadata", "package", "ltsactivity", "ltspoi", "ltsgastronomy" })]
         public string Type { get; set; }
         public DateTime? LastUpdate { get; set; }
         public string? Source { get; set; }
@@ -2677,9 +2677,11 @@ namespace DataModel
 
     public class LicenseInfo
     {
+        [SwaggerEnum(new[] { "CC0", "CC-BY", "Closed" })]
         public string? License { get; set; }
         public string? LicenseHolder { get; set; }
         public string? Author { get; set; }
+        [SwaggerSchema(Description = "readonly field", ReadOnly = true)]
         public bool ClosedData { get; set; }
     }
 
@@ -3020,6 +3022,7 @@ namespace DataModel
 
     public class GpsInfo : IGpsInfo
     {
+        [SwaggerEnum(new[] { "position", "viewpoint", "startingandarrivalpoint", "startingpoint", "arrivalpoint", "carparking", "halfwaypoint", "valleystationpoint", "middlestationpoint", "mountainstationpoint" })]
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
