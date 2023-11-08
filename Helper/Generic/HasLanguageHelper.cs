@@ -127,7 +127,9 @@ namespace Helper
                     if (myarticle.AdditionalArticleInfos.ContainsKey(language))
                     {
                         var additionalvalues = myarticle.AdditionalArticleInfos[language];
-                     
+
+                        FixDetailLanguageField(additionalvalues, language);
+
                         if (additionalvalues.Elements.Count > 0)
                             removelang = false;
 
@@ -231,6 +233,18 @@ namespace Helper
                             removelang = false;
                         if (!String.IsNullOrEmpty(contactvalues.ZipCode))
                             removelang = false;
+                    }
+
+                    if (mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                    {
+                        var additionalvalues = mypoiactivity.AdditionalPoiInfos[language];
+
+                        FixDetailLanguageField(additionalvalues, language);
+
+                        //Always present do not remove
+                        //if (additionalvalues.Elements.Count > 0)
+                        //    removelang = false;
+
                     }
 
                     //Add Language

@@ -584,6 +584,8 @@ namespace DataModel
         //public ICollection<Webcam>? Webcam { get; set; }
 
         public IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }
+
+        [SwaggerDeprecated("Obsolete")]
         public ICollection<string>? PoiServices { get; set; }
 
         public string? SyncSourceInterface { get; set; }
@@ -592,11 +594,14 @@ namespace DataModel
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
 
+        //Gastronomy Infos
         public int? MaxSeatingCapacity { get; set; }
         public ICollection<CategoryCodes>? CategoryCodes { get; set; }
         public ICollection<DishRates>? DishRates { get; set; }
         public ICollection<CapacityCeremony>? CapacityCeremony { get; set; }
-        public ICollection<Facilities>? Facilities { get; set; }
+        public ICollection<Facilities>? Facilities { get; set; }       
+        //End Gastronomy Infos
+        
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
         public IDictionary<string, List<AdditionalContact>>? AdditionalContact { get; set; }
@@ -2876,17 +2881,18 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-
+        
         public string? OutdooractiveID { get; set; }
         public string? OutdooractiveElevationID { get; set; }
+        public string? SmgId { get; set; }
+
 
         public bool? CopyrightChecked { get; set; }
 
+        [SwaggerSchema("Active on Source")]
         public bool Active { get; set; }
         public string? Shortname { get; set; }
-        public string? SmgId { get; set; }
-        public bool? Highlight { get; set; }
-
+   
         [SwaggerDeprecated("Use Ratings.Difficulty")]
         public string? Difficulty { get; set; }
 
@@ -2899,6 +2905,8 @@ namespace DataModel
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+
+        [SwaggerDeprecated("Use PublishedOn field")]
         public bool SmgActive { get; set; }
 
         public LocationInfo? LocationInfo { get; set; }
@@ -2920,7 +2928,7 @@ namespace DataModel
         public double? DistanceDuration { get; set; }
         public double? DistanceLength { get; set; }
 
-
+        public bool? Highlight { get; set; }
         public bool? IsOpen { get; set; }
         public bool? IsPrepared { get; set; }
         public bool? RunToValley { get; set; }
