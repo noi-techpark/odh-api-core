@@ -263,8 +263,8 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                     {
                         RelatedContent relatedcontent = new RelatedContent();
                         relatedcontent.Id = mywine.Id;
-                        relatedcontent.Name = mywine.Name;
-                        relatedcontent.Type = "WineAward";
+                        //relatedcontent.Name = mywine.Name;
+                        relatedcontent.Type = "wineaward";
 
                         myrelatedcontentlist.Add(relatedcontent);
                     }
