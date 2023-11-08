@@ -41,6 +41,8 @@ namespace RAVEN
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "lts";
 
+            data.Source = data.Source.ToLower();
+
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(data, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
 
@@ -105,11 +107,7 @@ namespace RAVEN
             acco.SmgActive = data.SmgActive;
             acco.SmgTags = data.SmgTags;
             acco.SpecialFeaturesIds = data.SpecialFeaturesIds;
-            acco.Source = data.Source;
-
-            if (String.IsNullOrEmpty(data.Source))
-                acco.Source = "lts";
-
+            acco.Source = String.IsNullOrEmpty(data.Source) ? "lts" : data.Source.ToLower();
             acco.ThemeIds = data.ThemeIds;
             acco.TourismVereinId = data.TourismVereinId;
             acco.TrustYouActive = data.TrustYouActive;  
@@ -124,7 +122,6 @@ namespace RAVEN
 
             return acco;
         }
-
 
         public static ODHActivityPoiLinked GetODHActivityPoiPGObject(ODHActivityPoiLinked data)
         {
@@ -151,15 +148,15 @@ namespace RAVEN
                 List<RelatedContent> relcontentlist = new List<RelatedContent>();
                 foreach (var relatedcontent in data.RelatedContent)
                 {
-                    RelatedContent relatedcontenttotransform = relatedcontent;
+                    RelatedContent relatedcontenttotransform = relatedcontent;                    
 
-                    if (relatedcontent.Type == "acco" || relatedcontent.Type == "event" || relatedcontent.Type == "webcam")
+                    if (relatedcontent.Type == "odhactivitypoi" || relatedcontent.Type == "eventshort")
                     {
-                        relatedcontenttotransform.Id = relatedcontenttotransform.Id.ToUpper();
+                        relatedcontenttotransform.Id = relatedcontenttotransform.Id.ToLower();
                     }
                     else
                     {
-                        relatedcontenttotransform.Id = relatedcontenttotransform.Id.ToLower();
+                        relatedcontenttotransform.Id = relatedcontenttotransform.Id.ToUpper();
                     }
 
                     relcontentlist.Add(relatedcontenttotransform);
@@ -212,20 +209,20 @@ namespace RAVEN
             if (!String.IsNullOrEmpty(data.LTSId))
                 data.LTSId = data.LTSId.ToUpper();
 
-            ////fix if source is null
-            //string datasource = data.Source;
+            //fix if source is null
+            string datasource = data.Source;
 
-            //if (datasource == null)
-            //{
-            //    if (data.Id.Contains("hgv"))
-            //        datasource = "hgv";
-            //    else
-            //        datasource = "lts";
-            //}
-            //else
-            //{
-            //    datasource = datasource.ToLower();
-            //}
+            if (datasource == null)
+            {
+                if (data.Id.Contains("hgv"))
+                    datasource = "hgv";
+                else
+                    datasource = "lts";
+            }
+            else
+            {
+                datasource = datasource.ToLower();
+            }
 
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationRoomLinked>(data, MetadataHelper.GetMetadataforAccommodationRoom); //GetMetadata(data.Id, "accommodationroom", datasource, data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodationroom", true);
@@ -1039,7 +1036,7 @@ namespace RAVEN
                 linked.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
 
             if (String.IsNullOrEmpty(data.Source))
-                data.Source = "idm";
+                linked.Source = "idm";
 
             linked._Meta = MetadataHelper.GetMetadataobject<DistrictLinked>(linked, MetadataHelper.GetMetadataforDistrict); //GetMetadata(data.Id, "district", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("district", data.SmgActive);
