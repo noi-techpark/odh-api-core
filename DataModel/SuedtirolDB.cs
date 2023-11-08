@@ -2977,6 +2977,7 @@ namespace DataModel
 
     public class GpsInfo : IGpsInfo
     {
+        [SwaggerEnum(new[] { "position", "viewpoint", "startingandarrivalpoint", "startingpoint", "arrivalpoint", "carparking", "halfwaypoint", "valleystationpoint", "middlestationpoint", "mountainstationpoint" })]
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
