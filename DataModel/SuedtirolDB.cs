@@ -1216,6 +1216,7 @@ namespace DataModel
         public int? RoomCount { get; set; }
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public IDictionary<string, GpsInfo> GpsPoints
         {
@@ -1312,10 +1313,8 @@ namespace DataModel
         //New Article Expiration date
         public DateTime? ExpirationDate { get; set; }
 
-        //NEW Adding SpatialCoverage
-        //public ICollection<SpatialCoverage> SpatialCoverage { get; set; }
-
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public IDictionary<string, GpsInfo> GpsPoints
         {
             get
@@ -2442,7 +2441,7 @@ namespace DataModel
 
         public new ICollection<GpsInfo> GpsInfo { get; set; }
 
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public new IDictionary<string, GpsInfo> GpsPoints
         {
             get

@@ -290,6 +290,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -298,6 +299,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -306,7 +308,7 @@ namespace DataModel
             }
         }
 
-        //Taglist
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -362,6 +364,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)] 
         public string? Self
         {
             get
@@ -370,6 +373,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]        
         public bool OdhActive
         {
             get
@@ -379,6 +383,7 @@ namespace DataModel
         }
 
         //Taglist
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -387,6 +392,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public AccoType AccoType
         {
             get
@@ -395,6 +401,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public AccoCategory AccoCategory
         {
             get
@@ -403,6 +410,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AccoBoards> AccoBoards
         {
             get
@@ -411,6 +419,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AccoBadges> AccoBadges
         {
             get
@@ -419,6 +428,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AccoThemes> AccoThemes
         {
             get
@@ -427,6 +437,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AccoSpecialFeatures> AccoSpecialFeatures
         {
             get
@@ -482,6 +493,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -498,8 +510,16 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
-        //TODO mark this (EventDatesBegin/EventDatesEnd/EventDateCounter) as obsolete
-
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public string? Self
+        {
+            get
+            {
+                return "Event/" + Uri.EscapeDataString(this.Id);
+            }
+        }
+       
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [SwaggerDeprecated("Obsolete")]
         public List<DateTime> EventDatesBegin
         {
@@ -509,6 +529,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [SwaggerDeprecated("Obsolete")]
         public List<DateTime> EventDatesEnd
         {
@@ -518,6 +539,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [SwaggerDeprecated("Obsolete")]
         public int EventDateCounter
         {
@@ -527,14 +549,7 @@ namespace DataModel
             }
         }
 
-        public string? Self
-        {
-            get
-            {
-                return "Event/" + Uri.EscapeDataString(this.Id);
-            }
-        }
-
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<DistrictLink> Districts
         {
             get
@@ -543,7 +558,7 @@ namespace DataModel
             }
         }
 
-        //Taglist
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -552,6 +567,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -606,6 +622,7 @@ namespace DataModel
 
     public class VenueLinked : Venue, IMetaData
     {
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -616,6 +633,7 @@ namespace DataModel
 
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -623,6 +641,7 @@ namespace DataModel
                 return this.SmgActive;
             }
         }
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -637,13 +656,9 @@ namespace DataModel
 
     public class PackageLinked : Package, IMetaData
     {
-        public PackageLinked()
-        {
-            GpsPoints = new Dictionary<string, GpsInfo>();
-        }
-
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -652,7 +667,7 @@ namespace DataModel
             }
         }
 
-        //Taglist
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -661,6 +676,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -668,15 +684,13 @@ namespace DataModel
                 return this.SmgActive;
             }
         }
-
-        //derzuageton
-        public IDictionary<string, GpsInfo> GpsPoints { get; set; }
     }
 
     public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -685,6 +699,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -693,6 +708,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -701,6 +717,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHActivityPoiTypesLink>? ODHActivityPoiTypes
         {
             get
@@ -719,6 +736,7 @@ namespace DataModel
 
         //TO CHECK on GetObjectSingleAsync<T>() Areas is populated twice
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AreaLink>? Areas
         {
             get
@@ -743,6 +761,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -751,6 +770,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -759,6 +779,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -767,6 +788,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHActivityPoiTypesLink> PoiTypes
         {
             get
@@ -782,6 +804,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AreaLink> Areas
         {
             get
@@ -811,6 +834,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -819,6 +843,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -827,6 +852,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -835,6 +861,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHActivityPoiTypesLink> ActivityTypes
         {
             get
@@ -850,6 +877,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AreaLink> Areas
         {
             get
@@ -879,6 +907,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -887,6 +916,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -895,6 +925,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHActivityPoiTypesLink>? ArticleTypes
         {
             get
@@ -908,6 +939,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<string>? ArticleTypeList
         {
             get
@@ -921,6 +953,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -934,6 +967,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -942,6 +976,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -950,6 +985,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -958,6 +994,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public RegionLink Region
         {
             get
@@ -966,6 +1003,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public MunicipalityLink Municipality
         {
             get
@@ -974,6 +1012,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public TourismAssociationLink Tourismassociation
         {
             get
@@ -1021,6 +1060,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1029,6 +1069,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -1037,6 +1078,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1045,6 +1087,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public RegionLink Region
         {
             get
@@ -1053,6 +1096,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public TourismAssociationLink Tourismassociation
         {
             get
@@ -1100,6 +1144,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1108,6 +1153,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -1116,6 +1162,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1124,6 +1171,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public RegionLink Region
         {
             get
@@ -1132,6 +1180,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<SkiAreaLink> SkiAreas
         {
             get
@@ -1179,6 +1228,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1187,6 +1237,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -1195,6 +1246,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1203,6 +1255,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<SkiAreaLink> SkiAreas
         {
             get
@@ -1250,6 +1303,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1258,6 +1312,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -1266,6 +1321,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1274,6 +1330,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<DistrictLink> Districts
         {
             get
@@ -1282,6 +1339,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<TourismAssociationLink> TourismAssociations
         {
             get
@@ -1290,6 +1348,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<RegionLink> Regions
         {
             get
@@ -1337,6 +1396,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1345,6 +1405,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -1353,6 +1414,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1361,6 +1423,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<TourismAssociationLink> TourismAssociations
         {
             get
@@ -1369,6 +1432,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<DistrictLink> Districts
         {
             get
@@ -1416,6 +1480,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1424,6 +1489,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1432,6 +1498,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public RegionLink Region
         {
             get
@@ -1440,6 +1507,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public MunicipalityLink Municipality
         {
             get
@@ -1448,6 +1516,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public TourismAssociationLink Tourismassociation
         {
             get
@@ -1456,6 +1525,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public SkiAreaLink SkiArea
         {
             get
@@ -1469,6 +1539,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1477,6 +1548,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -1485,6 +1557,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1493,6 +1566,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public SkiRegionLink SkiRegion
         {
             get
@@ -1501,6 +1575,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AreaLink> Areas
         {
             get
@@ -1509,6 +1584,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<TourismAssociationLink> TourismAssociations
         {
             get
@@ -1517,6 +1593,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<RegionLink> Regions
         {
             get
@@ -1566,6 +1643,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1574,6 +1652,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -1582,6 +1661,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1629,6 +1709,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1637,6 +1718,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1645,6 +1727,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AreaLink> Areas
         {
             get
@@ -1653,6 +1736,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<ODHTags> ODHTags
         {
             get
@@ -1666,6 +1750,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1674,6 +1759,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1682,6 +1768,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public ICollection<AreaLink> Areas
         {
             get
@@ -1732,6 +1819,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1740,6 +1828,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public bool OdhActive
         {
             get
@@ -1748,6 +1837,7 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public CompanyLink Company
         {
             get
@@ -1761,6 +1851,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1774,6 +1865,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1787,6 +1879,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1800,6 +1893,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1813,6 +1907,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1826,6 +1921,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
@@ -1840,6 +1936,7 @@ namespace DataModel
     {
         public Metadata? _Meta { get; set; }
 
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
         {
             get
