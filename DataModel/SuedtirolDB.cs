@@ -12,6 +12,7 @@ using Newtonsoft.Json.Converters;
 using DataModel.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics;
+using System.ComponentModel;
 
 namespace DataModel
 {
@@ -3029,6 +3030,8 @@ namespace DataModel
 
     public class GpsInfo : IGpsInfo
     {
+        //[DefaultValue("position")]
+        //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         [SwaggerEnum(new[] { "position", "viewpoint", "startingandarrivalpoint", "startingpoint", "arrivalpoint", "carparking", "halfwaypoint", "valleystationpoint", "middlestationpoint", "mountainstationpoint" })]
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }

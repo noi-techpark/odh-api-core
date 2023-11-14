@@ -19,10 +19,33 @@ namespace DataModel
             if (!ltsactivitypoi)
             {
                 if (gpsinfos != null && gpsinfos.Count > 0)
-                    return gpsinfos
-                        .DistinctBy(x => x.Gpstype)
-                        .Where(x => x.Gpstype != null)
-                        .ToDictionary(x => x.Gpstype!, x => x);
+                {
+                    //If GPSInfo has GpsType = null or Empty --->
+                    if (gpsinfos.Any(x => String.IsNullOrEmpty(x.Gpstype)))
+                    {
+                        foreach(var gpsinfo in gpsinfos.Where(x => String.IsNullOrEmpty(x.Gpstype)))
+                        {
+                            gpsinfo.Gpstype = "position";
+                        }
+                    }
+
+                    //If GPSInfo has more GpsType = position ---> Grouped count is inferior to totalcount GpsPoints returns only first element.....
+                    if (gpsinfos.GroupBy(x => x.Gpstype).Count() < gpsinfos.Count)
+                    {
+
+                        return gpsinfos
+                            .DistinctBy(x => x.Gpstype)
+                            .Where(x => x.Gpstype != null)
+                            .ToDictionary(x => x.Gpstype!, x => x);
+                    }
+                    else
+                    {
+                        return gpsinfos
+                            .DistinctBy(x => x.Gpstype)
+                            .Where(x => x.Gpstype != null)
+                            .ToDictionary(x => x.Gpstype!, x => x);
+                    }                      
+                }                    
                 else
                     return new Dictionary<string, GpsInfo>();
             }   
@@ -69,23 +92,5 @@ namespace DataModel
                 return null;
             }
         }
-
-        //public IDictionary<string, GpsInfo> GpsPoints
-        //{
-        //    get
-        //    {
-        //        if (this.GpsInfo != null && this.GpsInfo.Count > 0)
-        //        {
-        //            return this.GpsInfo.ToDictionary(x => x.Gpstype, x => x);
-        //        }
-        //        else
-        //        {
-        //            return new Dictionary<string, GpsInfo>
-        //            {
-        //            };
-        //        }
-        //    }
-        //}
-
     }
 }
