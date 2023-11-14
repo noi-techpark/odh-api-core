@@ -38,7 +38,7 @@ namespace Helper
         }
 
         //For Articles
-        public static void CheckMyInsertedLanguages(this ArticleBaseInfos myarticle, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Article myarticle, List<string> availablelanguages)
         {
             if (myarticle.HasLanguage == null)
                 myarticle.HasLanguage = new List<string>();
@@ -127,7 +127,9 @@ namespace Helper
                     if (myarticle.AdditionalArticleInfos.ContainsKey(language))
                     {
                         var additionalvalues = myarticle.AdditionalArticleInfos[language];
-                     
+
+                        FixDetailLanguageField(additionalvalues, language);
+
                         if (additionalvalues.Elements.Count > 0)
                             removelang = false;
 
@@ -233,6 +235,18 @@ namespace Helper
                             removelang = false;
                     }
 
+                    if (mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                    {
+                        var additionalvalues = mypoiactivity.AdditionalPoiInfos[language];
+
+                        FixDetailLanguageField(additionalvalues, language);
+
+                        //Always present do not remove
+                        //if (additionalvalues.Elements.Count > 0)
+                        //    removelang = false;
+
+                    }
+
                     //Add Language
                     if (removelang == false)
                     {
@@ -256,7 +270,7 @@ namespace Helper
         }
 
         //For Events
-        public static void CheckMyInsertedLanguages(this EventBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Event mypoiactivity, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
@@ -355,7 +369,7 @@ namespace Helper
         }
 
         //For Gastronomy
-        public static void CheckMyInsertedLanguages(this GastronomyBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Gastronomy mypoiactivity, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();

@@ -18,7 +18,7 @@ namespace LCS.Parser
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Get the POI Detail Information //string activitytype
-        public static LTSPoi GetPoiDetailLTSNEW(string rid, LTSPoi hike, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static PoiBaseInfos GetPoiDetailLTSNEW(string rid, PoiBaseInfos hike, string ltsuser, string ltspswd, string ltsmsgpswd)
         {
 
             List<string> myactivitylist = new List<string>();
