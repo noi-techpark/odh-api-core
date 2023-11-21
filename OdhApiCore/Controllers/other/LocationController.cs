@@ -55,14 +55,14 @@ namespace OdhApiCore.Controllers.api
         [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 7200, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
         [HttpGet, Route("Location")]
         public async Task<IActionResult> GetTheLocationList(
-            string? language = "en",
+            string? language,
             [SwaggerEnum(new[] { "mta", "reg", "tvs", "mun", "fra" })]
             string? type = "null",
             bool showall = true,
             string? locfilter = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetLocationInfoFiltered(language ?? "en", locfilter, showall, type, cancellationToken);
+            return await GetLocationInfoFiltered(language, locfilter, showall, type, cancellationToken);
         }
 
         /// <summary>
