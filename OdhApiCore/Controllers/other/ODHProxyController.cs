@@ -26,10 +26,10 @@ namespace OdhApiCore.Controllers.other
 
                 foreach (var paramdict in HttpContext.Request.Query)
                 {
-                    parameter = parameter + paramdict.Key + "=" + paramdict.Value;
+                    parameter = parameter + paramdict.Key + "=" + paramdict.Value + "&";
                 }                
 
-                var fullurl = url + parameter;
+                var fullurl = url + parameter.Remove(parameter.Length - 1, 1);
 
                 //Quick production fix
                 //fullurl = fullurl.Replace("https:/", "https://");
@@ -54,10 +54,10 @@ namespace OdhApiCore.Controllers.other
 
                 foreach (var paramdict in HttpContext.Request.Query)
                 {
-                    parameter = parameter + paramdict.Key + "=" + paramdict.Value;
+                    parameter = parameter + paramdict.Key + "=" + paramdict.Value + "&";
                 }
 
-                var fullurl = url + parameter;
+                var fullurl = url + parameter.Remove(parameter.Length - 1, 1);
             
                 var request = HttpContext.CreateProxyHttpRequest(new Uri(fullurl));
 
