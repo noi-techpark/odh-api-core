@@ -94,7 +94,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="lang">Language</param>
         /// <param name="locfilter">Location Filter</param>
         /// <returns>Collection of Reduced Location Objects</returns>
-        private async Task<IActionResult> GetLocationInfoFiltered(string lang, string? locfilter, bool allactivedata, string? type, CancellationToken cancellationToken)
+        private async Task<IActionResult> GetLocationInfoFiltered(string? lang, string? locfilter, bool allactivedata, string? type, CancellationToken cancellationToken)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
             List<Tuple<string, string>> loclist = new List<Tuple<string, string>>();
