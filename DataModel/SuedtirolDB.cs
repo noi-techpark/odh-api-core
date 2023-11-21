@@ -785,6 +785,8 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public AccoHGVInfo? AccoHGVInfo { get; set; }
+
+        public AccoOverview? AccoOverview { get; set; }
     }
 
     public class AccommodationRaven : Accommodation
@@ -943,6 +945,36 @@ namespace DataModel
         public bool Bookable { get; set; }
         public string AvailableFrom { get; set; }
         public int PriceFrom { get; set; }
+    }
+
+    public class AccoOverview
+    {
+        public int TotalRooms { get; set; }
+        public int SingleRooms { get; set; }
+        public int DoubleRooms { get; set; }
+        public int TripleRooms { get; set; }
+        public int QuadrupleRooms { get; set; }
+        public int Apartments { get; set; }
+        public int ApartmentBeds { get; set; }
+        public int MaxPersons { get; set; }
+        public int OutdoorParkings { get; set; }
+        public int GarageParkings { get; set; }
+
+        public int CampingUnits { get; set; }
+        public int CampingWashrooms { get; set; }
+        public int CampingDouches { get; set; }
+        public int CampingToilettes { get; set; }
+        public int CampingWashingstands { get; set; }
+        public int ApartmentRoomSize { get; set; }
+
+        public TimeSpan CheckInOutFrom { get; set; }
+        public TimeSpan CheckInOutTo { get; set; }
+        public TimeSpan ReceptionOpenFrom { get; set; }
+        public TimeSpan ReceptionOpenTo { get; set; }
+        public TimeSpan RoomServiceFrom { get; set; }
+        public TimeSpan RoomServiceTo { get; set; }
+        public TimeSpan BaggageServiceFrom { get; set; }
+        public TimeSpan BaggageServiceTo { get; set; }
     }
 
     #endregion
