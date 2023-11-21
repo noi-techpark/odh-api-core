@@ -77,11 +77,11 @@ namespace OdhApiCore.Controllers.api
         //[Authorize(Roles = "DataReader,GastroReader")]
         [HttpGet, Route("Location/Skiarea")]
         public async Task<IActionResult> GetTheSkiareaList(
-            string? language = "en",
+            string? language,
             string? locfilter = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetSkiAreaInfoFiltered(language ?? "en", locfilter, cancellationToken);
+            return await GetSkiAreaInfoFiltered(language, locfilter, cancellationToken);
         }
 
         #endregion
@@ -278,7 +278,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="locfilter"></param>
         /// <returns>Collection of Reduced Location Objects</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        private async Task<IActionResult> GetSkiAreaInfoFiltered(string lang, string? locfilter, CancellationToken cancellationToken)
+        private async Task<IActionResult> GetSkiAreaInfoFiltered(string? lang, string? locfilter, CancellationToken cancellationToken)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 
