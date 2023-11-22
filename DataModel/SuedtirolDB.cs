@@ -3549,6 +3549,14 @@ namespace DataModel
 
     #region Type2Endpoint
 
+    public class GenericODHData : IIdentifiable, IPublishedOn, IActivateable
+    {
+        public string Id { get; set; }
+        public string? Shortname { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
+        public bool Active { get; set; }
+    }
+
     public class DataModelHelpers
     {
         /// <summary>
