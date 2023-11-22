@@ -52,31 +52,38 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("PushODHActivityPoisByTag/{tags}")]
         public async Task<IActionResult> PushODHActivityPoisByTag(string tags, CancellationToken cancellationToken)
         {
-            List<string> taglist = tags.Split(',').ToList();
+            List<string> taglist = tags.ToLower().Split(',').ToList();
 
-            PushDataOperation customdataoperation = new PushDataOperation(settings, QueryFactory, OdhPushnotifier);
-            var results = await customdataoperation.PushAllODHActivityPoiwithTags(taglist);
+            if (taglist != null && taglist.Count > 0)
+            {
+                PushDataOperation customdataoperation = new PushDataOperation(settings, QueryFactory, OdhPushnotifier);
+                var results = await customdataoperation.PushAllODHActivityPoiwithTags(taglist);
 
-            List<UpdateResult> updates = new List<UpdateResult>();
-            foreach (var result in results) {
-                updates.Add(
-                    new UpdateResult
-                    {
-                        operation = "Push ODHActivityPoi by Tag " + String.Join(",", taglist),
-                        updatetype = "custom",
-                        otherinfo = "",
-                        message = "Done",
-                        recordsmodified = 0,
-                        created = 0,
-                        deleted = 0,
-                        id = "",
-                        updated = 0,
-                        success = true,
-                        pushed = result
-                    });
+                List<UpdateResult> updates = new List<UpdateResult>();
+                foreach (var result in results)
+                {
+                    updates.Add(
+                        new UpdateResult
+                        {
+                            operation = "Push ODHActivityPoi by Tag " + String.Join(",", taglist),
+                            updatetype = "custom",
+                            otherinfo = "",
+                            message = "Done",
+                            recordsmodified = 0,
+                            created = 0,
+                            deleted = 0,
+                            id = "",
+                            updated = 0,
+                            success = true,
+                            pushed = result
+                        });
+                }
+
+                return Ok(updates);
             }
-
-            return Ok(updates);
+            else
+                return BadRequest("no tag");
+           
         }
 
         #endregion
