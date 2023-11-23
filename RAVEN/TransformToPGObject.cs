@@ -115,7 +115,10 @@ namespace RAVEN
             acco.TrustYouResults = data.TrustYouResults;
             acco.TrustYouScore = data.TrustYouScore;
             acco.TrustYouState = data.TrustYouState;
-            acco.TVMember = data.TVMember;            
+            acco.TVMember = data.TVMember;
+
+            acco.AccoHGVInfo = data.AccoHGVInfo;
+            //acco.AccoOverview = data.AccoOverview;
 
             acco._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(acco, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
