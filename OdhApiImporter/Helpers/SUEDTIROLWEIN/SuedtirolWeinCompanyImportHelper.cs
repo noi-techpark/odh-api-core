@@ -68,7 +68,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             List<string> languagelistcategories = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
 
             //Getting valid Tags for Weinkellereien
-            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>() { "Essen Trinken" }); //Essen Trinken ??
+            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforCategories(QueryFactory, new List<string>() { "Essen Trinken" }); //Essen Trinken ??
 
             //Load Type + Subtype fore each language
             var suedtiroltypemain = await ODHTagHelper.GeODHTagByID(QueryFactory, "Essen Trinken");
@@ -320,7 +320,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 suedtirolweinpoi.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
                 
                 //Set Tags based on OdhTags
-                await GenericTaggingHelper.AddMappingToODHActivityPoi(suedtirolweinpoi, settings.JsonConfig.Jsondir);
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(suedtirolweinpoi, settings.JsonConfig.Jsondir);
 
               
                 var result = await InsertDataToDB(suedtirolweinpoi, new KeyValuePair<string, XElement>(dataid, winedata));

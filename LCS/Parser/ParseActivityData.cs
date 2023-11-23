@@ -764,7 +764,7 @@ namespace LCS
 
             hike.OwnerRid = theactivityde.Owner.RID;
 
-            List<string> arearidlist = new List<string>();
+            HashSet<string> arearidlist = new HashSet<string>();
 
             if (theactivityde.Memberships != null)
             {
@@ -782,7 +782,7 @@ namespace LCS
                     }
                 }
 
-                hike.AreaId = arearidlist.ToList();
+                hike.AreaId = arearidlist;
             }
 
             //IDM Favorite over Area

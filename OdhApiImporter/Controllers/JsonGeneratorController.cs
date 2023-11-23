@@ -76,6 +76,26 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+        [HttpGet, Route("ODH/OdhTagCategorieslist")]
+        public async Task<IActionResult> ProduceOdhTagCategoriesListJson(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await JsonGeneratorHelper.GenerateJSONODHTagCategoriesList(QueryFactory, settings.JsonConfig.Jsondir, "TagsForCategories");
+
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "ODHTagCategoriesList", "Generate Json ODHTagCategoriesList succeeded", true);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "ODHTagCategoriesList", "Generate Json ODHTagCategoriesList failed", ex, true);
+
+                return BadRequest(result);
+            }
+        }
+
+
         #endregion
 
         #region LocationInfo

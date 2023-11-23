@@ -864,7 +864,7 @@ namespace LCS.Parser
             hike.GpsTrack = mygpstracklist.ToList();
 
 
-            List<string> arearidlist = new List<string>();
+            HashSet<string> arearidlist = new HashSet<string>();
 
             if (thepoide.Memberships != null)
             {
@@ -893,7 +893,7 @@ namespace LCS.Parser
                     }
                 }
 
-                hike.AreaId = arearidlist.ToList();
+                hike.AreaId = arearidlist;
 
             }
 

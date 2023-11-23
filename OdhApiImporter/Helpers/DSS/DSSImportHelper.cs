@@ -193,7 +193,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                         if (area?.Id != null)
                         {
-                            parsedobject.AreaId = new List<string>() { area.Id };
+                            parsedobject.AreaId = new HashSet<string>() { area.Id };
                             if (parsedobject.LocationInfo == null)
                                 parsedobject.LocationInfo = new LocationInfoLinked();
 
@@ -321,7 +321,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                     //Special get all Taglist and traduce it on import
 
-                    await GenericTaggingHelper.AddMappingToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
+                    await GenericTaggingHelper.AddTagsToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
                 }
 
                 var sourceid = (string)DSSImportUtil.GetSourceId(item, entitytype);

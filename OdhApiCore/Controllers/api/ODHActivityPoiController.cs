@@ -29,10 +29,13 @@ namespace OdhApiCore.Controllers.api
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ODHActivityPoiController : OdhController
-    {        
+    {
+        private readonly ISettings settings;
+
         public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
         {
+            this.settings = settings;
         }
 
         #region SWAGGER Exposed API
@@ -407,6 +410,15 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE LocationInfo
                 odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
 
+                //POPULATE Automatic Assigned Tags
+                ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+
+                //POPULATE Tags
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //POPULATE Categories
+                await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true);
             });
         }
@@ -433,6 +445,15 @@ namespace OdhApiCore.Controllers.api
                 
                 //POPULATE LocationInfo
                 odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
+                //POPULATE Automatic Assigned Tags
+                ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+
+                //POPULATE Tags
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //POPULATE Categories
+                await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
 
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true);
             });

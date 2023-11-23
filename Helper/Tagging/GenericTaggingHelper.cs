@@ -16,7 +16,7 @@ namespace Helper
 {
     public class GenericTaggingHelper
     {
-        public static async Task AddMappingToODHActivityPoi(IIdentifiable mypgdata, string jsondir)
+        public static async Task AddTagsToODHActivityPoi(IIdentifiable mypgdata, string jsondir)
         {
             try
             {

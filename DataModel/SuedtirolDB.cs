@@ -526,10 +526,10 @@ namespace DataModel
         public IDictionary<string, string> SkiRegionName { get; set; }
 
         [SwaggerDeprecated("Deprecated use AreaIds")]
-        public ICollection<string>? AreaId { get; set; }
+        public HashSet<string>? AreaId { get; set; }
 
         [GetOnlyJsonProperty]
-        public ICollection<string>? AreaIds { get { return AreaId; } }
+        public ICollection<string>? AreaIds { get { return this.AreaId; } }
 
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
@@ -2914,10 +2914,10 @@ namespace DataModel
         public string? TourismorganizationId { get; set; }
 
         [SwaggerDeprecated("Deprecated use AreaIds")]
-        public ICollection<string>? AreaId { get; set; }
+        public HashSet<string>? AreaId { get; set; }
         
         [GetOnlyJsonProperty]
-        public ICollection<string>? AreaIds { get { return AreaId; } }
+        public ICollection<string>? AreaIds { get { return this.AreaId; } }
 
         public double? AltitudeDifference { get; set; }
         public double? AltitudeHighestPoint { get; set; }

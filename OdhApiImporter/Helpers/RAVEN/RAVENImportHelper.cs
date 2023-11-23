@@ -196,8 +196,13 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
                     
+                    //Special Operations
+
                     //Special get all Taglist and traduce it on import
-                    await GenericTaggingHelper.AddMappingToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+                    await GenericTaggingHelper.AddTagsToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+
+                    //TODO Recreate LocationInfo
+                    //TODO Recreate Categories
 
                     //Add the PublishedOn Logic
                     //Exception here all Tags with autopublish has to be passed
