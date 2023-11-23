@@ -786,7 +786,7 @@ namespace DataModel
 
         public AccoHGVInfo? AccoHGVInfo { get; set; }
 
-        public AccoOverview? AccoOverview { get; set; }
+        //public AccoOverview? AccoOverview { get; set; }
     }
 
     public class AccommodationRaven : Accommodation
