@@ -940,6 +940,8 @@ namespace DataModel
         public string? Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        public AccoHGVInfo? AccoHGVInfo { get; set; }
     }
 
     public class AccoRoomInfo
@@ -1080,6 +1082,13 @@ namespace DataModel
 
         public string? Description { get; set; }
         public string? BacklinkUrl { get; set; }
+    }
+
+    public class AccoHGVInfo
+    {
+        public bool Bookable { get; set; }
+        public string AvailableFrom { get; set; }
+        public int PriceFrom { get; set; }
     }
 
     #endregion
