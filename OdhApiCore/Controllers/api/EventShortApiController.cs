@@ -541,7 +541,8 @@ namespace OdhApiCore.Controllers.api
             // Sieh nach ob bereits ein Event mit demselben namen und 
             var sameevent = eventshortlistbyroom.Where(x => x.Id == roomtoadd.Id
                                                         && x.RoomStartDate == roomtoadd.RoomStartDate
-                                                        && x.RoomEndDate == roomtoadd.RoomEndDate).FirstOrDefault();
+                                                        && x.RoomEndDate == roomtoadd.RoomEndDate
+                                                        && x.Subtitle == roomtoadd.Subtitle).FirstOrDefault();
 
             if (sameevent != null)
             {
