@@ -967,8 +967,11 @@ namespace DataModel
         public int CampingWashingstands { get; set; }
         public int ApartmentRoomSize { get; set; }
 
-        public TimeSpan CheckInOutFrom { get; set; }
-        public TimeSpan CheckInOutTo { get; set; }
+        public TimeSpan CheckInFrom { get; set; }
+        public TimeSpan CheckInTo { get; set; }
+        public TimeSpan CheckOutFrom { get; set; }
+        public TimeSpan CheckOutTo { get; set; }
+
         public TimeSpan ReceptionOpenFrom { get; set; }
         public TimeSpan ReceptionOpenTo { get; set; }
         public TimeSpan RoomServiceFrom { get; set; }
