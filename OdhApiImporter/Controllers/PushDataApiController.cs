@@ -24,9 +24,6 @@ using OdhApiImporter.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using OdhNotifier;
-using Amazon.Auth.AccessControlPolicy;
-using MongoDB.Driver.Core.Operations;
-using System.ComponentModel;
 
 namespace OdhApiImporter.Controllers
 {
