@@ -410,7 +410,7 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE LocationInfo
                 odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
 
-                //POPULATE Automatic Assigned Tags
+                //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
 
                 //POPULATE Tags
@@ -418,6 +418,10 @@ namespace OdhApiCore.Controllers.api
 
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //TODO DISTANCE Calculation
+
+                //TODO check for Reduced Data                
 
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true);
             });
@@ -446,7 +450,7 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE LocationInfo
                 odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
 
-                //POPULATE Automatic Assigned Tags
+                //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
 
                 //POPULATE Tags
@@ -454,6 +458,10 @@ namespace OdhApiCore.Controllers.api
 
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //TODO DISTANCE Calculation
+
+                //TODO check for Reduced Data
 
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true);
             });
