@@ -56,6 +56,8 @@ namespace OdhApiImporter.Helpers
 
             List<string> idlistspreadsheet = new List<string>();
             List<string> sourcelist = new List<string>();
+            sourcelist.Add("drin");
+            sourcelist.Add("trevilab");
 
             foreach (var ninjadata in ninjadataarr.Select(x => x.tmetadata))
             {
@@ -92,6 +94,7 @@ namespace OdhApiImporter.Helpers
                             errorimportcounter = errorimportcounter + result.error ?? 0;
 
                             idlistspreadsheet.Add(idtocheck.ToUpper());
+
                             if (!sourcelist.Contains(eventtosave.Source))
                                 sourcelist.Add(eventtosave.Source);
 

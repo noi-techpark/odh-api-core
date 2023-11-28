@@ -131,7 +131,7 @@ namespace NINJA.Parser
         {
             try
             {
-                if (id != "------" && place != null)
+                if (id == "------" && place == null)
                     throw new Exception("incomplete data, no id");
 
                 EventLinked myevent = new EventLinked();
