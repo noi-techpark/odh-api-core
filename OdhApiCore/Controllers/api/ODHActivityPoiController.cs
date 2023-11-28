@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Location;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -28,10 +29,13 @@ namespace OdhApiCore.Controllers.api
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ODHActivityPoiController : OdhController
-    {        
+    {
+        private readonly ISettings settings;
+
         public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory)
            : base(env, settings, logger, queryFactory)
         {
+            this.settings = settings;
         }
 
         #region SWAGGER Exposed API
@@ -400,8 +404,25 @@ namespace OdhApiCore.Controllers.api
                 //GENERATE ID
                 odhactivitypoi.Id = Helper.IdGenerator.GenerateIDFromType(odhactivitypoi);
 
+                //GENERATE HasLanguage
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it","nl","cs","pl","ru","fr" });
-                
+
+                //POPULATE LocationInfo
+                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
+                //POPULATE Automatic Assigned ODHTags
+                ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+
+                //POPULATE Tags
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //POPULATE Categories
+                await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //TODO DISTANCE Calculation
+
+                //TODO check for Reduced Data                
+
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true);
             });
         }
@@ -422,9 +443,26 @@ namespace OdhApiCore.Controllers.api
             {
                 //Check ID uppercase lowercase
                 Helper.IdGenerator.CheckIdFromType(odhactivitypoi);
-
+                
+                //GENERATE HasLanguage
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
                 
+                //POPULATE LocationInfo
+                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
+                //POPULATE Automatic Assigned ODHTags
+                ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+
+                //POPULATE Tags
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //POPULATE Categories
+                await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //TODO DISTANCE Calculation
+
+                //TODO check for Reduced Data
+
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true);
             });
         }

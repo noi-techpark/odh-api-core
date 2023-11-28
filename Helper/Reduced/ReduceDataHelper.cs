@@ -24,9 +24,9 @@ namespace Helper
             return myobject switch
             {
                 Accommodation or AccommodationLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                LTSActivity or LTSActivityLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                LTSPoi or LTSPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                Gastronomy or GastronomyLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                LTSActivityLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                LTSPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                GastronomyLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 Event or EventLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 ODHActivityPoi or ODHActivityPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 Measuringpoint or MeasuringpointLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
@@ -154,11 +154,12 @@ namespace Helper
 
             reduced.Id = mypoi.Id + "_REDUCED";
             //reduced.GpsPoints = mypoi.GpsPoints; read only
-            reduced.Latitude = mypoi.Latitude;
-            reduced.Longitude = mypoi.Longitude;
-            reduced.Gpstype = mypoi.Gpstype;
-            reduced.Altitude = mypoi.Altitude;
-            reduced.AltitudeUnitofMeasure = mypoi.AltitudeUnitofMeasure;
+            //reduced.Latitude = mypoi.Latitude;
+            //reduced.Longitude = mypoi.Longitude;
+            //reduced.Gpstype = mypoi.Gpstype;
+            //reduced.Altitude = mypoi.Altitude;
+            //reduced.AltitudeUnitofMeasure = mypoi.AltitudeUnitofMeasure;
+            reduced.GpsInfo = mypoi.GpsInfo;
 
             //ContactInfo/CompanyName
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
@@ -284,12 +285,12 @@ namespace Helper
             reduced.AccoDetail = ReducedDataHelper.ReduceAccoDetail(myacco.AccoDetail ?? new Dictionary<string, AccoDetail>());
 
             //A1GEP, A1GNP, A0Alt
-            reduced.Gpstype = myacco.Gpstype;
-            reduced.Latitude = myacco.Latitude;
-            reduced.Longitude = myacco.Longitude;
-            reduced.Altitude = myacco.Altitude;
-            reduced.AltitudeUnitofMeasure = myacco.AltitudeUnitofMeasure;
-            //reduced.GpsPoints = myacco.GpsPoints; //Calculated
+            //reduced.Gpstype = myacco.Gpstype;
+            //reduced.Latitude = myacco.Latitude;
+            //reduced.Longitude = myacco.Longitude;
+            //reduced.Altitude = myacco.Altitude;
+            //reduced.AltitudeUnitofMeasure = myacco.AltitudeUnitofMeasure;
+            reduced.GpsInfo = myacco.GpsInfo;
 
             //A0Roo
             reduced.HasRoom = myacco.HasRoom;
@@ -336,11 +337,12 @@ namespace Helper
             reduced.Id = myevent.Id + "_REDUCED";
 
             //Definition/GEP, GNP
-            reduced.Gpstype = myevent.Gpstype;
-            reduced.Latitude = myevent.Latitude;
-            reduced.Longitude = myevent.Longitude;
-            reduced.Altitude = myevent.Altitude;
-            reduced.AltitudeUnitofMeasure = myevent.AltitudeUnitofMeasure;
+            //reduced.Gpstype = myevent.Gpstype;
+            //reduced.Latitude = myevent.Latitude;
+            //reduced.Longitude = myevent.Longitude;
+            //reduced.Altitude = myevent.Altitude;
+            //reduced.AltitudeUnitofMeasure = myevent.AltitudeUnitofMeasure;
+            reduced.GpsInfo = myevent.GpsInfo;
 
             //DefinitionLng/Title
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(myevent.Detail);
@@ -395,11 +397,12 @@ namespace Helper
             //Name
             reduced.Shortname = measuringpoint.Shortname;
             //GeoData/Position/Longitude,Latitude,Altitude
-            reduced.Gpstype = measuringpoint.Gpstype;
-            reduced.Latitude = measuringpoint.Latitude;
-            reduced.Longitude = measuringpoint.Longitude;
-            reduced.Altitude = measuringpoint.Altitude;
-            reduced.AltitudeUnitofMeasure = measuringpoint.AltitudeUnitofMeasure;
+            //reduced.Gpstype = measuringpoint.Gpstype;
+            //reduced.Latitude = measuringpoint.Latitude;
+            //reduced.Longitude = measuringpoint.Longitude;
+            //reduced.Altitude = measuringpoint.Altitude;
+            //reduced.AltitudeUnitofMeasure = measuringpoint.AltitudeUnitofMeasure;
+            reduced.GpsInfo = measuringpoint.GpsInfo;
 
             //Observation / Temperature
             reduced.Temperature = measuringpoint.Temperature;

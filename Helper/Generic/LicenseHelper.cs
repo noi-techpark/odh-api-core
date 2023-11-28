@@ -55,7 +55,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforActivity(LTSActivity data)
+        public static LicenseInfo GetLicenseforActivity(PoiBaseInfos data)
         {
             var isopendata = false;
             var licensetype = "Closed";
@@ -70,7 +70,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforPoi(LTSPoi data)
+        public static LicenseInfo GetLicenseforPoi(PoiBaseInfos data)
         {
             var isopendata = false;
             var licensetype = "Closed";
@@ -260,7 +260,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforArticle(ArticleBaseInfos data)
+        public static LicenseInfo GetLicenseforArticle(Article data)
         {
             var isopendata = false;
             var licensetype = "Closed";

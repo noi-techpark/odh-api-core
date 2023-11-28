@@ -31,8 +31,14 @@ namespace Helper
             }
         }
 
+        private static void FixDetailLanguageField(ILanguage mydetail, string language)
+        {
+            if (String.IsNullOrEmpty(mydetail.Language))
+                mydetail.Language = language;
+        }
+
         //For Articles
-        public static void CheckMyInsertedLanguages(this ArticleBaseInfos myarticle, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Article myarticle, List<string> availablelanguages)
         {
             if (myarticle.HasLanguage == null)
                 myarticle.HasLanguage = new List<string>();
@@ -48,6 +54,7 @@ namespace Helper
                     {
                         var detailvalues = myarticle.Detail[language];
 
+                        FixDetailLanguageField(detailvalues, language);
                         FixDetailBaseAndIntroText(detailvalues);
 
                         if (!String.IsNullOrEmpty(detailvalues.AdditionalText))
@@ -74,9 +81,12 @@ namespace Helper
 
                         myarticle.Detail[language].Language = language;
                     }
+                    
                     if (myarticle.ContactInfos.ContainsKey(language) && myarticle.ContactInfos[language] != null)
                     {
                         var contactvalues = myarticle.ContactInfos[language];
+
+                        FixDetailLanguageField(contactvalues, language);
 
                         if (!String.IsNullOrEmpty(contactvalues.Address))
                             removelang = false;
@@ -118,6 +128,8 @@ namespace Helper
                     {
                         var additionalvalues = myarticle.AdditionalArticleInfos[language];
 
+                        FixDetailLanguageField(additionalvalues, language);
+
                         if (additionalvalues.Elements.Count > 0)
                             removelang = false;
 
@@ -158,9 +170,11 @@ namespace Helper
                 {
                     bool removelang = true;
 
-                   if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
+                    if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
                     {
                         var detailvalues = mypoiactivity.Detail[language];
+
+                        FixDetailLanguageField(detailvalues, language);
                         FixDetailBaseAndIntroText(detailvalues);
 
                         if (!String.IsNullOrEmpty(detailvalues.AdditionalText))
@@ -180,9 +194,12 @@ namespace Helper
                         if (!String.IsNullOrEmpty(detailvalues.Title))
                             removelang = false;
                     }
+                    
                     if (mypoiactivity.ContactInfos.ContainsKey(language) && mypoiactivity.ContactInfos[language] != null)
                     {
                         var contactvalues = mypoiactivity.ContactInfos[language];
+
+                        FixDetailLanguageField(contactvalues, language);
 
                         if (!String.IsNullOrEmpty(contactvalues.Address))
                             removelang = false;
@@ -218,6 +235,18 @@ namespace Helper
                             removelang = false;
                     }
 
+                    if (mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                    {
+                        var additionalvalues = mypoiactivity.AdditionalPoiInfos[language];
+
+                        FixDetailLanguageField(additionalvalues, language);
+
+                        //Always present do not remove
+                        //if (additionalvalues.Elements.Count > 0)
+                        //    removelang = false;
+
+                    }
+
                     //Add Language
                     if (removelang == false)
                     {
@@ -241,7 +270,7 @@ namespace Helper
         }
 
         //For Events
-        public static void CheckMyInsertedLanguages(this EventBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Event mypoiactivity, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
@@ -256,6 +285,8 @@ namespace Helper
                     if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
                     {
                         var detailvalues = mypoiactivity.Detail[language];
+
+                        FixDetailLanguageField(detailvalues, language);
                         FixDetailBaseAndIntroText(detailvalues);
 
                         if (!String.IsNullOrEmpty(detailvalues.AdditionalText))
@@ -275,9 +306,12 @@ namespace Helper
                         if (!String.IsNullOrEmpty(detailvalues.Title))
                             removelang = false;
                     }
+                    
                     if (mypoiactivity.ContactInfos.ContainsKey(language) && mypoiactivity.ContactInfos[language] != null)
                     {
                         var contactvalues = mypoiactivity.ContactInfos[language];
+
+                        FixDetailLanguageField(contactvalues, language);
 
                         if (!String.IsNullOrEmpty(contactvalues.Address))
                             removelang = false;
@@ -335,7 +369,7 @@ namespace Helper
         }
 
         //For Gastronomy
-        public static void CheckMyInsertedLanguages(this GastronomyBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this Gastronomy mypoiactivity, List<string> availablelanguages)
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
@@ -351,6 +385,8 @@ namespace Helper
                     {
                         var detailvalues = mypoiactivity.Detail[language];
                         FixDetailBaseAndIntroText(detailvalues);
+
+                        FixDetailLanguageField(detailvalues, language);
 
                         if (!String.IsNullOrEmpty(detailvalues.AdditionalText))
                             removelang = false;
@@ -369,9 +405,12 @@ namespace Helper
                         if (!String.IsNullOrEmpty(detailvalues.Title))
                             removelang = false;
                     }
+                    
                     if (mypoiactivity.ContactInfos.ContainsKey(language) && mypoiactivity.ContactInfos[language] != null)
                     {
                         var contactvalues = mypoiactivity.ContactInfos[language];
+
+                        FixDetailLanguageField(contactvalues, language);
 
                         if (!String.IsNullOrEmpty(contactvalues.Address))
                             removelang = false;

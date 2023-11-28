@@ -7,7 +7,6 @@ using Helper;
 using Microsoft.AspNetCore.Mvc;
 using OdhNotifier;
 using RAVEN;
-using ServiceReferenceLCS;
 using SqlKata;
 using SqlKata.Execution;
 using System;
@@ -50,9 +49,9 @@ namespace OdhApiImporter.Helpers
             switch (datatype.ToLower())
             {
                 case "accommodation":
-                    mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<AccommodationRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<AccommodationRaven, AccommodationLinked>((AccommodationRaven)mydata, TransformToPGObject.GetAccommodationPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -128,9 +127,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "gastronomy":
-                    mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<GastronomyRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<GastronomyLinked, GastronomyLinked>((GastronomyLinked)mydata, TransformToPGObject.GetGastronomyPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<GastronomyRaven, GastronomyLinked>((GastronomyRaven)mydata, TransformToPGObject.GetGastronomyPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -197,8 +196,13 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
                     
+                    //Special Operations
+
                     //Special get all Taglist and traduce it on import
-                    await GenericTaggingHelper.AddMappingToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+                    await GenericTaggingHelper.AddTagsToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+
+                    //TODO Recreate LocationInfo
+                    //TODO Recreate Categories
 
                     //Add the PublishedOn Logic
                     //Exception here all Tags with autopublish has to be passed
@@ -221,9 +225,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "event":
-                    mydata = await GetDataFromRaven.GetRavenData<EventLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<EventRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<EventLinked, EventLinked>((EventLinked)mydata, TransformToPGObject.GetEventPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<EventRaven, EventLinked>((EventRaven)mydata, TransformToPGObject.GetEventPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -271,9 +275,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "metaregion":
-                    mydata = await GetDataFromRaven.GetRavenData<MetaRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<MetaRegion>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<MetaRegionLinked, MetaRegionLinked>((MetaRegionLinked)mydata, TransformToPGObject.GetMetaRegionPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<MetaRegion, MetaRegionLinked>((MetaRegion)mydata, TransformToPGObject.GetMetaRegionPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -288,9 +292,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "region":
-                    mydata = await GetDataFromRaven.GetRavenData<RegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<Region>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<RegionLinked, RegionLinked>((RegionLinked)mydata, TransformToPGObject.GetRegionPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<Region, RegionLinked>((Region)mydata, TransformToPGObject.GetRegionPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -305,9 +309,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "tv":
-                    mydata = await GetDataFromRaven.GetRavenData<TourismvereinLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "TourismAssociation/");
+                    mydata = await GetDataFromRaven.GetRavenData<Tourismverein>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "TourismAssociation/");
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<TourismvereinLinked, TourismvereinLinked>((TourismvereinLinked)mydata, TransformToPGObject.GetTourismAssociationPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<Tourismverein, TourismvereinLinked>((Tourismverein)mydata, TransformToPGObject.GetTourismAssociationPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -322,9 +326,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "municipality":
-                    mydata = await GetDataFromRaven.GetRavenData<MunicipalityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<Municipality>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<MunicipalityLinked, MunicipalityLinked>((MunicipalityLinked)mydata, TransformToPGObject.GetMunicipalityPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<Municipality, MunicipalityLinked>((Municipality)mydata, TransformToPGObject.GetMunicipalityPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -339,9 +343,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "district":
-                    mydata = await GetDataFromRaven.GetRavenData<DistrictLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<District>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<DistrictLinked, DistrictLinked>((DistrictLinked)mydata, TransformToPGObject.GetDistrictPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<District, DistrictLinked>((District)mydata, TransformToPGObject.GetDistrictPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -356,9 +360,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "experiencearea":
-                    mydata = await GetDataFromRaven.GetRavenData<ExperienceAreaLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<ExperienceArea>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<ExperienceAreaLinked, ExperienceAreaLinked>((ExperienceAreaLinked)mydata, TransformToPGObject.GetExperienceAreaPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<ExperienceArea, ExperienceAreaLinked>((ExperienceArea)mydata, TransformToPGObject.GetExperienceAreaPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -373,9 +377,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "skiarea":
-                    mydata = await GetDataFromRaven.GetRavenData<SkiAreaLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<SkiAreaRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<SkiAreaLinked, SkiAreaLinked>((SkiAreaLinked)mydata, TransformToPGObject.GetSkiAreaPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<SkiAreaRaven, SkiAreaLinked>((SkiAreaRaven)mydata, TransformToPGObject.GetSkiAreaPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -390,9 +394,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "skiregion":
-                    mydata = await GetDataFromRaven.GetRavenData<SkiRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<SkiRegion>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<SkiRegionLinked, SkiRegionLinked>((SkiRegionLinked)mydata, TransformToPGObject.GetSkiRegionPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<SkiRegion, SkiRegionLinked>((SkiRegion)mydata, TransformToPGObject.GetSkiRegionPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -442,9 +446,9 @@ namespace OdhApiImporter.Helpers
                     break;
 
                 case "measuringpoint":
-                    mydata = await GetDataFromRaven.GetRavenData<MeasuringpointLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "Weather/Measuringpoint/");
+                    mydata = await GetDataFromRaven.GetRavenData<MeasuringpointRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "Weather/Measuringpoint/");
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<MeasuringpointLinked, MeasuringpointLinked>((MeasuringpointLinked)mydata, TransformToPGObject.GetMeasuringpointPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<MeasuringpointRaven, MeasuringpointLinked>((MeasuringpointRaven)mydata, TransformToPGObject.GetMeasuringpointPGObject);
                     else
                         throw new Exception("No data found!");
 

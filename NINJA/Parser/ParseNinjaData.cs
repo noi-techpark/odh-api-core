@@ -254,9 +254,13 @@ namespace NINJA.Parser
                 myevent._Meta.LastUpdate = myevent.LastChange;
 
                 //Gps Info
-                myevent.Latitude = place != null ? place.scoordinate.y : 0;
-                myevent.Longitude = place != null ? place.scoordinate.x : 0;
-                myevent.Gpstype = "position";
+                GpsInfo eventgpsinfo = new GpsInfo();
+                eventgpsinfo.Latitude = place != null ? place.scoordinate.y : 0;
+                eventgpsinfo.Longitude = place != null ? place.scoordinate.x : 0;
+                eventgpsinfo.Gpstype = "position";
+
+                myevent.GpsInfo = new List<GpsInfo>();
+                myevent.GpsInfo.Add(eventgpsinfo);
 
                 IDictionary<string, string> floor = new Dictionary<string, string>();
                 floor.Add(new KeyValuePair<string, string>("de", "Stock"));

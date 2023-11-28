@@ -49,15 +49,25 @@ namespace OdhApiImporter.Controllers
         #region CustomPush
 
         [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("PushODHActivityPoisByTag/{tags}")]
-        public async Task<IActionResult> PushODHActivityPoisByTag(string tags, CancellationToken cancellationToken)
+        [HttpGet, Route("PushODHActivityPoisByTag")]
+        public async Task<IActionResult> PushODHActivityPoisByTag(
+            string datatype,
+            string? ids,
+            string? tags, 
+            string? notificationchannel,
+            CancellationToken cancellationToken)
         {
-            List<string> taglist = tags.ToLower().Split(',').ToList();
+            var type = datatype.ToLower();
 
-            if (taglist != null && taglist.Count > 0)
+            try
             {
+                type = ODHTypeHelper.TranslateType2Table(datatype);
+
+                List<string> taglist = tags != null ? tags.ToLower().Split(',').ToList() : new List<string>();
+                List<string> idlist = ids != null ? ids.ToLower().Split(',').ToList() : new List<string>();
+               
                 PushDataOperation customdataoperation = new PushDataOperation(settings, QueryFactory, OdhPushnotifier);
-                var results = await customdataoperation.PushAllODHActivityPoiwithTags(taglist);
+                var results = await customdataoperation.PushAllODHActivityPoiwithTags(type, idlist, taglist);
 
                 List<UpdateResult> updates = new List<UpdateResult>();
                 foreach (var result in results)
@@ -65,24 +75,35 @@ namespace OdhApiImporter.Controllers
                     updates.Add(
                         new UpdateResult
                         {
-                            operation = "Push ODHActivityPoi by Tag " + String.Join(",", taglist),
+                            operation = type + ".push." + notificationchannel,
                             updatetype = "custom",
                             otherinfo = "",
                             message = "Done",
                             recordsmodified = 0,
                             created = 0,
                             deleted = 0,
-                            id = "",
+                            id = result.Key,
                             updated = 0,
                             success = true,
-                            pushed = result
+                            pushed = result.Value,
+                            source = "api",
+                            pushchannels = result.Value.Keys,
+                            objectcompared = 0,
+                            objectchanges = null,
+                            objectchangestring = null,
+                            objectchanged = 0,
+                            objectimagechanged = 0
                         });
+
                 }
 
                 return Ok(updates);
             }
-            else
-                return BadRequest("no tag");
+            catch(Exception ex)
+            {
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(ids ?? tags, "api", type + ".push." + notificationchannel, "custom", "Push to Marketplace failed", "", default(UpdateDetail), ex, true);
+                return BadRequest(errorResult);
+            }
            
         }
 

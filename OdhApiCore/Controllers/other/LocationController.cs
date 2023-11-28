@@ -55,14 +55,14 @@ namespace OdhApiCore.Controllers.api
         [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 7200, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
         [HttpGet, Route("Location")]
         public async Task<IActionResult> GetTheLocationList(
-            string? language = "en",
+            string? language,
             [SwaggerEnum(new[] { "mta", "reg", "tvs", "mun", "fra" })]
             string? type = "null",
             bool showall = true,
             string? locfilter = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetLocationInfoFiltered(language ?? "en", locfilter, showall, type, cancellationToken);
+            return await GetLocationInfoFiltered(language, locfilter, showall, type, cancellationToken);
         }
 
         /// <summary>
@@ -77,11 +77,11 @@ namespace OdhApiCore.Controllers.api
         //[Authorize(Roles = "DataReader,GastroReader")]
         [HttpGet, Route("Location/Skiarea")]
         public async Task<IActionResult> GetTheSkiareaList(
-            string? language = "en",
+            string? language,
             string? locfilter = null,
             CancellationToken cancellationToken = default)
         {
-            return await GetSkiAreaInfoFiltered(language ?? "en", locfilter, cancellationToken);
+            return await GetSkiAreaInfoFiltered(language, locfilter, cancellationToken);
         }
 
         #endregion
@@ -94,7 +94,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="lang">Language</param>
         /// <param name="locfilter">Location Filter</param>
         /// <returns>Collection of Reduced Location Objects</returns>
-        private async Task<IActionResult> GetLocationInfoFiltered(string lang, string? locfilter, bool allactivedata, string? type, CancellationToken cancellationToken)
+        private async Task<IActionResult> GetLocationInfoFiltered(string? lang, string? locfilter, bool allactivedata, string? type, CancellationToken cancellationToken)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
             List<Tuple<string, string>> loclist = new List<Tuple<string, string>>();
@@ -278,7 +278,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="locfilter"></param>
         /// <returns>Collection of Reduced Location Objects</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        private async Task<IActionResult> GetSkiAreaInfoFiltered(string lang, string? locfilter, CancellationToken cancellationToken)
+        private async Task<IActionResult> GetSkiAreaInfoFiltered(string? lang, string? locfilter, CancellationToken cancellationToken)
         {
             List<LocHelperclass> mylocationlist = new List<LocHelperclass>();
 

@@ -32,24 +32,27 @@ namespace OdhApiImporter.Helpers
             this.OdhPushnotifier = odhpushnotifier;
         }
 
-        public async Task<List<IDictionary<string, NotifierResponse>>> PushAllODHActivityPoiwithTags(List<string> taglist)
+        public async Task<IDictionary<string, IDictionary<string, NotifierResponse>>> PushAllODHActivityPoiwithTags(string datatype, List<string> idlist, List<string> taglist)
         {
-            var pushresultlist = new List<IDictionary<string, NotifierResponse>>();
+            var pushresultlist = new Dictionary<string, IDictionary<string, NotifierResponse>>();
 
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("smgpois")
+                   .From(datatype)
+                   .When(idlist.Count > 0, q => q.IdIlikeFilter(idlist))
                    .When(taglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(taglist));
 
-            var data = await query.GetObjectListAsync<ODHActivityPoi>();
+            ODHTypeHelper.TranslateTypeString2Type(datatype);
+
+            var datalist = await query.GetObjectListAsync<GenericODHData>();
            
-            foreach (var poi in data)
+            foreach (var data in datalist)
             {
-                if (poi.PublishedOn != null && poi.PublishedOn.Contains("idm-marketplace"))
+                if (data.PublishedOn != null && data.PublishedOn.Contains("idm-marketplace"))
                 {
-                    var pushresults = await OdhPushnotifier.PushToPublishedOnServices(poi.Id, "odhactivitypoi", "forced", false, false, "api", new List<string>() { "idm-marketplace" });
-                    pushresultlist.Add(pushresults);
+                    var pushresults = await OdhPushnotifier.PushToPublishedOnServices(data.Id, "odhactivitypoi", "forced", false, false, "api", new List<string>() { "idm-marketplace" });
+                    pushresultlist.Add(data.Id, pushresults);
                 }
             }
 

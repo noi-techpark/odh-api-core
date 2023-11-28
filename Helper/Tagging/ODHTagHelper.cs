@@ -4,10 +4,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataModel;
+using Newtonsoft.Json;
 using SqlKata.Execution;
 
 namespace Helper
@@ -15,7 +17,7 @@ namespace Helper
 
     public class ODHTagHelper
     {
-        public static async Task<IEnumerable<SmgTags>> GetODHTagsValidforTranslations(QueryFactory QueryFactory, List<string> validforentity, List<string>? idlist = null)
+        public static async Task<IEnumerable<SmgTags>> GetODHTagsValidforCategories(QueryFactory QueryFactory, List<string> validforentity, List<string>? idlist = null)
         {
             try
             {
@@ -108,5 +110,65 @@ namespace Helper
             return maintype;
         }
 
+        public static async Task GetCategoriesFromAssignedODHTags(ODHActivityPoiLinked smgpoi, string jsondir)
+        {
+            //All available languages
+            List<string> languagelistcategories = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
+
+            //Get Valid Categories live
+            //var validtagsforcategories = await GetODHTagsValidforCategories(QueryFactory, new List<string>() { "smgpois" });
+            //Get Valid Categories from json
+            var validtagsforcategories = await GetAllODHTagsforCategorizationJson(jsondir);
+
+            //Set the AdditionalPoiInfos if they are missing
+            if (smgpoi.AdditionalPoiInfos == null)
+                smgpoi.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
+
+            if (smgpoi.SmgTags != null && smgpoi.SmgTags.Count > 0)
+            {
+                //Setting Categorization by Valid Tags
+                var currentcategories = validtagsforcategories.Where(x => smgpoi.SmgTags.Select(y => y.ToLower()).Contains(x.Id.ToLower()));
+
+                //Resetting Categories
+                foreach (var languagecategory in languagelistcategories)
+                {
+                    if (smgpoi.AdditionalPoiInfos.ContainsKey(languagecategory))
+                    {
+                        if (smgpoi.AdditionalPoiInfos[languagecategory].Categories == null)
+                        {
+                            smgpoi.AdditionalPoiInfos[languagecategory].Categories = new List<string>();
+                        }
+                        else
+                        {
+                            smgpoi.AdditionalPoiInfos[languagecategory].Categories.Clear();
+                        }
+                    }
+                    else
+                    {
+                        smgpoi.AdditionalPoiInfos.TryAddOrUpdate(languagecategory, new AdditionalPoiInfos() { Language = languagecategory, Categories = new List<string>() });
+                    }   
+                }
+                //Reassigning Categories
+                foreach (var smgtagtotranslate in currentcategories)
+                {
+                    foreach (var languagecategory in languagelistcategories)
+                    {
+                        if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && !smgpoi.AdditionalPoiInfos[languagecategory].Categories.Contains(smgtagtotranslate.TagName[languagecategory].Trim()))
+                            smgpoi.AdditionalPoiInfos[languagecategory].Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
+                    }
+                }
+            }
+        }
+
+        //GETS all tags for categorization tags from json as object to avoid DB call on each Tag update
+        public static async Task<List<TagLinked>> GetAllODHTagsforCategorizationJson(string jsondir)
+        {
+            using (StreamReader r = new StreamReader(Path.Combine(jsondir, $"TagsForCategories.json")))
+            {
+                string json = await r.ReadToEndAsync();
+
+                return JsonConvert.DeserializeObject<List<TagLinked>>(json) ?? new();
+            }
+        }
     }
 }

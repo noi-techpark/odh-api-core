@@ -336,22 +336,26 @@ namespace CDB.Parser
                 
                 if (coords != null)
                 {
-                    myacco.Gpstype = "position";
+                    myacco.GpsInfo = new List<GpsInfo>();
 
-                    myacco.Longitude = Convert.ToDouble(coords.Attribute("A1GEP").Value, myculture);
-                    myacco.Latitude = Convert.ToDouble(coords.Attribute("A1GNP").Value, myculture);
+                    GpsInfo myinfo = new GpsInfo();
+
+                    myinfo.Gpstype = "position";
+
+                    myinfo.Longitude = Convert.ToDouble(coords.Attribute("A1GEP").Value, myculture);
+                    myinfo.Latitude = Convert.ToDouble(coords.Attribute("A1GNP").Value, myculture);
 
                     if (position != null)
                     {
-                        myacco.Altitude = Convert.ToDouble(position.Attribute("A0Alt").Value, myculture);
-                        myacco.AltitudeUnitofMeasure = "m";
-                    }                    
+                        myinfo.Altitude = Convert.ToDouble(position.Attribute("A0Alt").Value, myculture);
+                        myinfo.AltitudeUnitofMeasure = "m";
+                    }
+
+                    myacco.GpsInfo.Add(myinfo);
                 }
                 else if (coords == null)
                 {
-                    myacco.Latitude = 0;
-                    myacco.Longitude = 0;
-                    myacco.Altitude = null;                    
+                    myacco.GpsInfo = null;                 
                 }
 
                 if (ratings != null)

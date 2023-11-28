@@ -76,7 +76,7 @@ namespace OdhApiImporter.Helpers
             List<string> languagelistcategories = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
 
             //Getting valid Tags for Museums
-            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>() { "Kultur Sehenswürdigkeiten" });
+            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforCategories(QueryFactory, new List<string>() { "Kultur Sehenswürdigkeiten" });
 
             //Loading District & Municipality data
             var districtreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(QueryFactory, "districts");
@@ -399,7 +399,7 @@ namespace OdhApiImporter.Helpers
                 ODHActivityPoiHelper.SetMainCategorizationForODHActivityPoi(mymuseum);
 
                 //Set Tags based on OdhTags
-                await GenericTaggingHelper.AddMappingToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
              
                 if (mymuseumdata?.Root is { })
                 {
