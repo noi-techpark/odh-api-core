@@ -174,13 +174,13 @@ namespace OdhApiImporter.Controllers
                     pushed = resulttuple,
                 };
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue succeeded", otherinfo, updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Custom Update succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue failed", otherinfo, updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Custom Update failed", otherinfo, updatedetail, ex, true);
 
                 return BadRequest(errorResult);
             }

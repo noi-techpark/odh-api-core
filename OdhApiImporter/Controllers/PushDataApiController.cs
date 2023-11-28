@@ -96,7 +96,8 @@ namespace OdhApiImporter.Controllers
                         });
 
                 }
-                return Ok(updates);                
+
+                return Ok(updates);
             }
             catch(Exception ex)
             {

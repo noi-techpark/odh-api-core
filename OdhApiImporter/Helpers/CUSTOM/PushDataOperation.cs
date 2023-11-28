@@ -46,7 +46,7 @@ namespace OdhApiImporter.Helpers
             ODHTypeHelper.TranslateTypeString2Type(datatype);
 
             var datalist = await query.GetObjectListAsync<GenericODHData>();
-
+           
             foreach (var data in datalist)
             {
                 if (data.PublishedOn != null && data.PublishedOn.Contains("idm-marketplace"))
