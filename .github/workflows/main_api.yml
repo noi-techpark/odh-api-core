@@ -190,3 +190,4 @@ jobs:
           curl "${{ env.API_URL }}ODH/AccommodationFulllist"
           curl "${{ env.API_URL }}ODH/Taglist"
           curl "${{ env.API_URL }}ODH/OdhTagAutoPublishlist"
+          curl "${{ env.API_URL }}ODH/OdhTagCategorieslist"
