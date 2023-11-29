@@ -472,7 +472,7 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : null; } }
+        public new Nullable<double> Altitude { get { return this.GpsInfo != null && this.GpsInfo.Count > 0 ? this.GpsInfo.FirstOrDefault().Altitude : 0; } }
 
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
