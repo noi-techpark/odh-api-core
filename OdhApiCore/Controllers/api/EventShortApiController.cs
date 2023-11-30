@@ -228,6 +228,7 @@ namespace OdhApiCore.Controllers.api
         /// GET EventShort Types
         /// </summary>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="type">Type to filter for ('TechnologyFields','CustomTagging')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -240,6 +241,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EventShortTypes")]
         public async Task<IActionResult> GetEventShortTypes(
             string? language,
+            string? type,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -248,7 +250,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventShortTypesList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
+            return await GetEventShortTypesList(language, type, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -604,7 +606,7 @@ namespace OdhApiCore.Controllers.api
 
         #region EVENTSHORT TYPES
 
-        private Task<IActionResult> GetEventShortTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetEventShortTypesList(string? language, string? typefilter, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -612,6 +614,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("eventshorttypes")
                         .SelectRaw("data")
                         .When(FilterClosedData, q => q.FilterClosedData())
+                        .When(!String.IsNullOrEmpty(typefilter), q => q.WhereRaw("data->>'Type' ILIKE $$", typefilter))
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
