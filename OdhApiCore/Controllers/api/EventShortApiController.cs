@@ -241,7 +241,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EventShortTypes")]
         public async Task<IActionResult> GetEventShortTypes(
             string? language,
-            string? type,
+            string? type = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
