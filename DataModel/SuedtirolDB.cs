@@ -2811,6 +2811,34 @@ namespace DataModel
         //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
+    public class Source : IIdentifiable, IImportDateassigneable, ILicenseInfo
+    {
+        public LicenseInfo? LicenseInfo { get; set; }
+
+        public Source()
+        {
+            Name = new Dictionary<string, string>();
+            Description = new Dictionary<string, string>();
+        }
+
+        public string? Id { get; set; }
+
+        [SwaggerDeprecated("Deprecated, refer to Name")]
+        public string? Shortname { get; set; }
+
+        public IDictionary<string, string> Name { get; set; }
+        public IDictionary<string, string> Description { get; set; }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        public string? Url { get; set; }
+
+        //Generic Mapping Object
+        //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+    }
+
+
     public class LTSTaggingType
     {
         public LTSTaggingType()
