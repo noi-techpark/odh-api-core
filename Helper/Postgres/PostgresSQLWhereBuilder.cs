@@ -818,8 +818,8 @@ namespace Helper
 
         //Return Where and Parameters for OdhTag and Tag
         public static Query PublishersWhereExpression(
-            this Query query, IReadOnlyCollection<string> languagelist, 
-            IReadOnlyCollection<string> sourcelist,
+            this Query query, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, 
             bool filterClosedData, IEnumerable<string> userroles)
         {
@@ -832,6 +832,27 @@ namespace Helper
             return query
                 .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
                 .SourceFilter_GeneratedColumn(sourcelist)
+                .When(idlist != null, q => query.WhereIn("id", idlist))
+                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
+                .FilterDataByAccessRoles(userroles);
+        }
+
+        public static Query SourcesWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> idlist,
+            string? searchfilter, string? language,
+            bool filterClosedData, IEnumerable<string> userroles)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                searchfilter, language, idlist
+            );
+
+            return query
+                .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
+                .When(idlist != null, q => query.WhereIn("id", idlist))
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
