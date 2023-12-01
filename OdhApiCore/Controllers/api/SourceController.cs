@@ -118,7 +118,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query()
                     .SelectRaw("data")
-                    .From("Sources")
+                    .From("sources")
                     .SourcesWhereExpression(
                         languagelist: new List<string>(),
                         idlist: idlist,
