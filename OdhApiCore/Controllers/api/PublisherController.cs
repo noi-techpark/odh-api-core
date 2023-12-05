@@ -193,7 +193,7 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
-                publisher.Id = Helper.IdGenerator.GenerateIDFromType(publisher);
+                publisher.Id = publisher.Key.ToLower().Replace(" ", "") ?? Helper.IdGenerator.GenerateIDFromType(publisher);
 
                 if (publisher.LicenseInfo == null)
                     publisher.LicenseInfo = new LicenseInfo() { ClosedData = false };

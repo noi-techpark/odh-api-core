@@ -188,7 +188,7 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
-                source.Id = Helper.IdGenerator.GenerateIDFromType(source);
+                source.Id = source.Key.ToLower().Replace(" ", "") ?? Helper.IdGenerator.GenerateIDFromType(source);
 
                 if (source.LicenseInfo == null)
                     source.LicenseInfo = new LicenseInfo() { ClosedData = false };

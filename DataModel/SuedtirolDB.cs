@@ -22,7 +22,11 @@ namespace DataModel
 
     public interface IIdentifiable
     {
-        string Id { get; set; }
+        string Id { get; set; }        
+    }
+
+    public interface IShortName
+    {
         string? Shortname { get; set; }
     }
 
@@ -470,7 +474,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource, ISmgActive, IPublishedOn
+    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource, ISmgActive, IPublishedOn, IShortName
     {
         public Area()
         {
@@ -703,7 +707,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Accommodation : TrustYouInfos, IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -866,7 +870,7 @@ namespace DataModel
         public int TrustYouState { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
+    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1081,7 +1085,7 @@ namespace DataModel
 
     #region Events
 
-    public class Event : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
+    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1225,7 +1229,7 @@ namespace DataModel
 
     #region Venues
 
-    public class Venue : IIdentifiable, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive
+    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive
     {
         public Venue()
         {
@@ -1294,7 +1298,7 @@ namespace DataModel
     #region Articles    
 
     //BaseInfo Article
-    public abstract class Article : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
+    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1619,7 +1623,7 @@ namespace DataModel
         public string? imageUrl { get; set; }
     }
 
-    public class WeatherHistory : IIdentifiable, ILicenseInfo, IImportDateassigneable
+    public class WeatherHistory : IIdentifiable, IShortName, ILicenseInfo, IImportDateassigneable
     {
         public WeatherHistory()
         {
@@ -1640,7 +1644,7 @@ namespace DataModel
 
     #region Packages
 
-    public class Package : IIdentifiable, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
+    public class Package : IIdentifiable, IShortName, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1651,7 +1655,6 @@ namespace DataModel
             ChannelInfo = new Dictionary<string, string>();
         }
 
-        //IIdentifiable
         public string? Id { get; set; }
 
         //Infos zum Import
@@ -1772,7 +1775,7 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Measuringpoint : IIdentifiable, IShortName, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public Measuringpoint()
         {
@@ -1960,7 +1963,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
     {
         public EventShort()
         {
@@ -2410,7 +2413,7 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamInfoRaven : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
+    public class WebcamInfoRaven : Webcam, IIdentifiable, IShortName, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
     {
         public WebcamInfoRaven()
         {
@@ -2555,7 +2558,7 @@ namespace DataModel
 
     #region Wine
 
-    public class Wine : IIdentifiable, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive
+    public class Wine : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2734,7 +2737,7 @@ namespace DataModel
         public bool ClosedData { get; set; }
     }
 
-    public class SmgTags : IIdentifiable, IImportDateassigneable, ILicenseInfo, IPublishedOn
+    public class SmgTags : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2796,19 +2799,15 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-
-        [SwaggerDeprecated("Deprecated, refer to Name")]
-        public string? Shortname { get; set; }
+        
+        public string Key { get; set; }
 
         public IDictionary<string, string> Name { get; set; }
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
 
-        public string? PublisherUrl { get; set; }
-
-        //Generic Mapping Object
-        //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public string? Url { get; set; }
     }
 
     public class Source : IIdentifiable, IImportDateassigneable, ILicenseInfo
@@ -2822,9 +2821,8 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-
-        [SwaggerDeprecated("Deprecated, refer to Name")]
-        public string? Shortname { get; set; }
+        
+        public string Key { get; set; }
 
         public IDictionary<string, string> Name { get; set; }
         public IDictionary<string, string> Description { get; set; }
@@ -2834,8 +2832,7 @@ namespace DataModel
 
         public string? Url { get; set; }
 
-        //Generic Mapping Object
-        //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public ICollection<string>? Interfaces { get; set; }
     }
 
 
