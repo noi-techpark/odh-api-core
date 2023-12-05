@@ -832,7 +832,7 @@ namespace Helper
             return query
                 .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
                 .SourceFilter_GeneratedColumn(sourcelist)
-                .When(idlist != null, q => query.WhereIn("id", idlist))
+                .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
@@ -852,7 +852,7 @@ namespace Helper
 
             return query
                 .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
-                .When(idlist != null, q => query.WhereIn("id", idlist))
+                .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
