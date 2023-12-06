@@ -790,7 +790,7 @@ namespace DataModel
 
         public AccoHGVInfo? AccoHGVInfo { get; set; }
 
-        //public AccoOverview? AccoOverview { get; set; }
+        public AccoOverview? AccoOverview { get; set; }
     }
 
     public class AccommodationRaven : Accommodation
@@ -3663,6 +3663,7 @@ namespace DataModel
                 "wineaward" => "WineAward",
                 "odhtag" => "ODHTag",
                 "publisher" => "Publisher",
+                "source" => "Source",
                 "weatherhistory" => "Weather/History",
                 "odhmetadata" => "MetaData",
                 "tag" => "Tag",

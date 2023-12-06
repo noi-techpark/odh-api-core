@@ -118,7 +118,7 @@ namespace RAVEN
             acco.TVMember = data.TVMember;
 
             acco.AccoHGVInfo = data.AccoHGVInfo;
-            //acco.AccoOverview = data.AccoOverview;
+            acco.AccoOverview = data.AccoOverview;
 
             acco._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(acco, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
