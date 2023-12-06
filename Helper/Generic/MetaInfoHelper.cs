@@ -69,6 +69,7 @@ namespace Helper
                 WineLinked wl => GetMetadataforWineAward(wl),
                 ODHTagLinked odhtl => GetMetadataforOdhTag(odhtl),
                 PublisherLinked pbl => GetMetadataforPublisher(pbl),
+                SourceLinked pbl => GetMetadataforSource(pbl),
                 WeatherHistoryLinked wh => GetMetaDataForWeatherHistory(wh),
                 WeatherLinked we => GetMetaDataForWeather(we),
                 WeatherDistrictLinked wd => GetMetaDataForWeatherDistrict(wd),
@@ -175,6 +176,13 @@ namespace Helper
         {
             string sourcemeta = "noi";
             
+            return GetMetadata(data, sourcemeta, data.LastChange);
+        }
+
+        public static Metadata GetMetadataforSource(SourceLinked data)
+        {
+            string sourcemeta = "noi";
+
             return GetMetadata(data, sourcemeta, data.LastChange);
         }
 

@@ -88,6 +88,7 @@ namespace Helper
                 Wine or WineLinked => IDStyle.uppercase,
                 SmgTags or ODHTagLinked => IDStyle.lowercase,
                 Publisher or PublisherLinked => IDStyle.lowercase,
+                Source or SourceLinked => IDStyle.lowercase,
                 TourismMetaData => IDStyle.lowercase,
                 _ => throw new Exception("not known odh type")
             };
@@ -123,6 +124,7 @@ namespace Helper
                 Type _ when odhtype == typeof(Wine) || odhtype == typeof(WineLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(SmgTags) || odhtype == typeof(ODHTagLinked) => IDStyle.lowercase,
                 Type _ when odhtype == typeof(Publisher) || odhtype == typeof(PublisherLinked) => IDStyle.lowercase,
+                Type _ when odhtype == typeof(Source) || odhtype == typeof(SourceLinked) => IDStyle.lowercase,
                 Type _ when odhtype == typeof(TourismMetaData) => IDStyle.lowercase,                
                 _ => throw new Exception("not known odh type")
             };
