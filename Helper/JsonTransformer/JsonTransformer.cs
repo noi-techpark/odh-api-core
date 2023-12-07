@@ -53,6 +53,27 @@ namespace Helper
                 new JsonRaw(token.ToString(Formatting.Indented));
         }        
 
+        public static JsonRaw? TransformRawDataV2(
+            this JsonRaw raw, 
+            string? language, 
+            string[] fields,
+            Func<string, string> urlGenerator,
+            Dictionary<string, IEnumerable<string>> fieldstohidebysource,            
+            bool filterClosedData, 
+            bool filteroutNullValues
+            )
+        {
+            //TO CHECK
+            //ROLE
+
+
+            JToken? token = JToken.Parse(raw.Value);
+
+            return (token == null) ?
+            null :
+                new JsonRaw(token.ToString(Formatting.Indented));
+        }
+
         public static List<string> FilterOutPropertiesByRole(IEnumerable<string> userroles)
         {
             if (userroles.Contains("IDM"))
