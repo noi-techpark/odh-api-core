@@ -239,6 +239,7 @@ namespace OdhApiCore.Controllers
                     else if (enddate != null)
                         sortfromdate = enddate;
 
+                    //TO CHECK Events with Eventdate interval vs singledays, how do we sort here?
 
                     if (sort.ToLower() == "asc")
                         sortifseednull = "get_abs_eventdate_single(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)";
