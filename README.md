@@ -71,6 +71,7 @@ Custom Functions on DB
 * json_2_tsrange_array
 * convert_tsrange_array_to_tsmultirange
 * json_2_ts_array
+* get_abs_eventdate_single
 
 These custom functions are used for the generated Columns
 
@@ -379,7 +380,7 @@ $function$
 * get_abs_eventdate_single
 
 ```sql
-CREATE OR REPLACE FUNCTION public.get_abs_eventdate_single(ts_array timestamp[],ts_tocalculate timestamp)
+CREATE OR REPLACE FUNCTION public.get_abs_eventdate_single(ts_array timestamp[],ts_tocalculate timestamp, sortorder text)
  RETURNS bigint
  LANGUAGE plpgsql
  IMMUTABLE STRICT
@@ -393,12 +394,15 @@ BEGIN
     -- Durchlaufen des ts-Arrays
     FOREACH tsr IN ARRAY ts_array
     LOOP
-        -- calculate   	
+        -- berechne datumsabs    	
         intarr := array_append(intarr, abs(extract(epoch from (tsr - ts_tocalculate)))::bigint);
     END LOOP;
 
-    result = (select unnest(intarr) as x order by x limit 1);
-   
+	  if sortorder = 'desc' then
+	  	result = (select unnest(intarr) as x order by x desc limit 1);
+	  else
+	   result = (select unnest(intarr) as x order by x desc limit 1);
+	  end if;
 	END IF;		
 
     RETURN result;

@@ -77,7 +77,7 @@ END;
 $function$
 ;
 
-CREATE OR REPLACE FUNCTION public.get_abs_eventdate_single(ts_array timestamp[],ts_tocalculate timestamp)
+CREATE OR REPLACE FUNCTION public.get_abs_eventdate_single(ts_array timestamp[],ts_tocalculate timestamp, sortorder text)
  RETURNS bigint
  LANGUAGE plpgsql
  IMMUTABLE STRICT
@@ -95,14 +95,18 @@ BEGIN
         intarr := array_append(intarr, abs(extract(epoch from (tsr - ts_tocalculate)))::bigint);
     END LOOP;
 
-    result = (select unnest(intarr) as x order by x limit 1);
-   
+	  if sortorder = 'desc' then
+	  	result = (select unnest(intarr) as x order by x desc limit 1);
+	  else
+	   result = (select unnest(intarr) as x order by x desc limit 1);
+	  end if;
 	END IF;		
 
     RETURN result;
 END;
 $function$
 ;
+
 
 
 ALTER TABLE public.events ADD gen_eventdates tsmultirange NULL GENERATED ALWAYS AS (convert_tsrange_array_to_tsmultirange(json_2_tsrange_array(data #> '{EventDate}'::text[]))) STORED;

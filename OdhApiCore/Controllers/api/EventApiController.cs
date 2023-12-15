@@ -51,7 +51,7 @@ namespace OdhApiCore.Controllers
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
         /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
-        /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
+        /// <param name="sort">Sorting of Events by Begindate next to passed begindate ('desc': Descending, 'asc': Ascending)</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field OdhActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events), (default:'null')</param>                
         /// <param name="source">Filter by Source (Separator ','), (Sources available 'lts','trevilab','drin'),(default: 'null')</param>
@@ -225,11 +225,24 @@ namespace OdhApiCore.Controllers
                 string? sortifseednull = null;
 
                 if (sort != null)
-                {                  
+                {
+                    //gen_nextbegindate Obsolete
+                    //if (sort.ToLower() == "asc")
+                    //    sortifseednull = "gen_nextbegindate ASC";
+                    //else
+                    //    sortifseednull = "gen_nextbegindate DESC";
+
+                    var sortfromdate = "2000-01-01";
+                    if(begindate != null)
+                        sortfromdate = begindate;
+                    else if (enddate != null)
+                        sortfromdate = begindate;
+
+
                     if (sort.ToLower() == "asc")
-                        sortifseednull = "gen_nextbegindate ASC";
+                        sortifseednull = "get_abs_eventdate_single(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)";
                     else
-                        sortifseednull = "gen_nextbegindate DESC";
+                        sortifseednull = "get_abs_eventdate_single(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, desc)";
 
                     //Set seed to null
                     seed = null;
