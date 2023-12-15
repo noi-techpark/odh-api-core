@@ -70,6 +70,7 @@ Custom Functions on DB
 * is_valid_jsonb
 * json_2_tsrange_array
 * convert_tsrange_array_to_tsmultirange
+* json_2_ts_array
 
 These custom functions are used for the generated Columns
 
@@ -178,6 +179,11 @@ ALTER TABLE tablename ADD IF NOT EXISTS gen_array text[] GENERATED ALWAYS AS (ex
 ALTER TABLE tablename ADD IF NOT EXISTS gen_date timestamp GENERATED ALWAYS AS (text2ts(data#>>'{LastChange}')::timestamp) stored;
 ```
 
+* tsarray
+```sql
+ALTER TABLE events ADD IF NOT EXISTS gen_tsarray timestamp[] GENERATED ALWAYS AS (json_2_ts_array(data#>'{EventDate}')) stored;
+```
+
 * tsmultirange
 ```sql
 ALTER TABLE tablename ADD IF NOT EXISTS gen_tsmultirange tsmultirange GENERATED ALWAYS AS (convert_tsrange_array_to_tsmultirange(json_2_tsrange_array(data#>'{EventDate}'))) stored;
@@ -269,6 +275,31 @@ LANGUAGE plpgsql IMMUTABLE;
 * json_2_tsrange_array
 
 ```sql
+CREATE OR REPLACE FUNCTION public.json_2_ts_array(jsonarray jsonb)
+ RETURNS timestamp[]
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$ begin if jsonarray <> 'null' then return (
+  select 
+    array(
+      select 
+        (event ->> 'From')::timestamp + (event ->> 'Begin')::time        
+      from 
+        jsonb_array_elements(jsonarray) as event 
+      where 
+        (event ->> 'From')::timestamp + (event ->> 'Begin')::time < (event ->> 'To')::timestamp + (event ->> 'End')::time
+    )
+);
+else return null;
+end if;
+end;
+$function$
+;
+```
+
+* json_2_tsrange_array
+
+```sql
 CREATE OR REPLACE FUNCTION public.json_2_tsrange_array(jsonarray jsonb)
  RETURNS tsrange[]
  LANGUAGE plpgsql
@@ -343,6 +374,37 @@ end if;
 return (array['A22','ANONYMOUS','IDM','STA']);
 end;
 $function$
+```
+
+* get_abs_eventdate_single
+
+```sql
+CREATE OR REPLACE FUNCTION public.get_abs_eventdate_single(ts_array timestamp[],ts_tocalculate timestamp)
+ RETURNS bigint
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$
+DECLARE
+    intarr bigint[];
+	result bigint;
+    tsr timestamp;    
+BEGIN
+	IF ts_array IS NOT NULL THEN
+    -- Durchlaufen des ts-Arrays
+    FOREACH tsr IN ARRAY ts_array
+    LOOP
+        -- calculate   	
+        intarr := array_append(intarr, abs(extract(epoch from (tsr - ts_tocalculate)))::bigint);
+    END LOOP;
+
+    result = (select unnest(intarr) as x order by x limit 1);
+   
+	END IF;		
+
+    RETURN result;
+END;
+$function$
+;
 ```
 
 ### REUSE
