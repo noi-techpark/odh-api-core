@@ -233,16 +233,17 @@ namespace OdhApiCore.Controllers
                     //    sortifseednull = "gen_nextbegindate DESC";
 
                     var sortfromdate = "2000-01-01";
+                    
                     if(begindate != null)
                         sortfromdate = begindate;
                     else if (enddate != null)
-                        sortfromdate = begindate;
+                        sortfromdate = enddate;
 
 
                     if (sort.ToLower() == "asc")
                         sortifseednull = "get_abs_eventdate_single(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)";
                     else
-                        sortifseednull = "get_abs_eventdate_single(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, desc)";
+                        sortifseednull = "get_abs_eventdate_single(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc')";
 
                     //Set seed to null
                     seed = null;
