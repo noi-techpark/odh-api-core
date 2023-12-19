@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -61,6 +62,8 @@ namespace CDB.Parser
                 Console.ForegroundColor = ConsoleColor.Green;
 
                 DateTime firstimported = DateTime.MinValue;
+
+                Dictionary<string, string> additionalfeaturestoadd = new Dictionary<string, string>();
 
                 string vatnumber = "";
 
@@ -198,6 +201,8 @@ namespace CDB.Parser
                     var mytype = mytypes.Root.Elements("AccoType").Where(x => x.Attribute("RID").Value == ltsTypeRid).FirstOrDefault().Attribute("SmgType").Value;
                     myacco.AccoTypeId = mytype;
 
+                    additionalfeaturestoadd.Add("AccoType", ltsTypeRid);
+
                     //Setting Category
 
                     string ltsCatRid = category.Attribute("T6RID").Value;
@@ -205,21 +210,28 @@ namespace CDB.Parser
                     var mycategory = mycategories.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == ltsCatRid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
                     myacco.AccoCategoryId = mycategory;
 
+                    additionalfeaturestoadd.Add("AccoCategory", ltsCatRid);
+
                     //Setting Board Infos
                     var boardings = category.Elements("Board");
 
                     List<string> accoboardings = new List<string>();
+                    List<string> accoboardingrids = new List<string>();
 
                     foreach (XElement myboardelement in boardings)
                     {
                         string boardrid = myboardelement.Attribute("T8RID").Value;
+
+                        accoboardingrids.Add(boardrid);
 
                         var myboard = myboards.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == boardrid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
 
                         if (myboard != null)
                             accoboardings.Add(myboard);
                     }
-                    myacco.BoardIds = accoboardings.ToList();                    
+                    myacco.BoardIds = accoboardings.ToList();
+
+                    additionalfeaturestoadd.Add("AccoBoard", String.Join(",", accoboardingrids));
                 }
 
                 if (tin.Count() > 0)
@@ -258,9 +270,40 @@ namespace CDB.Parser
                                     featurelist.Add(new AccoFeatureLinked() { Id = tinrid, Name = myfeatureparsed2, HgvId = hgvamenityid });
                             }
                         }
-                        myacco.Features = featurelist.ToList();
-
+                        
                     }
+
+                    //Add Category, Board and Type to features
+                    foreach (var featuretoadd in additionalfeaturestoadd)
+                    {
+                        var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == featuretoadd.Value).FirstOrDefault();
+
+                        if (myfeature != null)
+                        {
+                            var myfeatureparsed = myfeature.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault();
+
+                            if (myfeatureparsed != null)
+                            {
+                                var myfeatureparsed2 = myfeatureparsed.Attribute("T1Des").Value;
+
+                                //Getting HGV ID if available
+
+                                string hgvamenityid = "";
+
+                                //var myamenity = roomamenitylist.Root.Elements("amenity").Elements("ltsrid").Where(x => x.Value == tinrid).FirstOrDefault();
+
+                                var myamenity = roomamenitylist.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == featuretoadd.Value).FirstOrDefault();
+
+                                if (myamenity != null)
+                                    hgvamenityid = myamenity.Element("hgvid").Value;
+
+                                if (myfeatureparsed2 != null)
+                                    featurelist.Add(new AccoFeatureLinked() { Id = featuretoadd.Value, Name = myfeatureparsed2, HgvId = hgvamenityid });
+                            }
+                        }
+                    }
+
+                    myacco.Features = featurelist.ToList();
                 }
                 else
                 {
