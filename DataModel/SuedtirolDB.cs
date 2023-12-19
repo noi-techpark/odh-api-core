@@ -2965,6 +2965,8 @@ namespace DataModel
         
         public string? OutdooractiveID { get; set; }
         public string? OutdooractiveElevationID { get; set; }
+
+        [SwaggerDeprecated("Use Mappings")]
         public string? SmgId { get; set; }
 
 
