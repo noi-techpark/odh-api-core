@@ -243,7 +243,7 @@ namespace OdhApiCore.Controllers
                         //TO CHECK Events with Eventdate interval vs singledays, how do we sort here?
                         if (sort.ToLower() == "upcoming")
                         {
-                            sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)";
+                            sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp))";
 
                             //if (sort.ToLower() == "asc")
                             //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
@@ -252,7 +252,7 @@ namespace OdhApiCore.Controllers
                         }
                         if (sort.ToLower() == "upcomingspecial")
                         {
-                            sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
+                            sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)) DESC";
 
                             //if (sort.ToLower() == "asc")
                             //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
