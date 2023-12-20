@@ -77,29 +77,59 @@ END;
 $function$
 ;
 
-CREATE OR REPLACE FUNCTION public.get_abs_eventdate_single(ts_array timestamp[],ts_tocalculate timestamp, sortorder text)
+--calculates the distance from given date
+CREATE OR REPLACE FUNCTION public.get_nearest_tsrange_distance(tsrange_array tsrange[], ts_tocalculate timestamp without time zone, sortorder text, prioritizesingledayevents bool)
  RETURNS bigint
  LANGUAGE plpgsql
  IMMUTABLE STRICT
 AS $function$
-DECLARE
-    intarr bigint[];
+DECLARE    
 	result bigint;
-    tsr timestamp;    
+	intarr bigint[];
+	mytsrange tsrange;
+    tsr timestamp;
+    singledayadd int;
+--    tsresult timestamp;
 BEGIN
-	IF ts_array IS NOT NULL THEN
+	IF tsrange_array IS NOT NULL THEN
     -- Durchlaufen des ts-Arrays
-    FOREACH tsr IN ARRAY ts_array
-    LOOP
-        -- berechne datumsabs    	
-        intarr := array_append(intarr, abs(extract(epoch from (tsr - ts_tocalculate)))::bigint);
+    FOREACH mytsrange IN array tsrange_array
+    loop
+	    singledayadd = 0;
+	   
+	   if(prioritizesingledayevents = true) then
+	    
+	    -- if prioritiyesingledayevents is used, increase all distances for multidayevents with 1
+		     if(lower(mytsrange)::date = upper(mytsrange)::date) then
+	         	singledayadd = 0;
+	         else
+	         	singledayadd = 1;
+	         end if;
+	        
+	   end if;
+	    
+	    -- get tsrange which is matching (ongoing event) and add 0
+	    if mytsrange @> ts_tocalculate then
+           intarr := array_append(intarr, singledayadd);
+        else
+       -- check if period has already ended
+           if upper(mytsrange)::timestamp > ts_tocalculate then
+               --if period has not ended calculate distance
+               intarr := array_append(intarr, extract(epoch from (lower(mytsrange)::timestamp - ts_tocalculate))::bigint + singledayadd);
+	    	
+           end if;
+        
+       end if;
+       
     END LOOP;
 
+      --get distance (default minimum distance is returned, desc gets the highest distance)
 	  if sortorder = 'desc' then
 	  	result = (select unnest(intarr) as x order by x desc limit 1);
 	  else
-	   result = (select unnest(intarr) as x order by x desc limit 1);
+	   result = (select unnest(intarr) as x order by x asc limit 1);
 	  end if;
+   	  
 	END IF;		
 
     RETURN result;
@@ -107,9 +137,55 @@ END;
 $function$
 ;
 
+-- GETS the next tsrange to a given date
+CREATE OR REPLACE FUNCTION public.get_nearest_tsrange(tsrange_array tsrange[], ts_tocalculate timestamp without time zone)
+ RETURNS tsrange
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$
+DECLARE    
+	result tsrange;
+	distance bigint;
+    distancetemp bigint;
+	mytsrange tsrange;
+    tsr timestamp;    
+BEGIN
+	IF tsrange_array IS NOT NULL then
+	
+	distance = 9999999999;
+	-- Durchlaufen des ts-Arrays
+    FOREACH mytsrange IN array tsrange_array
+    loop
+	    -- get tsrange which is matching (ongoing event)
+	    if mytsrange @> ts_tocalculate then
+            result = mytsrange;
+            distance = 0;
+        else
+       -- check if period has already ended
+           if upper(mytsrange)::timestamp > ts_tocalculate then
+           
+               --if period has not ended calculate distance
+               distancetemp = extract(epoch from (lower(mytsrange)::timestamp - ts_tocalculate))::bigint;
+	    	
+              if(distance > distancetemp) then
+              	distance = distancetemp;
+              	result = mytsrange;
+              end if;
+              
+           end if;
+        
+       end if;
+       
+    END LOOP;
+ 
+	END IF;		
 
+    RETURN result;
+END;
+$function$
+;
 
 ALTER TABLE public.events ADD gen_eventdates tsmultirange NULL GENERATED ALWAYS AS (convert_tsrange_array_to_tsmultirange(json_2_tsrange_array(data #> '{EventDate}'::text[]))) STORED;
 
-ALTER TABLE events ADD IF NOT EXISTS gen_eventdatearray timestamp[] GENERATED ALWAYS AS (json_2_ts_array(data#>'{EventDate}')) stored;
+ALTER TABLE public.events ADD gen_eventdatearray _tsrange NULL GENERATED ALWAYS AS (json_2_tsrange_array(data #> '{EventDate}'::text[])) STORED;
 

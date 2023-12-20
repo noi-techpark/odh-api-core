@@ -185,6 +185,11 @@ ALTER TABLE tablename ADD IF NOT EXISTS gen_date timestamp GENERATED ALWAYS AS (
 ALTER TABLE events ADD IF NOT EXISTS gen_tsarray timestamp[] GENERATED ALWAYS AS (json_2_ts_array(data#>'{EventDate}')) stored;
 ```
 
+* tsrangearray
+```sql
+ALTER TABLE events ADD IF NOT EXISTS gen_tsrangearray tsrange[] GENERATED ALWAYS AS (json_2_tsrange_array(data#>'{EventDate}')) stored;
+```
+
 * tsmultirange
 ```sql
 ALTER TABLE tablename ADD IF NOT EXISTS gen_tsmultirange tsmultirange GENERATED ALWAYS AS (convert_tsrange_array_to_tsmultirange(json_2_tsrange_array(data#>'{EventDate}'))) stored;
@@ -273,7 +278,7 @@ end; $$
 LANGUAGE plpgsql IMMUTABLE;
 ```
 
-* json_2_tsrange_array
+* json_2_ts_array
 
 ```sql
 CREATE OR REPLACE FUNCTION public.json_2_ts_array(jsonarray jsonb)
@@ -299,6 +304,8 @@ $function$
 ```
 
 * json_2_tsrange_array
+
+Used on Events, creates a TSRange Array from EventDate Json
 
 ```sql
 CREATE OR REPLACE FUNCTION public.json_2_tsrange_array(jsonarray jsonb)
@@ -377,32 +384,118 @@ end;
 $function$
 ```
 
-* get_abs_eventdate_single
+* get_nearest_tsrange_distance
+
+Used on Events calculates the difference between a given date and it's next Date Interval
 
 ```sql
-CREATE OR REPLACE FUNCTION public.get_abs_eventdate_single(ts_array timestamp[],ts_tocalculate timestamp, sortorder text)
+--calculates the distance from given date
+CREATE OR REPLACE FUNCTION public.get_nearest_tsrange_distance(tsrange_array tsrange[], ts_tocalculate timestamp without time zone, sortorder text, prioritizesingledayevents bool)
  RETURNS bigint
  LANGUAGE plpgsql
  IMMUTABLE STRICT
 AS $function$
-DECLARE
-    intarr bigint[];
+DECLARE    
 	result bigint;
-    tsr timestamp;    
+	intarr bigint[];
+	mytsrange tsrange;
+    tsr timestamp;
+    singledayadd int;
+
 BEGIN
-	IF ts_array IS NOT NULL THEN
-    -- Durchlaufen des ts-Arrays
-    FOREACH tsr IN ARRAY ts_array
-    LOOP
-        -- berechne datumsabs    	
-        intarr := array_append(intarr, abs(extract(epoch from (tsr - ts_tocalculate)))::bigint);
+	IF tsrange_array IS NOT NULL THEN
+    -- Iterate trough Array
+    FOREACH mytsrange IN array tsrange_array
+    loop
+	    singledayadd = 0;
+	   
+	   if(prioritizesingledayevents = true) then
+	    
+	    -- if prioritiyesingledayevents is used, increase all distances for multidayevents with 1
+		     if(lower(mytsrange)::date = upper(mytsrange)::date) then
+	         	singledayadd = 0;
+	         else
+	         	singledayadd = 1;
+	         end if;
+	        
+	   end if;
+	    
+	    -- get tsrange which is matching (ongoing event) and add 0
+	    if mytsrange @> ts_tocalculate then
+           intarr := array_append(intarr, singledayadd);
+        else
+       -- check if period has already ended
+           if upper(mytsrange)::timestamp > ts_tocalculate then
+               --if period has not ended calculate distance
+               intarr := array_append(intarr, extract(epoch from (lower(mytsrange)::timestamp - ts_tocalculate))::bigint + singledayadd);
+	    	
+           end if;
+        
+       end if;
+       
     END LOOP;
 
+      --get distance (default minimum distance is returned, desc gets the highest distance)
 	  if sortorder = 'desc' then
 	  	result = (select unnest(intarr) as x order by x desc limit 1);
 	  else
-	   result = (select unnest(intarr) as x order by x desc limit 1);
+	   result = (select unnest(intarr) as x order by x asc limit 1);
 	  end if;
+   	  
+	END IF;		
+
+    RETURN result;
+END;
+$function$
+;
+```
+
+* get_nearest_tsrange
+
+Used on Events, gets the next Date Interval to a passed date as TSRange
+
+```sql
+-- GETS the next tsrange to a given date
+CREATE OR REPLACE FUNCTION public.get_nearest_tsrange(tsrange_array tsrange[], ts_tocalculate timestamp without time zone)
+ RETURNS tsrange
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$
+DECLARE    
+	result tsrange;
+	distance bigint;
+    distancetemp bigint;
+	mytsrange tsrange;
+    tsr timestamp;    
+BEGIN
+	IF tsrange_array IS NOT NULL then
+	
+	distance = 9999999999;
+	-- Iterate trough Array
+    FOREACH mytsrange IN array tsrange_array
+    loop
+	    -- get tsrange which is matching (ongoing event)
+	    if mytsrange @> ts_tocalculate then
+            result = mytsrange;
+            distance = 0;
+        else
+       -- check if period has already ended
+           if upper(mytsrange)::timestamp > ts_tocalculate then
+           
+               --if period has not ended calculate distance
+               distancetemp = extract(epoch from (lower(mytsrange)::timestamp - ts_tocalculate))::bigint;
+	    	
+              if(distance > distancetemp) then
+              	distance = distancetemp;
+              	result = mytsrange;
+              end if;
+              
+           end if;
+        
+       end if;
+       
+    END LOOP;
+ 
 	END IF;		
 
     RETURN result;

@@ -51,7 +51,7 @@ namespace OdhApiCore.Controllers
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
         /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
-        /// <param name="sort">Sorting of Events by Begindate next to passed begindate ('desc': Descending, 'asc': Ascending)</param>
+        /// <param name="sort">Sorting Mode of Events ('asc': Ascending simple sort by general begindate, 'desc': simple descent sorting by begindate, 'upcoming': Sort Events by next EventDate matching passed startdate, 'upcomingspecial': Sort Events by next EventDate matching passed startdate, multiple day events are showed at bottom, default: if no sort mode passed, sort by shortname )</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field OdhActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events), (default:'null')</param>                
         /// <param name="source">Filter by Source (Separator ','), (Sources available 'lts','trevilab','drin'),(default: 'null')</param>
@@ -242,9 +242,9 @@ namespace OdhApiCore.Controllers
                     //TO CHECK Events with Eventdate interval vs singledays, how do we sort here?
 
                     if (sort.ToLower() == "asc")
-                        sortifseednull = "get_abs_eventdate_single(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)";
+                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
                     else
-                        sortifseednull = "get_abs_eventdate_single(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc')";
+                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
 
                     //Set seed to null
                     seed = null;
