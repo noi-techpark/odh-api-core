@@ -243,17 +243,21 @@ namespace OdhApiCore.Controllers
                         //TO CHECK Events with Eventdate interval vs singledays, how do we sort here?
                         if (sort.ToLower() == "upcoming")
                         {
-                            if (sort.ToLower() == "asc")
-                                sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
-                            else
-                                sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc') DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
+                            sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)";
+
+                            //if (sort.ToLower() == "asc")
+                            //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
+                            //else
+                            //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc') DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
                         }
                         if (sort.ToLower() == "upcomingspecial")
                         {
-                            if (sort.ToLower() == "asc")
-                                sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
-                            else
-                                sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc', true) DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
+                            sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
+
+                            //if (sort.ToLower() == "asc")
+                            //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
+                            //else
+                            //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc', true) DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
                         }
                     }
 
