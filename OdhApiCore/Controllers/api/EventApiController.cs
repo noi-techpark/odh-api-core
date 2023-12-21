@@ -222,52 +222,8 @@ namespace OdhApiCore.Controllers
                     active, smgactive, smgtags, lastchange, langfilter, source, publishedon,
                     cancellationToken);
 
-                string? sortifseednull = null;
-
-                if (sort != null)
-                {
-                    //simple sort bz datebegin
-                    if (sort.ToLower() == "asc")
-                        sortifseednull = "gen_nextbegindate ASC";
-                    else if (sort.ToLower() == "desc")
-                        sortifseednull = "gen_nextbegindate DESC";
-                    else if (sort.ToLower().StartsWith("upcoming"))
-                    {
-                        var sortfromdate = "2000-01-01";
-
-                        if (begindate != null)
-                            sortfromdate = begindate;
-                        else if (enddate != null)
-                            sortfromdate = enddate;
-
-                        //TO CHECK Events with Eventdate interval vs singledays, how do we sort here?
-                        if (sort.ToLower() == "upcoming")
-                        {
-                            sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp))";
-
-                            //if (sort.ToLower() == "asc")
-                            //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
-                            //else
-                            //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc') DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
-                        }
-                        if (sort.ToLower() == "upcomingspecial")
-                        {
-                            sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)) DESC";
-
-                            //if (sort.ToLower() == "asc")
-                            //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
-                            //else
-                            //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc', true) DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
-                        }
-                    }
-
-                    //Set seed to null
-                    seed = null;
-                    
-                    //Set Rawfilter to this RTHOENI rawfilter can overwrite this ;)
-                    //rawfilter = sortifseednull;
-                }
-
+                string? sortifseednull = EventHelper.GetEventSortExpression(sort, begindate, enddate, ref seed);
+             
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
