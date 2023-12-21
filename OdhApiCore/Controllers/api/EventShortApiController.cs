@@ -672,6 +672,10 @@ namespace OdhApiCore.Controllers.api
             {
                 if (eventshort != null)
                 {
+                    //Adding Source content if not defined
+                    if (String.IsNullOrEmpty(eventshort.Source))
+                        eventshort.Source = "Content";
+
                     if (eventshort.EventLocation == null)
                         throw new Exception("Eventlocation needed");
                     
@@ -819,6 +823,10 @@ namespace OdhApiCore.Controllers.api
             {
                 if (eventshort != null && id != null)
                 {
+                    //Adding Source content if not defined
+                    if (String.IsNullOrEmpty(eventshort.Source))
+                        eventshort.Source = "Content";
+
                     if (eventshort.EventLocation == null)
                         throw new Exception("Eventlocation needed");
 
