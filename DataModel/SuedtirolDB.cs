@@ -22,7 +22,11 @@ namespace DataModel
 
     public interface IIdentifiable
     {
-        string Id { get; set; }
+        string Id { get; set; }        
+    }
+
+    public interface IShortName
+    {
         string? Shortname { get; set; }
     }
 
@@ -470,7 +474,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource, ISmgActive, IPublishedOn
+    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource, ISmgActive, IPublishedOn, IShortName
     {
         public Area()
         {
@@ -480,6 +484,7 @@ namespace DataModel
         public LicenseInfo? LicenseInfo { get; set; }
         public string? Id { get; set; }
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
         public string? CustomId { get; set; }
@@ -703,7 +708,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Accommodation : TrustYouInfos, IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -733,6 +738,7 @@ namespace DataModel
         public bool? IsGastronomy { get; set; }
         public bool IsBookable { get; set; }
         public bool? IsAccommodation { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public bool? TVMember { get; set; }
         public string? TourismVereinId { get; set; }
@@ -786,7 +792,7 @@ namespace DataModel
 
         public AccoHGVInfo? AccoHGVInfo { get; set; }
 
-        //public AccoOverview? AccoOverview { get; set; }
+        public AccoOverview? AccoOverview { get; set; }
     }
 
     public class AccommodationRaven : Accommodation
@@ -866,7 +872,7 @@ namespace DataModel
         public int TrustYouState { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
+    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1049,6 +1055,7 @@ namespace DataModel
         public string? AccommodationId { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
@@ -1081,7 +1088,7 @@ namespace DataModel
 
     #region Events
 
-    public class Event : IIdentifiable, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
+    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1152,10 +1159,13 @@ namespace DataModel
         public LocationInfo? LocationInfo { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
+
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
 
+        [SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
         public Nullable<DateTime> NextBeginDate { get; set; }
 
         public string Source { get; set; }
@@ -1225,7 +1235,7 @@ namespace DataModel
 
     #region Venues
 
-    public class Venue : IIdentifiable, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive
+    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive
     {
         public Venue()
         {
@@ -1243,6 +1253,7 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         
         public ICollection<string> SmgTags { get; set; }
@@ -1294,7 +1305,7 @@ namespace DataModel
     #region Articles    
 
     //BaseInfo Article
-    public abstract class Article : IIdentifiable, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
+    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1322,6 +1333,7 @@ namespace DataModel
         //NEU SMG Infos
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public DateTime? ArticleDate { get; set; }
@@ -1619,7 +1631,7 @@ namespace DataModel
         public string? imageUrl { get; set; }
     }
 
-    public class WeatherHistory : IIdentifiable, ILicenseInfo, IImportDateassigneable
+    public class WeatherHistory : IIdentifiable, IShortName, ILicenseInfo, IImportDateassigneable
     {
         public WeatherHistory()
         {
@@ -1640,7 +1652,7 @@ namespace DataModel
 
     #region Packages
 
-    public class Package : IIdentifiable, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
+    public class Package : IIdentifiable, IShortName, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1651,7 +1663,6 @@ namespace DataModel
             ChannelInfo = new Dictionary<string, string>();
         }
 
-        //IIdentifiable
         public string? Id { get; set; }
 
         //Infos zum Import
@@ -1659,6 +1670,7 @@ namespace DataModel
         public DateTime LastUpdate { get; set; }
 
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
 
@@ -1772,7 +1784,7 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Measuringpoint : IIdentifiable, IShortName, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public Measuringpoint()
         {
@@ -1788,6 +1800,7 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
 
@@ -1960,7 +1973,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
     {
         public EventShort()
         {
@@ -2410,7 +2423,7 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamInfoRaven : Webcam, IIdentifiable, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
+    public class WebcamInfoRaven : Webcam, IIdentifiable, IShortName, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
     {
         public WebcamInfoRaven()
         {
@@ -2430,7 +2443,7 @@ namespace DataModel
         public string? Shortname { get; set; }
         public bool Active { get; set; }
 
-        [Obsolete("Use Publishedon")]
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         // public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
@@ -2555,7 +2568,7 @@ namespace DataModel
 
     #region Wine
 
-    public class Wine : IIdentifiable, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive
+    public class Wine : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2588,6 +2601,7 @@ namespace DataModel
         public DateTime? FirstImport { get; set; }
 
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
@@ -2734,7 +2748,7 @@ namespace DataModel
         public bool ClosedData { get; set; }
     }
 
-    public class SmgTags : IIdentifiable, IImportDateassigneable, ILicenseInfo, IPublishedOn
+    public class SmgTags : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2796,20 +2810,42 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-
-        [SwaggerDeprecated("Deprecated, refer to Name")]
-        public string? Shortname { get; set; }
+        
+        public string Key { get; set; }
 
         public IDictionary<string, string> Name { get; set; }
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
 
-        public string? PublisherUrl { get; set; }
-
-        //Generic Mapping Object
-        //public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public string? Url { get; set; }
     }
+
+    public class Source : IIdentifiable, IImportDateassigneable, ILicenseInfo
+    {
+        public LicenseInfo? LicenseInfo { get; set; }
+
+        public Source()
+        {
+            Name = new Dictionary<string, string>();
+            Description = new Dictionary<string, string>();
+        }
+
+        public string? Id { get; set; }
+        
+        public string Key { get; set; }
+
+        public IDictionary<string, string> Name { get; set; }
+        public IDictionary<string, string> Description { get; set; }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        public string? Url { get; set; }
+
+        public ICollection<string>? Interfaces { get; set; }
+    }
+
 
     public class LTSTaggingType
     {
@@ -2892,6 +2928,7 @@ namespace DataModel
         //public DateTime FirstImport { get; set; }
         //public DateTime LastChange { get; set; }
 
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
@@ -2928,6 +2965,8 @@ namespace DataModel
         
         public string? OutdooractiveID { get; set; }
         public string? OutdooractiveElevationID { get; set; }
+
+        [SwaggerDeprecated("Use Mappings")]
         public string? SmgId { get; set; }
 
 
@@ -3638,6 +3677,7 @@ namespace DataModel
                 "wineaward" => "WineAward",
                 "odhtag" => "ODHTag",
                 "publisher" => "Publisher",
+                "source" => "Source",
                 "weatherhistory" => "Weather/History",
                 "odhmetadata" => "MetaData",
                 "tag" => "Tag",

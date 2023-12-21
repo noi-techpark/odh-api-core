@@ -1946,6 +1946,20 @@ namespace DataModel
         }
     }
 
+    public class SourceLinked : Source, IMetaData
+    {
+        public Metadata? _Meta { get; set; }
+
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public string? Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Source/" + this.Id;
+            }
+        }
+    }
+
     //TODO ADD Linked + Meta 
     //EventTopics
     //ActivityTypes

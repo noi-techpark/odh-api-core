@@ -51,7 +51,7 @@ namespace OdhApiCore.Controllers
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible, available Tags reference to 'v1/ODHTag?validforentity=event'), (default:'null')</param>        
         /// <param name="begindate">BeginDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
         /// <param name="enddate">EndDate of Events (Format: yyyy-MM-dd), (default: 'null')</param>
-        /// <param name="sort">Sorting of Events by Next Begindate ('desc': Descending, 'asc': Ascending)</param>
+        /// <param name="sort">Sorting Mode of Events ('asc': Ascending simple sort by next begindate, 'desc': simple descent sorting by next begindate, 'upcoming': Sort Events by next EventDate matching passed startdate, 'upcomingspecial': Sort Events by next EventDate matching passed startdate, multiple day events are showed at bottom, default: if no sort mode passed, sort by shortname )</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'null')</param>
         /// <param name="odhactive">ODH Active (Published) Events Filter (Refers to field OdhActive) Events Filter (possible Values: 'true' only published Events, 'false' only not published Events), (default:'null')</param>                
         /// <param name="source">Filter by Source (Separator ','), (Sources available 'lts','trevilab','drin'),(default: 'null')</param>
@@ -222,22 +222,8 @@ namespace OdhApiCore.Controllers
                     active, smgactive, smgtags, lastchange, langfilter, source, publishedon,
                     cancellationToken);
 
-                string? sortifseednull = null;
-
-                if (sort != null)
-                {                  
-                    if (sort.ToLower() == "asc")
-                        sortifseednull = "gen_nextbegindate ASC";
-                    else
-                        sortifseednull = "gen_nextbegindate DESC";
-
-                    //Set seed to null
-                    seed = null;
-                    
-                    //Set Rawfilter to this RTHOENI rawfilter can overwrite this ;)
-                    //rawfilter = sortifseednull;
-                }
-
+                string? sortifseednull = EventHelper.GetEventSortExpression(sort, begindate, enddate, ref seed);
+             
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
