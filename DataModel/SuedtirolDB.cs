@@ -484,6 +484,7 @@ namespace DataModel
         public LicenseInfo? LicenseInfo { get; set; }
         public string? Id { get; set; }
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
         public string? CustomId { get; set; }
@@ -737,6 +738,7 @@ namespace DataModel
         public bool? IsGastronomy { get; set; }
         public bool IsBookable { get; set; }
         public bool? IsAccommodation { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public bool? TVMember { get; set; }
         public string? TourismVereinId { get; set; }
@@ -1053,6 +1055,7 @@ namespace DataModel
         public string? AccommodationId { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
@@ -1156,10 +1159,13 @@ namespace DataModel
         public LocationInfo? LocationInfo { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
+
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
 
+        [SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
         public Nullable<DateTime> NextBeginDate { get; set; }
 
         public string Source { get; set; }
@@ -1247,6 +1253,7 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         
         public ICollection<string> SmgTags { get; set; }
@@ -1326,6 +1333,7 @@ namespace DataModel
         //NEU SMG Infos
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public DateTime? ArticleDate { get; set; }
@@ -1662,6 +1670,7 @@ namespace DataModel
         public DateTime LastUpdate { get; set; }
 
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
 
@@ -1791,6 +1800,7 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
 
@@ -2433,7 +2443,7 @@ namespace DataModel
         public string? Shortname { get; set; }
         public bool Active { get; set; }
 
-        [Obsolete("Use Publishedon")]
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         // public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
@@ -2591,6 +2601,7 @@ namespace DataModel
         public DateTime? FirstImport { get; set; }
 
         public bool Active { get; set; }
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
@@ -2917,6 +2928,7 @@ namespace DataModel
         //public DateTime FirstImport { get; set; }
         //public DateTime LastChange { get; set; }
 
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
@@ -2953,6 +2965,8 @@ namespace DataModel
         
         public string? OutdooractiveID { get; set; }
         public string? OutdooractiveElevationID { get; set; }
+
+        [SwaggerDeprecated("Use Mappings")]
         public string? SmgId { get; set; }
 
 
