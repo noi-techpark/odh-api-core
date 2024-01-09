@@ -218,7 +218,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventShort/RoomMapping")]
         public async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLinkDictionary(
-            string? language = null
+            string? language = "en"
             )
         {
             return await GetBDPNoiRoomsWithLink(language);
