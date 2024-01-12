@@ -931,7 +931,8 @@ namespace DataModel
             get
             {
                 var returnlist = new List<ODHActivityPoiTypesLink>();
-                returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeDataString(this.Type), Type = "ArticleType" });
+                if (!String.IsNullOrEmpty(this.Type))                 
+                    returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.Type, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeDataString(this.Type), Type = "ArticleType" });
                 if (!String.IsNullOrEmpty(this.SubType) && this.SubType != "no Subtype" && this.SubType != "Essen Trinken")
                     returnlist.Add(new ODHActivityPoiTypesLink() { Id = this.SubType, Self = ODHConstant.ApplicationURL + "ArticleTypes/" + Uri.EscapeDataString(this.SubType), Type = "ArticleSubType" });
 

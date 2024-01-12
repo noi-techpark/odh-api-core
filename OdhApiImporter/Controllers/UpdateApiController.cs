@@ -532,7 +532,7 @@ namespace OdhApiImporter.Controllers
 
         #region DSS DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("DSS/{dssentity}/Update")]
         public async Task<IActionResult> UpdateAllDSSData(string dssentity, CancellationToken cancellationToken = default)
         {
@@ -578,7 +578,7 @@ namespace OdhApiImporter.Controllers
 
         #region EJOBS DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("LOOPTEC/Ejobs/Update")]
         public async Task<IActionResult> UpdateAllLooptecEjobs(CancellationToken cancellationToken = default)
         {
@@ -608,7 +608,7 @@ namespace OdhApiImporter.Controllers
 
         #region PANOMAX DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("PANOMAX/Webcam/Update")]
         public async Task<IActionResult> UpdateAllPanomaxWebcams(CancellationToken cancellationToken = default)
         {
@@ -638,7 +638,7 @@ namespace OdhApiImporter.Controllers
 
         #region PANOCLOUD DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("PANOCLOUD/Webcam/Update")]
         public async Task<IActionResult> UpdateAllPanocloudWebcams(CancellationToken cancellationToken = default)
         {
@@ -668,7 +668,7 @@ namespace OdhApiImporter.Controllers
 
         #region FERATEL DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("FERATEL/Webcam/Update")]
         public async Task<IActionResult> UpdateAllFeratelWebcams(CancellationToken cancellationToken = default)
         {
@@ -698,7 +698,7 @@ namespace OdhApiImporter.Controllers
 
         #region A22 DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("A22/{a22entity}/Update")]
         public async Task<IActionResult> UpdateAllA22Data(string a22entity, CancellationToken cancellationToken = default)
         {

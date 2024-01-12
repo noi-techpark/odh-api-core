@@ -263,7 +263,7 @@ namespace OdhApiImporter.Controllers
 
         #region MetaData
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("UpdateMetaDataRecordCount")]
         public async Task<IActionResult> UpdateMetaDataRecordCount(CancellationToken cancellationToken)
         {

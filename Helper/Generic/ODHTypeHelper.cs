@@ -14,8 +14,45 @@ namespace Helper
 {
     public class ODHTypeHelper
     {
+        public static IEnumerable<string> GetAllTypeStrings()
+        {
+            return new List<string>()
+            {
+                "accommodation",
+                "accommodationroom",
+                "ltsactivity",
+                "ltspoi",
+                "ltsgastronomy",
+                "event",
+                "odhactivitypoi",
+                "package",
+                "measuringpoint",
+                "webcam",
+                "article",
+                "venue",
+                "eventshort",
+                "experiencearea",
+                "metaregion",
+                "region",
+                "tourismassociation",
+                "municipality",
+                "district",
+                "skiarea",
+                "skiregion",
+                "area",
+                "wineaward",
+                "odhtag",
+                "publisher",
+                "source",
+                "weatherhistory",
+                "odhmetadata",
+                "tag"
+            };
+        }
+
+
         #region TypeObject2TypeStringANDPGTable
-     
+
         /// <summary>
         /// Translates a ODH Type Object to the Type (Metadata) as String
         /// </summary>

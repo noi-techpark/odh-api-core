@@ -449,7 +449,7 @@ namespace OdhApiCore.Controllers.api
 
                             myeventshortbyroom!.EventEndDate = eventshort.EndDate;
                             myeventshortbyroom.EventEndDateUTC = eventshort.EndDateUTC;
-                            myeventshortbyroom.EventId = eventshort.EventId;
+                            myeventshortbyroom.EventId = eventshort.EventId.Value;
                             myeventshortbyroom.EventLocation = eventshort.EventLocation;
                             myeventshortbyroom.EventSource = eventshort.Source;
                             myeventshortbyroom.EventStartDate = eventshort.StartDate;
@@ -677,7 +677,7 @@ namespace OdhApiCore.Controllers.api
                         eventshort.Source = "Content";
 
                     if (eventshort.EventLocation == null)
-                        throw new Exception("Eventlocation needed");
+                        throw new Exception("EvenLocation needed");
                     
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
