@@ -117,7 +117,7 @@ namespace OdhApiImporter.Helpers
 
                 //modify domain
 
-                if (metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
+                if (!host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
                 {
                     metadata.BaseUrl = "https://tourism.api.opendatahub.com";
                     metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");
