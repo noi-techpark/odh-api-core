@@ -117,15 +117,13 @@ namespace OdhApiImporter.Helpers
 
                 //modify domain
 
-                if (metadata.Dataspace != "mobility")
+                if (!host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
                 {
-                    if (host.StartsWith("localhost"))
-                        metadata.BaseUrl = "https://localhost:5001";
-                    if (host.StartsWith("importer.tourism"))
-                        metadata.BaseUrl = "https://api.tourism.testingmachine.eu";
-                    else
-                        metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+                    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+                    if(!String.IsNullOrEmpty(metadata.SwaggerUrl))
+                        metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");
                 }
+
                 metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
 
 
