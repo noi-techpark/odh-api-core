@@ -1989,8 +1989,8 @@ namespace DataModel
         public string? Source { get; set; }
 
         [SwaggerEnum(new[] { "NOI", "EC" })]
-        public string? EventLocation { get; set; }
-        public int EventId { get; set; }
+        public string EventLocation { get; set; }
+        public int? EventId { get; set; }
 
         //Dictionary with EventTextDE + EventDescriptionDE infos
         public IDictionary<string, string> EventText { get; set; }

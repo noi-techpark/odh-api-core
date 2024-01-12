@@ -48,21 +48,15 @@ namespace OdhApiImporter.Controllers
             return Ok("importer alive");
         }
 
-        [HttpGet, Route("TestNotify")]
-        public async Task<IActionResult> TestNotify()
-        {            
-            var responses = await OdhPushnotifier.PushToAllRegisteredServices("2657B7CBCB85380B253D2FBE28AF100E", "ACCOMMODATION", "forced", false, false, "api");
+       
 
-            return Ok();
-        }
-
-        [HttpGet, Route("TestMongoDB")]
-        public async Task<IActionResult> TestMongoDB()
-        {
-            var test = MongoDBFactory.GetDocumentById<BsonDocument>("TestDB", "TestDB", "63cfa30278b2fc0eda271a28");
+        //[HttpGet, Route("TestMongoDB")]
+        //public async Task<IActionResult> TestMongoDB()
+        //{
+        //    var test = MongoDBFactory.GetDocumentById<BsonDocument>("TestDB", "TestDB", "63cfa30278b2fc0eda271a28");
             
-            return Ok(test.ToString());
-        }
+        //    return Ok(test.ToString());
+        //}
     }
 
 

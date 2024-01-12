@@ -157,7 +157,6 @@ namespace OdhApiImporter.Controllers
             });
         }
 
-
         #endregion
 
         #region Articles
@@ -264,7 +263,7 @@ namespace OdhApiImporter.Controllers
 
         #region MetaData
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("UpdateMetaDataRecordCount")]
         public async Task<IActionResult> UpdateMetaDataRecordCount(CancellationToken cancellationToken)
         {
@@ -286,29 +285,7 @@ namespace OdhApiImporter.Controllers
             });
         }
 
-        //[Authorize(Roles = "DataPush")]
-        //[HttpGet, Route("UpdateMetaDataApiId")]
-        //public async Task<IActionResult> UpdateMetaDataApiId(CancellationToken cancellationToken)
-        //{
-        //    CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-        //    var objectscount = await customdataoperation.UpdateMetaDataApiId();
-
-        //    return Ok(new UpdateResult
-        //    {
-        //        operation = "Modify Metadata ApiId",
-        //        updatetype = "custom",
-        //        otherinfo = "",
-        //        message = "Done",
-        //        recordsmodified = 0,
-        //        created = objectscount["created"],
-        //        deleted = objectscount["deleted"],
-        //        id = "",
-        //        updated = 0,
-        //        success = true
-        //    });
-        //}
-
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ResaveMetaData")]
         public async Task<IActionResult> ResaveMetaData(CancellationToken cancellationToken)
         {
