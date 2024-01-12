@@ -120,7 +120,8 @@ namespace OdhApiImporter.Helpers
                 if (!host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
                 {
                     metadata.BaseUrl = "https://tourism.api.opendatahub.com";
-                    metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");
+                    if(!String.IsNullOrEmpty(metadata.SwaggerUrl))
+                        metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");
                 }
 
                 metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
