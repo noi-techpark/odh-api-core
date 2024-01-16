@@ -22,6 +22,29 @@ namespace DataModel.Annotations
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+    public class SwaggerDeprecatedV2Attribute : Attribute
+    {
+        public SwaggerDeprecatedV2Attribute(string? description = null, string? deprecationdate = null, string? removedafter = null)
+        {
+            Description = description;
+
+            if(DateTime.TryParse(deprecationdate, out DateTime deprecationdatetemp))
+                DeprecationDate = deprecationdatetemp;
+            else
+                DeprecationDate = null;
+
+            if (DateTime.TryParse(removedafter, out DateTime removedaftertemp))
+                RemovedAfter = removedaftertemp;
+            else
+                RemovedAfter = null;
+        }
+
+        public string Description { get; }
+        public DateTime? DeprecationDate { get; }
+        public DateTime? RemovedAfter { get; }
+    }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
     public class SwaggerEnumAttribute : Attribute
     {
         public SwaggerEnumAttribute(string[] enumValues)

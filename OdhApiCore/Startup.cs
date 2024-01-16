@@ -32,6 +32,7 @@ using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
 using OdhApiCore.Swagger;
+using Schema.NET;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -46,11 +47,13 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -311,10 +314,19 @@ namespace OdhApiCore
                         ValidateAudience = false,
                         ValidateLifetime = true,                        
                         ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
-                        ValidateIssuer = true
+                        ValidateIssuer = true,
+                        //RoleClaimTypeRetriever
+                        //RoleClaimType = "resource_access.odh-api-core.roles"  //TO TEST 
                     };
                     jwtBearerOptions.Events = new JwtBearerEvents()
-                    {     
+                    {   
+                    //    OnTokenValidated = context =>
+                    //    {
+                    //        var jwt = (context.SecurityToken as JwtSecurityToken);
+                            
+                    //        RoleHelper.AddRoleClaims(context.Principal);
+                    //        return Task.CompletedTask;
+                    //    },
                         OnAuthenticationFailed = c =>
                         {
                             c.NoResult();                            
@@ -326,7 +338,7 @@ namespace OdhApiCore
                             
                             return c.Response.WriteAsync("");
                             //return Task.CompletedTask;
-                        },
+                        },                        
                         //OnChallenge = c =>
                         //{
                         //    c.HandleResponse();
@@ -540,4 +552,23 @@ namespace OdhApiCore
             });
         }
     }
+
+    //public class RoleHelper
+    //{
+    //    public static void AddRoleClaims(ClaimsPrincipal principal)
+    //    {
+    //        var claimsIdentity = principal.Identity as ClaimsIdentity;
+    //        if (claimsIdentity != null)
+    //        {
+    //            //if (claimsIdentity.HasClaim("role", "AdminRoleNameFromToken"))
+    //            //{
+    //            //    if (!claimsIdentity.HasClaim("role", Role.Administrator.ToString()))
+    //            //    {
+    //            //        claimsIdentity.AddClaim(new Claim("role", Role.Administrator.ToString()));
+    //            //    }
+    //            //}
+    //        }
+    //    }
+    //}
+    
 }

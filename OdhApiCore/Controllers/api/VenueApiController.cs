@@ -383,7 +383,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
-        [Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify")]
+        [Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify,VenueUpdate")]
         [HttpPut, Route("Venue/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] VenueLinked venue)
         {

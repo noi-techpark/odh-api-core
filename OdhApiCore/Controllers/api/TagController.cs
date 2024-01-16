@@ -238,7 +238,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetTagAsync))]
-        [Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify")]
+        [Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify,TagUpdate")]
         [HttpPut, Route("Tag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] TagLinked tag)
         {

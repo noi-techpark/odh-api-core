@@ -484,6 +484,7 @@ namespace DataModel
         public LicenseInfo? LicenseInfo { get; set; }
         public string? Id { get; set; }
         public bool Active { get; set; }
+        //[SwaggerDeprecatedV2Attribute("Obsolete, use PublishedOn", "2024-01-01", "")]
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }

@@ -364,7 +364,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="article">Article Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify")]
+        [Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify,ArticleUpdate")]
         [InvalidateCacheOutput(nameof(GetArticleList))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

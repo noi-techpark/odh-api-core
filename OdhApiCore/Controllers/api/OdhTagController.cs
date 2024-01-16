@@ -250,7 +250,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
-        [Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify")]
+        [Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify,ODHTagUpdate")]
         [HttpPut, Route("ODHTag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHTagLinked odhtag)
         {

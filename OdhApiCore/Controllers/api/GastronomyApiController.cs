@@ -357,7 +357,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetGastronomyList))]
-        [Authorize(Roles = "DataWriter,DataModify,GastronomyManager,GastronomyModify")]
+        [Authorize(Roles = "DataWriter,DataModify,GastronomyManager,GastronomyModify,GastronomyUpdate")]
         [HttpPut, Route("Gastronomy/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] GastronomyLinked gastronomy)
         {
