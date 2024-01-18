@@ -6,6 +6,7 @@ using AspNetCore.CacheOutput.InMemory.Extensions;
 using DataModel;
 using Helper;
 using Helper.Factories;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections;
@@ -323,7 +324,7 @@ namespace OdhApiCore
                     {
                         OnTokenValidated = context =>
                         {                            
-                            RoleHelper.AddRoleClaims(context.Principal);
+                            RoleHelper.AddRoleClaims(context.Principal, "odh-api-core");
                             return Task.CompletedTask;
                         },
                         OnAuthenticationFailed = c =>
@@ -553,48 +554,5 @@ namespace OdhApiCore
         }
     }
 
-    public class RoleHelper
-    {
-        public static void AddRoleClaims(ClaimsPrincipal? principal)
-        {
-            if (principal != null)
-            {
-                var claimsIdentity = principal.Identity as ClaimsIdentity;
-                if (claimsIdentity != null)
-                {
-                    //Get resource_access roles
-
-                    //var resourceaccess = jwt.Payload.Where(x => x.Key == "resource_access").ToList();
-
-                    //var odhapicore = resourceaccess.Where(x => x.Key == "odh-api-core").ToList();
-
-                    //var odhapicoreroles = odhapicore.Where(x => x.Key == "roles").ToList();
-
-                    var resourceaccess = claimsIdentity.Claims.Where(x => x.Type == "resource_access").FirstOrDefault();
-                    var resourceroles = JsonConvert.DeserializeObject<Dictionary<string, Resource_Roles>>(resourceaccess.Value);
-                    var resourceroleodhapicore = resourceroles.Where(x => x.Key == "odh-api-core").FirstOrDefault();
-
-                    foreach (var resourcerole in resourceroleodhapicore.Value.roles)
-                    {
-                        claimsIdentity.AddClaim(new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", resourcerole));
-                    }
-
-                    //if (claimsIdentity.HasClaim("role", "AdminRoleNameFromToken"))
-                    //{
-                    //    if (!claimsIdentity.HasClaim("role", Role.Administrator.ToString()))
-                    //    {
-                    //        claimsIdentity.AddClaim(new Claim("role", Role.Administrator.ToString()));
-                    //    }
-                    //}
-                }
-            }
-        }
-
-        public class Resource_Roles
-        {
-            public List<string> roles { get; set; }
-        }
-
-    }
-
+   
 }
