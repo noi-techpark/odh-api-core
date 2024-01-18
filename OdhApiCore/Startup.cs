@@ -322,11 +322,12 @@ namespace OdhApiCore
                     };
                     jwtBearerOptions.Events = new JwtBearerEvents()
                     {
-                        OnTokenValidated = context =>
-                        {                            
-                            RoleHelper.AddRoleClaims(context.Principal, "odh-api-core");
-                            return Task.CompletedTask;
-                        },
+                        //When switching to Authorization Services this is not needed anymore
+                        //OnTokenValidated = context =>
+                        //{
+                        //    RoleHelper.AddRoleClaims(context.Principal, "odh-api-core");
+                        //    return Task.CompletedTask;
+                        //},
                         OnAuthenticationFailed = c =>
                         {
                             c.NoResult();
@@ -515,6 +516,8 @@ namespace OdhApiCore
             //}
 
             app.UseRateLimiting();
+
+            app.UseKeycloakAuthorizationService();
 
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);

@@ -15,6 +15,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Helper;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace Helper.Identity
 {
@@ -27,7 +31,7 @@ namespace Helper.Identity
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IConfiguration configuration)
         {
             var endpoint = context.GetEndpoint();
 
@@ -55,14 +59,18 @@ namespace Helper.Identity
                 var handler = new JwtSecurityTokenHandler();
                 var token = bearertoken.Replace("Bearer", "").Trim();
 
-                var authorizationtoken = RequestAuthorizationEndpoint(token);
-
-                var jwttoken = ReadMyJWTSecurityToken(authorizationtoken, handler);
-
-                if (jwttoken != null)
+                var permissions = await RequestAuthorizationEndpoint(token, configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"));
+                
+                //Store the permissions as claims
+                foreach(var permission in permissions)
                 {
-                    //Read the assigned roles and add some access logic
+                    foreach(var scope in permission.scopes)
+                    {
+                        if(context.User.Identities.FirstOrDefault() != null)
+                            context.User.Identities.FirstOrDefault().AddClaim(new Claim(ClaimTypes.Role, permission.rsname + "_" + scope));
+                    }
                 }
+                
             }
 
             await _next(context);
@@ -82,13 +90,39 @@ namespace Helper.Identity
             }
         }
 
-        private static string RequestAuthorizationEndpoint(string token)
+        private static async Task<IEnumerable<KeyCloakPermissions>> RequestAuthorizationEndpoint(string token, string authorizationendpoint)
         {
             //TODO REQUEST AUTHORIZATION ON KEYCLOAK with grant_type=urn:ietf:params:oauth:grant-type:uma-ticket AND audience=odh-tourism-api
             //and pass the bearer token
 
-            return "";
+            var body = new Dictionary<string, string>();
+            body.Add("grant_type", "urn:ietf:params:oauth:grant-type:uma-ticket");
+            body.Add("audience", "odh-tourism-api");
+            body.Add("response_mode", "permissions");
+
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                using var request = new HttpRequestMessage(HttpMethod.Post, authorizationendpoint + "protocol/openid-connect/token") { Content = new FormUrlEncodedContent(body) };
+                using var response = await client.SendAsync(request);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                    throw new Exception("Error on getting data " + response.StatusCode.ToString());
+
+                //Parse JSON Response to
+                var responsecontent = await response.Content.ReadAsStringAsync();
+                var responseobject = JsonConvert.DeserializeObject<List<KeyCloakPermissions>>(responsecontent);
+
+                return responseobject;
+            }            
         }
+    }
+
+    public class KeyCloakPermissions
+    {
+        public List<string> scopes { get; set; }
+        public string rsname { get; set; }
     }
 }
 

@@ -5,6 +5,7 @@
 using DataModel;
 using DataModel.Annotations;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -23,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -74,6 +76,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[EnableCors(origins: "*", headers: "*", methods: "*")]
+        [AuthorizeODH(PermissionAction.Read)]
         [HttpGet, Route("EventShort")]
         public async Task<IActionResult> Get(
             uint pagenumber = 1, 
