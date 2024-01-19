@@ -386,7 +386,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
-        [Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify")]
+        [Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify,EventUpdate")]
         [HttpPut, Route("Event/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] EventLinked odhevent)
         {

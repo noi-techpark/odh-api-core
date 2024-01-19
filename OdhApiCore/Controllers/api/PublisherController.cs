@@ -208,7 +208,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Publisher Id</param>
         /// <param name="publisher">Publisher Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataModify,PublisherManager,PublisherModify")]
+        [Authorize(Roles = "DataWriter,DataModify,PublisherManager,PublisherModify,PublisherUpdate")]
         [HttpPut, Route("Publisher/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] PublisherLinked publisher)
         {

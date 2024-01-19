@@ -203,7 +203,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Source Id</param>
         /// <param name="source">Source Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataModify,SourceManager,SourceModify")]
+        [Authorize(Roles = "DataWriter,DataModify,SourceManager,SourceModify,SourceUpdate")]
         [HttpPut, Route("Source/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] SourceLinked source)
         {

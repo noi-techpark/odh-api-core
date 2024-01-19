@@ -408,7 +408,7 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
-        [Authorize(Roles = "DataWriter,DataModify,ActivityManager,ActivityModify")]
+        [Authorize(Roles = "DataWriter,DataModify,ActivityManager,ActivityModify,ActivityUpdate")]
         [HttpPut, Route("Activity/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] LTSActivityLinked activity)
         {

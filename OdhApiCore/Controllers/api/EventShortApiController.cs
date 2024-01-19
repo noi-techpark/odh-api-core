@@ -449,7 +449,7 @@ namespace OdhApiCore.Controllers.api
 
                             myeventshortbyroom!.EventEndDate = eventshort.EndDate;
                             myeventshortbyroom.EventEndDateUTC = eventshort.EndDateUTC;
-                            myeventshortbyroom.EventId = eventshort.EventId.Value;
+                            myeventshortbyroom.EventId = eventshort.EventId;
                             myeventshortbyroom.EventLocation = eventshort.EventLocation;
                             myeventshortbyroom.EventSource = eventshort.Source;
                             myeventshortbyroom.EventStartDate = eventshort.StartDate;
@@ -810,7 +810,7 @@ namespace OdhApiCore.Controllers.api
 
         // PUT: api/EventShort/5
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
+        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,EventShortUpdate,VirtualVillageManager")]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -396,7 +396,7 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetPoiList))]
-        [Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify")]
+        [Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify,PoiUpdate")]
         [HttpPut, Route("Poi/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] LTSPoiLinked poi)
         {

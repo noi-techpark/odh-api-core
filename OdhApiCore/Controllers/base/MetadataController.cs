@@ -185,7 +185,7 @@ namespace OdhApiCore.Controllers
         /// <param name="metadata">TourismMetaData Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,MetadataManager,MetadataCreate")]
+        [Authorize(Roles = "DataWriter,DataCreate,MetaDataManager,MetaDataCreate")]
         [InvalidateCacheOutput(nameof(Get))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -209,7 +209,7 @@ namespace OdhApiCore.Controllers
         /// <param name="metadata">TourismMetaData Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,MetadataManager,MetadataModify")]
+        [Authorize(Roles = "DataWriter,DataModify,MetaDataManager,MetaDataUpdate")]
         [InvalidateCacheOutput(nameof(Get))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -232,7 +232,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">MetaData Id</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,MetadataManager,MetadataDelete")]
+        [Authorize(Roles = "DataWriter,DataDelete,MetaDataManager,MetaDataDelete")]
         [InvalidateCacheOutput(nameof(Get))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

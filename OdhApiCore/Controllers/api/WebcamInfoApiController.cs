@@ -229,7 +229,7 @@ namespace OdhApiCore.Controllers
         /// <param name="webcam">WebcamInfo Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify")]
+        [Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify,WebcamUpdate")]
         [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpPut, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
