@@ -235,7 +235,7 @@ namespace Helper
         /// <param name="table"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static async Task<PGCRUDResult> DeleteData<T>(this QueryFactory QueryFactory, string id, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
+        public static async Task<PGCRUDResult> DeleteData<T>(this QueryFactory QueryFactory, string id, string table, string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentException(nameof(id), "No data");
@@ -252,26 +252,48 @@ namespace Helper
 
             var deleteresult = 0;
             var errorresult = 0;
+            var errorreason = "";
+
             List<string> channelstopublish = new List<string>();
 
             if (queryresult == null)
             {
-                //throw new ArgumentNullException(nameof(query), "No data");
-                return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                errorreason = "Not Found";
+                return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, errorreason= errorreason, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
             }
             else
             {
+                if(deletecondition != null)
+                {
+                    var splitted = deletecondition.Split("=");
+
+                    var queryresult2 = QueryFactory.Query(table)
+                    .Select("data")
+                    .Where("id", idtodelete)
+                    .Where("gen_" + splitted[0], splitted[1]);
+
+                    if (queryresult2 == null)
+                    {
+                        errorreason = "Not Allowed";
+                        return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, errorreason = errorreason, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                    }
+                }
+
+                //Check the Delete Condition first
                 if (queryresult.PublishedOn != null)
                     channelstopublish.AddRange(queryresult.PublishedOn);
 
                 deleteresult = await QueryFactory.Query(table).Where("id", idtodelete)
-                        .DeleteAsync();
+                        .DeleteAsync();                                
             }
 
             if (deleteresult == 0)
+            {
                 errorresult = 1;
+                errorreason = "Internal Error";
+            }
 
-            return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = deleteresult, error = errorresult, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+            return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = deleteresult, error = errorresult, errorreason = errorreason, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
         }
 
         /// <summary>

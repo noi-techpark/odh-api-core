@@ -125,6 +125,8 @@ namespace DataModel
 
         public int? error { get; init; }
 
+        public string? errorreason { get; init; }
+
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
         public int? objectimageschanged { get; init; }

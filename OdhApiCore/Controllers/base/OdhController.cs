@@ -284,10 +284,45 @@ namespace OdhApiCore.Controllers
         protected async Task<IActionResult> DeleteData(string id, string table, string? deletecondition = null)
         {
             //TODO Add logic which checks if user is authorized to delete data
+            //Return not found if wrong ID
+            //Return forbitten 403 if 
+            //Return 401 if unauthorized
 
-            return Ok(await QueryFactory.DeleteData(id, table));            
+            var deleteresult = await QueryFactory.DeleteData(id, table);
+
+            switch(deleteresult.errorreason)
+            {
+                case "": return Ok(deleteresult);
+                case "Not Allowed": return Forbid();
+                case "Not Found": return NotFound();
+                case "Internal Error": return StatusCode(500);
+                default:
+                    return Ok(deleteresult);
+            }                
+        }
+
+        protected async Task<IActionResult> DeleteData<T>(string id, string table, string? deletecondition = null) where T : IIdentifiable, IMetaData, IPublishedOn, IImportDateassigneable, new()
+        {
+            //TODO Add logic which checks if user is authorized to delete data
+            //Return not found if wrong ID
+            //Return forbitten 403 if 
+            //Return 401 if unauthorized
+
+            var deleteresult = await QueryFactory.DeleteData<T>(id, table);
+
+            switch (deleteresult.errorreason)
+            {
+                case "": return Ok(deleteresult);
+                case "Not Allowed": return Forbid();
+                case "Not Found": return NotFound();
+                case "Internal Error": return StatusCode(500);
+                default:
+                    return Ok(deleteresult);
+            }
         }
 
         //TODO Upsert Data and push to all published Channels
-    }    
+
+        //TODO Delete Data and push to all published Channels
+    }
 }

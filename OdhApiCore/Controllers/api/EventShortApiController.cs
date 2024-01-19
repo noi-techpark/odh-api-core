@@ -905,74 +905,87 @@ namespace OdhApiCore.Controllers.api
 
         // DELETE: api/EventShort/5
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpDelete, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]        
-        public async Task<IActionResult> Delete(string id)
+        public Task<IActionResult> Delete(string id)
         {
-            try
+            return DoAsyncReturn(async () =>
             {
-                if (id != null)
-                {
-                    var query =
-                         QueryFactory.Query("eventeuracnoi")
-                             .Select("data")
-                             .Where("id", id.ToLower());
+                //check if there are additionalfilters to add
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-                    //var myeventraw = await query.FirstOrDefaultAsync<JsonRaw>();                    
-                    //var myevent = JsonConvert.DeserializeObject<EventShort>(myeventraw.Value);
+                id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
 
-                    var myevent = await query.GetObjectSingleAsync<EventShort>();
+                return await DeleteData(id, "eventeuracnoi", additionalfilter);
+            });
 
-                    if (myevent != null)
-                    {
-                        if (myevent.Source != "EBMS")
-                        {
-                            if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataDelete", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
-                                throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
+            //try
+            //{
+            //    if (id != null)
+            //    {
+            //        //check if there are additionalfilters to add
+            //        AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-                            //TODO CHECK IF THIS WORKS     
-                            //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
-                            //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+            //        var query =
+            //             QueryFactory.Query("eventeuracnoi")
+            //                 .Select("data")
+            //                 .Where("id", id.ToLower());
 
-                            return await DeleteData(id, "eventeuracnoi");
-                        }
-                        else
-                        {
-                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
-                            {
-                                //TODO CHECK IF THIS WORKS     
-                                //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
-                                //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+            //        var myevent = await query.GetObjectSingleAsync<EventShort>();
 
-                                return await DeleteData(id, "eventeuracnoi");
-                            }
-                            else
-                            {
-                                throw new Exception("EventShort cannot be deleted");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("EventShort not found");
-                    }
-                }
-                else
-                {
-                    throw new Exception("No EventShort Id provided");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            //        if (myevent != null)
+            //        {
+            //            if (myevent.Source != "EBMS")
+            //            {
+            //                if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataDelete", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
+            //                    throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
+
+            //                //TODO CHECK IF THIS WORKS     
+            //                //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
+
+            //                //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+
+            //                return await DeleteData(id, "eventeuracnoi");
+            //            }
+            //            else
+            //            {
+            //                if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
+            //                {
+            //                    //TODO CHECK IF THIS WORKS     
+            //                    //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
+
+            //                    //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+
+            //                    return await DeleteData(id, "eventeuracnoi");
+            //                }
+            //                else
+            //                {
+            //                    throw new Exception("EventShort cannot be deleted");
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            throw new Exception("EventShort not found");
+            //        }
+            //    }
+            //    else
+            //    {
+            //        throw new Exception("No EventShort Id provided");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest(ex.Message);
+            //}
         }
 
         //[ApiExplorerSettings(IgnoreApi = true)]
