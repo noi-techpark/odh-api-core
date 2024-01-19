@@ -443,7 +443,7 @@ namespace OdhApiCore.Controllers.api
                             if (String.IsNullOrEmpty(myeventshortbyroom?.EventDescription?["en"]) && eventshort.EventDescriptionDE != null)
                                 myeventshortbyroom!.EventDescription?.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
 
-                            myeventshortbyroom.EventTitle = myeventshortbyroom.EventDescription;
+                            myeventshortbyroom!.EventTitle = myeventshortbyroom.EventDescription!;
 
                          
 
