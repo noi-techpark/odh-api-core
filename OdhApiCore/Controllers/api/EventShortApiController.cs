@@ -449,7 +449,7 @@ namespace OdhApiCore.Controllers.api
 
                             myeventshortbyroom!.EventEndDate = eventshort.EndDate;
                             myeventshortbyroom.EventEndDateUTC = eventshort.EndDateUTC;
-                            myeventshortbyroom.EventId = eventshort.EventId.Value;
+                            myeventshortbyroom.EventId = eventshort.EventId;
                             myeventshortbyroom.EventLocation = eventshort.EventLocation;
                             myeventshortbyroom.EventSource = eventshort.Source;
                             myeventshortbyroom.EventStartDate = eventshort.StartDate;

@@ -2315,7 +2315,7 @@ namespace DataModel
 
         //Event Infos
 
-        public int EventId { get; set; }
+        public int? EventId { get; set; }
 
         public Dictionary<string, string> EventTitle { get; set; }
 
