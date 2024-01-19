@@ -3387,11 +3387,13 @@ namespace DataModel
         /// <summary>
         /// //1 = closed, 2 = open, 0 = undefined
         /// </summary>
+        [SwaggerSchema("1 = closed, 2 = open, 0 = undefined, Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>")]
         public int State { get; set; }
 
         /// <summary>
         /// 1 = General Opening Time, 2 = time range for warm meals, 3 = time range for pizza, 4 = time range for snack’s
         /// </summary>
+        [SwaggerSchema("1 = General Opening Time, 2 = time range for warm meals, 3 = time range for pizza, 4 = time range for snack’s, Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>")]
         public int Timecode { get; set; }
     }
 
