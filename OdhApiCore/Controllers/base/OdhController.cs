@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -118,7 +119,6 @@ namespace OdhApiCore.Controllers
             }
         }
 
-
         protected IEnumerable<string> UserRolesList
         {
             get
@@ -141,6 +141,30 @@ namespace OdhApiCore.Controllers
 
         //    return false;
         //}
+
+        //Test if there is an additionalfilter
+        protected Dictionary<string,string> AdditionalFiltersToAdd
+        {
+            get
+            {
+                var additionalfilterdict = new Dictionary<string,string>();
+                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.Value.Split("/").Last()));
+                foreach(var role in rolesforendpoint)
+                {
+                    var splittedrole = role.Value.Split("_");
+                    if(splittedrole.Length == 2)
+                    {
+                        var splittedfilter = splittedrole[1].Split('|');
+                        if(splittedfilter.Length == 2)
+                            additionalfilterdict.TryAddOrUpdate(splittedfilter[0], splittedfilter[1]);
+                    }
+                        
+                }
+
+                return additionalfilterdict;
+            }
+        }
+
 
         protected IEnumerable<string> FieldsToHide
         {
@@ -257,8 +281,10 @@ namespace OdhApiCore.Controllers
             return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew));          
         }
 
-        protected async Task<IActionResult> DeleteData(string id, string table)
+        protected async Task<IActionResult> DeleteData(string id, string table, string? deletecondition = null)
         {
+            //TODO Add logic which checks if user is authorized to delete data
+
             return Ok(await QueryFactory.DeleteData(id, table));            
         }
 

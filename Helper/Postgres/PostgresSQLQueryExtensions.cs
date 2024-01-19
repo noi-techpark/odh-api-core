@@ -1752,6 +1752,15 @@ namespace Helper
 
         #endregion
 
+        #region AdditionalFilter
+
+        //TODO ADD some other usecases
+        public static Query FilterAdditionalDataByRoles(this Query query, string? additionalfilter)
+        {
+            var splitted = additionalfilter.Split("=");
+            return query.WhereRaw("gen_" + splitted[0] + " = $$", splitted[1]);
+        }
+        #endregion
     }
 
 

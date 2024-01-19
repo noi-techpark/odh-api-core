@@ -676,6 +676,7 @@ namespace Helper
             IReadOnlyCollection<string> publishedonlist,
             string? searchfilter,
             string? language, string? lastchange, 
+            string? additionalfilter,
             bool filterClosedData, IEnumerable<string> userroles, bool getbyrooms = false)
         {
             LogMethodInfo(
@@ -709,6 +710,7 @@ namespace Helper
                 .SearchFilter(EventShortTitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))
                 .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }

@@ -1090,7 +1090,7 @@ namespace OdhApiCore.Controllers.api
                            start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
                            websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
                            publishedonlist: myeventshorthelper.publishedonlist,
-                           searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
+                           searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange, additionalfilter: null,
                            filterClosedData: FilterClosedData, userroles: UserRolesToFilter, getbyrooms: false)
                        .ApplyRawFilter(rawfilter)
                        .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, orderby);

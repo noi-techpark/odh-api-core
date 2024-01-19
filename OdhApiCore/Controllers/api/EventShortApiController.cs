@@ -293,6 +293,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //check if there are additionalfilters to add
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);                
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
                     sourcefilter, eventlocationfilter, active, websiteactive, communityactive, idfilter, webaddressfilter, lastchange, sortorder, publishedon);
@@ -307,6 +309,7 @@ namespace OdhApiCore.Controllers.api
                            start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
                            websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
                            publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
+                           additionalfilter: additionalfilter,
                            filterClosedData: FilterClosedData, userroles: UserRolesToFilter, getbyrooms: false)
                        .ApplyRawFilter(rawfilter)
                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);
@@ -387,6 +390,7 @@ namespace OdhApiCore.Controllers.api
                        start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
                        websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
                        publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
+                       additionalfilter: null,
                        filterClosedData: FilterClosedData, userroles: UserRolesToFilter, getbyrooms: false)
                    .ApplyRawFilter(rawfilter);
 
