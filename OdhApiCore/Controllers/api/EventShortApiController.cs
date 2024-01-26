@@ -350,10 +350,14 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //check if there are additionalfilters to add
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("eventeuracnoi")
                         .Select("data")
                         .Where("id", id.ToLower())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))
                         .When(FilterClosedData, q => q.FilterClosedData());
 
                 var fieldsTohide = FieldsToHide;
@@ -666,7 +670,8 @@ namespace OdhApiCore.Controllers.api
         // POST: api/EventShort
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[EnableCors("DataBrowserCorsPolicy")]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        [AuthorizeODH(PermissionAction.Create)]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -817,7 +822,8 @@ namespace OdhApiCore.Controllers.api
 
         // PUT: api/EventShort/5
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,EventShortUpdate,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,EventShortUpdate,VirtualVillageManager")]
+        [AuthorizeODH(PermissionAction.Update)]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -918,11 +924,11 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //check if there are additionalfilters to add
-                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
 
-                return await DeleteData(id, "eventeuracnoi", additionalfilter);
+                return await DeleteData<EventShortLinked>(id, "eventeuracnoi", additionalfilter);
             });
 
             //try

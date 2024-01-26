@@ -270,7 +270,7 @@ namespace OdhApiCore.Controllers
 
         //Provide Methods for POST, PUT, DELETE passing DataType etc...
 
-        protected async Task<IActionResult> UpsertData<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, string editsource = "api") where T : IIdentifiable, IImportDateassigneable, IMetaData
+        protected async Task<IActionResult> UpsertData<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, string editsource = "api", string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             //TODO Username and provenance of the insert/edit
             //Get the Username
@@ -279,7 +279,7 @@ namespace OdhApiCore.Controllers
             if (this.HttpContext.Request.Headers.ContainsKey("Referer"))
                 editsource = this.HttpContext.Request.Headers["Referer"];
 
-            return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew));          
+            return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, deletecondition));          
         }
 
         protected async Task<IActionResult> DeleteData(string id, string table, string? deletecondition = null)
@@ -289,17 +289,7 @@ namespace OdhApiCore.Controllers
             //Return forbitten 403 if 
             //Return 401 if unauthorized
 
-            var deleteresult = await QueryFactory.DeleteData(id, table);
-
-            switch(deleteresult.errorreason)
-            {
-                case "": return Ok(deleteresult);
-                case "Not Allowed": return Forbid();
-                case "Not Found": return NotFound();
-                case "Internal Error": return StatusCode(500);
-                default:
-                    return Ok(deleteresult);
-            }                
+            return ReturnCRUDResult(await QueryFactory.DeleteData(id, table));
         }
 
         protected async Task<IActionResult> DeleteData<T>(string id, string table, string? deletecondition = null) where T : IIdentifiable, IMetaData, IPublishedOn, IImportDateassigneable, new()
@@ -309,13 +299,16 @@ namespace OdhApiCore.Controllers
             //Return forbitten 403 if 
             //Return 401 if unauthorized
 
-            var deleteresult = await QueryFactory.DeleteData<T>(id, table);
+            var deleteresult = await QueryFactory.DeleteData<T>(id, table, deletecondition);
+
+            //TODO push delete to all published Channels
 
             switch (deleteresult.errorreason)
             {
                 case "": return Ok(deleteresult);
                 case "Not Allowed": return Forbid();
                 case "Not Found": return NotFound();
+                case "Bad Request": return BadRequest();
                 case "Internal Error": return StatusCode(500);
                 default:
                     return Ok(deleteresult);
@@ -325,5 +318,19 @@ namespace OdhApiCore.Controllers
         //TODO Upsert Data and push to all published Channels
 
         //TODO Delete Data and push to all published Channels
+
+
+        protected IActionResult ReturnCRUDResult(PGCRUDResult result)
+        {
+            switch (result.errorreason)
+            {
+                case "": return Ok(result);
+                case "Not Allowed": return Forbid();
+                case "Not Found": return NotFound();
+                case "Internal Error": return StatusCode(500);
+                default:
+                    return Ok(result);
+            }
+        }
     }
 }
