@@ -111,6 +111,7 @@ namespace OdhApiCore
             {
                 host = context.Request.Host.ToString(),
                 path = context.Request.Path.ToString(),
+                method = context.Request.Method.ToString(),
                 urlparams = urlparameters, //.Replace("&", "-"),  //Helper.StringHelpers.GenerateDictionaryFromQuerystring(context.Request.QueryString.ToString()),
                 referer = referer,
                 schema = context.Request.Scheme,
