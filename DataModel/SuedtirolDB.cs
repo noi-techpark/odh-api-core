@@ -2048,7 +2048,7 @@ namespace DataModel
             }
         }
         //Hauptsaal/ort
-        public string AnchorVenue { get; set; }
+        public string? AnchorVenue { get; set; }
         //Hauptsaal/ort soll für die Ausgabe verwendet werden
         public string? AnchorVenueShort { get; set; }
         //letzte Änderung
