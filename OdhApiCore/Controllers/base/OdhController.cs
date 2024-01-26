@@ -148,7 +148,8 @@ namespace OdhApiCore.Controllers
             get
             {
                 var additionalfilterdict = new Dictionary<string,string>();
-                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.Value.Split("/").Last()));
+
+                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.Value.Split("/").Last() + "_"));
                 foreach(var role in rolesforendpoint)
                 {
                     var splittedrole = role.Value.Split("_");

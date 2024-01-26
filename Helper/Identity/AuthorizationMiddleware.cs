@@ -66,8 +66,11 @@ namespace Helper.Identity
                 {
                     foreach(var scope in permission.scopes)
                     {
-                        if(context.User.Identities.FirstOrDefault() != null)
-                            context.User.Identities.FirstOrDefault().AddClaim(new Claim(ClaimTypes.Role, permission.rsname + "_" + scope));
+                        var resourceendpointsplitted = permission.rsname.Split('?');
+                        var additionalfilter = resourceendpointsplitted.Length > 1 ? "_" + resourceendpointsplitted[1] : "";
+
+                        if (context.User.Identities.FirstOrDefault() != null)
+                            context.User.Identities.FirstOrDefault().AddClaim(new Claim(ClaimTypes.Role, resourceendpointsplitted[0] + "_" + scope + additionalfilter));
                     }
                 }
                 
