@@ -450,13 +450,13 @@ namespace OdhApiCore.Controllers.api
                             if (String.IsNullOrEmpty(myeventshortbyroom?.EventDescription?["en"]) && eventshort.EventDescriptionDE != null)
                                 myeventshortbyroom!.EventDescription?.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
 
-                            myeventshortbyroom.EventTitle = myeventshortbyroom.EventDescription;
+                            myeventshortbyroom!.EventTitle = myeventshortbyroom.EventDescription!;
 
                          
 
                             myeventshortbyroom!.EventEndDate = eventshort.EndDate;
                             myeventshortbyroom.EventEndDateUTC = eventshort.EndDateUTC;
-                            myeventshortbyroom.EventId = eventshort.EventId.Value;
+                            myeventshortbyroom.EventId = eventshort.EventId;
                             myeventshortbyroom.EventLocation = eventshort.EventLocation;
                             myeventshortbyroom.EventSource = eventshort.Source;
                             myeventshortbyroom.EventStartDate = eventshort.StartDate;
@@ -839,11 +839,11 @@ namespace OdhApiCore.Controllers.api
 
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
-                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }) && eventshort.EventLocation != "VV")
-                        throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+                    //if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }) && eventshort.EventLocation != "VV")
+                    //    throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
-                    if(CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }))
-                        eventshort.Source = User.Identity != null ? User.Identity.Name : "";
+                    //if(CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }))
+                    //    eventshort.Source = User.Identity != null ? User.Identity.Name : "";
 
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
