@@ -100,6 +100,8 @@ namespace Helper
             //TODO: Id Uppercase or Lowercase depending on table
             //TODO: Shortname population?
 
+            //TODO Comparing and pushchannels
+
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
 
@@ -116,6 +118,8 @@ namespace Helper
             int updateresult = 0;
             int errorresult = 0;
 
+            string errorreason = "";
+
             data.LastChange = DateTime.Now;
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
@@ -131,6 +135,8 @@ namespace Helper
                 if (errorwhendataisnew)
                     throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
 
+                //Check first if data has the condition
+
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
                 operation = "INSERT";
@@ -140,15 +146,21 @@ namespace Helper
                 if(errorwhendataexists)
                     throw new ArgumentNullException(nameof(data.Id), "Id exists already");
 
-                updateresult = await QueryFactory.Query(table).Where("id", data.Id)
-                        .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                updateresult = await QueryFactory
+                    .Query(table)
+                    .Where("id", data.Id)
+                    .When(deletecondition != null, x => x.FilterAdditionalDataByRoles(deletecondition))
+                    .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+
+                //IF Updateresult == 0 return forbidden
+
                 operation = "UPDATE";
             }
 
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = false, objectchanged = null, objectimageschanged = null, pushchannels = null, changes = null };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = false, objectchanged = null, objectimageschanged = null, pushchannels = null, changes = null };
         }
 
         public static async Task<PGCRUDResult> UpsertDataDestinationData<T,V>(this QueryFactory QueryFactory, T data, V destinationdata, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false, bool compareimagedata = false) 
@@ -312,8 +324,7 @@ namespace Helper
 
             var queryresult = await query.GetObjectSingleAsync<IPublishedOn>();
 
-            var deleteresult = 0;
-            var errorresult = 0;
+            var deleteresult = 0;            
             var errorreason = "";
 
             if (queryresult == null)
@@ -346,7 +357,6 @@ namespace Helper
                     .DeleteAsync();
 
                 deleteresult = await QueryFactory.Query(table)
-
                         .DeleteAsync();
             }
 
