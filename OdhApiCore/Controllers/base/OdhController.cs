@@ -149,17 +149,17 @@ namespace OdhApiCore.Controllers
             {
                 var additionalfilterdict = new Dictionary<string,string>();
 
-                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.Value.Split("/").Last() + "_"));
-                foreach(var role in rolesforendpoint)
+                if (Request.Path.Value != null)
                 {
-                    var splittedrole = role.Value.Split("_");
-                    if(splittedrole.Length == 2)
+                    var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.Value.Split("/").Last() + "_"));
+                    foreach (var role in rolesforendpoint)
                     {
-                        var splittedfilter = splittedrole[1].Split('|');
-                        if(splittedfilter.Length == 2)
-                            additionalfilterdict.TryAddOrUpdate(splittedfilter[0], splittedfilter[1]);
+                        var splittedrole = role.Value.Split("_");
+                        if (splittedrole.Length == 3)
+                        {
+                            additionalfilterdict.TryAddOrUpdate(splittedrole[1], splittedrole[2]);
+                        }
                     }
-                        
                 }
 
                 return additionalfilterdict;
