@@ -668,18 +668,18 @@ namespace OdhApiCore.Controllers.api
         #region POST PUT DELETE
 
         // POST: api/EventShort
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[EnableCors("DataBrowserCorsPolicy")]
         //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
         [AuthorizeODH(PermissionAction.Create)]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPost, Route("EventShort")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Post([FromBody] EventShortLinked eventshort)
         {
+            //check if there are additionalfilters to add
+            AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
             try
             {
                 if (eventshort != null)
@@ -807,7 +807,7 @@ namespace OdhApiCore.Controllers.api
                     //TODO, Sync publishedon with current values, remove SETTER from ActiveToday, ActiveWeb, ActiveCommunity and generate it from publishedon, remove 
                     //checkboxes from 
 
-                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true);
+                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true, false, "api", additionalfilter);
                 }
                 else
                 {
@@ -832,6 +832,9 @@ namespace OdhApiCore.Controllers.api
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Put(string id, [FromBody] EventShortLinked eventshort)
         {
+            //check if there are additionalfilters to add
+            AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
             try
             {
                 if (eventshort != null && id != null)
@@ -896,7 +899,7 @@ namespace OdhApiCore.Controllers.api
                     //Create PublishedonList
                     //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
 
-                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", false, true);
+                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", false, true, "api", additionalfilter);
                 }
                 else
                 {

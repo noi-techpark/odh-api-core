@@ -276,10 +276,13 @@ namespace OdhApiCore.Controllers
             //Get the Username
             string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";
 
-            if (this.HttpContext.Request.Headers.ContainsKey("Referer"))
-                editsource = this.HttpContext.Request.Headers["Referer"];
+            if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
+                editsource = HttpContext.Request.Headers["Referer"];
 
-            return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, deletecondition));          
+            return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, deletecondition));
+
+            //TODO check if user is allowed to edit source
+            //TODO push modified data to all published Channels
         }
 
         protected async Task<IActionResult> DeleteData(string id, string table, string? deletecondition = null)
@@ -299,20 +302,9 @@ namespace OdhApiCore.Controllers
             //Return forbitten 403 if 
             //Return 401 if unauthorized
 
-            var deleteresult = await QueryFactory.DeleteData<T>(id, table, deletecondition);
+            return ReturnCRUDResult(await QueryFactory.DeleteData<T>(id, table, deletecondition));
 
-            //TODO push delete to all published Channels
-
-            switch (deleteresult.errorreason)
-            {
-                case "": return Ok(deleteresult);
-                case "Not Allowed": return Forbid();
-                case "Not Found": return NotFound();
-                case "Bad Request": return BadRequest();
-                case "Internal Error": return StatusCode(500);
-                default:
-                    return Ok(deleteresult);
-            }
+            //TODO push delete to all published Channels            
         }
 
         //TODO Upsert Data and push to all published Channels
@@ -327,6 +319,7 @@ namespace OdhApiCore.Controllers
                 case "": return Ok(result);
                 case "Not Allowed": return Forbid();
                 case "Not Found": return NotFound();
+                case "Bad Request": return BadRequest();
                 case "Internal Error": return StatusCode(500);
                 default:
                     return Ok(result);
