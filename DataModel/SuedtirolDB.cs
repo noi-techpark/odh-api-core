@@ -839,6 +839,8 @@ namespace DataModel
     public class AccoFeature
     {
         public string? Id { get; set; }
+
+        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public string? Name { get; set; }
 
         public string? HgvId { get; set; }
