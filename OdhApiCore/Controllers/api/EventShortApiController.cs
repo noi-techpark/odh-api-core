@@ -678,7 +678,7 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> Post([FromBody] EventShortLinked eventshort)
         {
             //check if there are additionalfilters to add
-            AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+            AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
             try
             {
@@ -833,7 +833,7 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> Put(string id, [FromBody] EventShortLinked eventshort)
         {
             //check if there are additionalfilters to add
-            AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+            AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
             try
             {

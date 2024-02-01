@@ -49,7 +49,15 @@ namespace Helper.Identity
 
         private bool CheckAccess(ClaimsPrincipal User, PermissionAction action, string endpoint)
         {
+          
             var lastendpointelement = endpoint.Split('/').Last();
+
+            //TODO on DELETE + UPDATE the Id is passed in the route....
+            if (action == PermissionAction.Delete || action == PermissionAction.Update)
+            {
+                lastendpointelement = endpoint.Split('/')[endpoint.Split('/').Length - 1];
+            }
+
 
             return User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(lastendpointelement + "_" + action.ToString()));
         }
