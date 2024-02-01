@@ -76,7 +76,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[EnableCors(origins: "*", headers: "*", methods: "*")]
-        [AuthorizeODH(PermissionAction.Read)]
+        //[AuthorizeODH(PermissionAction.Read)] Also Anonymous can read it
         [HttpGet, Route("EventShort")]
         public async Task<IActionResult> Get(
             uint pagenumber = 1, 
