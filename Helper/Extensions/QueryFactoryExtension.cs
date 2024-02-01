@@ -94,7 +94,74 @@ namespace Helper
 
         #region PG Helpers
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, string? operation = "INSERT", string? condition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        {
+            //TODO: What if no id is passed? Generate ID
+            //TODO: Id Uppercase or Lowercase depending on table
+            //TODO: Shortname population?
+
+            //TODO Comparing and pushchannels
+            
+            if (data == null)
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = null };
+
+            //Check if data exists
+            var query = QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", data.Id);
+
+            var queryresult = await query.GetObjectSingleAsync<T>();            
+
+            int createresult = 0;
+            int updateresult = 0;
+            int errorresult = 0;
+
+            string errorreason = "";
+            
+            //Setting LastChange
+            data.LastChange = DateTime.Now;
+            //Setting MetaInfo
+            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+            //Setting Editinfo
+            data._Meta.UpdateInfo = new UpdateInfo() { UpdatedBy = editor, UpdateSource = editsource };
+            //Setting Firstimport
+            if (data.FirstImport == null)
+                data.FirstImport = DateTime.Now;
+
+            //Check data condition
+            if (!CheckUpsertCondition(data, condition))
+            {                              
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = null };
+            }
+
+            if (queryresult == null)
+            {
+                if (errorwhendataisnew)
+                    throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
+
+                createresult = await QueryFactory.Query(table)
+                   .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+            }
+            else
+            {   
+                if(errorwhendataexists)
+                    throw new ArgumentNullException(nameof(data.Id), "Id exists already");
+                
+                updateresult = await QueryFactory
+                    .Query(table)
+                    .Where("id", data.Id)
+                    //.When(condition != null, x => x.FilterAdditionalDataByRoles(condition))
+                    .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+              
+            }
+
+            if (createresult == 0 && updateresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = null };
+        }
+
+        public static async Task<PGCRUDResult> UpsertDataAndCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, string? operation = "INSERT", string? condition = null, bool comparedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
         {
             //TODO: What if no id is passed? Generate ID
             //TODO: Id Uppercase or Lowercase depending on table
@@ -102,17 +169,99 @@ namespace Helper
 
             //TODO Comparing and pushchannels
 
+            List<string> channelstopublish = new List<string>();
+
             if (data == null)
-                throw new ArgumentNullException(nameof(data), "no data");
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = comparedata, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
 
             //Check if data exists
             var query = QueryFactory.Query(table)
                       .Select("data")
                       .Where("id", data.Id);
 
-            var queryresult = await query.GetAsync<T>();
+            var queryresult = await query.GetObjectSingleAsync<T>();
 
-            string operation = "";
+            int createresult = 0;
+            int updateresult = 0;
+            int errorresult = 0;
+
+            string errorreason = "";
+            
+            EqualityResult equalityresult = new EqualityResult() { isequal = false, patch = null };
+
+            //Setting LastChange
+            data.LastChange = DateTime.Now;
+            //Setting MetaInfo
+            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+            //Setting Editinfo
+            data._Meta.UpdateInfo = new UpdateInfo() { UpdatedBy = editor, UpdateSource = editsource };
+            //Setting Firstimport
+            if (data.FirstImport == null)
+                data.FirstImport = DateTime.Now;
+
+            //Check data condition
+            if (!CheckUpsertCondition(data, condition))
+            {
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = comparedata, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+            }
+
+            if (queryresult == null)
+            {
+                if (errorwhendataisnew)
+                    throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
+
+                createresult = await QueryFactory.Query(table)
+                   .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+
+                //If data is null let equalityresult.isequal = false and imagecompareresult = false, and the publish channels
+                if (data.PublishedOn != null)
+                    channelstopublish.AddRange(data.PublishedOn);
+            }
+            else
+            {
+                if (errorwhendataexists)
+                    throw new ArgumentNullException(nameof(data.Id), "Id exists already");
+
+                //Compare the data
+                if (comparedata && queryresult != null)
+                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
+
+                //Add all Publishedonfields before and after change
+                channelstopublish.AddRange(data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn));
+
+                updateresult = await QueryFactory
+                    .Query(table)
+                    .Where("id", data.Id)
+                    //.When(condition != null, x => x.FilterAdditionalDataByRoles(condition))
+                    .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+
+            }
+
+            if (createresult == 0 && updateresult == 0)
+                errorresult = 1;
+
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = 0, pushchannels = channelstopublish, changes = equalityresult.patch };
+        }
+
+        public static async Task<PGCRUDResult> UpsertDataAndFullCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, string? operation = "INSERT", string? condition = null, bool comparedata = false, bool compareimagedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, IImageGalleryAware, new()
+        {
+            //TODO: What if no id is passed? Generate ID
+            //TODO: Id Uppercase or Lowercase depending on table
+            //TODO: Shortname population?
+
+            //TODO Comparing and pushchannels
+
+            List<string> channelstopublish = new List<string>();
+
+            if (data == null)
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+
+            //Check if data exists
+            var query = QueryFactory.Query(table)
+                      .Select("data")
+                      .Where("id", data.Id);
+
+            var queryresult = await query.GetObjectSingleAsync<T>();
 
             int createresult = 0;
             int updateresult = 0;
@@ -120,48 +269,98 @@ namespace Helper
 
             string errorreason = "";
 
+            bool imagecompareresult = false;
+            EqualityResult equalityresult = new EqualityResult() { isequal = false, patch = null };
+
+            //Setting LastChange
             data.LastChange = DateTime.Now;
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
-
             //Setting Editinfo
             data._Meta.UpdateInfo = new UpdateInfo() { UpdatedBy = editor, UpdateSource = editsource };
-
+            //Setting Firstimport
             if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
 
-            if (queryresult == null || queryresult.Count() == 0)
+            //Check data condition
+            if (!CheckUpsertCondition(data, condition))
+            {
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+            }
+
+            if (queryresult == null)
             {
                 if (errorwhendataisnew)
                     throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
 
-                //Check first if data has the condition
-
                 createresult = await QueryFactory.Query(table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
-                operation = "INSERT";
+
+                //If data is null let equalityresult.isequal = false and imagecompareresult = false, and the publish channels
+                if (data.PublishedOn != null)
+                    channelstopublish.AddRange(data.PublishedOn);
             }
             else
-            {   
-                if(errorwhendataexists)
+            {
+                if (errorwhendataexists)
                     throw new ArgumentNullException(nameof(data.Id), "Id exists already");
+
+                //Compare the data
+                if (comparedata && queryresult != null)
+                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
+
+                //Compare Image Gallery
+                if (compareimagedata && queryresult != null)
+                    imagecompareresult = EqualityHelper.CompareImageGallery(data.ImageGallery, queryresult.ImageGallery, new List<string>() { });
+
+                //Add all Publishedonfields before and after change
+                channelstopublish.AddRange(data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn));
 
                 updateresult = await QueryFactory
                     .Query(table)
                     .Where("id", data.Id)
-                    .When(deletecondition != null, x => x.FilterAdditionalDataByRoles(deletecondition))
+                    //.When(condition != null, x => x.FilterAdditionalDataByRoles(condition))
                     .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
 
-                //IF Updateresult == 0 return forbidden
-
-                operation = "UPDATE";
             }
 
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = false, objectchanged = null, objectimageschanged = null, pushchannels = null, changes = null };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
+
+        public static bool CheckUpsertCondition<T>(T data, string? condition) where T : IIdentifiable, IImportDateassigneable, IMetaData 
+        {
+            bool checkresult = true;
+
+            if (condition == null)
+                return checkresult;
+
+            var splittedcondition = condition.Split("=");
+
+            //Add here all allowed conditions
+            if (splittedcondition.Length > 1)
+            {
+                switch (splittedcondition[0].ToLower())
+                {
+                    //case "source": 
+                    //    if(data._Meta.Source != splittedcondition[1]) 
+                    //        checkresult = false;
+                    //    break;
+                    default:
+                        var property = data.GetType().GetProperty(splittedcondition[0]).GetValue(data, null);
+
+                        if(property.ToString() != splittedcondition[1])
+                                   checkresult = false;
+
+                        break;
+                }
+            }
+            
+            return checkresult;
+        }
+
 
         public static async Task<PGCRUDResult> UpsertDataDestinationData<T,V>(this QueryFactory QueryFactory, T data, V destinationdata, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false, bool compareimagedata = false) 
             where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, IImageGalleryAware, new()
@@ -247,7 +446,7 @@ namespace Helper
         /// <param name="table"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static async Task<PGCRUDResult> DeleteData<T>(this QueryFactory QueryFactory, string id, string table, string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
+        public static async Task<PGCRUDResult> DeleteData<T>(this QueryFactory QueryFactory, string id, string table, string? condition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
         {
             List<string> channelstopublish = new List<string>();
 
@@ -273,13 +472,13 @@ namespace Helper
             }
             else
             {
-                if(deletecondition != null)
+                if(condition != null)
                 {
                     //TO CHECK IF HERE THE OBJECT IS NEEDED
                     var queryresult2 = QueryFactory.Query(table)
                     .Select("data")
                     .Where("id", idtodelete)
-                    .Where(q => q.FilterAdditionalDataByRoles(deletecondition));
+                    .Where(q => q.FilterAdditionalDataByRoles(condition));
 
                     if (queryresult2 == null)
                         return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };                    
@@ -308,7 +507,7 @@ namespace Helper
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table, bool casesensitive = true, string? deletecondition = null)
+        public static async Task<PGCRUDResult> DeleteData(this QueryFactory QueryFactory, string id, string table, bool casesensitive = true, string? condition = null)
         {
             List<string> channelstopublish = new List<string>();
 
@@ -333,13 +532,13 @@ namespace Helper
             }
             else
             {
-                if (deletecondition != null)
+                if (condition != null)
                 {
                     var queryresult2 = QueryFactory.Query(table)
                     .Select("data")
                     .When(casesensitive, x => x.Where("id", id))
                     .When(!casesensitive, x => x.WhereLike("id", id))
-                    .Where(q => q.FilterAdditionalDataByRoles(deletecondition));
+                    .Where(q => q.FilterAdditionalDataByRoles(condition));
 
                     if (queryresult2 == null)
                     {

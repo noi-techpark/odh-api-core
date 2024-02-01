@@ -268,31 +268,75 @@ namespace OdhApiCore.Controllers
             });
         }
 
-        //Provide Methods for POST, PUT, DELETE passing DataType etc...
+        //TODO Upsert Data and push to all published Channels
 
-        protected async Task<IActionResult> UpsertData<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, string editsource = "api", string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        protected async Task<IActionResult> UpsertData<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, string editsource = "api", string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData 
         {
             //TODO Username and provenance of the insert/edit
             //Get the Username
             string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";
+            string operation = errorwhendataexists && !errorwhendataisnew ? "CREATE" : "UPDATE";
 
             if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
                 editsource = HttpContext.Request.Headers["Referer"];
 
-            return Ok(await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, deletecondition));
+            var result = await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition);
 
             //TODO check if user is allowed to edit source
             //TODO push modified data to all published Channels
+
+            return ReturnCRUDResult(result);
         }
 
-        protected async Task<IActionResult> DeleteData(string id, string table, string? deletecondition = null)
+        protected async Task<IActionResult> UpsertDataAndCompare<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, string editsource = "api", string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
+        {
+            //TODO Username and provenance of the insert/edit
+            //Get the Username
+            string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";
+            string operation = errorwhendataexists && !errorwhendataisnew ? "CREATE" : "UPDATE";
+
+            if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
+                editsource = HttpContext.Request.Headers["Referer"];
+
+            var result = await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition);
+
+            //TODO check if user is allowed to edit source
+            //TODO push modified data to all published Channels
+
+            return ReturnCRUDResult(result);
+        }
+
+        protected async Task<IActionResult> UpsertDataAndFullCompare<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, string editsource = "api", string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, IImageGalleryAware, new()
+        {
+            //TODO Username and provenance of the insert/edit
+            //Get the Username
+            string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";
+            string operation = errorwhendataexists && !errorwhendataisnew ? "CREATE" : "UPDATE";
+
+            if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
+                editsource = HttpContext.Request.Headers["Referer"];
+
+            var result = await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition);
+
+            //TODO check if user is allowed to edit source
+            //TODO push modified data to all published Channels
+
+            return ReturnCRUDResult(result);
+        }
+
+
+        //TODO Delete Data and push to all published Channels
+
+        protected async Task<IActionResult> DeleteData(string id, string table, bool casesensitive = true, string? deletecondition = null)
         {
             //TODO Add logic which checks if user is authorized to delete data
             //Return not found if wrong ID
             //Return forbitten 403 if 
             //Return 401 if unauthorized
 
-            return ReturnCRUDResult(await QueryFactory.DeleteData(id, table));
+            return ReturnCRUDResult(await QueryFactory.DeleteData(id, table, casesensitive, deletecondition));
+
+            //TODO push delete to all published Channels  
         }
 
         protected async Task<IActionResult> DeleteData<T>(string id, string table, string? deletecondition = null) where T : IIdentifiable, IMetaData, IPublishedOn, IImportDateassigneable, new()
@@ -307,9 +351,8 @@ namespace OdhApiCore.Controllers
             //TODO push delete to all published Channels            
         }
 
-        //TODO Upsert Data and push to all published Channels
+      
 
-        //TODO Delete Data and push to all published Channels
 
 
         protected IActionResult ReturnCRUDResult(PGCRUDResult result)
@@ -320,6 +363,7 @@ namespace OdhApiCore.Controllers
                 case "Not Allowed": return Forbid();
                 case "Not Found": return NotFound();
                 case "Bad Request": return BadRequest();
+                case "No Data": return BadRequest();
                 case "Internal Error": return StatusCode(500);
                 default:
                     return Ok(result);

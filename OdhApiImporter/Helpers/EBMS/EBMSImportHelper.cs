@@ -106,7 +106,7 @@ namespace OdhApiImporter.Helpers
                 if (eventindb != null)
                 {                 
                     changedonDB = eventindb.ChangedOn;
-                    imagegallery = eventindb.ImageGallery;
+                    imagegallery = eventindb.ImageGallery != null ? eventindb.ImageGallery.ToList() : null;
                     eventTextDE = eventindb.EventTextDE;
                     eventTextIT = eventindb.EventTextIT;
                     eventTextEN = eventindb.EventTextEN;
