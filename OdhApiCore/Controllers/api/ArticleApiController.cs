@@ -345,6 +345,9 @@ namespace OdhApiCore.Controllers.api
                 //GENERATE ID
                 article.Id = Helper.IdGenerator.GenerateIDFromType(article);
 
+                if (String.IsNullOrEmpty(article.Source))
+                    article.Source = "noi";
+
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 if(article.ArticleDateTo == null)
@@ -376,6 +379,9 @@ namespace OdhApiCore.Controllers.api
             {
                 //Check ID uppercase lowercase
                 article.Id = Helper.IdGenerator.CheckIdFromType<ArticlesLinked>(id);
+
+                if (String.IsNullOrEmpty(article.Source))
+                    article.Source = "noi";
 
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
