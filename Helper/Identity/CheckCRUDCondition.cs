@@ -13,7 +13,7 @@ namespace Helper.Identity
 {
     public class CheckCRUDCondition
     {
-        public static bool CheckCondition<T>(T data, string? condition) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static bool CRUDOperationAllowed<T>(T data, string? condition) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             bool checkresult = true;
 
@@ -32,6 +32,37 @@ namespace Helper.Identity
                         if (data._Meta.Source != splittedcondition[1])
                             checkresult = false;
                         break;
+                    //Using reflection to get the Type
+                    default:
+                        var property = data.GetType().GetProperty(splittedcondition[0]);
+                        if (property != null)
+                        {
+                            var propvalue = property.GetValue(data, null);
+                            if (propvalue.ToString() != splittedcondition[1])
+                                checkresult = false;
+                        }
+
+                        break;
+                }
+            }
+
+            return checkresult;
+        }
+
+        public static bool CRUDOperationAllowedWithoutConstraint<T>(T data, string? condition)
+        {
+            bool checkresult = true;
+
+            if (condition == null)
+                return checkresult;
+
+            var splittedcondition = condition.Split("=");
+
+            //Add here all allowed conditions
+            if (splittedcondition.Length > 1)
+            {
+                switch (splittedcondition[0].ToLower())
+                {
                     //Using reflection to get the Type
                     default:
                         var property = data.GetType().GetProperty(splittedcondition[0]);

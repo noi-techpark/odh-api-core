@@ -130,7 +130,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             //Check data condition
-            if (!CheckCRUDCondition.CheckCondition(data, condition))
+            if (!CheckCRUDCondition.CRUDOperationAllowed(data, condition))
             {                              
                 return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = null };
             }
@@ -201,7 +201,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             //Check data condition
-            if (!CheckCRUDCondition.CheckCondition(data, condition))
+            if (!CheckCRUDCondition.CRUDOperationAllowed(data, condition))
             {
                 return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = comparedata, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
             }
@@ -284,7 +284,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             //Check data condition
-            if (!CheckCRUDCondition.CheckCondition(data, condition))
+            if (!CheckCRUDCondition.CRUDOperationAllowed(data, condition))
             {
                 return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
             }
@@ -444,19 +444,12 @@ namespace Helper
             }
             else
             {
-                if(condition != null)
+                //Check data condition
+                if (!CheckCRUDCondition.CRUDOperationAllowed(queryresult, condition))
                 {
-                    //TO CHECK IF HERE THE OBJECT IS NEEDED
-                    var queryresult2 = QueryFactory.Query(table)
-                    .Select("data")
-                    .Where("id", idtodelete)
-                    .Where(q => q.FilterAdditionalDataByRoles(condition));
-
-                    if (queryresult2 == null)
-                        return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };                    
+                    return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
                 }
-
-                //Check the Delete Condition first
+                
                 if (queryresult.PublishedOn != null)
                     channelstopublish.AddRange(queryresult.PublishedOn);
 
@@ -504,18 +497,10 @@ namespace Helper
             }
             else
             {
-                if (condition != null)
+                //Check data condition
+                if (!CheckCRUDCondition.CRUDOperationAllowedWithoutConstraint(queryresult, condition))
                 {
-                    var queryresult2 = QueryFactory.Query(table)
-                    .Select("data")
-                    .When(casesensitive, x => x.Where("id", id))
-                    .When(!casesensitive, x => x.WhereLike("id", id))
-                    .Where(q => q.FilterAdditionalDataByRoles(condition));
-
-                    if (queryresult2 == null)
-                    {
-                        return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
-                    }
+                    return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
                 }
 
                 //Check the Delete Condition first
