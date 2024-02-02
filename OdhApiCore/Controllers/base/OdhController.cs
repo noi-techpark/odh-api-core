@@ -305,7 +305,7 @@ namespace OdhApiCore.Controllers
             if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
                 editsource = HttpContext.Request.Headers["Referer"];
 
-            var result = await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition);
+            var result = await QueryFactory.UpsertDataAndCompare<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition, true);
 
             //push modified data to all published Channels
             result.pushed = await CheckIfObjectChangedAndPush(result, result.id, result.odhtype);
@@ -323,7 +323,7 @@ namespace OdhApiCore.Controllers
             if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
                 editsource = HttpContext.Request.Headers["Referer"];
 
-            var result = await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition);
+            var result = await QueryFactory.UpsertDataAndFullCompare<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition, true, true);
 
             //push modified data to all published Channels
             result.pushed = await CheckIfObjectChangedAndPush(result, result.id, result.odhtype);
