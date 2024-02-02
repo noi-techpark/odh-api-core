@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Helper.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
@@ -39,7 +40,7 @@ namespace Helper.Identity
         }
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            bool isAuthorized = CheckAccess(context.HttpContext.User, _action, context.HttpContext.Request.Path); // :)
+            bool isAuthorized = CheckAccess(context.HttpContext.User, _action, context.HttpContext.Request.Path.GetPathNextTo("/","v1")); // :)
 
             if (!isAuthorized)
             {
@@ -49,17 +50,10 @@ namespace Helper.Identity
 
         private bool CheckAccess(ClaimsPrincipal User, PermissionAction action, string endpoint)
         {
-          
-            var lastendpointelement = endpoint.Split('/').Last();
-
-            //TODO on DELETE + UPDATE the Id is passed in the route....
-            if (action == PermissionAction.Delete || action == PermissionAction.Update)
-            {
-                lastendpointelement = endpoint.Split('/')[endpoint.Split('/').Length - 1];
-            }
-
-
-            return User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(lastendpointelement + "_" + action.ToString()));
+            if (!String.IsNullOrEmpty(endpoint))
+                return User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(endpoint + "_" + action.ToString()));
+            else
+                return false;
         }
     }    
 }

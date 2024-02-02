@@ -5,6 +5,7 @@
 using DataModel;
 using Helper.Extensions;
 using Helper.Generic;
+using Helper.Identity;
 using Helper.JsonHelpers;
 using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
@@ -129,7 +130,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             //Check data condition
-            if (!CheckUpsertCondition(data, condition))
+            if (!CheckCRUDCondition.CheckCondition(data, condition))
             {                              
                 return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = null };
             }
@@ -200,7 +201,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             //Check data condition
-            if (!CheckUpsertCondition(data, condition))
+            if (!CheckCRUDCondition.CheckCondition(data, condition))
             {
                 return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = comparedata, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
             }
@@ -283,7 +284,7 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             //Check data condition
-            if (!CheckUpsertCondition(data, condition))
+            if (!CheckCRUDCondition.CheckCondition(data, condition))
             {
                 return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
             }
@@ -330,36 +331,7 @@ namespace Helper
             return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
-        public static bool CheckUpsertCondition<T>(T data, string? condition) where T : IIdentifiable, IImportDateassigneable, IMetaData 
-        {
-            bool checkresult = true;
-
-            if (condition == null)
-                return checkresult;
-
-            var splittedcondition = condition.Split("=");
-
-            //Add here all allowed conditions
-            if (splittedcondition.Length > 1)
-            {
-                switch (splittedcondition[0].ToLower())
-                {
-                    //case "source": 
-                    //    if(data._Meta.Source != splittedcondition[1]) 
-                    //        checkresult = false;
-                    //    break;
-                    default:
-                        var property = data.GetType().GetProperty(splittedcondition[0]).GetValue(data, null);
-
-                        if(property.ToString() != splittedcondition[1])
-                                   checkresult = false;
-
-                        break;
-                }
-            }
-            
-            return checkresult;
-        }
+        
 
 
         public static async Task<PGCRUDResult> UpsertDataDestinationData<T,V>(this QueryFactory QueryFactory, T data, V destinationdata, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false, bool compareimagedata = false) 

@@ -4,6 +4,7 @@
 
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -151,7 +152,9 @@ namespace OdhApiCore.Controllers
 
                 if (Request.Path.Value != null)
                 {
-                    var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.Value.Split("/").Last() + "_"));
+                    //GET ENDPOINT (after v1)
+
+                    var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.GetPathNextTo("/", "v1") + "_"));
                     foreach (var role in rolesforendpoint)
                     {
                         var splittedrole = role.Value.Split("_");
