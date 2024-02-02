@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -230,7 +231,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
-        [Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpPost, Route("ODHTag")]
         public Task<IActionResult> Post([FromBody] ODHTagLinked odhtag)
         {
@@ -250,7 +252,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
-        [Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify,ODHTagUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify,ODHTagUpdate")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpPut, Route("ODHTag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHTagLinked odhtag)
         {
@@ -269,7 +272,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
-        [Authorize(Roles = "DataWriter,DataDelete,ODHTagManager,ODHTagDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,ODHTagManager,ODHTagDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("ODHTag/{id}")]
         public Task<IActionResult> Delete(string id)
         {

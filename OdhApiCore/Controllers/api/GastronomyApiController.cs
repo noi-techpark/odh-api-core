@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -336,7 +337,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetGastronomyList))]
-        [Authorize(Roles = "DataWriter,DataCreate,GastronomyManager,GastronomyCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,GastronomyManager,GastronomyCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Gastronomy")]
         public Task<IActionResult> Post([FromBody] GastronomyLinked gastronomy)
         {
@@ -357,7 +359,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetGastronomyList))]
-        [Authorize(Roles = "DataWriter,DataModify,GastronomyManager,GastronomyModify,GastronomyUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,GastronomyManager,GastronomyModify,GastronomyUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Gastronomy/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] GastronomyLinked gastronomy)
         {
@@ -377,7 +380,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetGastronomyList))]
-        [Authorize(Roles = "DataWriter,DataDelete,GastronomyManager,GastronomyDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,GastronomyManager,GastronomyDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Gastronomy/{id}")]
         public Task<IActionResult> Delete(string id)
         {

@@ -23,6 +23,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using OdhApiCore.Filters;
 using ServiceReferenceLCS;
 using OdhApiCore.Controllers.api;
+using Helper.Identity;
 
 namespace OdhApiCore.Controllers
 {
@@ -387,7 +388,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
-        [Authorize(Roles = "DataWriter,DataCreate,ActivityManager,ActivityCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,ActivityManager,ActivityCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Activity")]
         public Task<IActionResult> Post([FromBody] LTSActivityLinked activity)
         {
@@ -408,7 +410,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
-        [Authorize(Roles = "DataWriter,DataModify,ActivityManager,ActivityModify,ActivityUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,ActivityManager,ActivityModify,ActivityUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Activity/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] LTSActivityLinked activity)
         {
@@ -428,7 +431,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
-        [Authorize(Roles = "DataWriter,DataDelete,ActivityManager,ActivityDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,ActivityManager,ActivityDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Activity/{id}")]
         public Task<IActionResult> Delete(string id)
         {

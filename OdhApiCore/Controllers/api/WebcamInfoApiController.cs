@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -204,7 +205,8 @@ namespace OdhApiCore.Controllers
         /// <param name="webcam">WebcamInfo Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,WebcamManager,WebcamCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
+        //[Authorize(Roles = "DataWriter,DataCreate,WebcamManager,WebcamCreate")]
         [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpPost, Route("WebcamInfo")]
         public Task<IActionResult> Post([FromBody] WebcamInfoLinked webcam)
@@ -229,7 +231,8 @@ namespace OdhApiCore.Controllers
         /// <param name="webcam">WebcamInfo Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify,WebcamUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
+        //[Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify,WebcamUpdate")]
         [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpPut, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
@@ -250,7 +253,8 @@ namespace OdhApiCore.Controllers
         /// <param name="id">WebcamInfo Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
+        //[Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
         [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpDelete, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Delete(string id)

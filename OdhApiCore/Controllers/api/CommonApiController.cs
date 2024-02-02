@@ -4,6 +4,7 @@
 
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -1156,7 +1157,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">MetaRegion Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,MetaRegionCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,MetaRegionCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("MetaRegion")]
         public Task<IActionResult> Post([FromBody] MetaRegionLinked data)
         {
@@ -1173,7 +1175,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Region Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,RegionCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,RegionCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Region")]
         public Task<IActionResult> Post([FromBody] RegionLinked data)
         {
@@ -1190,7 +1193,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">ExperienceArea Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,ExperienceAreaCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,ExperienceAreaCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("ExperienceArea")]
         public Task<IActionResult> Post([FromBody] ExperienceAreaLinked data)
         {
@@ -1207,7 +1211,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">TourismAssociation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,TourismAssociationCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,TourismAssociationCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("TourismAssociation")]
         public Task<IActionResult> Post([FromBody] TourismvereinLinked data)
         {
@@ -1224,7 +1229,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Municipality Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,MunicipalityCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,MunicipalityCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Municipality")]
         public Task<IActionResult> Post([FromBody] MunicipalityLinked data)
         {
@@ -1241,7 +1247,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">District Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,DistrictCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,DistrictCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("District")]
         public Task<IActionResult> Post([FromBody] DistrictLinked data)
         {
@@ -1258,7 +1265,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Area Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,AreaCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,AreaCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Area")]
         public Task<IActionResult> Post([FromBody] AreaLinked data)
         {
@@ -1275,7 +1283,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">SkiRegion Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,SkiRegionCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,SkiRegionCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("SkiRegion")]
         public Task<IActionResult> Post([FromBody] SkiRegionLinked data)
         {
@@ -1292,7 +1301,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">SkiArea Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,SkiAreaCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,SkiAreaCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("SkiArea")]
         public Task<IActionResult> Post([FromBody] SkiAreaLinked data)
         {
@@ -1309,7 +1319,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Wine Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,WineAwardCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,WineAwardCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("WineAward")]
         public Task<IActionResult> Post([FromBody] WineLinked data)
         {
@@ -1327,7 +1338,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">MetaRegion Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,MetaRegionUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,MetaRegionUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("MetaRegion/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] MetaRegionLinked data)
         {
@@ -1345,7 +1357,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Region Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,RegionUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,RegionUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Region/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] RegionLinked data)
         {
@@ -1363,7 +1376,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">ExperienceArea Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,ExperienceAreaUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,ExperienceAreaUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("ExperienceArea/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ExperienceAreaLinked data)
         {
@@ -1381,7 +1395,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">TourismAssociation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,TourismAssociationUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,TourismAssociationUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("TourismAssociation/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] TourismvereinLinked data)
         {
@@ -1399,7 +1414,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Municipality Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,MunicipalityUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,MunicipalityUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Municipality/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] MunicipalityLinked data)
         {
@@ -1417,7 +1433,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">District Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,DistrictUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,DistrictUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("District/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] DistrictLinked data)
         {
@@ -1435,7 +1452,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Area Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,AreaUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,AreaUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Area/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] AreaLinked data)
         {
@@ -1453,7 +1471,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">SkiRegion Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,SkiRegionUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,SkiRegionUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("SkiRegion/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] SkiRegionLinked data)
         {
@@ -1471,7 +1490,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">SkiArea Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,SkiAreaUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,SkiAreaUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("SkiArea/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] SkiAreaLinked data)
         {
@@ -1489,7 +1509,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">WineAward Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,WineAwardUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,WineAwardUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("WineAward/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WineLinked data)
         {
@@ -1506,7 +1527,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">MetaRegion Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,MetaRegionDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,MetaRegionDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("MetaRegion/{id}")]
         public Task<IActionResult> DeleteMetaRegion(string id)
         {
@@ -1523,7 +1545,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Region Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,RegionDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,RegionDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Region/{id}")]
         public Task<IActionResult> DeleteRegion(string id)
         {
@@ -1540,7 +1563,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ExperienceArea Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,ExperienceAreaDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,ExperienceAreaDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("ExperienceArea/{id}")]
         public Task<IActionResult> DeleteExperienceArea(string id)
         {
@@ -1557,7 +1581,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">TourismAssociation Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,TourismAssociationDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,TourismAssociationDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("TourismAssociation/{id}")]
         public Task<IActionResult> DeleteTourismAssociation(string id)
         {
@@ -1574,7 +1599,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Municipality Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,MunicipalityDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,MunicipalityDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Municipality/{id}")]
         public Task<IActionResult> DeleteMunicipality(string id)
         {
@@ -1591,7 +1617,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">District Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,DistrictDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,DistrictDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("District/{id}")]
         public Task<IActionResult> DeleteDistrict(string id)
         {
@@ -1608,7 +1635,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Area Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,AreaDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,AreaDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Area/{id}")]
         public Task<IActionResult> DeleteArea(string id)
         {
@@ -1625,7 +1653,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">SkiRegion Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,SkiRegionDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,SkiRegionDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("SkiRegion/{id}")]
         public Task<IActionResult> DeleteSkiRegion(string id)
         {
@@ -1642,7 +1671,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">SkiArea Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,SkiAreaDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,SkiAreaDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("SkiArea/{id}")]
         public Task<IActionResult> DeleteSkiArea(string id)
         {
@@ -1659,7 +1689,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">WineAward Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,WineAwardDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,WineAwardDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("WineAward/{id}")]
         public Task<IActionResult> DeleteWineAward(string id)
         {

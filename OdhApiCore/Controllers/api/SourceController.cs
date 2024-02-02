@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -182,7 +183,8 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="Source">SourceLinked Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataCreate,SourceManager,SourceCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,SourceManager,SourceCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Source")]
         public Task<IActionResult> Post([FromBody] SourceLinked source)
         {
@@ -203,7 +205,8 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Source Id</param>
         /// <param name="source">Source Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataModify,SourceManager,SourceModify,SourceUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,SourceManager,SourceModify,SourceUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Source/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] SourceLinked source)
         {
@@ -220,7 +223,8 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Source Id</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataDelete,SourceManager,SourceDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,SourceManager,SourceDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Source/{id}")]
         public Task<IActionResult> Delete(string id)
         {

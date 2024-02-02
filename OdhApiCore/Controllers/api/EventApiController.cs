@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -365,7 +366,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
-        [Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
         [HttpPost, Route("Event")]
         public Task<IActionResult> Post([FromBody] EventLinked odhevent)
         {
@@ -386,7 +388,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
-        [Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify,EventUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
+        //[Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify,EventUpdate")]
         [HttpPut, Route("Event/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] EventLinked odhevent)
         {
@@ -406,7 +409,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
-        [Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Event/{id}")]
         public Task<IActionResult> Delete(string id)
         {

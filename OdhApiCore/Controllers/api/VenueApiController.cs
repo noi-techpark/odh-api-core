@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -361,7 +362,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
-        [Authorize(Roles = "DataWriter,DataCreate,VenueManager,VenueCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,VenueManager,VenueCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Venue")]
         public Task<IActionResult> Post([FromBody] VenueLinked venue)
         {
@@ -383,7 +385,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
-        [Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify,VenueUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify,VenueUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Venue/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] VenueLinked venue)
         {
@@ -404,7 +407,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
-        [Authorize(Roles = "DataWriter,DataDelete,VenueManager,VenueDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,VenueManager,VenueDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Venue/{id}")]
         public Task<IActionResult> Delete(string id)
         {

@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -332,7 +333,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="article">Article Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [InvalidateCacheOutput(nameof(GetArticleList))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -367,7 +369,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="article">Article Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify,ArticleUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify,ArticleUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [InvalidateCacheOutput(nameof(GetArticleList))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -398,7 +401,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Article Id</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,ArticleManager,ArticleDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,ArticleManager,ArticleDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [InvalidateCacheOutput(nameof(GetArticleList))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

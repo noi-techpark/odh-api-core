@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Helper.Location;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -395,7 +396,8 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
-        [Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("ODHActivityPoi")]
         public Task<IActionResult> Post([FromBody] ODHActivityPoiLinked odhactivitypoi)
         {
@@ -435,7 +437,8 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
-        [Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiModify,ODHActivityPoiUpdate,SmgPoiManager,SmgPoiModify")]
+        //[Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiModify,ODHActivityPoiUpdate,SmgPoiManager,SmgPoiModify")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHActivityPoiLinked odhactivitypoi)
         {
@@ -474,7 +477,8 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
-        [Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Delete(string id)
         {

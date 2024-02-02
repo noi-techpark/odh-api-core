@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -219,7 +220,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetTagAsync))]
-        [Authorize(Roles = "DataWriter,DataCreate,TagManager,TagCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,TagManager,TagCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Tag")]
         public Task<IActionResult> Post([FromBody] TagLinked tag)
         {
@@ -238,7 +240,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetTagAsync))]
-        [Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify,TagUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify,TagUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Tag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] TagLinked tag)
         {
@@ -256,7 +259,8 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetTagAsync))]
-        [Authorize(Roles = "DataWriter,DataDelete,TagManager,TagDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,TagManager,TagDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Tag/{id}")]
         public Task<IActionResult> Delete(string id)
         {

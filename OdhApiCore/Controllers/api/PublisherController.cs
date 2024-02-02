@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -187,7 +188,8 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="publisher">PublisherLinked Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataCreate,PublisherManager,PublisherCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,PublisherManager,PublisherCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Publisher")]
         public Task<IActionResult> Post([FromBody] PublisherLinked publisher)
         {
@@ -208,7 +210,8 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Publisher Id</param>
         /// <param name="publisher">Publisher Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataModify,PublisherManager,PublisherModify,PublisherUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,PublisherManager,PublisherModify,PublisherUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Publisher/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] PublisherLinked publisher)
         {
@@ -225,7 +228,8 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Publisher Id</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataDelete,PublisherManager,PublisherDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,PublisherManager,PublisherDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Publisher/{id}")]
         public Task<IActionResult> Delete(string id)
         {

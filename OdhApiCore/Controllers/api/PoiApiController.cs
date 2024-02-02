@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -375,7 +376,8 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetPoiList))]
-        [Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,PoiManager,PoiCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Poi")]
         public Task<IActionResult> Post([FromBody] LTSPoiLinked poi)
         {
@@ -396,7 +398,8 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetPoiList))]
-        [Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify,PoiUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,PoiManager,PoiModify,PoiUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Poi/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] LTSPoiLinked poi)
         {
@@ -416,7 +419,8 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetPoiList))]
-        [Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,PoiManager,PoiDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Poi/{id}")]
         public Task<IActionResult> Delete(string id)
         {
