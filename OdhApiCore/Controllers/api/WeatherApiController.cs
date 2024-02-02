@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Npgsql;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SIAG;
 using SqlKata;
@@ -36,8 +37,8 @@ namespace OdhApiCore.Controllers
     {
         private readonly ISettings settings;
         
-        public WeatherController(IWebHostEnvironment env, ISettings settings, ILogger<WeatherController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public WeatherController(IWebHostEnvironment env, ISettings settings, ILogger<WeatherController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;            
         }

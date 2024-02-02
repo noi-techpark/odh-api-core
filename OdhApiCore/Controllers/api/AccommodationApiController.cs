@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using MSS;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -38,8 +39,8 @@ namespace OdhApiCore.Controllers
         private readonly IHttpClientFactory httpClientFactory;
         private readonly ISettings settings;
 
-        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
-            : base(env, settings, logger, queryFactory)
+        public AccommodationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.httpClientFactory = httpClientFactory;
             this.settings = settings;
@@ -946,10 +947,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 accommodation.Id = Helper.IdGenerator.GenerateIDFromType(accommodation);
                 //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<AccommodationLinked>(accommodation, "accommodations", true);
+                return await UpsertData<AccommodationLinked>(accommodation, "accommodations", true, false, "api", additionalfilter);
             });
         }
 
@@ -968,10 +972,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
                 //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<AccommodationLinked>(accommodation, "accommodations", false, true);
+                return await UpsertData<AccommodationLinked>(accommodation, "accommodations", false, true, "api", additionalfilter);
             });
         }
 
@@ -989,9 +996,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
 
-                return await DeleteData(id, "accommodations");
+                return await DeleteData<AccommodationLinked>(id, "accommodations", additionalfilter);
             });
         }
 

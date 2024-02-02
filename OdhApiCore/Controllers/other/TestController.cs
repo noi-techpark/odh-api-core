@@ -24,6 +24,7 @@ using System.Globalization;
 using System.Net.Http;
 using Swashbuckle.AspNetCore.Annotations;
 using DataModel.Annotations;
+using OdhNotifier;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -36,8 +37,8 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
-            : base(env, settings, logger, queryFactory)
+        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.httpClientFactory = httpClientFactory;
             this.settings = settings;

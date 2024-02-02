@@ -24,6 +24,7 @@ using OdhApiCore.Filters;
 using ServiceReferenceLCS;
 using OdhApiCore.Controllers.api;
 using Helper.Identity;
+using OdhNotifier;
 
 namespace OdhApiCore.Controllers
 {
@@ -35,8 +36,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
     {     
-        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

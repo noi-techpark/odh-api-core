@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Npgsql;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using SqlKata;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.Annotations;
@@ -37,8 +38,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class EventShortController : OdhController
     {        
-        public EventShortController(IWebHostEnvironment env, ISettings settings, ILogger<EventShortController> logger, QueryFactory queryFactory)
-           : base(env, settings, logger, queryFactory)
+        public EventShortController(IWebHostEnvironment env, ISettings settings, ILogger<EventShortController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

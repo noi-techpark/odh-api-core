@@ -765,7 +765,7 @@ namespace OdhApiImporter.Helpers
             if(deletereduceddata)
                 await QueryFactory.DeleteData<T>(datatosave.Id + "_reduced", table);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
         }
 
         //For Destinationdata Venue
@@ -782,7 +782,7 @@ namespace OdhApiImporter.Helpers
                 await QueryFactory.DeleteData<T>(datatosave.Id + "_reduced", table);
 
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, pushchannels = result.pushchannels, changes = result.changes };
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, pushchannels = result.pushchannels, changes = result.changes };
         }
 
         private async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype, string pushorigin = "lts.push")
@@ -807,7 +807,7 @@ namespace OdhApiImporter.Helpers
         {
             var result = await QueryFactory.DeleteData<T>(id, table);
 
-            var reducedresult = new PGCRUDResult() { changes = null, compareobject = false, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimageschanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
+            var reducedresult = new PGCRUDResult() { changes = null, compareobject = false, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimagechanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
 
             //Check if reduced object has to be deleted
             if (deletereduced)
@@ -822,7 +822,7 @@ namespace OdhApiImporter.Helpers
                 deleted = result.deleted + reducedresult.deleted,
                 error = result.error + reducedresult.error,
                 objectchanged = result.objectchanged,
-                objectimagechanged = result.objectimageschanged,
+                objectimagechanged = result.objectimagechanged,
                 comparedobjects = 0,
                 pushchannels = result.pushchannels,
                 changes = result.changes

@@ -21,6 +21,7 @@ using System.Dynamic;
 using Dapper;
 using Newtonsoft.Json.Linq;
 using System.Data;
+using OdhNotifier;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -32,8 +33,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

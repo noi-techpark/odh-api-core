@@ -10,7 +10,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
+using OdhNotifier;
 using Schema.NET;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -30,18 +33,20 @@ namespace OdhApiCore.Controllers
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
 
-        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory)
+        public OdhController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
         {
             this.env = env;
             this.settings = settings;
             this.Logger = logger;
             this.QueryFactory = queryFactory;
+            this.OdhPushnotifier = odhpushnotifier;
         }
 
         protected ILogger<OdhController> Logger { get; }
 
         protected QueryFactory QueryFactory { get; }
 
+        private IOdhPushNotifier OdhPushnotifier;
 
         /// <summary>
         /// When not in this role Images which does not have a CC0 License are filtered out maybe obsolete ?
@@ -285,7 +290,6 @@ namespace OdhApiCore.Controllers
 
             var result = await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition);
 
-            //TODO check if user is allowed to edit source
             //TODO push modified data to all published Channels
 
             return ReturnCRUDResult(result);
@@ -303,9 +307,9 @@ namespace OdhApiCore.Controllers
 
             var result = await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition);
 
-            //TODO check if user is allowed to edit source
-            //TODO push modified data to all published Channels
-
+            //push modified data to all published Channels
+            result.pushed = await CheckIfObjectChangedAndPush(result, result.id, result.odhtype);
+            
             return ReturnCRUDResult(result);
         }
 
@@ -321,8 +325,8 @@ namespace OdhApiCore.Controllers
 
             var result = await QueryFactory.UpsertData<T>(data, table, editor, editsource, errorwhendataexists, errorwhendataisnew, operation, deletecondition);
 
-            //TODO check if user is allowed to edit source
-            //TODO push modified data to all published Channels
+            //push modified data to all published Channels
+            result.pushed = await CheckIfObjectChangedAndPush(result, result.id, result.odhtype);
 
             return ReturnCRUDResult(result);
         }
@@ -337,9 +341,11 @@ namespace OdhApiCore.Controllers
             //Return forbitten 403 if 
             //Return 401 if unauthorized
 
-            return ReturnCRUDResult(await QueryFactory.DeleteData(id, table, casesensitive, deletecondition));
-
-            //TODO push delete to all published Channels  
+            var result = await QueryFactory.DeleteData(id, table, casesensitive, deletecondition);
+            //push modified data to all published Channels
+            result.pushed = await CheckIfObjectChangedAndPush(result, result.id, result.odhtype);
+            
+            return ReturnCRUDResult(result);
         }
 
         protected async Task<IActionResult> DeleteData<T>(string id, string table, string? deletecondition = null) where T : IIdentifiable, IMetaData, IPublishedOn, IImportDateassigneable, new()
@@ -349,14 +355,30 @@ namespace OdhApiCore.Controllers
             //Return forbitten 403 if 
             //Return 401 if unauthorized
 
-            return ReturnCRUDResult(await QueryFactory.DeleteData<T>(id, table, deletecondition));
+            var result = await QueryFactory.DeleteData<T>(id, table, deletecondition);
+            //push modified data to all published Channels
+            result.pushed = await CheckIfObjectChangedAndPush(result, result.id, result.odhtype);
 
-            //TODO push delete to all published Channels            
+            return ReturnCRUDResult(result);         
         }
 
-      
+        protected async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(PGCRUDResult myupdateresult, string id, string datatype, string pushorigin = "odh.api.push")
+        {
+            IDictionary<string, NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
 
+            //Check if data has changed and Push To all channels
+            if (myupdateresult.error == 0 && myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0 && myupdateresult.pushchannels != null && myupdateresult.pushchannels.Count > 0)
+            {
+                //Check if image has changed
+                bool hasimagechanged = false;
+                if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
+                    hasimagechanged = true;
 
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, hasimagechanged, false, "api", myupdateresult.pushchannels.ToList());
+            }
+
+            return pushresults;
+        }
 
         protected IActionResult ReturnCRUDResult(PGCRUDResult result)
         {

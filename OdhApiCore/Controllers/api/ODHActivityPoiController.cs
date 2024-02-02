@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -33,8 +34,8 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly ISettings settings;
 
-        public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory)
-           : base(env, settings, logger, queryFactory)
+        public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }

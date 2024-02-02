@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -23,8 +24,8 @@ namespace OdhApiCore.Controllers.api
 {
     public class CommonController : OdhController
     {
-        public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<CommonController> logger, QueryFactory queryFactory)
-       : base(env, settings, logger, queryFactory)
+        public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<CommonController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+       : base(env, settings, logger, queryFactory, odhpushnotifier)
         {            
         }
 

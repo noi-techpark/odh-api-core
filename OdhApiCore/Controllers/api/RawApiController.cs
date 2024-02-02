@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,8 @@ namespace OdhApiCore.Controllers.api
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class RawdataApiController : OdhController
     {
-        public RawdataApiController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory)
-           : base(env, settings, logger, queryFactory)
+        public RawdataApiController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

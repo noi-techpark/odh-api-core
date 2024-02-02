@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Controllers.api;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using Schema.NET;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
@@ -33,7 +34,7 @@ namespace OdhApiCore.Controllers
         private static string absoluteUri = "";
         private readonly ISettings settings;
 
-        public MetaDataController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory) : base(env, settings, logger, queryFactory)
+        public MetaDataController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier) : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }

@@ -34,6 +34,7 @@ using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
 using OdhApiCore.Swagger;
+using OdhNotifier;
 using Schema.NET;
 using Serilog;
 using Serilog.Core;
@@ -299,6 +300,7 @@ namespace OdhApiCore
 
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
+            services.AddScoped<IOdhPushNotifier, OdhPushNotifier>();
 
             //Initialize JWT Authentication
             services.AddAuthentication(options =>

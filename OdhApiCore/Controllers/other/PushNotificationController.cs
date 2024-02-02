@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OdhNotifier;
 using PushServer;
 using SqlKata.Execution;
 using System;
@@ -21,8 +22,8 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly ISettings settings;
 
-        public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }

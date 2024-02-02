@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -30,8 +31,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class PublisherController : OdhController
     {
-        public PublisherController(IWebHostEnvironment env, ISettings settings, ILogger<PublisherController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public PublisherController(IWebHostEnvironment env, ISettings settings, ILogger<PublisherController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

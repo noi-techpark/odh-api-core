@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using Schema.NET;
 using SqlKata.Execution;
 using System;
@@ -32,8 +33,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class GastronomyController : OdhController
     {        
-        public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

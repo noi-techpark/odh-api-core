@@ -104,7 +104,7 @@ namespace Helper
             //TODO Comparing and pushchannels
             
             if (data == null)
-                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = null };
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = null };
 
             //Check if data exists
             var query = QueryFactory.Query(table)
@@ -132,7 +132,7 @@ namespace Helper
             //Check data condition
             if (!CheckCRUDCondition.CRUDOperationAllowed(data, condition))
             {                              
-                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = null };
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = null };
             }
 
             if (queryresult == null)
@@ -159,7 +159,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = null };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = null };
         }
 
         public static async Task<PGCRUDResult> UpsertDataAndCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, string? operation = "INSERT", string? condition = null, bool comparedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, new()
@@ -173,7 +173,7 @@ namespace Helper
             List<string> channelstopublish = new List<string>();
 
             if (data == null)
-                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = comparedata, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = comparedata, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
 
             //Check if data exists
             var query = QueryFactory.Query(table)
@@ -203,7 +203,7 @@ namespace Helper
             //Check data condition
             if (!CheckCRUDCondition.CRUDOperationAllowed(data, condition))
             {
-                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = comparedata, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = comparedata, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
             }
 
             if (queryresult == null)
@@ -241,7 +241,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = 0, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimagechanged = 0, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
         public static async Task<PGCRUDResult> UpsertDataAndFullCompare<T>(this QueryFactory QueryFactory, T data, string table, string editor, string editsource, bool errorwhendataexists = false, bool errorwhendataisnew = false, string? operation = "INSERT", string? condition = null, bool comparedata = false, bool compareimagedata = false) where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, IImageGalleryAware, new()
@@ -255,7 +255,7 @@ namespace Helper
             List<string> channelstopublish = new List<string>();
 
             if (data == null)
-                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
 
             //Check if data exists
             var query = QueryFactory.Query(table)
@@ -286,7 +286,7 @@ namespace Helper
             //Check data condition
             if (!CheckCRUDCondition.CRUDOperationAllowed(data, condition))
             {
-                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = data.Id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = operation!, changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
             }
 
             if (queryresult == null)
@@ -328,7 +328,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimagechanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
         
@@ -406,7 +406,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimagechanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
       
         /// <summary>
@@ -423,7 +423,7 @@ namespace Helper
             List<string> channelstopublish = new List<string>();
 
             if (string.IsNullOrEmpty(id))
-                return new PGCRUDResult() { id = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
 
             var idtodelete = Helper.IdGenerator.CheckIdFromType<T>(id);
 
@@ -440,14 +440,14 @@ namespace Helper
         
             if (queryresult == null)
             {                
-                return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, errorreason= "Not Found", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = idtodelete, odhtype = null, created = 0, updated = 0, deleted = 0, error = 1, errorreason= "Not Found", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
             }
             else
             {
                 //Check data condition
                 if (!CheckCRUDCondition.CRUDOperationAllowed(queryresult, condition))
                 {
-                    return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                    return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
                 }
                 
                 if (queryresult.PublishedOn != null)
@@ -458,9 +458,9 @@ namespace Helper
             }
 
             if (deleteresult == 0)           
-                return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };                
+                return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };                
             
-            return new PGCRUDResult() { id = idtodelete, created = 0, updated = 0, deleted = deleteresult, error = 0, errorreason = errorreason, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+            return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = deleteresult, error = 0, errorreason = errorreason, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
         }
 
         /// <summary>
@@ -477,7 +477,7 @@ namespace Helper
             List<string> channelstopublish = new List<string>();
 
             if (string.IsNullOrEmpty(id))
-                return new PGCRUDResult() { id = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
 
             //Check if data exists
             var query =
@@ -493,14 +493,14 @@ namespace Helper
 
             if (queryresult == null)
             {
-                return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Found", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Found", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
             }
             else
             {
                 //Check data condition
                 if (!CheckCRUDCondition.CRUDOperationAllowedWithoutConstraint(queryresult, condition))
                 {
-                    return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                    return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
                 }
 
                 //Check the Delete Condition first
@@ -517,9 +517,9 @@ namespace Helper
             }
 
             if (deleteresult == 0)
-                return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
 
-            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = 0, errorreason = errorreason, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimageschanged = 0, pushchannels = channelstopublish };
+            return new PGCRUDResult() { id = id, created = 0, updated = 0, deleted = deleteresult, error = 0, errorreason = errorreason, operation = "DELETE", changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
         }
 
 
@@ -608,7 +608,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = null, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimagechanged = null, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
         /// <summary>
@@ -701,7 +701,7 @@ namespace Helper
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimageschanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimagechanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
         #endregion

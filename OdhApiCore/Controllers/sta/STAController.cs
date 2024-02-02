@@ -22,6 +22,7 @@ using AspNetCore.CacheOutput;
 using System.IO;
 using OdhApiCore.GenericHelpers;
 using OdhApiCore.Controllers.helper;
+using OdhNotifier;
 
 namespace OdhApiCore.Controllers.sta
 {
@@ -32,8 +33,8 @@ namespace OdhApiCore.Controllers.sta
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
 
-        public STAController(IWebHostEnvironment env, ISettings settings, ILogger<STAController> logger, QueryFactory queryFactory)
-         : base(env, settings, logger, queryFactory)
+        public STAController(IWebHostEnvironment env, ISettings settings, ILogger<STAController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+         : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.env = env;
             this.settings = settings;

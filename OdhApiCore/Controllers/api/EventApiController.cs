@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -31,8 +32,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class EventController : OdhController
     {        
-        public EventController(IWebHostEnvironment env, ISettings settings, ILogger<EventController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public EventController(IWebHostEnvironment env, ISettings settings, ILogger<EventController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using Schema.NET;
 using SqlKata.Execution;
 using System;
@@ -33,8 +34,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class PoiController : OdhController
     {      
-        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public PoiController(IWebHostEnvironment env, ISettings settings, ILogger<PoiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
