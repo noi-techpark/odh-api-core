@@ -677,7 +677,7 @@ namespace OdhApiCore.Controllers.api
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Post([FromBody] EventShortLinked eventshort)
         {
-            //check if there are additionalfilters to add
+            //Additional Filters on the Action Create
             AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
             try
@@ -832,7 +832,7 @@ namespace OdhApiCore.Controllers.api
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Put(string id, [FromBody] EventShortLinked eventshort)
         {
-            //check if there are additionalfilters to add
+            //Additional Filters on the Action Update
             AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
             try
@@ -926,7 +926,7 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
-                //check if there are additionalfilters to add
+                //Additional Filters on the Action Delete
                 AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);

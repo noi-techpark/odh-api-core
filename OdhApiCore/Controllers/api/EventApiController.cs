@@ -373,10 +373,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 odhevent.Id = Helper.IdGenerator.GenerateIDFromType(odhevent);
                 odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<EventLinked>(odhevent, "events", true);
+                return await UpsertData<EventLinked>(odhevent, "events", true, false, "api", additionalfilter);
             });
         }
 
@@ -395,10 +398,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 odhevent.Id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
                 odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<EventLinked>(odhevent, "events", false, true);
+                return await UpsertData<EventLinked>(odhevent, "events", false, true, "api", additionalfilter);
             });
         }
 
@@ -416,9 +422,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
 
-                return await DeleteData(id, "events");
+                return await DeleteData<EventLinked>(id, "events", additionalfilter);
             });
         }
 
