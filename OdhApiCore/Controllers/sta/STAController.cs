@@ -228,7 +228,7 @@ namespace OdhApiCore.Controllers.sta
                     //Save to PG
                     //Check if data exists                    
 
-                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois", "sta.import", "importer");
+                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois", "", "sta.import", "importer");
 
                     if(result.updated != null)
                         updatecounter = updatecounter + result.updated.Value;

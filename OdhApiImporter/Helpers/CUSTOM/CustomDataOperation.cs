@@ -478,7 +478,7 @@ namespace OdhApiImporter.Helpers
                     myarticle.SmgTags = new List<string>() { "important" };
                 }
 
-                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, "articles", "article.modify", "importer");
+                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, "articles", "", "article.modify", "importer");
 
                 if(pgcrudresult.created != null)
                     crudcount = crudcount + pgcrudresult.created.Value;

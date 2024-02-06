@@ -716,7 +716,7 @@ namespace OdhApiImporter.Helpers
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
         
-            var result = await QueryFactory.UpsertData<T>(datatosave, table, "lts.push.import", "odh.importer", false, false);
+            var result = await QueryFactory.UpsertData<T>(datatosave, table, "", "lts.push.import", "odh.importer", false, false);
 
             //Delete the reduced data
             if (deletereduceddata)
@@ -737,7 +737,7 @@ namespace OdhApiImporter.Helpers
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;            
 
-            var result = await QueryFactory.UpsertDataAndCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult);
+            var result = await QueryFactory.UpsertDataAndCompare<T>(datatosave, table, "", "lts.push.import", "odh.importer", false, false, compareresult);
 
             //Delete the reduced data
             if (deletereduceddata)
@@ -759,7 +759,7 @@ namespace OdhApiImporter.Helpers
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult, compareimagechange);
+            var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "", "lts.push.import", "odh.importer", false, false, compareresult, compareimagechange);
             
             //Delete the reduced data if available
             if(deletereduceddata)
