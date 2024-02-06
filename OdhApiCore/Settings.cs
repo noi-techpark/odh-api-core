@@ -32,6 +32,8 @@ namespace OdhApiCore
         private readonly CDBConfig cdbConfig;
         private readonly SiagConfig siagConfig;
 
+        private readonly List<NotifierConfig> notifierConfig;
+
 
         public Settings(IConfiguration configuration)
         {
@@ -103,7 +105,19 @@ namespace OdhApiCore
                     var fcmconfigobj = new FCMConfig(fcmkey.Key, fcmkey.GetValue<string>("ServerKey", ""), fcmkey.GetValue<string>("SenderId", ""));
                     this.fcmConfig.Add(fcmconfigobj);
                 }
-            }          
+            }
+
+            var notifierconfiglist = this.configuration.GetSection("NotifierConfig").GetChildren();
+            this.notifierConfig = new List<NotifierConfig>();
+
+            var notifierconfigdict = this.configuration.GetSection("NotifierConfig").GetChildren();
+            if (notifierconfigdict != null)
+            {
+                foreach (var notifiercfg in notifierconfiglist)
+                {
+                    this.notifierConfig.Add(new NotifierConfig(notifiercfg.Key, notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
+                }
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -133,8 +147,8 @@ namespace OdhApiCore
         public NinjaConfig NinjaConfig => throw new NotImplementedException();
         public LoopTecConfig LoopTecConfig => throw new NotImplementedException();
 
-        public RavenConfig RavenConfig => this.ravenConfig;        
+        public RavenConfig RavenConfig => this.ravenConfig;
 
-        public List<NotifierConfig> NotifierConfig => throw new NotImplementedException();
+        public List<NotifierConfig> NotifierConfig => this.notifierConfig;
     }
 }

@@ -1757,10 +1757,68 @@ namespace Helper
         //TODO ADD some other usecases
         public static Query FilterAdditionalDataByRoles(this Query query, string? additionalfilter)
         {
-            var splitted = additionalfilter.Split("=");
-            return query.WhereRaw("gen_" + splitted[0] + " = $$", splitted[1]);
+            var readcondition = GetColumnToFilterOn(additionalfilter);
+
+            return query.When(
+                readcondition.Count() > 0,
+                q =>
+                {
+                    foreach (var item in readcondition)
+                    {
+                        q = q.WhereRaw(
+                            item.Column + item.Operator + "$$", item.Value
+                        );
+                    }
+                    return q;
+                }
+                ); 
+            //WhereRaw("gen_" + splitted[0] + " = $$", splitted[1]);
         }
+
+        public static IEnumerable<ReadCondition> GetColumnToFilterOn(string? condition)
+        {
+            var toreturn = new List<ReadCondition>();
+
+            if (condition != null)
+            {
+                var splittedcondition = condition.Split("&");
+
+                foreach(var mycondition in splittedcondition)
+                {
+                    //for now only operation = is allowed
+                    var splitted = mycondition.Split("=");
+
+                    if(splitted.Length == 2)
+                    {
+                        toreturn.Add(new ReadCondition() { Column = GetGeneratedColumn(splitted[0]), Operator = "=", Value = splitted[1] });
+                    }
+                }
+            }
+
+            return toreturn;
+        }
+
+        public static string GetGeneratedColumn(string input)
+        {
+            switch (input)
+            {
+                case "source":
+                    return "gen_source";
+                case "accessrole":
+                    return "gen_accessrole";
+                default:
+                    return "data->>'" + input + "'";
+            }       
+        }
+
         #endregion
+    }
+
+    public class ReadCondition
+    {
+        public string Column { get; set;}
+        public string Operator { get; set; }
+        public string Value { get; set; }
     }
 
 
