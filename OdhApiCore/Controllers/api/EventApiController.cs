@@ -241,7 +241,8 @@ namespace OdhApiCore.Controllers
                             regionlist: myeventhelper.regionlist, topiclist: myeventhelper.topicrids, sourcelist: myeventhelper.sourcelist,
                             languagelist: myeventhelper.languagelist, begindate: myeventhelper.begin, enddate: myeventhelper.end,
                             activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive, publishedonlist: myeventhelper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange, 
+                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
+                            additionalfilter: additionalfilter,
                             filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
                          .ApplyRawFilter(rawfilter)
                          //.OrderByRawIfNotNull(sortifseednull)

@@ -411,7 +411,8 @@ namespace Helper
           DateTime? begindate, DateTime? enddate,
           bool? activefilter, bool? smgactivefilter,
           IReadOnlyCollection<string> publishedonlist,
-          string? searchfilter, string? language, string? lastchange, 
+          string? searchfilter, string? language, string? lastchange,
+          string? additionalfilter,
           bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
         {
             LogMethodInfo(
@@ -452,8 +453,9 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
-                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
-                .FilterDataByAccessRoles(userroles);
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter));
+                //.When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
+                //.FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for Accommodation

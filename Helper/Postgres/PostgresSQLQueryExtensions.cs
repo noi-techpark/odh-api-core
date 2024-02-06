@@ -1766,7 +1766,7 @@ namespace Helper
                     foreach (var item in readcondition)
                     {
                         q = q.WhereRaw(
-                            item.Column + item.Operator + "$$", item.Value
+                            item.Column + item.Query, item.Value
                         );
                     }
                     return q;
@@ -1790,7 +1790,7 @@ namespace Helper
 
                     if(splitted.Length == 2)
                     {
-                        toreturn.Add(new ReadCondition() { Column = GetGeneratedColumn(splitted[0]), Operator = "=", Value = splitted[1] });
+                        toreturn.Add(GetGeneratedColumn(splitted[0], "=", splitted[1]));
                     }
                 }
             }
@@ -1798,16 +1798,16 @@ namespace Helper
             return toreturn;
         }
 
-        public static string GetGeneratedColumn(string input)
+        public static ReadCondition GetGeneratedColumn(string input, string splitchar, string value)
         {
             switch (input)
             {
                 case "source":
-                    return "gen_source";
+                    return new ReadCondition() { Column = "gen_source", Query = " = $$", Value = value };
                 case "accessrole":
-                    return "gen_accessrole";
+                    return new ReadCondition() { Column = "gen_access_role", Query = " @> array\\[$$\\]", Value = value };
                 default:
-                    return "data->>'" + input + "'";
+                    return new ReadCondition() { Column = "data->>'" + input + "'", Query = "= $$", Value = value };
             }       
         }
 
@@ -1817,7 +1817,7 @@ namespace Helper
     public class ReadCondition
     {
         public string Column { get; set;}
-        public string Operator { get; set; }
+        public string Query { get; set; }
         public string Value { get; set; }
     }
 

@@ -742,7 +742,7 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             orglist: helper.orgidlist, sourcelist: helper.sourcelist, begindate: helper.begin, enddate: helper.end, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, languagelist: helper.languagelist, publishedonlist: helper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                            searchfilter: searchfilter, language: language, lastchange: null, additionalfilter: null, filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
