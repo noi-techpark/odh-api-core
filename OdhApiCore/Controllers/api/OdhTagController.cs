@@ -134,16 +134,9 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
-            {
-                //Hack
-                //if (validforentity != null && validforentity.Contains("odhactivitypoi"))
-                //{
-                //    validforentity = validforentity.Replace("odhactivitypoi", "smgpoi");
-                //}
-                //if (maintype != null && maintype.Contains("odhactivitypoi"))
-                //{
-                //    maintype = maintype.Replace("odhactivitypoi", "smgpoi");
-                //}
+            {                
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -209,6 +202,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var data = await QueryFactory.Query("smgtags")
                     .Select("data")
                     .Where("id", id.ToLower())
@@ -239,9 +235,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 odhtag.Id = Helper.IdGenerator.GenerateIDFromType(odhtag);
 
-                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", true);
+                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", true, false, "api", additionalfilter);
             });
         }
 
@@ -260,9 +259,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 odhtag.Id = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
 
-                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", false, true);
+                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", false, true, "api", additionalfilter);
             });
         }
 
@@ -280,9 +282,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
 
-                return await DeleteData(id, "smgtags");
+                return await DeleteData<ODHTagLinked>(id, "smgtags", additionalfilter);
             });
         }
 

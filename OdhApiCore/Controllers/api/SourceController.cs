@@ -115,6 +115,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var idlist = Helper.CommonListCreator.CreateIdList(idfilter);
 
                 var query =
@@ -163,6 +166,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var data = await QueryFactory.Query("sources")
                     .Select("data")
                     .Where("id", id.ToLower())
@@ -191,12 +197,15 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 source.Id = source.Key.ToLower().Replace(" ", "") ?? Helper.IdGenerator.GenerateIDFromType(source);
 
                 if (source.LicenseInfo == null)
                     source.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<SourceLinked>(source, "sources", true);
+                return await UpsertData<SourceLinked>(source, "sources", true, false, "api", additionalfilter);
             });
         }
 
@@ -213,9 +222,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 source.Id = Helper.IdGenerator.CheckIdFromType<SourceLinked>(id);
 
-                return await UpsertData<SourceLinked>(source, "sources", false, true);
+                return await UpsertData<SourceLinked>(source, "sources", false, true, "api", additionalfilter);
             });
         }
 
@@ -231,9 +243,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<SourceLinked>(id);
 
-                return await DeleteData(id, "sources");
+                return await DeleteData(id, "sources", false, additionalfilter);
             });
         }
 

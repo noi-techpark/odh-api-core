@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Identity;
 using LCS;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -822,6 +823,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 //Fix add are to every arefilter item
                 string? areafilterwithprefix = String.IsNullOrEmpty(areafilter) ? "" : "are" + areafilter;
                 //string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
@@ -900,6 +904,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("measuringpoints")
                         .Select("data")
@@ -976,8 +983,85 @@ namespace OdhApiCore.Controllers
 
             return mysnowreport;
         }
-      
+
         #endregion
 
+        #region POST PUT DELETE Measuringpoint
+
+        /// <summary>
+        /// POST Insert new Measuringpoint
+        /// </summary>
+        /// <param name="measuringpoint">Measuringpoint Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [AuthorizeODH(PermissionAction.Create)]
+        //[Authorize(Roles = "DataWriter,DataCreate,MeasuringpointManager,MeasuringpointCreate")]
+        //[InvalidateCacheOutput(typeof(MeasuringpointController), nameof(Get))]
+        [HttpPost, Route("Weather/Measuringpoint")]
+        public Task<IActionResult> Post([FromBody] MeasuringpointLinked measuringpoint)
+        {
+            measuringpoint.LicenseInfo = LicenseHelper.GetLicenseforMeasuringpoint(measuringpoint);
+
+            return DoAsyncReturn(async () =>
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
+                measuringpoint.Id = Helper.IdGenerator.GenerateIDFromType(measuringpoint);
+
+                return await UpsertData<MeasuringpointLinked>(measuringpoint, "measuringpoints", true, false, "api", additionalfilter);
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Measuringpoint
+        /// </summary>
+        /// <param name="id">Measuringpoint Id</param>
+        /// <param name="measuringpoint">Measuringpoint Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [AuthorizeODH(PermissionAction.Update)]
+        //[Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify,WebcamUpdate")]
+        //[InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        [HttpPut, Route("Weather/Measuringpoint/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] MeasuringpointLinked measuringpoint)
+        {
+            measuringpoint.LicenseInfo = LicenseHelper.GetLicenseforMeasuringpoint(measuringpoint);
+
+            return DoAsyncReturn(async () =>
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
+                measuringpoint.Id = Helper.IdGenerator.CheckIdFromType<MeasuringpointLinked>(id);
+
+                return await UpsertData<MeasuringpointLinked>(measuringpoint, "measuringpoints", false, true, "api", additionalfilter);
+            });
+        }
+
+        /// <summary>
+        /// DELETE Measuringpoint by Id
+        /// </summary>
+        /// <param name="id">Measuringpoint Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [AuthorizeODH(PermissionAction.Delete)]
+        //[Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
+        //[InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        [HttpDelete, Route("Weather/Measuringpoint/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
+                id = Helper.IdGenerator.CheckIdFromType<MeasuringpointLinked>(id);
+
+                return await DeleteData<MeasuringpointLinked>(id, "measuringpoints", additionalfilter);
+            });
+        }
+
+        #endregion
     }
 }

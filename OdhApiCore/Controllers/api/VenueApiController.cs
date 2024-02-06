@@ -225,6 +225,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 VenueHelper myvenuehelper = await VenueHelper.CreateAsync(
                     QueryFactory, idfilter, categoryfilter, featurefilter, setuptypefilter, locfilter, capacityfilter, roomcountfilter,
                     langfilter, sourcefilter, active, smgactive, smgtags, lastchange, publishedon,
@@ -281,6 +284,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var venuecolumn = destinationdataformat ? "destinationdata as data" : "data";
 
                 var query =
@@ -370,11 +376,14 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 venue.Id = Helper.IdGenerator.GenerateIDFromType(venue);
                 //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
-                return await UpsertData<VenueLinked>(venue, "venues_v2", true);
+                return await UpsertData<VenueLinked>(venue, "venues_v2", true, false, "api", additionalfilter);
             });
         }
 
@@ -393,11 +402,14 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 venue.Id = Helper.IdGenerator.CheckIdFromType<VenueLinked>(id);
                 //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
-                return await UpsertData<VenueLinked>(venue, "venues_v2", false, true);
+                return await UpsertData<VenueLinked>(venue, "venues_v2", false, true, "api", additionalfilter);
             });
         }
 
@@ -415,9 +427,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<VenueLinked>(id);
 
-                return await DeleteData(id, "venues_v2");
+                return await DeleteData<VenueLinked>(id, "venues_v2", additionalfilter);
             });
         }
 

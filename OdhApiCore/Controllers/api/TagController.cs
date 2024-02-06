@@ -134,6 +134,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var sourcelist = Helper.CommonListCreator.CreateIdList(source);
@@ -198,6 +201,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var data = await QueryFactory.Query("tags")
                     .Select("data")
                     .Where("id", id.ToLower())
@@ -228,8 +234,11 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 tag.Id = !String.IsNullOrEmpty(tag.Id) ? tag.Id.ToUpper() : "noId";
-                return await UpsertData<TagLinked>(tag, "tags");
+                return await UpsertData<TagLinked>(tag, "tags", true, false, "api", additionalfilter);
             });
         }
 
@@ -248,8 +257,11 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 tag.Id = id.ToUpper();
-                return await UpsertData<TagLinked>(tag, "tags");
+                return await UpsertData<TagLinked>(tag, "tags", false, true, "api", additionalfilter);
             });
         }
 
@@ -267,8 +279,11 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = id.ToUpper();
-                return await DeleteData(id, "tags");
+                return await DeleteData(id, "tags", false, additionalfilter);
             });
         }
 

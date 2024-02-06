@@ -254,6 +254,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 ODHActivityPoiHelper myodhactivitypoihelper = await ODHActivityPoiHelper.CreateAsync(
                     queryFactory: QueryFactory,typefilter: type, subtypefilter: subtypefilter, level3typefilter: level3typefilter, 
                     idfilter: idfilter, locfilter: locfilter, areafilter: areafilter,  languagefilter: languagefilter, sourcefilter: sourcefilter, 
@@ -321,6 +324,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("smgpois")
                         .Select("data")
@@ -404,6 +410,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 //GENERATE ID
                 odhactivitypoi.Id = Helper.IdGenerator.GenerateIDFromType(odhactivitypoi);
 
@@ -426,7 +435,7 @@ namespace OdhApiCore.Controllers.api
 
                 //TODO check for Reduced Data                
 
-                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true);
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true, false, "api", additionalfilter);
             });
         }
 
@@ -445,6 +454,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 Helper.IdGenerator.CheckIdFromType(odhactivitypoi);
                 
@@ -467,7 +479,7 @@ namespace OdhApiCore.Controllers.api
 
                 //TODO check for Reduced Data
 
-                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true);
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true, "api", additionalfilter);
             });
         }
 
@@ -485,10 +497,13 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<ODHActivityPoiLinked>(id);
 
-                return await DeleteData(id, "smgpois");
+                return await DeleteData<ODHActivityPoiLinked>(id, "smgpois", additionalfilter);
             });
         }
 

@@ -204,6 +204,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, categorycodefilter,
                     dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
@@ -256,6 +259,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("gastronomies")
                         .Select("data")
@@ -344,11 +350,14 @@ namespace OdhApiCore.Controllers
         public Task<IActionResult> Post([FromBody] GastronomyLinked gastronomy)
         {
             return DoAsyncReturn(async () =>
-            {             
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 gastronomy.Id = Helper.IdGenerator.GenerateIDFromType(gastronomy);
                 gastronomy.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", true);
+                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", true, false, "api", additionalfilter);
             });
         }
 
@@ -367,10 +376,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 gastronomy.Id = Helper.IdGenerator.CheckIdFromType<GastronomyLinked>(id);
                 gastronomy.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", false, true);
+                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", false, true, "api", additionalfilter);
             });
         }
 
@@ -388,9 +400,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<GastronomyLinked>(id);
 
-                return await DeleteData(id, "gastronomies");
+                return await DeleteData<GastronomyLinked>(id, "gastronomies", additionalfilter);
             });
         }
 

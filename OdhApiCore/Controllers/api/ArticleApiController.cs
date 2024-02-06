@@ -205,6 +205,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 ArticleHelper myarticlehelper = ArticleHelper.Create(
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
                     active, smgactive, smgtags, articledate, articledateto, source, lastchange, publishedon);
@@ -259,6 +262,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("articles")
                         .Select("data")
@@ -345,6 +351,9 @@ namespace OdhApiCore.Controllers.api
         {            
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 //GENERATE ID
                 article.Id = Helper.IdGenerator.GenerateIDFromType(article);
 
@@ -359,7 +368,7 @@ namespace OdhApiCore.Controllers.api
                 if (article.LicenseInfo == null)
                     article.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<ArticlesLinked>(article, "articles", true);
+                return await UpsertData<ArticlesLinked>(article, "articles", true, false, "api", additionalfilter);
             });
         }
 
@@ -381,6 +390,9 @@ namespace OdhApiCore.Controllers.api
         {            
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 article.Id = Helper.IdGenerator.CheckIdFromType<ArticlesLinked>(id);
 
@@ -392,7 +404,7 @@ namespace OdhApiCore.Controllers.api
                 if (article.ArticleDateTo == null)
                     article.ArticleDateTo = DateTime.MaxValue;
 
-                return await UpsertData<ArticlesLinked>(article, "articles", false, true);
+                return await UpsertData<ArticlesLinked>(article, "articles", false, true, "api", additionalfilter);
             });
         }
 
@@ -413,10 +425,13 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<ArticlesLinked>(id);
 
-                return await DeleteData(id, "articles");
+                return await DeleteData<ArticlesLinked>(id, "articles", additionalfilter);
             });
         }
 

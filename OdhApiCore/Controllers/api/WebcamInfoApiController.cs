@@ -134,6 +134,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 WebcamInfoHelper mywebcaminfohelper = WebcamInfoHelper.Create(
                     source, idfilter, active, smgactive, lastchange, publishedon);
 
@@ -180,6 +183,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("webcams")
                         .Select("data")
@@ -219,9 +225,12 @@ namespace OdhApiCore.Controllers
             
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 webcam.Id = Helper.IdGenerator.GenerateIDFromType(webcam);
 
-                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", true);
+                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", true, false, "api", additionalfilter);
             });
         }
 
@@ -242,9 +251,12 @@ namespace OdhApiCore.Controllers
             
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 webcam.Id = Helper.IdGenerator.CheckIdFromType<WebcamInfoLinked>(id);
 
-                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", false, true);
+                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", false, true, "api", additionalfilter);
             });
         }
 
@@ -264,12 +276,14 @@ namespace OdhApiCore.Controllers
 
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<WebcamInfoLinked>(id);
 
-                return await DeleteData(id, "webcams");
+                return await DeleteData<WebcamInfoLinked>(id, "webcams", additionalfilter);
             });
         }
-
 
         #endregion
     }

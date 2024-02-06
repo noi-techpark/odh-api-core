@@ -991,6 +991,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
@@ -1021,6 +1024,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
@@ -1062,6 +1068,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
@@ -1090,6 +1099,9 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> WineGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
+            //Additional Read Filters to Add Check
+            AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
             return DoAsyncReturn(async () =>
             {
                 var query =
@@ -1129,11 +1141,13 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
-
         private Task<IActionResult> CommonGetSingleHelper(string id, string tablename, string[] fields, string? language, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query(tablename)
                         .Select("data")
@@ -1165,8 +1179,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<MetaRegionLinked>(data, "metaregions", true);
+                return await UpsertData<MetaRegionLinked>(data, "metaregions", true, false, "api", additionalfilter);
             });
         }
 
@@ -1183,8 +1200,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<RegionLinked>(data, "regions", true);
+                return await UpsertData<RegionLinked>(data, "regions", true, false, "api", additionalfilter);
             });
         }
 
@@ -1201,8 +1221,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas", true);
+                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas", true, false, "api", additionalfilter);
             });
         }
 
@@ -1219,8 +1242,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<TourismvereinLinked>(data, "tvs", true);
+                return await UpsertData<TourismvereinLinked>(data, "tvs", true, false, "api", additionalfilter);
             });
         }
 
@@ -1237,8 +1263,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<MunicipalityLinked>(data, "municipalities", true);
+                return await UpsertData<MunicipalityLinked>(data, "municipalities", true, false, "api", additionalfilter);
             });
         }
 
@@ -1255,8 +1284,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<DistrictLinked>(data, "districts", true);
+                return await UpsertData<DistrictLinked>(data, "districts", true, false, "api", additionalfilter);
             });
         }
 
@@ -1273,8 +1305,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<AreaLinked>(data, "areas", true);
+                return await UpsertData<AreaLinked>(data, "areas", true, false, "api", additionalfilter);
             });
         }
 
@@ -1290,9 +1325,12 @@ namespace OdhApiCore.Controllers.api
         public Task<IActionResult> Post([FromBody] SkiRegionLinked data)
         {
             return DoAsyncReturn(async () =>
-            {
+            {  
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<SkiRegionLinked>(data, "skiregions", true);
+                return await UpsertData<SkiRegionLinked>(data, "skiregions", true, false, "api", additionalfilter);
             });
         }
 
@@ -1309,8 +1347,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<SkiAreaLinked>(data, "skiareas", true);
+                return await UpsertData<SkiAreaLinked>(data, "skiareas", true, false, "api", additionalfilter);
             });
         }
 
@@ -1327,8 +1368,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<WineLinked>(data, "wines", true);
+                return await UpsertData<WineLinked>(data, "wines", true, false, "api", additionalfilter);
             });
         }
 
@@ -1345,9 +1389,12 @@ namespace OdhApiCore.Controllers.api
         public Task<IActionResult> Put(string id, [FromBody] MetaRegionLinked data)
         {
             return DoAsyncReturn(async () =>
-            {                
+            {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
-                return await UpsertData<MetaRegionLinked>(data, "metaregions", false, true);
+                return await UpsertData<MetaRegionLinked>(data, "metaregions", false, true, "api", additionalfilter);
             });
         }
 
@@ -1365,8 +1412,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
-                return await UpsertData<RegionLinked>(data, "regions", false, true);
+                return await UpsertData<RegionLinked>(data, "regions", false, true, "api", additionalfilter);
             });
         }
 
@@ -1384,8 +1434,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
-                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas", false, true);
+                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas", false, true, "api", additionalfilter);
             });
         }
 
@@ -1403,8 +1456,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
-                return await UpsertData<TourismvereinLinked>(data, "tvs", false, true);
+                return await UpsertData<TourismvereinLinked>(data, "tvs", false, true, "api", additionalfilter);
             });
         }
 
@@ -1422,8 +1478,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
-                return await UpsertData<MunicipalityLinked>(data, "municipalities", false, true);
+                return await UpsertData<MunicipalityLinked>(data, "municipalities", false, true, "api", additionalfilter);
             });
         }
 
@@ -1441,8 +1500,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
-                return await UpsertData<DistrictLinked>(data, "districts", false, true);
+                return await UpsertData<DistrictLinked>(data, "districts", false, true, "api", additionalfilter);
             });
         }
 
@@ -1460,8 +1522,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
-                return await UpsertData<AreaLinked>(data, "areas", false, true);
+                return await UpsertData<AreaLinked>(data, "areas", false, true, "api", additionalfilter);
             });
         }
 
@@ -1479,8 +1544,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
-                return await UpsertData<SkiRegionLinked>(data, "skiregions", false, true);
+                return await UpsertData<SkiRegionLinked>(data, "skiregions", false, true, "api", additionalfilter);
             });
         }
 
@@ -1498,8 +1566,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
-                return await UpsertData<SkiAreaLinked>(data, "skiareas", false, true);
+                return await UpsertData<SkiAreaLinked>(data, "skiareas", false, true, "api", additionalfilter);
             });
         }
 
@@ -1517,8 +1588,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
-                return await UpsertData<WineLinked>(data, "wines", false, true);
+                return await UpsertData<WineLinked>(data, "wines", false, true, "api", additionalfilter);
             });
         }
 
@@ -1535,8 +1609,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
-                return await DeleteData(id, "metaregions");
+                return await DeleteData<MetaRegionLinked>(id, "metaregions", additionalfilter);
             });
         }
 
@@ -1553,8 +1630,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
-                return await DeleteData(id, "regions");
+                return await DeleteData<RegionLinked>(id, "regions", additionalfilter);
             });
         }
 
@@ -1571,8 +1651,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
-                return await DeleteData(id, "experienceareas");
+                return await DeleteData<ExperienceAreaLinked>(id, "experienceareas", additionalfilter);
             });
         }
 
@@ -1589,8 +1672,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
-                return await DeleteData(id, "tvs");
+                return await DeleteData<TourismvereinLinked>(id, "tvs", additionalfilter);
             });
         }
 
@@ -1607,8 +1693,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
-                return await DeleteData(id, "municipalities");
+                return await DeleteData<MunicipalityLinked>(id, "municipalities", additionalfilter);
             });
         }
 
@@ -1625,8 +1714,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
-                return await DeleteData(id, "districts");
+                return await DeleteData<DistrictLinked>(id, "districts", additionalfilter);
             });
         }
 
@@ -1643,8 +1735,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
-                return await DeleteData(id, "areas");
+                return await DeleteData<AreaLinked>(id, "areas", additionalfilter);
             });
         }
 
@@ -1661,8 +1756,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
-                return await DeleteData(id, "skiregions");
+                return await DeleteData<SkiRegionLinked>(id, "skiregions", additionalfilter);
             });
         }
 
@@ -1679,8 +1777,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
-                return await DeleteData(id, "skiareas");
+                return await DeleteData<SkiAreaLinked>(id, "skiareas", additionalfilter);
             });
         }
 
@@ -1697,8 +1798,11 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
-                return await DeleteData(id, "wines");
+                return await DeleteData<WineLinked>(id, "wines", additionalfilter);
             });
         }
 

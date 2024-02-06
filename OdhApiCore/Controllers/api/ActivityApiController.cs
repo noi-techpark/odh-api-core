@@ -247,6 +247,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     QueryFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange, langfilter,
@@ -309,6 +312,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("activities")
                         .Select("data")
@@ -396,10 +402,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 activity.Id = Helper.IdGenerator.GenerateIDFromType(activity);
                 activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSActivityLinked>(activity, "activities", true);
+                return await UpsertData<LTSActivityLinked>(activity, "activities", true, false, "api", additionalfilter);
             });
         }
 
@@ -418,10 +427,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 activity.Id = Helper.IdGenerator.CheckIdFromType<LTSActivityLinked>(id);
                 activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSActivityLinked>(activity, "activities", false, true);
+                return await UpsertData<LTSActivityLinked>(activity, "activities", false, true, "api", additionalfilter);
             });
         }
 
@@ -439,9 +451,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<LTSActivityLinked>(id);
 
-                return await DeleteData(id, "activities");
+                return await DeleteData<LTSActivityLinked>(id, "activities", additionalfilter);
             });
         }
 

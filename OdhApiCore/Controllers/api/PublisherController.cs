@@ -118,6 +118,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var sourcelist = Helper.CommonListCreator.CreateIdList(source);
                 var idlist = Helper.CommonListCreator.CreateIdList(idfilter);
 
@@ -168,6 +171,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var data = await QueryFactory.Query("publishers")
                     .Select("data")
                     .Where("id", id.ToLower())
@@ -196,12 +202,15 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 publisher.Id = publisher.Key.ToLower().Replace(" ", "") ?? Helper.IdGenerator.GenerateIDFromType(publisher);
 
                 if (publisher.LicenseInfo == null)
                     publisher.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<PublisherLinked>(publisher, "publishers", true);
+                return await UpsertData<PublisherLinked>(publisher, "publishers", true, false, "api", additionalfilter);
             });
         }
 
@@ -218,9 +227,12 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 publisher.Id = Helper.IdGenerator.CheckIdFromType<PublisherLinked>(id);
 
-                return await UpsertData<PublisherLinked>(publisher, "publishers", false, true);
+                return await UpsertData<PublisherLinked>(publisher, "publishers", false, true, "api", additionalfilter);
             });
         }
 
@@ -236,9 +248,14 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<PublisherLinked>(id);
 
-                return await DeleteData(id, "publishers");
+                //return await DeleteData<PublisherLinked>(id, "publishers", additionalfilter); // Does not implement IPublishedOn
+
+                return await DeleteData(id, "publishers", false, additionalfilter);
             });
         }
 

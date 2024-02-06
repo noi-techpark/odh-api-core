@@ -231,6 +231,9 @@ namespace OdhApiCore.Controllers.api
 
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 PoiHelper myactivityhelper = await PoiHelper.CreateAsync(
                     QueryFactory, poitype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter,
                     locfilter: locfilter, areafilter: areafilter, highlightfilter: highlightfilter, activefilter: active,
@@ -293,6 +296,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("pois")
                         .Select("data")
@@ -384,10 +390,13 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 poi.Id = Helper.IdGenerator.GenerateIDFromType(poi);
                 poi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSPoiLinked>(poi, "pois", true);
+                return await UpsertData<LTSPoiLinked>(poi, "pois", true, false, "api", additionalfilter);
             });
         }
 
@@ -406,10 +415,13 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 poi.Id = Helper.IdGenerator.CheckIdFromType<LTSPoiLinked>(id);
                 poi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSPoiLinked>(poi, "pois", false, true);
+                return await UpsertData<LTSPoiLinked>(poi, "pois", false, true, "api", additionalfilter);
             });
         }
 
@@ -427,9 +439,12 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<LTSPoiLinked>(id);
 
-                return await DeleteData(id, "pois");
+                return await DeleteData<LTSPoiLinked>(id, "pois", additionalfilter);
             });
         }
 

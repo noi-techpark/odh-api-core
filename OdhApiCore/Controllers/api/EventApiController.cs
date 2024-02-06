@@ -219,6 +219,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 EventHelper myeventhelper = await EventHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, rancfilter, topicfilter, orgfilter, begindate, enddate,
                     active, smgactive, smgtags, lastchange, langfilter, source, publishedon,
@@ -285,6 +288,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("events")
                         .Select("data")
