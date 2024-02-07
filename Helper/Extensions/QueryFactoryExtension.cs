@@ -107,7 +107,8 @@ namespace Helper
             //Check if data exists
             var query = QueryFactory.Query(table)
                       .Select("data")
-                      .Where("id", data.Id);
+                      .Where("id", data.Id)
+                      //TODO ADD THE Accessrole query here and give an error if there is no data returned;
 
             var queryresult = await query.GetObjectSingleAsync<T>();            
 

@@ -138,24 +138,27 @@ namespace OdhApiCore.Controllers
         {
             get
             {
-                List<string> fieldstohide = new();
+                //Deactivation because not needed at the moment
+                //List<string> fieldstohide = new();
 
-                var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
-                
-                //Search all settings with Entity = Controllername
-                var fields = settings.Field2HideConfig
-                    .Where(x => x.Entity == this.ControllerContext.RouteData.Values["controller"]?.ToString() ||
-                                string.IsNullOrEmpty(x.Entity));
+                //var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
 
-                foreach(var field in fields)
-                {
-                    if(roleclaims.Intersect(field.DisplayOnRoles ?? new()).Count() == 0)
-                    {
-                        fieldstohide.AddRange(field.Fields ?? new());
-                    }
-                }
+                ////Search all settings with Entity = Controllername
+                //var fields = settings.Field2HideConfig
+                //    .Where(x => x.Entity == this.ControllerContext.RouteData.Values["controller"]?.ToString() ||
+                //                string.IsNullOrEmpty(x.Entity));
 
-                return fieldstohide;
+                //foreach(var field in fields)
+                //{
+                //    if(roleclaims.Intersect(field.DisplayOnRoles ?? new()).Count() == 0)
+                //    {
+                //        fieldstohide.AddRange(field.Fields ?? new());
+                //    }
+                //}
+
+                //return fieldstohide;
+
+                return new List<string>();
             }
         }
 
@@ -237,9 +240,19 @@ namespace OdhApiCore.Controllers
 
         //TODO Upsert Data and push to all published Channels
 
+        /// <summary>
+        /// Simple Save Method without Compare, ImageCompare and Push Functionality
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="table"></param>
+        /// <param name="errorwhendataexists"></param>
+        /// <param name="errorwhendataisnew"></param>
+        /// <param name="editsource"></param>
+        /// <param name="deletecondition"></param>
+        /// <returns></returns>
         protected async Task<IActionResult> UpsertData<T>(T data, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, string editsource = "api", string? deletecondition = null) where T : IIdentifiable, IImportDateassigneable, IMetaData 
         {
-            //TODO Username and provenance of the insert/edit
             //Get the Username
             string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";
             string operation = errorwhendataexists && !errorwhendataisnew ? "CREATE" : "UPDATE";
@@ -247,9 +260,7 @@ namespace OdhApiCore.Controllers
             if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
                 editsource = HttpContext.Request.Headers["Referer"];
 
-            var result = await QueryFactory.UpsertData<T>(data, table, operation, editor, editsource, errorwhendataexists, errorwhendataisnew, deletecondition);
-
-            //TODO push modified data to all published Channels
+            var result = await QueryFactory.UpsertData<T>(data, table, operation, editor, editsource, errorwhendataexists, errorwhendataisnew, deletecondition);            
 
             return ReturnCRUDResult(result);
         }
