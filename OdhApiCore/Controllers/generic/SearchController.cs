@@ -190,9 +190,7 @@ namespace OdhApiCore.Controllers
 
             var data = await query.GetAsync<JsonRaw>();
             
-            var fieldsTohide = FieldsToHide;
-            
-            return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide))
+            return data.Select(raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide))
                     .Where(json => json != null)
                     .Select(json => json!);
         }

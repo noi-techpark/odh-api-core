@@ -155,13 +155,11 @@ namespace OdhApiCore.Controllers
                         displayascategory: displayascategory,
                         searchfilter: searchfilter,
                         language: language,
-                        filterClosedData: FilterClosedData, userroles: UserRolesToFilter
+                        userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
-
-            var fieldsTohide = FieldsToHide;
-
+            
                 if (pagenumber != null)
                 {
 
@@ -174,7 +172,7 @@ namespace OdhApiCore.Controllers
 
                     var dataTransformed =
                         data.List.Select(
-                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                         );
 
                     uint totalpages = (uint)data.TotalPages;
@@ -192,7 +190,7 @@ namespace OdhApiCore.Controllers
                 {
                     var data = await query.GetAsync<JsonRaw>();
 
-                    return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
+                    return data.Select(raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide));
                 }
             });
         }      
@@ -206,13 +204,10 @@ namespace OdhApiCore.Controllers
 
                 var data = await QueryFactory.Query("tags")
                     .Select("data")
-                    .Where("id", id.ToLower())
-                    .When(FilterClosedData, q => q.FilterClosedData())
+                    .Where("id", id.ToLower())                    
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
         }
 

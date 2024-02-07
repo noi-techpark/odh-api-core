@@ -16,8 +16,8 @@ namespace Helper
     public static class JsonTransformer
     {              
         public static JsonRaw? TransformRawData(
-            this JsonRaw raw, string? language, string[] fields, bool checkCC0,
-            bool filterClosedData, bool filteroutNullValues, Func<string, string> urlGenerator, IEnumerable<string> fieldstohide)
+            this JsonRaw raw, string? language, string[] fields, 
+            bool filteroutNullValues, Func<string, string> urlGenerator, IEnumerable<string> fieldstohide)
         {
             JToken? token = JToken.Parse(raw.Value);
             //Filter out not desired langugae fields
@@ -27,9 +27,8 @@ namespace Helper
             // Filter out all data where the LicenseInfo does not contain `CC0`
             // Show all images
             //if (checkCC0) token = JsonTransformerMethods.FilterImagesByCC0License(token);
-            // Filter out all data where the LicenseInfo contains `hgv` as source.
-            if (filterClosedData) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
-
+            // Filter out all data where the LicenseInfo contains `hgv` as source.          
+            //if (filterClosedData) token = JsonTransformerMethods.FilterAccoRoomInfoByHGVSource(token);
             //Filter out all Data 
             //var rolefilter = FilterOutPropertiesByRole(userroles);
             //if (rolefilter.Count > 0)
@@ -38,7 +37,7 @@ namespace Helper
             if (fieldstohide.Count() > 0)
                 token = JsonTransformerMethods.FilterOutProperties(token, fieldstohide.ToList());
 
-            if (filterClosedData) token = token.FilterClosedData();
+            //if (filterClosedData) token = token.FilterClosedData();
             
             //Ensure Self Link is the right url
             token = token.TransformSelfLink(urlGenerator);

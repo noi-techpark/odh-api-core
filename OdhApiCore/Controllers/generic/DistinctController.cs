@@ -129,8 +129,7 @@ namespace OdhApiCore.Controllers
                         // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
                         .OrderByRawIfNotNull(rawsort)
                         //.ApplyOrdering_GeneratedColumns(null, null, rawsort)
-
-                        .FilterDataByAccessRoles(UserRolesList);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 //TODOS Metadata api support
            

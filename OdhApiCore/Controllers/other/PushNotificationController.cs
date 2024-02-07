@@ -46,8 +46,8 @@ namespace OdhApiCore.Controllers.api
             var query =
               QueryFactory.Query(mytable)
                   .Select("data")
-                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
-                  .When(FilterClosedData, q => q.FilterClosedData());
+                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
+                  //.When(FilterClosedData, q => q.FilterClosedData());
 
             // TODO: Create a logic that constructs a message out of the object
 
@@ -101,8 +101,8 @@ namespace OdhApiCore.Controllers.api
                 var query =
                   QueryFactory.Query(mytable)
                       .Select("data")
-                      .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
-                      .When(FilterClosedData, q => q.FilterClosedData());
+                      .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
+                      //.When(FilterClosedData, q => q.FilterClosedData());
 
                 var fieldsTohide = FieldsToHide;
 

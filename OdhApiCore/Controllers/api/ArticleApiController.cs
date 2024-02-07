@@ -226,7 +226,7 @@ namespace OdhApiCore.Controllers.api
                             articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, sourcelist: myarticlehelper.sourcelist,
                             publishedonlist: myarticlehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
                       
@@ -237,12 +237,10 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-                
-                var fieldsTohide = FieldsToHide;
-
+                                
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -269,15 +267,11 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("articles")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.When(FilterClosedData, q => q.FilterClosedData())
-                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, ReducedData);
                         .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
         }
 
@@ -292,21 +286,16 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("articletypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
-                
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                                
+                return
                       data.Select(
-                          raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                          raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                       );
-
-                return dataTransformed;
             });
         }
 
@@ -318,14 +307,11 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("articletypes")
                         .Select("data")
                         //.WhereJsonb("Key", "ilike", id)
-                        .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                
-                var fieldsTohide = FieldsToHide;
-
+                        .Where("id", id.ToLower());
+                               
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
         }
 

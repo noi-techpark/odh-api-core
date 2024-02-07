@@ -311,7 +311,7 @@ namespace OdhApiCore.Controllers.api
                            websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
                            publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
                            additionalfilter: additionalfilter,
-                           filterClosedData: FilterClosedData, userroles: UserRolesToFilter, getbyrooms: false)
+                           userroles: UserRolesToFilter, getbyrooms: false)
                        .ApplyRawFilter(rawfilter)
                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);
 
@@ -325,11 +325,9 @@ namespace OdhApiCore.Controllers.api
                 if (optimizedates)
                     data.List = OptimizeRoomForAppList(data.List);
 
-                var fieldsTohide = FieldsToHide;
-
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                     );
 
 
@@ -358,17 +356,14 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("eventeuracnoi")
                         .Select("data")
                         .Where("id", id.ToLower())
-                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))
-                        .When(FilterClosedData, q => q.FilterClosedData());
-
-                var fieldsTohide = FieldsToHide;
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter));
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 if (optimizedates && data is { })
                     data = OptimizeRoomForApp(data);
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
         }
 
@@ -396,7 +391,7 @@ namespace OdhApiCore.Controllers.api
                        websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
                        publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
                        additionalfilter: null,
-                       filterClosedData: FilterClosedData, userroles: UserRolesToFilter, getbyrooms: false)
+                       userroles: UserRolesToFilter, getbyrooms: false)
                    .ApplyRawFilter(rawfilter);
 
             var data =
@@ -409,14 +404,10 @@ namespace OdhApiCore.Controllers.api
 
             IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
 
-            var fieldsTohide = FieldsToHide;
-
-            var dataTransformed =
+            return Ok(
                     resultraw.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-            
-            return Ok(dataTransformed);
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                    ));                       
         }
 
         private IEnumerable<EventShortByRoom> TransformEventShortToRoom(IEnumerable<EventShort> eventsshort, DateTime start, DateTime end)
@@ -625,7 +616,6 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("eventshorttypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
                         .When(!String.IsNullOrEmpty(typefilter), q => q.WhereRaw("data->>'Type' ILIKE $$", typefilter))
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
@@ -633,14 +623,10 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                return
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                    );                
             });
         }
 
@@ -652,15 +638,12 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("eventshorttypes")
                         .Select("data")
                         //.WhereJsonb("Key", "ilike", id)
-                        .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                //.Where("Key", "ILIKE", id);
+                        .Where("id", id.ToLower());
+                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
         }
 

@@ -134,14 +134,12 @@ namespace OdhApiCore.Controllers
                         sourcelist: sourcelist,
                         searchfilter: searchfilter,
                         language: language,
-                        filterClosedData: FilterClosedData, userroles: UserRolesToFilter
+                        userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'");
 
-                var fieldsTohide = FieldsToHide;
-
-
+               
                 // Get paginated data
                 var data =
                     await query
@@ -151,7 +149,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -177,12 +175,9 @@ namespace OdhApiCore.Controllers
                 var data = await QueryFactory.Query("publishers")
                     .Select("data")
                     .Where("id", id.ToLower())
-                    .When(FilterClosedData, q => q.FilterClosedData())
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
         }
 

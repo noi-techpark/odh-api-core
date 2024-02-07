@@ -148,7 +148,7 @@ namespace OdhApiCore.Controllers
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
-                            languagelist: new List<string>(), filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            languagelist: new List<string>(), userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -159,11 +159,9 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
-                var fieldsTohide = FieldsToHide;
-
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -190,15 +188,11 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("webcams")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.When(FilterClosedData, q => q.FilterClosedData());
-                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
                         .FilterDataByAccessRoles(UserRolesToFilter);
-
-                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
         }
 

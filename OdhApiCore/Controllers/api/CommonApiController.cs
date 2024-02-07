@@ -1000,7 +1000,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language, 
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               lastchange: commonhelper.lastchange, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1008,15 +1008,11 @@ namespace OdhApiCore.Controllers.api
                 var data =
                     await query
                         .GetAsync<JsonRaw>();
-                
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                                
+                return
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                    );                
             });
         }
 
@@ -1033,7 +1029,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language,
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               lastchange: commonhelper.lastchange, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -1043,12 +1039,10 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -1077,7 +1071,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               searchfilter: searchfilter, language: language, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1085,15 +1079,11 @@ namespace OdhApiCore.Controllers.api
                 var data =
                     await query
                         .GetAsync<JsonRaw>();
-                
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                             
+                return
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                    );                
             });
         }
 
@@ -1110,7 +1100,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               searchfilter: searchfilter, language: language, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1120,12 +1110,10 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-
-                var fieldsTohide = FieldsToHide;
-
+             
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -1151,14 +1139,11 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query(tablename)
                         .Select("data")
-                        .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                
-                var fieldsTohide = FieldsToHide;
-
+                        .Where("id", id.ToUpper());
+                                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
         }
 

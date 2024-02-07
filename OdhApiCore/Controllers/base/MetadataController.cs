@@ -141,7 +141,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: new List<string>())
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: FieldsToHide)
                     );
 
                 //TODO WRITE A NEW urlGenerator for metadata
@@ -169,10 +169,8 @@ namespace OdhApiCore.Controllers
                         .Where("id", id.ToLower());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: FieldsToHide);
             });
         }
 

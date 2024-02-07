@@ -48,51 +48,21 @@ namespace OdhApiCore.Controllers
 
         private IOdhPushNotifier OdhPushnotifier;
 
-        /// <summary>
-        /// When not in this role Images which does not have a CC0 License are filtered out maybe obsolete ?
-        /// </summary>
-        protected bool FilterCC0License
-        {
-            get
-            {
-                var roles = new[] {
-                    "IDM",
-                    "AllImages"
-                };
-                return !roles.Any(User.IsInRole);
-            }
-        }
+        ///// <summary>
+        ///// When not in this role Images which does not have a CC0 License are filtered out maybe obsolete ?
+        ///// </summary>
+        //protected bool FilterCC0License
+        //{
+        //    get
+        //    {
+        //        var roles = new[] {
+        //            "IDM",
+        //            "AllImages"
+        //        };
+        //        return !roles.Any(User.IsInRole);
+        //    }
+        //}
         
-        /// <summary>
-        /// If User is in Role IDM or A22 set FilterClosedData to false
-        /// </summary>
-        protected bool FilterClosedData
-        {
-            get
-            {
-                var roles = new[] {
-                    "IDM",
-                    "A22"
-                };
-                return !roles.Any(User.IsInRole);
-            }
-        }
-        protected bool ReducedData => FiltertoReduced;
-
-        /// <summary>
-        /// If user is in Role IDM or LTS display full LTS Data
-        /// </summary>
-        protected bool FiltertoReduced
-        {
-            get
-            {
-                var roles = new[] {
-                    "IDM",
-                    "LTS"
-                };
-                return !roles.Any(User.IsInRole);
-            }
-        }
 
         /// <summary>
         /// ADD all relevant roles for data filtering
@@ -125,53 +95,58 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        protected IEnumerable<string> UserRolesList
+
+        //Test if there is an additionalfilter
+        protected IDictionary<string,string> AdditionalFiltersToAdd
         {
             get
-            {
-                var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
-
-                return roleclaims ?? new List<string>();
+            {                
+                return GetAdditionalFilterDictionary();
             }
         }
 
-        //public bool CheckAvailabilitySearch()
-        //{
-        //    List<string> roles = new List<string>() { "DataReader", "AccoReader" };
-
-        //    foreach(var role in roles)
-        //    {
-        //        if (User.IsInRole(role))
-        //            return true;                
-        //    }
-
-        //    return false;
-        //}
-
-        //Test if there is an additionalfilter
-        protected Dictionary<string,string> AdditionalFiltersToAdd
+        private IDictionary<string,string> GetAdditionalFilterDictionary()
         {
-            get
+            var additionalfilterdict = new Dictionary<string, string>();
+
+            if (Request.Path.Value != null)
             {
-                var additionalfilterdict = new Dictionary<string,string>();
+                //GET ENDPOINT (after v1)
 
-                if (Request.Path.Value != null)
+                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.GetPathNextTo("/", "v1") + "_"));
+                foreach (var role in rolesforendpoint)
                 {
-                    //GET ENDPOINT (after v1)
-
-                    var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.GetPathNextTo("/", "v1") + "_"));
-                    foreach (var role in rolesforendpoint)
+                    var splittedrole = role.Value.Split("_");
+                    if (splittedrole.Length == 3)
                     {
-                        var splittedrole = role.Value.Split("_");
-                        if (splittedrole.Length == 3)
-                        {
-                            additionalfilterdict.TryAddOrUpdate(splittedrole[1], splittedrole[2]);
-                        }
+                        additionalfilterdict.TryAddOrUpdate(splittedrole[1], splittedrole[2]);
                     }
                 }
-
-                return additionalfilterdict;
             }
+
+            return additionalfilterdict;
+        }
+
+        private IDictionary<string, string> GetEndPointAccessRole()
+        {
+            var additionalfilterdict = new Dictionary<string, string>();
+
+            if (Request.Path.Value != null)
+            {
+                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.GetPathNextTo("/", "v1") + "_"));
+                foreach (var role in rolesforendpoint)
+                {
+                    var splittedrole = role.Value.Split("_");
+                    if (splittedrole.Length == 3)
+                    {
+
+
+                        additionalfilterdict.TryAddOrUpdate(splittedrole[1], splittedrole[2]);
+                    }
+                }
+            }
+
+            return additionalfilterdict;
         }
 
 
@@ -182,7 +157,7 @@ namespace OdhApiCore.Controllers
                 List<string> fieldstohide = new();
 
                 var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
-
+                
                 //Search all settings with Entity = Controllername
                 var fields = settings.Field2HideConfig
                     .Where(x => x.Entity == this.ControllerContext.RouteData.Values["controller"]?.ToString() ||

@@ -137,7 +137,7 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
                             arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
                             smgactivefilter: mypoihelper.smgactive, searchfilter: searchfilter, language: language, lastchange: null, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                            userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -273,7 +273,7 @@ namespace OdhApiCore.Controllers.api
                             altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
@@ -395,7 +395,7 @@ namespace OdhApiCore.Controllers.api
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: null, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                             userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -498,7 +498,7 @@ namespace OdhApiCore.Controllers.api
                             displayascategory: null,
                             searchfilter: searchfilter,
                             language: language,
-                            filterClosedData: FilterClosedData, userroles: UserRolesToFilter
+                            userroles: UserRolesToFilter
                             )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
@@ -619,7 +619,7 @@ namespace OdhApiCore.Controllers.api
                             distancemin: helper.distancemin, distancemax: helper.distancemax, duration: helper.duration, durationmin: helper.durationmin,
                             durationmax: helper.durationmax, altitude: helper.altitude, altitudemin: helper.altitudemin, altitudemax: helper.altitudemax,
                             hasimage: helper.hasimage, tagdict: helper.tagdict, publishedonlist: helper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData, 
+                            searchfilter: searchfilter, language: language, lastchange: null, 
                             userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
@@ -742,7 +742,7 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             orglist: helper.orgidlist, sourcelist: helper.sourcelist, begindate: helper.begin, enddate: helper.end, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, languagelist: helper.languagelist, publishedonlist: helper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: null, additionalfilter: null, filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                            searchfilter: searchfilter, language: language, lastchange: null, additionalfilter: null, userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -853,7 +853,7 @@ namespace OdhApiCore.Controllers.api
                             smgtaglist: helper.smgtaglist, highlight: helper.highlight, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, articledate: helper.articledate, articledateto: helper.articledateto, sourcelist: helper.sourcelist,
                             publishedonlist: helper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                            searchfilter: searchfilter, language: language, lastchange: null, userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort);
@@ -981,7 +981,7 @@ namespace OdhApiCore.Controllers.api
                             altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
                             activefilter: myhelper.active, smgactivefilter: myhelper.smgactive, publishedonlist: myhelper.publishedonlist, sourcelist: new List<string>(),
                             searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
@@ -1092,7 +1092,7 @@ namespace OdhApiCore.Controllers.api
                            websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
                            publishedonlist: myeventshorthelper.publishedonlist,
                            searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange, additionalfilter: null,
-                           filterClosedData: FilterClosedData, userroles: UserRolesToFilter, getbyrooms: false)
+                           userroles: UserRolesToFilter, getbyrooms: false)
                        .ApplyRawFilter(rawfilter)
                        .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, orderby);
 
@@ -1387,7 +1387,7 @@ namespace OdhApiCore.Controllers.api
                         smgtaglist: commonhelper.smgtaglist, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
                                                publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, 
                                                searchfilter: searchfilter, language: language, lastchange: commonhelper.lastchange, 
-                                               filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort, orderby);
                 //.OrderByRaw(orderby)
@@ -1473,7 +1473,7 @@ namespace OdhApiCore.Controllers.api
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
-                            languagelist: new List<string>(), filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            languagelist: new List<string>(), userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 

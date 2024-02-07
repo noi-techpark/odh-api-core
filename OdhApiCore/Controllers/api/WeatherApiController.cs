@@ -735,7 +735,7 @@ namespace OdhApiCore.Controllers
                         .WeatherHistoryWhereExpression(
                             languagelist: myweatherhelper.languagelist, idlist: myweatherhelper.idlist, sourcelist: new List<string>(), begindate: myweatherhelper.datefrom,
                             enddate: myweatherhelper.dateto, searchfilter: searchfilter, language: language, lastchange: myweatherhelper.lastchange,
-                            filterClosedData: false, userroles: UserRolesToFilter)
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
                 //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//
@@ -747,11 +747,9 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
-                var fieldsTohide = FieldsToHide;
-
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                     );
 
                 //return dataTransformed;
@@ -784,12 +782,10 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                         .Where("id", id.ToUpper());
                         //Disable temporary there is no meta info .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
 
         }
@@ -844,7 +840,7 @@ namespace OdhApiCore.Controllers
                             activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper.publishedonlist,
                             sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -857,12 +853,10 @@ namespace OdhApiCore.Controllers
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-
-                    var fieldsTohide = FieldsToHide;
-
+                    
                     var dataTransformed =
                         data.List.Select(
-                            raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                         );
                     
                     uint totalpages = (uint)data.TotalPages;
@@ -882,14 +876,10 @@ namespace OdhApiCore.Controllers
                             await query
                                 .GetAsync<JsonRaw>();
 
-                    var fieldsTohide = FieldsToHide;
-
-                    var dataTransformed =
+                    return
                         data.Select(
-                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
                         );
-
-                    return dataTransformed;
                 }
             });
         }
@@ -911,15 +901,11 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("measuringpoints")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-                        //.When(FilterClosedData, q => q.FilterClosedData());
                         .FilterDataByAccessRoles(UserRolesToFilter);
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
             });
 
         }

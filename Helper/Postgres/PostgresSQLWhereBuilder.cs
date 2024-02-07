@@ -152,7 +152,7 @@ namespace Helper
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
             int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
             int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
-            string? language, string? lastchange, bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            string? language, string? lastchange, IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -204,7 +204,7 @@ namespace Helper
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
             IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
             bool? smgactivefilter, string? searchfilter, string? language, string? lastchange,
-            bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -249,7 +249,7 @@ namespace Helper
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist, bool? activefilter,
             bool? smgactivefilter, string? searchfilter, string? language, string? lastchange,
-            bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -297,7 +297,7 @@ namespace Helper
             IReadOnlyCollection<string> activitytypelist, IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> difficultylist,
             bool distance, int distancemin, int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin, int altitudemax,
             IDictionary<string, List<string>>? tagdict, bool? hasimage,IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, 
-            string? lastchange, bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            string? lastchange, IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -359,7 +359,7 @@ namespace Helper
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
             IReadOnlyCollection<string> smgtaglist, bool? highlight, bool? activefilter, bool? smgactivefilter, DateTime? articledate, DateTime? articledateto, IReadOnlyCollection<string> sourcelist,
             IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, string? lastchange, 
-            bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -413,7 +413,7 @@ namespace Helper
           IReadOnlyCollection<string> publishedonlist,
           string? searchfilter, string? language, string? lastchange,
           string? additionalfilter,
-          bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+          IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -453,9 +453,11 @@ namespace Helper
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
-                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter));
-                //.When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
-                //.FilterDataByAccessRoles(userroles);
+                //If info accessrole is passed by additionalfilter
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))
+                .When(String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter));
+            //.When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
+            //.FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for Accommodation
@@ -469,7 +471,7 @@ namespace Helper
             bool altitude, int altitudemin, int altitudemax, bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, 
-            bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -519,7 +521,7 @@ namespace Helper
             bool? visibleinsearch, IReadOnlyCollection<string> smgtaglist, bool? activefilter, bool? odhactivefilter,
             IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, 
-            bool filterClosedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -548,7 +550,7 @@ namespace Helper
             this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> companyid, IReadOnlyCollection<string> wineid,
             bool? activefilter, bool? odhactivefilter, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, 
-            bool filterClosedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -576,7 +578,7 @@ namespace Helper
             bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, 
             string? searchfilter, string? language, string? lastchange, 
-            bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -606,7 +608,7 @@ namespace Helper
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
              DateTime? begindate, DateTime? enddate, string? searchfilter,
             string? language, string? lastchange, 
-            bool filterClosedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -638,7 +640,7 @@ namespace Helper
             bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, string? lastchange, 
-            bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -680,7 +682,7 @@ namespace Helper
             string? searchfilter,
             string? language, string? lastchange, 
             string? additionalfilter,
-            bool filterClosedData, IEnumerable<string> userroles, bool getbyrooms = false)
+            IEnumerable<string> userroles, bool getbyrooms = false)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -730,7 +732,7 @@ namespace Helper
             bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, 
             string? searchfilter, string? language, string? lastchange, 
-            bool filterClosedData, bool reducedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -800,7 +802,7 @@ namespace Helper
             this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> mainentitylist, IReadOnlyCollection<string> validforentitylist, 
             IReadOnlyCollection<string> sourcelist, bool? displayascategory, IReadOnlyCollection<string> publishedonlist,
             string? searchfilter, string? language, 
-            bool filterClosedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -826,7 +828,7 @@ namespace Helper
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
             string? searchfilter, string? language, 
-            bool filterClosedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -847,7 +849,7 @@ namespace Helper
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist,
             string? searchfilter, string? language,
-            bool filterClosedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -868,7 +870,7 @@ namespace Helper
         public static Query RawdataWhereExpression(
             this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourceidlist, 
             IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist,
-            bool filterClosedData, IEnumerable<string> userroles)
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,

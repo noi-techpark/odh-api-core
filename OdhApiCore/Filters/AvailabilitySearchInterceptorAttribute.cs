@@ -445,7 +445,7 @@ namespace OdhApiCore.Filters
                            activefilter: myhelper.active, smgactivefilter: myhelper.smgactive, publishedonlist: myhelper.publishedonlist,
                            sourcelist: myhelper.sourcelist,
                            searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
-                           filterClosedData: false, reducedData: false, userroles: new List<string>() { "IDM" }) //Availability Search only for IDM Users therefore no filte Closed Data, no reduced data
+                           userroles: new List<string>() { "IDM" }) //Availability Search only for IDM Users therefore no filte Closed Data, no reduced data
                        .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
                        .GeoSearchFilterAndOrderby(geosearchresult);
 
