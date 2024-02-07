@@ -445,19 +445,12 @@ namespace Helper
                 .DistrictFilter(districtlist)
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
-                .LocFilterRegionFilter(regionlist)
-                //.EventTypeFilter(typelist) //Obsolete
-                //.EventRancFilter(ranclist) //Obsolete Ranc
+                .LocFilterRegionFilter(regionlist)                
                 .EventPublisherRancFilter(ranclist)
                 .EventOrgFilter(orglist)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
-                //If info accessrole is passed by additionalfilter
-                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))
-                .When(String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter));
-            //.When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
-            //.FilterDataByAccessRoles(userroles);
+                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                                
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))                            
+                .FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for Accommodation
@@ -716,7 +709,7 @@ namespace Helper
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))
-                .When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
+                //.When(userroles.Any(x => x == "IDM"), q => q.FilterReducedDataByRoles())
                 .FilterDataByAccessRoles(userroles);
         }
 

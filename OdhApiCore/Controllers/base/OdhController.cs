@@ -46,52 +46,37 @@ namespace OdhApiCore.Controllers
 
         protected QueryFactory QueryFactory { get; }
 
-        private IOdhPushNotifier OdhPushnotifier;
-
-        ///// <summary>
-        ///// When not in this role Images which does not have a CC0 License are filtered out maybe obsolete ?
-        ///// </summary>
-        //protected bool FilterCC0License
-        //{
-        //    get
-        //    {
-        //        var roles = new[] {
-        //            "IDM",
-        //            "AllImages"
-        //        };
-        //        return !roles.Any(User.IsInRole);
-        //    }
-        //}
-        
+        private IOdhPushNotifier OdhPushnotifier;      
 
         /// <summary>
-        /// ADD all relevant roles for data filtering
+        /// Gets all roles assigned to this endpoint
         /// </summary>
         protected IEnumerable<string> UserRolesToFilter
         {
             get
-            {               
-                var roles = new[] {
-                    "IDM",
-                    "LTS",
-                    "A22",
-                    "STA"
-                };
+            {
+                //var roles = new[] {
+                //    "IDM",
+                //    "LTS",
+                //    "A22",
+                //    "STA"
+                //};
 
-                if (!roles.Any(User.IsInRole))
-                    return new List<string>() { "ANONYMOUS" };
-                else
-                {
-                    var userroles = new List<string>();
+                //if (!roles.Any(User.IsInRole))
+                //    return new List<string>() { "ANONYMOUS" };
+                //else
+                //{
+                //    var userroles = new List<string>();
 
-                    foreach (var role in roles)
-                    {
-                        if(User.IsInRole(role))
-                            userroles.Add(role);
-                    }
+                //    foreach (var role in roles)
+                //    {
+                //        if(User.IsInRole(role))
+                //            userroles.Add(role);
+                //    }
 
-                    return userroles;
-                }                
+                //    return userroles;
+                //}                
+                return GetEndPointAccessRole();
             }
         }
 
@@ -100,7 +85,7 @@ namespace OdhApiCore.Controllers
         protected IDictionary<string,string> AdditionalFiltersToAdd
         {
             get
-            {                
+            {
                 return GetAdditionalFilterDictionary();
             }
         }
@@ -111,9 +96,9 @@ namespace OdhApiCore.Controllers
 
             if (Request.Path.Value != null)
             {
-                //GET ENDPOINT (after v1)
+                //TODO handle CompatiblityApi or SearchApi
 
-                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.GetPathNextTo("/", "v1") + "_"));
+                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(this.ControllerContext.RouteData.Values["controller"]?.ToString() + "_"));
                 foreach (var role in rolesforendpoint)
                 {
                     var splittedrole = role.Value.Split("_");
@@ -127,26 +112,25 @@ namespace OdhApiCore.Controllers
             return additionalfilterdict;
         }
 
-        private IDictionary<string, string> GetEndPointAccessRole()
+        private List<string> GetEndPointAccessRole()
         {
-            var additionalfilterdict = new Dictionary<string, string>();
+            List<string> rolelist = new List<string>();
 
-            if (Request.Path.Value != null)
+            var dict = GetAdditionalFilterDictionary();
+            
+            if(dict.ContainsKey("Read"))
             {
-                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(Request.Path.GetPathNextTo("/", "v1") + "_"));
-                foreach (var role in rolesforendpoint)
-                {
-                    var splittedrole = role.Value.Split("_");
-                    if (splittedrole.Length == 3)
+                if(dict["Read"].Split("&").Any(x => x.Contains("accessrole")))
+                {                    
+                    foreach(var role in dict["Read"].Split("&").Where(x => x.Contains("accessrole")).FirstOrDefault().Split("=").LastOrDefault().Split(","))
                     {
-
-
-                        additionalfilterdict.TryAddOrUpdate(splittedrole[1], splittedrole[2]);
+                            rolelist.Add(role);                    
                     }
                 }
+
             }
 
-            return additionalfilterdict;
+            return rolelist.Count == 0 ? new List<string>() { "ANONYMOUS" } : rolelist;
         }
 
 
