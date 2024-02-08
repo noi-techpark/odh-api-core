@@ -40,6 +40,9 @@ namespace OdhApiCore.Controllers
             this.Logger = logger;
             this.QueryFactory = queryFactory;
             this.OdhPushnotifier = odhpushnotifier;
+
+            //TO CHECK
+            //UserRolesToFilter = 
         }
 
         protected ILogger<OdhController> Logger { get; }

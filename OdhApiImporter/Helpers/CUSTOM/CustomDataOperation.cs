@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Helper;
 using Microsoft.FSharp.Control;
 using System.Diagnostics;
+using Helper.Generic;
 
 namespace OdhApiImporter.Helpers
 {
@@ -478,7 +479,7 @@ namespace OdhApiImporter.Helpers
                     myarticle.SmgTags = new List<string>() { "important" };
                 }
 
-                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, "articles", "", "article.modify", "importer");
+                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, new DataInfo("articles", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("article.modify", "importer"), new CRUDConstraints(), new CompareConfig(false,false));
 
                 if(pgcrudresult.created != null)
                     crudcount = crudcount + pgcrudresult.created.Value;

@@ -13,7 +13,7 @@ namespace Helper.Generic
     }
 
     public class DataInfo
-    {
+    {        
         public DataInfo(string table, CRUDOperation operation)
         {
             Table = table;
@@ -67,13 +67,17 @@ namespace Helper.Generic
 
     public class CRUDConstraints
     {
-        public CRUDConstraints(string? condition, IEnumerable<string> accessRole)
+        public CRUDConstraints()
+        {
+        }
+
+        public CRUDConstraints(string? condition, IEnumerable<string>? accessRole)
         {
             Condition = condition;
             AccessRole = accessRole;
         }
 
         public string? Condition { get; set; }
-        public IEnumerable<string> AccessRole { get; set; }
+        public IEnumerable<string>? AccessRole { get; set; }
     }
 }
