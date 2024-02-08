@@ -114,6 +114,9 @@ namespace Helper
             //TOCHECK: Shortname population?
 
             List<string> channelstopublish = new List<string>();
+            int? objectchangedcount = null;
+            int? objectimagechangedcount = null;
+
 
             //If no data is passed return error
             if (data == null)
@@ -130,9 +133,10 @@ namespace Helper
             int createresult = 0;
             int updateresult = 0;
             int errorresult = 0;
-            string errorreason = "";            
-            
-            bool imagecompareresult = false;
+            string errorreason = "";
+
+         
+            bool imagesequal = false;
             EqualityResult equalityresult = new EqualityResult() { isequal = false, patch = null };
 
             //Setting LastChange
@@ -150,13 +154,13 @@ namespace Helper
             //Check data condition return not allowed if it fails
             if (!CheckCRUDCondition.CRUDOperationAllowed(data, constraints.Condition))
             {
-                return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
             }
 
             if (queryresult == null)
             {
                 if (dataconfig.ErrorWhendataIsNew)
-                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Found", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Found", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
 
                 createresult = await QueryFactory.Query(dataconfig.Table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
@@ -169,15 +173,28 @@ namespace Helper
             else
             {
                 if (dataconfig.ErrorWhendataExists)
-                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
 
                 //Compare the data
                 if (compareConfig.CompareData && queryresult != null)
+                {
                     equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
+                    if (equalityresult.isequal)
+                        objectchangedcount = 0;
+                    else
+                        objectchangedcount = 1;
+                }
+
 
                 //Compare Image Gallery Check if this works with a cast to IImageGalleryAware
                 if (compareConfig.CompareImages && queryresult != null && data is IImageGalleryAware && queryresult is IImageGallery)
-                    imagecompareresult = EqualityHelper.CompareImageGallery((data as IImageGalleryAware).ImageGallery, (queryresult as IImageGalleryAware).ImageGallery, new List<string>() { });
+                {
+                    imagesequal = EqualityHelper.CompareImageGallery((data as IImageGalleryAware).ImageGallery, (queryresult as IImageGalleryAware).ImageGallery, new List<string>() { });
+                    if (imagesequal)
+                        objectimagechangedcount = 0;
+                    else
+                        objectimagechangedcount = 1;
+                }
 
                 //Add all Publishedonfields before and after change
                 if (data is IPublishedOn && queryresult is IPublishedOn)
@@ -192,9 +209,9 @@ namespace Helper
             }
 
             if (createresult == 0 && updateresult == 0)
-                return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
 
-            return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = dataconfig.Operation.ToString(), compareobject = compareConfig.CompareData, objectchanged = equalityresult.isequal ? 0 : 1, objectimagechanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = dataconfig.Operation.ToString(), compareobject = compareConfig.CompareData, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish, changes = equalityresult.patch };
         }
 
 
@@ -212,7 +229,7 @@ namespace Helper
             List<string> channelstopublish = new List<string>();
 
             if (string.IsNullOrEmpty(id))
-                return new PGCRUDResult() { id = "", odhtype = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = "", odhtype = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
 
             var idtodelete = Helper.IdGenerator.CheckIdFromType<T>(id);
 
@@ -228,14 +245,14 @@ namespace Helper
 
             if (queryresult == null)
             {
-                return new PGCRUDResult() { id = idtodelete, odhtype = null, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Found", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = idtodelete, odhtype = null, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Found", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
             }
             else
             {
                 //Check data condition
                 if (!CheckCRUDCondition.CRUDOperationAllowed(queryresult, constraints.Condition))
                 {
-                    return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+                    return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
                 }
 
                 if (queryresult is IPublishedOn && ((IPublishedOn)queryresult).PublishedOn != null)
@@ -246,9 +263,9 @@ namespace Helper
             }
 
             if (deleteresult == 0)
-                return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
 
-            return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = deleteresult, error = 0, errorreason = errorreason, operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
+            return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = deleteresult, error = 0, errorreason = errorreason, operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
         }
 
 

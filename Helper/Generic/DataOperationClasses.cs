@@ -51,7 +51,7 @@ namespace Helper.Generic
         public CompareConfig(bool comparedata, bool compareimages)
         {
             CompareData = comparedata;
-            CompareImages = CompareImages;
+            CompareImages = compareimages;
         }
 
         public bool CompareData { get; set; }
