@@ -25,6 +25,7 @@ using ServiceReferenceLCS;
 using OdhApiCore.Controllers.api;
 using Helper.Identity;
 using OdhNotifier;
+using Helper.Generic;
 
 namespace OdhApiCore.Controllers
 {
@@ -400,7 +401,7 @@ namespace OdhApiCore.Controllers
                 activity.Id = Helper.IdGenerator.GenerateIDFromType(activity);
                 activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSActivityLinked>(activity, "activities", true, false, "api", additionalfilter);
+                return await UpsertData<LTSActivityLinked>(activity, new DataInfo("activities", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -425,7 +426,7 @@ namespace OdhApiCore.Controllers
                 activity.Id = Helper.IdGenerator.CheckIdFromType<LTSActivityLinked>(id);
                 activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSActivityLinked>(activity, "activities", false, true, "api", additionalfilter);
+                return await UpsertData<LTSActivityLinked>(activity, new DataInfo("activities", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -448,7 +449,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<LTSActivityLinked>(id);
 
-                return await DeleteData<LTSActivityLinked>(id, "activities", additionalfilter);
+                return await DeleteData<LTSActivityLinked>(id, new DataInfo("activities", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

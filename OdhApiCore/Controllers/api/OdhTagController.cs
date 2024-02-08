@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -235,7 +236,7 @@ namespace OdhApiCore.Controllers
 
                 odhtag.Id = Helper.IdGenerator.GenerateIDFromType(odhtag);
 
-                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", true, false, "api", additionalfilter);
+                return await UpsertData<ODHTagLinked>(odhtag, new DataInfo("smgtags", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -259,7 +260,7 @@ namespace OdhApiCore.Controllers
 
                 odhtag.Id = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
 
-                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", false, true, "api", additionalfilter);
+                return await UpsertData<ODHTagLinked>(odhtag, new DataInfo("smgtags", CRUDOperation.Update), new CompareConfig(true, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -282,7 +283,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
 
-                return await DeleteData<ODHTagLinked>(id, "smgtags", additionalfilter);
+                return await DeleteData<ODHTagLinked>(id, new DataInfo("smgtags", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

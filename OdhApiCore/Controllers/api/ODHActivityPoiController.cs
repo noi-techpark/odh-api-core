@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Helper.Location;
 using Microsoft.AspNetCore.Authorization;
@@ -420,7 +421,7 @@ namespace OdhApiCore.Controllers.api
 
                 //TODO check for Reduced Data                
 
-                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true, false, "api", additionalfilter);
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, new DataInfo("smgpois", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -464,7 +465,7 @@ namespace OdhApiCore.Controllers.api
 
                 //TODO check for Reduced Data
 
-                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true, "api", additionalfilter);
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, new DataInfo("smgpois", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -488,7 +489,7 @@ namespace OdhApiCore.Controllers.api
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<ODHActivityPoiLinked>(id);
 
-                return await DeleteData<ODHActivityPoiLinked>(id, "smgpois", additionalfilter);
+                return await DeleteData<ODHActivityPoiLinked>(id, new DataInfo("smgpois", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

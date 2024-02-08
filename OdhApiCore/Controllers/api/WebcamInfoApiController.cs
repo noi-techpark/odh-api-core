@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -224,7 +225,7 @@ namespace OdhApiCore.Controllers
 
                 webcam.Id = Helper.IdGenerator.GenerateIDFromType(webcam);
 
-                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", true, false, "api", additionalfilter);
+                return await UpsertData<WebcamInfoLinked>(webcam, new DataInfo("webcams", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -250,7 +251,7 @@ namespace OdhApiCore.Controllers
 
                 webcam.Id = Helper.IdGenerator.CheckIdFromType<WebcamInfoLinked>(id);
 
-                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", false, true, "api", additionalfilter);
+                return await UpsertData<WebcamInfoLinked>(webcam, new DataInfo("webcams", CRUDOperation.Update), new CompareConfig(true, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -275,7 +276,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<WebcamInfoLinked>(id);
 
-                return await DeleteData<WebcamInfoLinked>(id, "webcams", additionalfilter);
+                return await DeleteData<WebcamInfoLinked>(id, new DataInfo("webcams", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

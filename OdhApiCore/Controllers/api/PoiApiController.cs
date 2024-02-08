@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -382,7 +383,7 @@ namespace OdhApiCore.Controllers.api
                 poi.Id = Helper.IdGenerator.GenerateIDFromType(poi);
                 poi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSPoiLinked>(poi, "pois", true, false, "api", additionalfilter);
+                return await UpsertData<LTSPoiLinked>(poi, new DataInfo("pois", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -407,7 +408,7 @@ namespace OdhApiCore.Controllers.api
                 poi.Id = Helper.IdGenerator.CheckIdFromType<LTSPoiLinked>(id);
                 poi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSPoiLinked>(poi, "pois", false, true, "api", additionalfilter);
+                return await UpsertData<LTSPoiLinked>(poi, new DataInfo("pois", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -430,7 +431,7 @@ namespace OdhApiCore.Controllers.api
 
                 id = Helper.IdGenerator.CheckIdFromType<LTSPoiLinked>(id);
 
-                return await DeleteData<LTSPoiLinked>(id, "pois", additionalfilter);
+                return await DeleteData<LTSPoiLinked>(id, new DataInfo("pois", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

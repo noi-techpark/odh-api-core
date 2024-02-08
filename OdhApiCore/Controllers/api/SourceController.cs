@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -199,7 +200,7 @@ namespace OdhApiCore.Controllers
                 if (source.LicenseInfo == null)
                     source.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<SourceLinked>(source, "sources", true, false, "api", additionalfilter);
+                return await UpsertData<SourceLinked>(source, new DataInfo("sources", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -221,7 +222,7 @@ namespace OdhApiCore.Controllers
 
                 source.Id = Helper.IdGenerator.CheckIdFromType<SourceLinked>(id);
 
-                return await UpsertData<SourceLinked>(source, "sources", false, true, "api", additionalfilter);
+                return await UpsertData<SourceLinked>(source, new DataInfo("sources", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -242,7 +243,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<SourceLinked>(id);
 
-                return await DeleteData(id, "sources", false, additionalfilter);
+                return await DeleteData<SourceLinked>(id, new DataInfo("sources", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

@@ -6,6 +6,7 @@ using AspNetCore.CacheOutput;
 using CDB;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -939,7 +940,7 @@ namespace OdhApiCore.Controllers
                 accommodation.Id = Helper.IdGenerator.GenerateIDFromType(accommodation);
                 //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<AccommodationLinked>(accommodation, "accommodations", true, false, "api", additionalfilter);
+                return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -964,7 +965,7 @@ namespace OdhApiCore.Controllers
                 accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
                 //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<AccommodationLinked>(accommodation, "accommodations", false, true, "api", additionalfilter);
+                return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -987,7 +988,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
 
-                return await DeleteData<AccommodationLinked>(id, "accommodations", additionalfilter);
+                return await DeleteData<AccommodationLinked>(id, new DataInfo("accommodations", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

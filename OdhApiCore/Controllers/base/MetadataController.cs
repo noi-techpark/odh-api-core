@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -197,7 +198,7 @@ namespace OdhApiCore.Controllers
                 //GENERATE ID
                 metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
                 
-                return await UpsertData<TourismMetaData>(metadata, "metadata", true);
+                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(null, UserRolesToFilter));
             });
         }
 
@@ -221,7 +222,7 @@ namespace OdhApiCore.Controllers
                 //Check ID uppercase lowercase
                 metadata.Id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
-                return await UpsertData<TourismMetaData>(metadata, "metadata", false, true);
+                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(null, UserRolesToFilter));
             });
         }
 
@@ -244,7 +245,7 @@ namespace OdhApiCore.Controllers
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
-                return await DeleteData(id, "metadata");
+                return await DeleteData<TourismMetaData>(id, new DataInfo("metadata", CRUDOperation.Delete), new CRUDConstraints(null, UserRolesToFilter));
             });
         }
 

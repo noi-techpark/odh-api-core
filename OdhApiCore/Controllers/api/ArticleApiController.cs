@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -354,7 +355,7 @@ namespace OdhApiCore.Controllers.api
                 if (article.LicenseInfo == null)
                     article.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<ArticlesLinked>(article, "articles", true, false, "api", additionalfilter);
+                return await UpsertData<ArticlesLinked>(article, new DataInfo("articles", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -390,7 +391,7 @@ namespace OdhApiCore.Controllers.api
                 if (article.ArticleDateTo == null)
                     article.ArticleDateTo = DateTime.MaxValue;
 
-                return await UpsertData<ArticlesLinked>(article, "articles", false, true, "api", additionalfilter);
+                return await UpsertData<ArticlesLinked>(article, new DataInfo("articles", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -417,7 +418,7 @@ namespace OdhApiCore.Controllers.api
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<ArticlesLinked>(id);
 
-                return await DeleteData<ArticlesLinked>(id, "articles", additionalfilter);
+                return await DeleteData<ArticlesLinked>(id, new DataInfo("articles", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

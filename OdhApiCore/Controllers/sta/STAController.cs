@@ -23,6 +23,7 @@ using System.IO;
 using OdhApiCore.GenericHelpers;
 using OdhApiCore.Controllers.helper;
 using OdhNotifier;
+using Helper.Generic;
 
 namespace OdhApiCore.Controllers.sta
 {
@@ -228,7 +229,7 @@ namespace OdhApiCore.Controllers.sta
                     //Save to PG
                     //Check if data exists                    
 
-                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois", "", "sta.import", "importer");
+                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, new DataInfo("smgpois", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("sta.import", "importer"), new CRUDConstraints(null, new List<string>()), new CompareConfig(false, false));
 
                     if(result.updated != null)
                         updatecounter = updatecounter + result.updated.Value;

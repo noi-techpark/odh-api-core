@@ -5,6 +5,7 @@
 using DataModel;
 using DataModel.Annotations;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -791,7 +792,7 @@ namespace OdhApiCore.Controllers.api
                     //TODO, Sync publishedon with current values, remove SETTER from ActiveToday, ActiveWeb, ActiveCommunity and generate it from publishedon, remove 
                     //checkboxes from 
 
-                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true, false, "api", additionalfilter);
+                    return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter)); ;
                 }
                 else
                 {
@@ -883,7 +884,7 @@ namespace OdhApiCore.Controllers.api
                     //Create PublishedonList
                     //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
 
-                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", false, true, "api", additionalfilter);
+                    return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
                 }
                 else
                 {
@@ -915,7 +916,7 @@ namespace OdhApiCore.Controllers.api
 
                 id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
 
-                return await DeleteData<EventShortLinked>(id, "eventeuracnoi", additionalfilter);
+                return await DeleteData<EventShortLinked>(id, new DataInfo("eventeuracnoi", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
 
             //try

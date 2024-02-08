@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using LCS;
 using Microsoft.AspNetCore.Cors;
@@ -995,7 +996,7 @@ namespace OdhApiCore.Controllers
 
                 measuringpoint.Id = Helper.IdGenerator.GenerateIDFromType(measuringpoint);
 
-                return await UpsertData<MeasuringpointLinked>(measuringpoint, "measuringpoints", true, false, "api", additionalfilter);
+                return await UpsertData<MeasuringpointLinked>(measuringpoint, new DataInfo("measuringpoints", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1021,7 +1022,7 @@ namespace OdhApiCore.Controllers
 
                 measuringpoint.Id = Helper.IdGenerator.CheckIdFromType<MeasuringpointLinked>(id);
 
-                return await UpsertData<MeasuringpointLinked>(measuringpoint, "measuringpoints", false, true, "api", additionalfilter);
+                return await UpsertData<MeasuringpointLinked>(measuringpoint, new DataInfo("measuringpoints", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1044,7 +1045,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<MeasuringpointLinked>(id);
 
-                return await DeleteData<MeasuringpointLinked>(id, "measuringpoints", additionalfilter);
+                return await DeleteData<MeasuringpointLinked>(id, new DataInfo("measuringpoints", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

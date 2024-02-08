@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -205,7 +206,7 @@ namespace OdhApiCore.Controllers
                 if (publisher.LicenseInfo == null)
                     publisher.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<PublisherLinked>(publisher, "publishers", true, false, "api", additionalfilter);
+                return await UpsertData<PublisherLinked>(publisher, new DataInfo("publishers", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -227,7 +228,7 @@ namespace OdhApiCore.Controllers
 
                 publisher.Id = Helper.IdGenerator.CheckIdFromType<PublisherLinked>(id);
 
-                return await UpsertData<PublisherLinked>(publisher, "publishers", false, true, "api", additionalfilter);
+                return await UpsertData<PublisherLinked>(publisher, new DataInfo("publishers", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -250,7 +251,7 @@ namespace OdhApiCore.Controllers
 
                 //return await DeleteData<PublisherLinked>(id, "publishers", additionalfilter); // Does not implement IPublishedOn
 
-                return await DeleteData(id, "publishers", false, additionalfilter);
+                return await DeleteData<PublisherLinked>(id, new DataInfo("publishers", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

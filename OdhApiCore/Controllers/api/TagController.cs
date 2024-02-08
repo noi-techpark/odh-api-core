@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -233,7 +234,7 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
                 tag.Id = !String.IsNullOrEmpty(tag.Id) ? tag.Id.ToUpper() : "noId";
-                return await UpsertData<TagLinked>(tag, "tags", true, false, "api", additionalfilter);
+                return await UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -256,7 +257,7 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
                 tag.Id = id.ToUpper();
-                return await UpsertData<TagLinked>(tag, "tags", false, true, "api", additionalfilter);
+                return await UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -278,7 +279,7 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
 
                 id = id.ToUpper();
-                return await DeleteData(id, "tags", false, additionalfilter);
+                return await DeleteData<TagLinked>(id, new DataInfo("tags", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

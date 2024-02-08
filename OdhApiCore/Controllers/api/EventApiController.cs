@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -373,7 +374,7 @@ namespace OdhApiCore.Controllers
                 odhevent.Id = Helper.IdGenerator.GenerateIDFromType(odhevent);
                 odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<EventLinked>(odhevent, "events", true, false, "api", additionalfilter);
+                return await UpsertData<EventLinked>(odhevent, new DataInfo("events", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -398,7 +399,7 @@ namespace OdhApiCore.Controllers
                 odhevent.Id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
                 odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<EventLinked>(odhevent, "events", false, true, "api", additionalfilter);
+                return await UpsertData<EventLinked>(odhevent, new DataInfo("events", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -421,7 +422,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
 
-                return await DeleteData<EventLinked>(id, "events", additionalfilter);
+                return await DeleteData<EventLinked>(id, new DataInfo("events", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

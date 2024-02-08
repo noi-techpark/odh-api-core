@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -343,7 +344,7 @@ namespace OdhApiCore.Controllers
                 gastronomy.Id = Helper.IdGenerator.GenerateIDFromType(gastronomy);
                 gastronomy.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", true, false, "api", additionalfilter);
+                return await UpsertData<GastronomyLinked>(gastronomy, new DataInfo("gastronomies", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -368,7 +369,7 @@ namespace OdhApiCore.Controllers
                 gastronomy.Id = Helper.IdGenerator.CheckIdFromType<GastronomyLinked>(id);
                 gastronomy.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", false, true, "api", additionalfilter);
+                return await UpsertData<GastronomyLinked>(gastronomy, new DataInfo("gastronomies", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -391,7 +392,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<GastronomyLinked>(id);
 
-                return await DeleteData<GastronomyLinked>(id, "gastronomies", additionalfilter);
+                return await DeleteData<GastronomyLinked>(id, new DataInfo("gastronomies", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

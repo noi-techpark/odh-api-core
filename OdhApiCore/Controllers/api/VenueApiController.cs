@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -369,7 +370,7 @@ namespace OdhApiCore.Controllers
                 //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
-                return await UpsertData<VenueLinked>(venue, "venues_v2", true, false, "api", additionalfilter);
+                return await UpsertData<VenueLinked>(venue, new DataInfo("venues_v2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -395,7 +396,7 @@ namespace OdhApiCore.Controllers
                 //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
-                return await UpsertData<VenueLinked>(venue, "venues_v2", false, true, "api", additionalfilter);
+                return await UpsertData<VenueLinked>(venue, new DataInfo("venues_v2", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -418,7 +419,7 @@ namespace OdhApiCore.Controllers
 
                 id = Helper.IdGenerator.CheckIdFromType<VenueLinked>(id);
 
-                return await DeleteData<VenueLinked>(id, "venues_v2", additionalfilter);
+                return await DeleteData<VenueLinked>(id, new DataInfo("venues_v2", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
