@@ -113,6 +113,8 @@ namespace Helper
             //TOCHECK: Id Uppercase or Lowercase depending on table
             //TOCHECK: Shortname population?
 
+            List<string> channelstopublish = new List<string>();
+
             //If no data is passed return error
             if (data == null)
                 return new PGCRUDResult() { id = "", odhtype = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
@@ -125,7 +127,6 @@ namespace Helper
                       .When(constraints.AccessRole.Count() > 0, q => q.FilterDataByAccessRoles(constraints.AccessRole))
                       .GetObjectSingleAsync<T>();
 
-            List<string> channelstopublish = new List<string>();
             int createresult = 0;
             int updateresult = 0;
             int errorresult = 0;
