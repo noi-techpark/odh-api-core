@@ -328,7 +328,7 @@ namespace OdhApiCore.Controllers.api
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
 
@@ -364,7 +364,7 @@ namespace OdhApiCore.Controllers.api
                 if (optimizedates && data is { })
                     data = OptimizeRoomForApp(data);
 
-                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -377,6 +377,8 @@ namespace OdhApiCore.Controllers.api
             bool? active, bool? websiteactive, bool? communityactive, string? idfilter, string? webaddressfilter, string? publishedon, string? lastchange, string? language, string? sortorder, 
             string? searchfilter, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
+            //Additional Read Filters to Add Check
+            AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
             EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
                   sourcefilter, eventlocationfilter, active, websiteactive, communityactive, idfilter, webaddressfilter, lastchange, sortorder, publishedon);
@@ -391,7 +393,7 @@ namespace OdhApiCore.Controllers.api
                        start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
                        websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
                        publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
-                       additionalfilter: null,
+                       additionalfilter: additionalfilter,
                        userroles: UserRolesToFilter, getbyrooms: false)
                    .ApplyRawFilter(rawfilter);
 
@@ -407,7 +409,7 @@ namespace OdhApiCore.Controllers.api
 
             return Ok(
                     resultraw.Select(
-                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     ));                       
         }
 
@@ -626,7 +628,7 @@ namespace OdhApiCore.Controllers.api
 
                 return
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );                
             });
         }
@@ -644,7 +646,7 @@ namespace OdhApiCore.Controllers.api
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
                 
-                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 

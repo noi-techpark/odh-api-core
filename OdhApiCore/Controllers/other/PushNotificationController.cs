@@ -104,8 +104,7 @@ namespace OdhApiCore.Controllers.api
                       .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
                       //.When(FilterClosedData, q => q.FilterClosedData());
 
-                var fieldsTohide = FieldsToHide;
-
+               
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 if (data is not { })

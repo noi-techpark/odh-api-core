@@ -155,7 +155,7 @@ namespace OdhApiCore.Controllers.api
 
                     var dataTransformed =
                             jsonrawdata.Select(
-                                raw => raw.TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                                raw => raw.TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                             );
 
                     uint totalpages = (uint)data.TotalPages;
@@ -183,7 +183,7 @@ namespace OdhApiCore.Controllers.api
 
                     var dataTransformed =
                             jsonrawdata.Select(
-                                raw => raw.TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide)
+                                raw => raw.TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                             );
 
                     uint totalpages = (uint)data.TotalPages;
@@ -218,7 +218,7 @@ namespace OdhApiCore.Controllers.api
 
                     var data = await query.FirstOrDefaultAsync<RawDataStoreWithId?>();
                     
-                    //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                    //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
                     return data != null ? data.UseJsonRaw() : new RawDataStoreWithId();
                 }
                 else

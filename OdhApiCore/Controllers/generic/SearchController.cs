@@ -135,6 +135,11 @@ namespace OdhApiCore.Controllers
         private async Task<IEnumerable<JsonRaw>> SearchTroughEntity(string entitytype, Func<string, string[]> fieldsearchfunc, string table, string language, string[] fields,
             string? searchfilter, bool searchontext, string[] passedfieldstosearchon, string? locfilter, string? rawfilter, string? rawsort, int? limitto, bool removenullvalues, CancellationToken cancellationToken)
         {
+            string endpoint = ODHTypeHelper.TranslateTypeToEndPoint(entitytype);
+
+            //check if there are additionalfilters to add
+            AdditionalFiltersToAddSearchApi(endpoint).TryGetValue("Read", out var additionalfilter);
+
             var searchonfields = fieldsearchfunc(language);
 
             //Add Textfields to search on if searchontext = true
@@ -180,9 +185,8 @@ namespace OdhApiCore.Controllers
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
-                //.When(FilterClosedData, q => q.FilterClosedData_GeneratedColumn())
-                //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
-                .FilterDataByAccessRoles(UserRolesToFilter)
+                .FilterDataByAccessRoles(UserRolesToFilterSearchApi(endpoint))
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
                 .Limit(limitto ?? int.MaxValue);
@@ -190,7 +194,7 @@ namespace OdhApiCore.Controllers
 
             var data = await query.GetAsync<JsonRaw>();
             
-            return data.Select(raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: FieldsToHide))
+            return data.Select(raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null))
                     .Where(json => json != null)
                     .Select(json => json!);
         }

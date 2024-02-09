@@ -66,12 +66,7 @@ namespace OdhApiCore.Controllers.api
             return Ok(JsonConvert.SerializeObject(settings.NoRateLimitConfig));
         }
 
-        [HttpGet, Route("TestField2Hide")]
-        public IActionResult GetFieldToHide()
-        {
-
-            return Ok(JsonConvert.SerializeObject(FieldsToHide));
-        }
+        
 
 
         [HttpGet, Route("UrlHelper", Name = "UrlHelperTest")]

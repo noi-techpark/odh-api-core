@@ -17,7 +17,7 @@ namespace Helper
     {              
         public static JsonRaw? TransformRawData(
             this JsonRaw raw, string? language, string[] fields, 
-            bool filteroutNullValues, Func<string, string> urlGenerator, IEnumerable<string> fieldstohide)
+            bool filteroutNullValues, Func<string, string> urlGenerator, IEnumerable<string>? fieldstohide)
         {
             JToken? token = JToken.Parse(raw.Value);
             //Filter out not desired langugae fields
@@ -34,7 +34,7 @@ namespace Helper
             //if (rolefilter.Count > 0)
             //    if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, rolefilter);
 
-            if (fieldstohide.Count() > 0)
+            if (fieldstohide != null && fieldstohide.Count() > 0)
                 token = JsonTransformerMethods.FilterOutProperties(token, fieldstohide.ToList());
 
             //if (filterClosedData) token = token.FilterClosedData();

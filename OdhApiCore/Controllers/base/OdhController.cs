@@ -49,42 +49,25 @@ namespace OdhApiCore.Controllers
 
         protected QueryFactory QueryFactory { get; }
 
-        private IOdhPushNotifier OdhPushnotifier;      
+        private IOdhPushNotifier OdhPushnotifier;
 
-        /// <summary>
-        /// Gets all roles assigned to this endpoint
-        /// </summary>
+        //Ensure this is only called 1 time per Controller operation
         protected IEnumerable<string> UserRolesToFilter
         {
             get
-            {
-                //var roles = new[] {
-                //    "IDM",
-                //    "LTS",
-                //    "A22",
-                //    "STA"
-                //};
-
-                //if (!roles.Any(User.IsInRole))
-                //    return new List<string>() { "ANONYMOUS" };
-                //else
-                //{
-                //    var userroles = new List<string>();
-
-                //    foreach (var role in roles)
-                //    {
-                //        if(User.IsInRole(role))
-                //            userroles.Add(role);
-                //    }
-
-                //    return userroles;
-                //}                
+            {      
                 return GetEndPointAccessRole();
             }
         }
 
+        //Hack Method for Search api which passes endpoint
+        protected IEnumerable<string> UserRolesToFilterSearchApi(string endpoint)
+        {
+             return GetEndPointAccessRole(endpoint);
+        }
 
-        //Test if there is an additionalfilter
+
+        //Ensure this is only called 1 time per Controller operation
         protected IDictionary<string,string> AdditionalFiltersToAdd
         {
             get
@@ -93,15 +76,23 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        private IDictionary<string,string> GetAdditionalFilterDictionary()
+        //Hack Method for Search api which passes endpoint
+        protected IDictionary<string, string> AdditionalFiltersToAddSearchApi(string endpoint)
+        {
+            return GetAdditionalFilterDictionary(endpoint);
+        }
+
+
+        private IDictionary<string,string> GetAdditionalFilterDictionary(string? pathtocheck = null)
         {
             var additionalfilterdict = new Dictionary<string, string>();
 
-            if (Request.Path.Value != null)
-            {
-                //TODO handle CompatiblityApi or SearchApi
+            if (pathtocheck != null)
+                pathtocheck = ControllerContext.RouteData.Values["controller"]?.ToString();
 
-                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(this.ControllerContext.RouteData.Values["controller"]?.ToString() + "_"));
+            if (pathtocheck != null)
+            {
+                var rolesforendpoint = User.Claims.Where(c => c.Type == ClaimTypes.Role && c.Value.StartsWith(pathtocheck + "_"));
                 foreach (var role in rolesforendpoint)
                 {
                     var splittedrole = role.Value.Split("_");
@@ -111,15 +102,14 @@ namespace OdhApiCore.Controllers
                     }
                 }
             }
-
             return additionalfilterdict;
         }
 
-        private List<string> GetEndPointAccessRole()
+        private List<string> GetEndPointAccessRole(string? path = null)
         {
             List<string> rolelist = new List<string>();
 
-            var dict = GetAdditionalFilterDictionary();
+            var dict = GetAdditionalFilterDictionary(path);
             
             if(dict.ContainsKey("Read"))
             {
@@ -130,38 +120,36 @@ namespace OdhApiCore.Controllers
                             rolelist.Add(role);                    
                     }
                 }
-
             }
 
             return rolelist.Count == 0 ? new List<string>() { "ANONYMOUS" } : rolelist;
         }
 
 
+
+        //NOT Needed at moment
         protected IEnumerable<string> FieldsToHide
         {
             get
             {
-                //Deactivation because not needed at the moment
-                //List<string> fieldstohide = new();
+                List<string> fieldstohide = new();
 
-                //var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
+                var roleclaims = User.Claims.Where(x => x.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role").Select(claim => claim.Value).ToList();
 
-                ////Search all settings with Entity = Controllername
-                //var fields = settings.Field2HideConfig
-                //    .Where(x => x.Entity == this.ControllerContext.RouteData.Values["controller"]?.ToString() ||
-                //                string.IsNullOrEmpty(x.Entity));
+                //Search all settings with Entity = Controllername
+                var fields = settings.Field2HideConfig
+                    .Where(x => x.Entity == this.ControllerContext.RouteData.Values["controller"]?.ToString() ||
+                                string.IsNullOrEmpty(x.Entity));
 
-                //foreach(var field in fields)
-                //{
-                //    if(roleclaims.Intersect(field.DisplayOnRoles ?? new()).Count() == 0)
-                //    {
-                //        fieldstohide.AddRange(field.Fields ?? new());
-                //    }
-                //}
+                foreach (var field in fields)
+                {
+                    if (roleclaims.Intersect(field.DisplayOnRoles ?? new()).Count() == 0)
+                    {
+                        fieldstohide.AddRange(field.Fields ?? new());
+                    }
+                }
 
-                //return fieldstohide;
-
-                return new List<string>();
+                return fieldstohide;
             }
         }
 
@@ -260,6 +248,7 @@ namespace OdhApiCore.Controllers
 
             return ReturnCRUDResult(result);
         }
+        
         //DELETE data
         protected async Task<IActionResult> DeleteData<T>(string id, DataInfo datainfo, CRUDConstraints crudconstraints) where T : IIdentifiable, IMetaData, IImportDateassigneable, new()
         {
@@ -275,7 +264,7 @@ namespace OdhApiCore.Controllers
             return ReturnCRUDResult(result);         
         }
 
-        //PUSH data
+        //PUSH Modified data
         protected async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(PGCRUDResult myupdateresult, string id, string datatype, string pushorigin = "odh.api.push")
         {
             IDictionary<string, NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
@@ -294,6 +283,7 @@ namespace OdhApiCore.Controllers
             return pushresults;
         }
 
+        //PUSH Deleted data
         private async Task<IDictionary<string, NotifierResponse>?> PushDeletedObject(PGCRUDResult myupdateresult, string id, string datatype, string pushorigin = "odh.api.push")
         {
             IDictionary<string, NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
