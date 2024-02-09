@@ -87,7 +87,7 @@ namespace OdhApiCore.Controllers
         {
             var additionalfilterdict = new Dictionary<string, string>();
 
-            if (pathtocheck != null)
+            if (pathtocheck == null)
                 pathtocheck = ControllerContext.RouteData.Values["controller"]?.ToString();
 
             if (pathtocheck != null)
