@@ -168,7 +168,11 @@ namespace Helper
                 dataconfig.Operation = CRUDOperation.Create;
 
                 if (data is IPublishedOn)
-                    channelstopublish.AddRange((data as IPublishedOn).PublishedOn);                
+                    channelstopublish.AddRange((data as IPublishedOn).PublishedOn);  
+                
+                //On insert always set changed = true
+                objectchangedcount = 1;
+                objectimagechangedcount = 1;
             }
             else
             {
