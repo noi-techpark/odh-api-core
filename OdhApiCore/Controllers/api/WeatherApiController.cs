@@ -941,19 +941,22 @@ namespace OdhApiCore.Controllers
 
             if(skiarea.RelatedContent != null && skiarea.RelatedContent.Where(x => x.Type == "webcam").Count() > 0)
             {
-                var webcamidlist = skiarea.RelatedContent.Where(x => x.Type == "webcam").Select(x => x.Id).ToList();
-
-                var webcamquery = QueryFactory.Query()
+                var webcamidlist = skiarea.RelatedContent.Where(x => x.Type == "webcam").ToList().Select(y => y.Id).ToList();
+                if(webcamidlist != null && webcamidlist.Count > 0)
+                {
+                    var webcamquery = QueryFactory.Query()
                    .SelectRaw("data")
                    .From("webcams")
                    .IdUpperFilter(webcamidlist);
 
-                var webcamsraw = await query.GetAsync<JsonRaw>();
+                    var webcamsraw = await webcamquery.GetAsync<JsonRaw>();
 
-                foreach(var webcamraw in webcamsraw)
-                {
-                    webcamlist.Add(JsonConvert.DeserializeObject<WebcamInfo>(webcamraw.Value));
-                }                 
+                    foreach (var webcamraw in webcamsraw)
+                    {
+                        webcamlist.Add(JsonConvert.DeserializeObject<WebcamInfo>(webcamraw.Value));
+                    }
+                }
+                            
             }
 
 
