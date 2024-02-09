@@ -270,7 +270,7 @@ namespace OdhApiCore.Controllers
 
             var result = await QueryFactory.DeleteData<T>(id, datainfo, crudconstraints);
             //push modified data to all published Channels
-            result.pushed = await CheckIfObjectChangedAndPush(result, result.id, result.odhtype);
+            result.pushed = await PushDeletedObject(result, result.id, result.odhtype);
 
             return ReturnCRUDResult(result);         
         }
@@ -293,6 +293,20 @@ namespace OdhApiCore.Controllers
 
             return pushresults;
         }
+
+        private async Task<IDictionary<string, NotifierResponse>?> PushDeletedObject(PGCRUDResult myupdateresult, string id, string datatype, string pushorigin = "odh.api.push")
+        {
+            IDictionary<string, NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
+
+            //Check if data has changed and Push To all channels
+            if (myupdateresult.deleted > 0 && myupdateresult.pushchannels.Count > 0)
+            {
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, false, true, "api", myupdateresult.pushchannels.ToList());
+            }
+
+            return pushresults;
+        }
+
 
         protected IActionResult ReturnCRUDResult(PGCRUDResult result)
         {

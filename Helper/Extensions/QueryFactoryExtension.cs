@@ -170,7 +170,7 @@ namespace Helper
                 if (data is IPublishedOn)
                     channelstopublish.AddRange((data as IPublishedOn).PublishedOn);  
                 
-                //On insert always set changed = true
+                //On insert always set the object and image to changed
                 objectchangedcount = 1;
                 objectimagechangedcount = 1;
             }
