@@ -123,6 +123,19 @@ namespace OdhApiImporter.Helpers
                     metadata.BaseUrl = "https://tourism.api.opendatahub.com";
                     if(!String.IsNullOrEmpty(metadata.SwaggerUrl))
                         metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");
+
+                    
+                }
+
+                if (metadata.ImageGallery != null && metadata.ImageGallery.Count() > 0)
+                {
+                    foreach (var image in metadata.ImageGallery)
+                    {
+                        if (image.ImageUrl.StartsWith("https://images.tourism.testingmachine.eu"))
+                        {
+                            image.ImageUrl = image.ImageUrl.Replace("https://images.tourism.testingmachine.eu", "https://images.opendatahub.com");
+                        }
+                    }
                 }
 
                 metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
@@ -409,7 +422,6 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
-
 
         public async Task<int> UpdateAllSTAVendingpoints()
         {
