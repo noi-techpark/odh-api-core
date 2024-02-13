@@ -22,31 +22,36 @@ namespace Helper.Identity
             if (condition == null)
                 return checkresult;
 
-            var splittedcondition = condition.Split("=");
+            var splitmultipleconditions = condition.Split("&");
 
-            //Add here all allowed conditions
-            if (splittedcondition.Length > 1)
+            foreach(var singlecondition in splitmultipleconditions)
             {
-                switch (splittedcondition[0].ToLower())
-                {
-                    //Hardcoded 
-                    case "source":
-                        if (data._Meta.Source != splittedcondition[1])
-                            checkresult = false;
-                        break;
-                    //Using reflection to get the Type
-                    default:
-                        var property = data.GetType().GetProperty(splittedcondition[0]);
-                        if (property != null)
-                        {
-                            var propvalue = property.GetValue(data, null);
-                            if (propvalue.ToString() != splittedcondition[1])
-                                checkresult = false;
-                        }
+                var splittedcondition = singlecondition.Split("=");
 
-                        break;
+                //Add here all allowed conditions
+                if (splittedcondition.Length > 1)
+                {
+                    switch (splittedcondition[0].ToLower())
+                    {
+                        //Hardcoded 
+                        case "source":
+                            if (data._Meta.Source != splittedcondition[1])
+                                checkresult = false;
+                            break;
+                        //Using reflection to get the Type
+                        default:
+                            var property = data.GetType().GetProperty(splittedcondition[0]);
+                            if (property != null)
+                            {
+                                var propvalue = property.GetValue(data, null);
+                                if (propvalue.ToString() != splittedcondition[1])
+                                    checkresult = false;
+                            }
+
+                            break;
+                    }
                 }
-            }
+            }             
 
             return checkresult;
         }
