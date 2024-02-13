@@ -125,11 +125,16 @@ namespace OdhApiCore.Controllers.api
                 //from rawdata
                 //where id in (SELECT max(id)  FROM rawdata where type = 'ejob' group by sourceid)
 
+                //TO CHECK additionalfilter???
+
                 var query =
                     QueryFactory.Query()
                     .When(latest, q => q.SelectRaw("max(id)"))
                     .From("rawdata")
-                    .RawdataWhereExpression(idlist, sourceidlist, typelist, sourcelist, userroles: UserRolesToFilter)
+                    .RawdataWhereExpression(idlist, 
+                    sourceidlist, typelist, sourcelist, 
+                    additionalfilter: null,
+                    userroles: UserRolesToFilter)
                     .ApplyRawFilter(rawfilter)
                     .OrderOnlyByRawSortIfNotNull(rawsort)
                     .When(latest, q => q.GroupBy("sourceid"));

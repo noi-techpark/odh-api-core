@@ -15,6 +15,8 @@ namespace Helper.Identity
     {
         public static bool CRUDOperationAllowed<T>(T data, string? condition) where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
+            //TODO what if condition has more variables
+
             bool checkresult = true;
 
             if (condition == null)

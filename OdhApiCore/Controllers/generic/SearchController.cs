@@ -138,7 +138,7 @@ namespace OdhApiCore.Controllers
             string endpoint = ODHTypeHelper.TranslateTypeToEndPoint(entitytype);
 
             //check if there are additionalfilters to add
-            AdditionalFiltersToAddSearchApi(endpoint).TryGetValue("Read", out var additionalfilter);
+            AdditionalFiltersToAddEndpoint(endpoint).TryGetValue("Read", out var additionalfilter);
 
             var searchonfields = fieldsearchfunc(language);
 
@@ -186,7 +186,7 @@ namespace OdhApiCore.Controllers
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .FilterDataByAccessRoles(UserRolesToFilterSearchApi(endpoint))
-                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter))
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
                 .Limit(limitto ?? int.MaxValue);

@@ -295,8 +295,9 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("events")
                         .Select("data")
                         .Where("id", id.ToUpper())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
-                
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);

@@ -726,7 +726,10 @@ namespace OdhApiCore.Controllers
            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
-            {                
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 WeatherHelper myweatherhelper = await WeatherHelper.CreateAsync(QueryFactory, idfilter, locfilter, language, datefrom, dateto, lastchange, cancellationToken);
 
                 var query =
@@ -736,6 +739,7 @@ namespace OdhApiCore.Controllers
                         .WeatherHistoryWhereExpression(
                             languagelist: myweatherhelper.languagelist, idlist: myweatherhelper.idlist, sourcelist: new List<string>(), begindate: myweatherhelper.datefrom,
                             enddate: myweatherhelper.dateto, searchfilter: searchfilter, language: language, lastchange: myweatherhelper.lastchange,
+                            additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
@@ -778,12 +782,17 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("weatherdatahistory")
                         .Select("data")
-                        .Where("id", id.ToUpper());
-                        //Disable temporary there is no meta info .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-                
+                        .Where("id", id.ToUpper())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter);
+
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
@@ -841,6 +850,7 @@ namespace OdhApiCore.Controllers
                             activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper.publishedonlist,
                             sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
+                            additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
@@ -902,8 +912,10 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("measuringpoints")
                         .Select("data")
                         .Where("id", id.ToUpper())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
-                
+
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);

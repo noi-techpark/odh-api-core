@@ -48,6 +48,7 @@ namespace OdhApiCoreTests.Helper
                         searchfilter: null,
                         language: null,
                         lastchange: null,
+                        additionalfilter: null,
                         userroles: new List<string>() { "STA" }
                     );
 
@@ -89,7 +90,8 @@ namespace OdhApiCoreTests.Helper
                         smgactivefilter: null,
                         searchfilter: null,
                         language: null,
-                        lastchange: null,                        
+                        lastchange: null,
+                        additionalfilter: null,
                         new List<string>() { "ANONYMOUS" }
                     );
 
@@ -131,7 +133,8 @@ namespace OdhApiCoreTests.Helper
                         smgactivefilter: null,
                         searchfilter: null,
                         language: null,
-                        lastchange: null,                        
+                        lastchange: null,
+                        additionalfilter: null,
                         userroles: new List<string>() { "IDM" }
                     );
 

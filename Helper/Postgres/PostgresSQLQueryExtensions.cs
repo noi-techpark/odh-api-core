@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using SqlKata;
 using SqlKata.Execution;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -1746,77 +1747,70 @@ namespace Helper
                 return q;
             });
 
-        //Filter Out Reduced
-        public static Query FilterReducedDataByRoles(this Query query) =>
-            query.WhereRaw("gen_reduced = false");
+        ////Filter Out Reduced
+        //public static Query FilterReducedDataByRoles(this Query query) =>
+        //    query.WhereRaw("gen_reduced = false");
 
         #endregion
 
         #region AdditionalFilter
-
-        //TODO ADD some other usecases
-        public static Query FilterAdditionalDataByRoles(this Query query, string? additionalfilter)
+       
+        public static Query FilterAdditionalDataByCondition(this Query query, string? condition)
         {
-            var readcondition = GetColumnToFilterOn(additionalfilter);
-
-            return query.When(
-                readcondition.Count() > 0,
-                q =>
-                {
-                    foreach (var item in readcondition)
-                    {
-                        q = q.WhereRaw(
-                            item.Column + item.Query, item.Value
-                        );
-                    }
-                    return q;
-                }
-                ); 
-            //WhereRaw("gen_" + splitted[0] + " = $$", splitted[1]);
-        }
-
-        public static IEnumerable<ReadCondition> GetColumnToFilterOn(string? condition)
-        {
-            var toreturn = new List<ReadCondition>();
-
-            if (condition != null)
+            if (condition != null && condition.Contains("="))
             {
-                var splittedcondition = condition.Split("&");
+                var splittedcondition = condition.Split("&").Select(x => x.Split("=")).Select(x => new ReadCondition() { Column = x[0], Value = x[1] });
 
-                foreach(var mycondition in splittedcondition)
+                var itemstoadd = splittedcondition.GroupBy(x => x.Column).Where(g => g.Count() == 1).ToList();
+                foreach (var item in itemstoadd)
                 {
-                    //for now only operation = is allowed
-                    var splitted = mycondition.Split("=");
+                    query.GetAdditionalFilterQueryByInput(item.Key, item.Select(x => x.Value).FirstOrDefault());
+                }
 
-                    if(splitted.Length == 2)
-                    {
-                        toreturn.Add(GetGeneratedColumn(splitted[0], "=", splitted[1]));
-                    }
+                var itemstomerge = splittedcondition.GroupBy(x => x.Column).Where(g => g.Count() > 1).ToList();
+                foreach (var item in itemstomerge)
+                {
+                    query.GetAdditionalFilterQueryByInput(item.Key, item.Select(x => x.Value).ToList());
                 }
             }
 
-            return toreturn;
+            return query;
         }
 
-        public static ReadCondition GetGeneratedColumn(string input, string splitchar, string value)
+        public static Query GetAdditionalFilterQueryByInput(this Query query, string input, string value)
         {
             switch (input)
             {
                 case "source":
-                    return new ReadCondition() { Column = "gen_source", Query = " = $$", Value = value };
+                    return query.Where("gen_source", value);
                 case "accessrole":
-                    return new ReadCondition() { Column = "gen_access_role", Query = " @> array\\[$$\\]", Value = value };
+                    return query.WhereRaw("gen_access_role @> array\\[$$\\]", value);
                 default:
-                    return new ReadCondition() { Column = "data->>'" + input + "'", Query = "= $$", Value = value };
-            }       
+                    return query.Where("data->>'" + input + "'", value);
+            }
         }
+
+        public static Query GetAdditionalFilterQueryByInput(this Query query, string input, List<string> value)
+        {
+            switch (input)
+            {
+                case "source":
+                    return query.WhereIn("gen_source", value);
+                case "accessrole":
+                    return query.WhereRaw("gen_access_role @> array\\[$$\\]", value);
+                default:
+                    return query.WhereIn("data->>'" + input + "'", value);
+            }
+        }
+
+
 
         #endregion
     }
 
     public class ReadCondition
     {
-        public string Column { get; set;}
+        public string Column { get; set; }
         public string Query { get; set; }
         public string Value { get; set; }
     }

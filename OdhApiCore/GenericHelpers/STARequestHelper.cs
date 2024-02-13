@@ -73,6 +73,7 @@ namespace OdhApiCore.GenericHelpers
                             altitudemin: 0, altitudemax: 0,
                             activefilter: true, smgactivefilter: null, publishedonlist: new List<string>(), sourcelist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>() { language },
+                            additionalfilter: null,
                             userroles: new List<string>() { "STA" })
                       .OrderByRaw(orderby);
 
@@ -121,6 +122,7 @@ namespace OdhApiCore.GenericHelpers
                             durationmax: 0, altitude: false, altitudemin: 0, altitudemax: 0,
                             hasimage: null, tagdict: null, publishedonlist: new List<string>(),
                             searchfilter: null, language: language, lastchange: null,
+                            additionalfilter: null,
                             userroles: new List<string>() { "STA" })
                     .OrderByRaw(orderby);
 

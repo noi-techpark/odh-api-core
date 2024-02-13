@@ -18,6 +18,7 @@ using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using OdhNotifier;
 using ServiceReferenceLCS;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -156,7 +157,8 @@ namespace OdhApiCore.Controllers
                         publishedonlist: publishedonlist,
                         displayascategory: displayascategory,
                         searchfilter: searchfilter,
-                        language: language,                        
+                        language: language,             
+                        additionalfilter: additionalfilter,
                         userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
@@ -204,10 +206,13 @@ namespace OdhApiCore.Controllers
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-                var data = await QueryFactory.Query("smgtags")
+                var query = QueryFactory.Query("smgtags")
                     .Select("data")
                     .Where("id", id.ToLower())
-                    .FirstOrDefaultAsync<JsonRaw>();
+                    .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                    .FilterDataByAccessRoles(UserRolesToFilter);
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });

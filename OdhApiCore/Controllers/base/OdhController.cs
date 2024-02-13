@@ -41,8 +41,8 @@ namespace OdhApiCore.Controllers
             this.QueryFactory = queryFactory;
             this.OdhPushnotifier = odhpushnotifier;
 
-            //TO CHECK
-            //UserRolesToFilter = 
+            //TO CHECK ControllerContext.RouteData is null in constructor
+            //UserRolesToFilter = GetEndPointAccessRole(endpoint);
         }
 
         protected ILogger<OdhController> Logger { get; }
@@ -63,7 +63,7 @@ namespace OdhApiCore.Controllers
         //Hack Method for Search api which passes endpoint
         protected IEnumerable<string> UserRolesToFilterSearchApi(string endpoint)
         {
-             return GetEndPointAccessRole(endpoint);
+            return GetEndPointAccessRole(endpoint);
         }
 
 
@@ -77,7 +77,7 @@ namespace OdhApiCore.Controllers
         }
 
         //Hack Method for Search api which passes endpoint
-        protected IDictionary<string, string> AdditionalFiltersToAddSearchApi(string endpoint)
+        protected IDictionary<string, string> AdditionalFiltersToAddEndpoint(string endpoint)
         {
             return GetAdditionalFilterDictionary(endpoint);
         }
@@ -98,7 +98,15 @@ namespace OdhApiCore.Controllers
                     var splittedrole = role.Value.Split("_");
                     if (splittedrole.Length == 3)
                     {
-                        additionalfilterdict.TryAddOrUpdate(splittedrole[1], splittedrole[2]);
+                        //TODO if key is already there add the info on the value with a &
+                        if(additionalfilterdict.ContainsKey(splittedrole[1]))
+                        {                            
+                            additionalfilterdict.TryAddOrUpdate(splittedrole[1], additionalfilterdict[splittedrole[1]] + "&" + splittedrole[2]);
+                        }
+                        else
+                        {
+                            additionalfilterdict.TryAddOrUpdate(splittedrole[1], splittedrole[2]);
+                        }                        
                     }
                 }
             }

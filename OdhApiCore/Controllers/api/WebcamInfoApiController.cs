@@ -149,7 +149,9 @@ namespace OdhApiCore.Controllers
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
-                            languagelist: new List<string>(), userroles: UserRolesToFilter)
+                            languagelist: new List<string>(), 
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -189,7 +191,9 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("webcams")
                         .Select("data")
                         .Where("id", id.ToUpper())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
+
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

@@ -227,6 +227,7 @@ namespace OdhApiCore.Controllers.api
                             articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, sourcelist: myarticlehelper.sourcelist,
                             publishedonlist: myarticlehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange,
+                            additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
@@ -268,6 +269,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("articles")
                         .Select("data")
                         .Where("id", id.ToUpper())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
@@ -306,8 +308,7 @@ namespace OdhApiCore.Controllers.api
             {
                 var query =
                     QueryFactory.Query("articletypes")
-                        .Select("data")
-                        //.WhereJsonb("Key", "ilike", id)
+                        .Select("data")                        
                         .Where("id", id.ToLower());
                                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

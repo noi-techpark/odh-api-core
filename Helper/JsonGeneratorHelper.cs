@@ -47,6 +47,7 @@ namespace Helper
                         altitudemin: 0, altitudemax: 0,
                         activefilter: null, smgactivefilter: true, publishedonlist: new List<string>(), sourcelist: new List<string>(),
                         searchfilter: null, language: null, lastchange: null, languagelist: new List<string>(),
+                        additionalfilter: null,
                         userroles: new List<string>(){ "IDM" })
                   .OrderByRaw(orderby);
 

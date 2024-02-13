@@ -252,6 +252,7 @@ namespace OdhApiCore.Controllers.api
                             arealist: myactivityhelper.arealist, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, languagelist: myactivityhelper.languagelist,
+                            additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
@@ -302,6 +303,7 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("pois")
                         .Select("data")
                         .Where("id", id.ToUpper())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

@@ -357,7 +357,8 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("eventeuracnoi")
                         .Select("data")
                         .Where("id", id.ToLower())
-                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByRoles(additionalfilter));
+                        .FilterDataByAccessRoles(UserRolesToFilter)
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

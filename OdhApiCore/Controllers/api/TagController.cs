@@ -156,6 +156,7 @@ namespace OdhApiCore.Controllers
                         displayascategory: displayascategory,
                         searchfilter: searchfilter,
                         language: language,
+                        additionalfilter: additionalfilter,
                         userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
@@ -205,7 +206,9 @@ namespace OdhApiCore.Controllers
 
                 var data = await QueryFactory.Query("tags")
                     .Select("data")
-                    .Where("id", id.ToLower())                    
+                    .Where("id", id.ToLower())
+                    .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                    .FilterDataByAccessRoles(UserRolesToFilter)
                     .FirstOrDefaultAsync<JsonRaw>();
 
                 return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
