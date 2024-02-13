@@ -233,6 +233,8 @@ namespace OdhApiCore.Controllers
                 object? result = await f();
                 if (result == null)
                     return this.NotFound();
+                else if (result is ActionResult)
+                    return (IActionResult)result;
                 else
                     return this.Ok(result);
             });
