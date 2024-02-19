@@ -107,8 +107,8 @@ namespace OdhApiCore.Controllers
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="language">Language</param>
         /// <param name="datefilter">DateFilter Format dd/MM/yyyy</param>
-        /// <returns>Weather Object</returns>
-        [ProducesResponseType(typeof(Weather), StatusCodes.Status200OK)]
+        /// <returns>WeatherHistory Object</returns>
+        [ProducesResponseType(typeof(WeatherHistory), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("WeatherHistory")]
@@ -154,8 +154,8 @@ namespace OdhApiCore.Controllers
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Measuringpoint Object</returns>
-        [ProducesResponseType(typeof(Measuringpoint), StatusCodes.Status200OK)]
+        /// <returns>WeatherHistory Object</returns>
+        [ProducesResponseType(typeof(WeatherHistory), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("WeatherHistory/{id}", Name = "SingleWeatherHistory")]
@@ -278,6 +278,37 @@ namespace OdhApiCore.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
             }
         }
+
+        /// <summary>
+        /// GET Weather Forecast 
+        /// </summary>
+        /// <param name="language">Language</param>        
+        /// <returns>WeatherForecast Object</returns>
+        [ProducesResponseType(typeof(IEnumerable<WeatherRealTime>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Weather/Forecast")]
+        public async Task<IActionResult> GetWeatherForecast(
+            uint? pagenumber = null,
+            PageSize pagesize = null!,
+            string? language = "en",
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+                return await GetWeatherForecast(pagenumber, pagesize, language ?? "en", null, geosearchresult, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
+
 
         /// <summary>
         /// GET Measuringpoint LIST
