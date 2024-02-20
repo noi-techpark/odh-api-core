@@ -291,6 +291,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetWeatherForecast(
             uint? pagenumber = null,
             PageSize pagesize = null!,
+            string? locfilter = null,
             string? language = "en",
             string? latitude = null,
             string? longitude = null,
@@ -301,7 +302,7 @@ namespace OdhApiCore.Controllers
             {
                 var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-                return await GetWeatherForecast(pagenumber, pagesize, language ?? "en", null, geosearchresult, cancellationToken);
+                return await GetWeatherMobilityForecast(pagenumber, pagesize, language ?? "en", locfilter, geosearchresult, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -729,6 +730,18 @@ namespace OdhApiCore.Controllers
                     return Ok(weatherresult);
                 }
             }           
+        }
+
+        /// GET Bezirkswetter by LocFilter LIVE Request
+        private async Task<IActionResult> GetWeatherMobilityForecast(
+            uint? pagenumber,
+            int? pagesize,
+            string language,
+            string? locfilter,
+            PGGeoSearchResult geosearchresult,
+            CancellationToken cancellationToken)
+        {
+            return Ok();            
         }
 
         #endregion

@@ -1650,6 +1650,20 @@ namespace DataModel
         public string? Shortname { get; set; }
         public string Id { get; set; }
     }
+    public class WeatherForecast
+    {
+        public DateTime date { get; set; }
+        public int Id { get; set; }
+        public string? language { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        public IEnumerable<GpsInfo> GpsInfo { get; set; }
+
+        //
+
+    }
 
     #endregion   
 
