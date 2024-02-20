@@ -46,7 +46,10 @@ namespace Helper
                 "source",
                 "weatherhistory",
                 "odhmetadata",
-                "tag"
+                "tag",
+                "weatherdistrict",
+                "weather",
+                "weatherforecast"
             };
         }
 
@@ -93,6 +96,7 @@ namespace Helper
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
                 Weather or WeatherLinked => "weather",
                 BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
+                WeatherForecast or WeatherForecastLinked => "weatherforecast",
                 TourismMetaData => "odhmetadata",
                 TagLinked => "tag",                
                 _ => throw new Exception("not known odh type")
@@ -225,6 +229,9 @@ namespace Helper
                 "publisher" => typeof(PublisherLinked),
                 "source" => typeof(SourceLinked),
                 "weatherhistory" => typeof(WeatherHistoryLinked),
+                "weather" => typeof(WeatherLinked),
+                "weatherdistrict" => typeof(WeatherDistrictLinked),
+                "weatherforecast" => typeof(WeatherForecastLinked),
                 "odhmetadata" => typeof(TourismMetaData),
                 "tag" => typeof(TagLinked),
                 _ => throw new Exception("not known odh type")

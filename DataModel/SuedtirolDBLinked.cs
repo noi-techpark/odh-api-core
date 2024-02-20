@@ -1904,6 +1904,22 @@ namespace DataModel
         }
     }
 
+    public class WeatherForecastLinked : WeatherForecast, IMetaData
+    {
+        public Metadata? _Meta { get; set; }
+
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public string? Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Weather/Forecast/" + this.Id;
+            }
+        }
+
+        public LocationInfoLinked LocationInfo { get; set; }
+    }    
+
     public class ODHTagLinked : SmgTags, IMetaData
     {
         public Metadata? _Meta { get; set; }
