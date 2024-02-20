@@ -110,7 +110,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 List<string> typestocheck = new List<string>();
-                Dictionary<string, IEnumerable<string>> resultdict = new Dictionary<string, IEnumerable<string>>();
+                Dictionary<string, IEnumerable<DeprecationInfo>> resultdict = new Dictionary<string, IEnumerable<DeprecationInfo>>();
 
                 if (odhtype == null)
                     typestocheck = ODHTypeHelper.GetAllTypeStrings().ToList();
@@ -129,12 +129,5 @@ namespace OdhApiCore.Controllers
         }
         
         #endregion
-    }
-
-    public class DeprecatedInfo
-    {
-        public string? Name { get; set; }
-        public string? Type { get; set; }
-        public string? Description { get; set; }
     }
 }
