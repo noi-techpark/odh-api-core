@@ -66,6 +66,7 @@ namespace OdhApiCore
             //TODO Make a Referer Class/Method for the logic
             var referer = "not provided";
 
+            //TO CHECK make parameter referer if it is provided as source of truth
             if (context.Request.Headers.ContainsKey("Referer"))
                 referer = context.Request.Headers["Referer"].ToString();
             else

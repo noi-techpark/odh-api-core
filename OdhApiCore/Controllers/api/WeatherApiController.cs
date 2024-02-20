@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.Runtime;
+using Amazon.S3.Model;
+using Amazon.S3;
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
@@ -21,9 +24,15 @@ using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon;
+using Amazon.S3.Transfer;
+using SharpCompress.Common;
+using Schema.NET;
+using SIAG.Model;
 
 namespace OdhApiCore.Controllers
 {
@@ -741,7 +750,33 @@ namespace OdhApiCore.Controllers
             PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
-            return Ok();            
+
+            if (!settings.S3Config.ContainsKey("dc-meteorology-province-forecast"))
+                return NotFound("No weatherforecast found");
+
+            var s3bucket = settings.S3Config["dc-meteorology-province-forecast"];
+           
+            TransferUtility fileTransferUtility =
+                new TransferUtility(new AmazonS3Client(s3bucket.AccessKey, s3bucket.AccessSecretKey, Amazon.RegionEndpoint.EUWest1));
+
+            var request = new TransferUtilityDownloadRequest()
+            {
+                BucketName = s3bucket.Bucket,
+                Key = s3bucket.Filename,
+                FilePath = settings.JsonConfig.Jsondir + s3bucket.Filename
+            };
+            fileTransferUtility.Download(request);
+
+            var siagweatherforecast = new SiagWeatherForecastModel();
+
+
+            using (StreamReader r = new StreamReader(settings.JsonConfig.Jsondir + s3bucket.Filename))
+            {
+                string json = r.ReadToEnd();
+                siagweatherforecast = JsonConvert.DeserializeObject<SiagWeatherForecastModel>(json);
+            }            
+
+            return Ok(siagweatherforecast);            
         }
 
         #endregion
