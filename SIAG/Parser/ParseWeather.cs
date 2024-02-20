@@ -138,10 +138,10 @@ namespace SIAG
                 {
                     Conditions myconditiontoday = new Conditions();
 
-                    myconditiontoday.date = Convert.ToDateTime(today.Element("date").Value);
+                    myconditiontoday.Date = Convert.ToDateTime(today.Element("date").Value);
                     myconditiontoday.WeatherCondition = today.Element("conditions") != null ? today.Element("conditions").Value : "";
-                    myconditiontoday.WeatherImgurl = today.Element("imageURL") != null ? today.Element("imageURL").Value : "";
-                    myconditiontoday.Weatherdesc = today.Element("weather") != null ? today.Element("weather").Value : "";
+                    myconditiontoday.WeatherImgUrl = today.Element("imageURL") != null ? today.Element("imageURL").Value : "";
+                    myconditiontoday.WeatherDesc = today.Element("weather") != null ? today.Element("weather").Value : "";
                     myconditiontoday.Title = today.Element("title") != null ? today.Element("title").Value : "";
                     myconditiontoday.Temperatures = today.Element("temperatures") != null ? today.Element("temperatures").Value : "";
 
@@ -200,10 +200,10 @@ namespace SIAG
                     {
                         Conditions myconditiontomorrow = new Conditions();
 
-                        myconditiontomorrow.date = Convert.ToDateTime(tomorrow.Element("date").Value);
+                        myconditiontomorrow.Date = Convert.ToDateTime(tomorrow.Element("date").Value);
                         myconditiontomorrow.WeatherCondition = tomorrow.Element("conditions") != null ? tomorrow.Element("conditions").Value : "";
-                        myconditiontomorrow.WeatherImgurl = tomorrow.Element("imageURL") != null ? tomorrow.Element("imageURL").Value : "";
-                        myconditiontomorrow.Weatherdesc = tomorrow.Element("weather") != null ? tomorrow.Element("weather").Value : "";
+                        myconditiontomorrow.WeatherImgUrl = tomorrow.Element("imageURL") != null ? tomorrow.Element("imageURL").Value : "";
+                        myconditiontomorrow.WeatherDesc = tomorrow.Element("weather") != null ? tomorrow.Element("weather").Value : "";
                         myconditiontomorrow.Title = tomorrow.Element("title") != null ? tomorrow.Element("title").Value : "";
                         myconditiontomorrow.Temperatures = tomorrow.Element("temperatures") != null ? tomorrow.Element("temperatures").Value : "";
 
@@ -572,14 +572,14 @@ namespace SIAG
                 {
                     Conditions myconditiontoday = new Conditions();
                     
-                    myconditiontoday.date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
+                    myconditiontoday.Date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
                     myconditiontoday.WeatherCondition = siagweather.today.conditions;
-                    myconditiontoday.WeatherImgurl = siagweather.today.imageUrl;
-                    myconditiontoday.Weatherdesc = siagweather.today.weather;
+                    myconditiontoday.WeatherImgUrl = siagweather.today.imageUrl;
+                    myconditiontoday.WeatherDesc = siagweather.today.weather;
                     myconditiontoday.Title = siagweather.today.title;
                     myconditiontoday.Temperatures = siagweather.today.temperatures;
 
-                    myconditiontoday.bulletinStatus = siagweather.today.bulletinStatus;
+                    myconditiontoday.BulletinStatus = siagweather.today.bulletinStatus;
                     myconditiontoday.Reliability = siagweather.today.reliability.ToString();
                     myconditiontoday.TempMaxmax = Convert.ToInt32(siagweather.today.tMaxMax);
                     myconditiontoday.TempMaxmin = Convert.ToInt32(siagweather.today.tMaxMin);
@@ -634,14 +634,14 @@ namespace SIAG
                 {                    
                     Conditions myconditiontomorrow = new Conditions();
 
-                    myconditiontomorrow.date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour); //TODO CHeck
+                    myconditiontomorrow.Date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour); //TODO CHeck
                     myconditiontomorrow.WeatherCondition = siagweather.tomorrow.conditions;
-                    myconditiontomorrow.WeatherImgurl = siagweather.tomorrow.imageUrl;
-                    myconditiontomorrow.Weatherdesc = siagweather.tomorrow.weather;
+                    myconditiontomorrow.WeatherImgUrl = siagweather.tomorrow.imageUrl;
+                    myconditiontomorrow.WeatherDesc = siagweather.tomorrow.weather;
                     myconditiontomorrow.Title = siagweather.tomorrow.title;
                     myconditiontomorrow.Temperatures = siagweather.tomorrow.temperatures;
 
-                    myconditiontomorrow.bulletinStatus = siagweather.tomorrow.bulletinStatus;
+                    myconditiontomorrow.BulletinStatus = siagweather.tomorrow.bulletinStatus;
                     myconditiontomorrow.Reliability = siagweather.tomorrow.reliability.ToString();
                     myconditiontomorrow.TempMaxmax = Convert.ToInt32(siagweather.tomorrow.tMaxMax);
                     myconditiontomorrow.TempMaxmin = Convert.ToInt32(siagweather.tomorrow.tMaxMin);

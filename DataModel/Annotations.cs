@@ -10,21 +10,21 @@ using System.Threading.Tasks;
 
 namespace DataModel.Annotations
 {
+    //[AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+    //public class SwaggerDeprecatedAttribute : Attribute
+    //{
+    //    public SwaggerDeprecatedAttribute(string? description = null)
+    //    {
+    //        Description = description;
+    //    }
+
+    //    public string Description { get; }
+    //}
+
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
     public class SwaggerDeprecatedAttribute : Attribute
     {
-        public SwaggerDeprecatedAttribute(string? description = null)
-        {
-            Description = description;
-        }
-
-        public string Description { get; }
-    }
-
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
-    public class SwaggerDeprecatedV2Attribute : Attribute
-    {
-        public SwaggerDeprecatedV2Attribute(string? description = null, string? deprecationdate = null, string? removedafter = null)
+        public SwaggerDeprecatedAttribute(string? description = null, string? deprecationdate = null, string? removedafter = null)
         {
             Description = description;
 

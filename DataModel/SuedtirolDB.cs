@@ -1432,17 +1432,28 @@ namespace DataModel
 
     public class Conditions
     {
-        public DateTime date { get; set; }
+        [SwaggerDeprecated("Obsolete, use Date","2024-02-28","2024-12-31")]
+        public DateTime date { get { return this.Date; } }
+
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc { get { return this.Weatherdesc; } }
+
+        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
+
+        [SwaggerDeprecated("Obsolete, use BulletinStatus", "2024-02-28", "2024-12-31")]
+        public int bulletinStatus { get { return this.bulletinStatus; } }
+
+        public DateTime Date { get; set; }
+
         public string? Title { get; set; }
         public string? WeatherCondition { get; set; }
-        public string? WeatherImgurl { get; set; }
+        
         public string? Temperatures { get; set; }
-        public string? Weatherdesc { get; set; }
 
-        //Compatibility
-        //public string? WeatherCode { get { return this.Weathercode; } }
-        public string? WeatherDesc { get { return this.Weatherdesc; } }
-        public string? WeatherImgUrl { get { return this.WeatherImgurl; } }
+        public string? WeatherDesc { get; set; }
+        public string? WeatherImgUrl { get; set; }
+
 
         //NEW
         public string? Reliability { get; set; }
@@ -1450,7 +1461,7 @@ namespace DataModel
         public int TempMaxmin { get; set; }
         public int TempMinmax { get; set; }
         public int TempMinmin { get; set; }
-        public int bulletinStatus { get; set; }
+        public int BulletinStatus { get; set; }
     }
 
     public class Forecast
