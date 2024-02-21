@@ -35,7 +35,7 @@ namespace Helper
             //if (rolefilter.Count > 0)
             //    if (checkCC0) token = JsonTransformerMethods.FilterOutProperties(token, rolefilter);
 
-            if (fieldstohide.Count() > 0)
+            if (fieldstohide != null && fieldstohide.Count() > 0)
                 token = JsonTransformerMethods.FilterOutProperties(token, fieldstohide.ToList());
 
             if (filterClosedData) token = token.FilterClosedData();

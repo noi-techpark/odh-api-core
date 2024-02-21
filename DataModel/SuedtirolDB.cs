@@ -1729,8 +1729,7 @@ namespace DataModel
         public IEnumerable<GpsInfo> GpsInfo { get; set; }
 
         public string MunicipalityIstatCode { get; set; }
-        public string Municipality { get; set; }
-
+        
         public string Shortname { get; set; }
 
         public ICollection<Forecast24Hours> ForeCastDaily { get; set; }

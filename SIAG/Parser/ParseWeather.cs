@@ -892,7 +892,7 @@ namespace SIAG
 
             weatherforecast.Id = "forecast_" + siagforecast.code;
 
-            weatherforecast.Municipality = GetNameInLanguage(lang, siagforecast);
+            weatherforecast.Shortname = GetNameInLanguage(lang, siagforecast);
             weatherforecast.MunicipalityIstatCode = siagforecast.code;
 
             weatherforecast.ForeCastDaily = new List<Forecast24Hours>();
