@@ -1640,8 +1640,10 @@ namespace DataModel
         public int? Reliability { get; set; }
     }
 
-    public class WeatherRealTime
+    public class WeatherRealTime: IIdentifiable
     {
+        public string Id { get; set; }
+
         public double altitude { get; set; }
         [SwaggerSchema("Indicates whether the weather stations are: [1] in the valley, [2] gauge stations, [3] on the mountain")]
         public int categoryId { get; set; }
@@ -1709,16 +1711,16 @@ namespace DataModel
         public string? Shortname { get; set; }
         public string Id { get; set; }
     }
-    public class WeatherForecast
+    public class WeatherForecast : IIdentifiable, IImportDateassigneable, ILicenseInfo, IShortName
     {
         public DateTime Date { get; set; }
 
-  //      "absTempMin": -10,
+        //"absTempMin": -10,
 		//"absTempMax": 20,
 		//"absPrecMin": 0,
 		//"absPrecMax": 10
 
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string? Language { get; set; }
         public LicenseInfo? LicenseInfo { get; set; }
         public DateTime? FirstImport { get; set; }
@@ -1728,6 +1730,8 @@ namespace DataModel
 
         public string MunicipalityIstatCode { get; set; }
         public string Municipality { get; set; }
+
+        public string Shortname { get; set; }
 
         public ICollection<Forecast24Hours> ForeCastDaily { get; set; }
 
@@ -1739,26 +1743,26 @@ namespace DataModel
         public DateTime Date { get; set; }
 
         [SwaggerSchema("Minimum Temperature in °C")]
-        public int MinTemp { get; set; }
+        public int? MinTemp { get; set; }
         [SwaggerSchema("Maximum Temperature in °C")]
-        public int MaxTemp { get; set; }
+        public int? MaxTemp { get; set; }
         [SwaggerSchema("Sunshine Duration in Hours h")]
-        public int SunshineDuration { get; set; }
+        public int? SunshineDuration { get; set; }
 
         [SwaggerSchema("Maximimum Precipitation Probability in Percent %")]
-        public int PrecipitationProbabilityMax { get; set; }
+        public int? PrecipitationProbability { get; set; }
 
         [SwaggerSchema("24 hour Precipitation sum in mm")]
-        public int Precipitation { get; set; }
+        public int? Precipitation { get; set; }
 
         [SwaggerSchema("Weather Code")]
-        public string WeatherCode { get; set; }
+        public string? WeatherCode { get; set; }
 
         [SwaggerSchema("Weather Desciption")]
-        public string WeatherDesc { get; set; }
+        public string? WeatherDesc { get; set; }
 
         [SwaggerSchema("Weather ImageUrl")]
-        public string WeatherImgUrl { get; set; }
+        public string? WeatherImgUrl { get; set; }
     }
 
     public class Forecast3Hours
@@ -1766,28 +1770,28 @@ namespace DataModel
         public DateTime Date { get; set; }
 
         [SwaggerSchema("Temperature in °C")]
-        public float Temperature { get; set; }
+        public float? Temperature { get; set; }
 
         [SwaggerSchema("Precipitation Probability in Percent %")]
-        public int PrecipitationProbability { get; set; }
+        public int? PrecipitationProbability { get; set; }
 
         [SwaggerSchema("Precipitation in mm")]
-        public int Precipitation { get; set; }
+        public float? Precipitation { get; set; }
 
         [SwaggerSchema("Weather Code")]
-        public string WeatherCode { get; set; }
+        public string? WeatherCode { get; set; }
 
         [SwaggerSchema("Weather Code")]
-        public string WeatherDesc { get; set; }
+        public string? WeatherDesc { get; set; }
 
         [SwaggerSchema("Weather ImageUrl")]
-        public string WeatherImgUrl { get; set; }
+        public string? WeatherImgUrl { get; set; }
 
         [SwaggerSchema("WindDirection in °")]
-        public int WindDirection { get; set; }
+        public int? WindDirection { get; set; }
 
         [SwaggerSchema("WindSpeed in m/s")]
-        public int WindSpeed { get; set; }
+        public int? WindSpeed { get; set; }
     }
 
 

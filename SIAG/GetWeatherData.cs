@@ -4,6 +4,7 @@
 
 using DataModel;
 using Newtonsoft.Json;
+using SIAG.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -295,5 +296,21 @@ namespace SIAG
                 return null;
 
         }
+
+        public static async Task<IEnumerable<WeatherForecastLinked?>> GetWeatherForeCastAsync(string lang, ICollection<string> municipalitycode, SiagWeatherForecastModel siagweatherforecast)
+        {
+            var weatherforecastpermun = new List<WeatherForecastLinked>();
+
+            foreach(var municipality in siagweatherforecast.municipalities)
+            {
+                if((municipalitycode == null || municipalitycode.Count == 0) || municipalitycode.Contains(municipality.code))
+                {
+                    weatherforecastpermun.Add(ParseWeather.ParseWeatherForecastFromJsonFile(lang, municipality, siagweatherforecast.info));
+                }                
+            }
+
+            return weatherforecastpermun;
+        }
+
     }
 }

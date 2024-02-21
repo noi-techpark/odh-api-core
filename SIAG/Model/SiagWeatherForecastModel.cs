@@ -12,11 +12,11 @@ namespace SIAG.Model
 {    
     public class SiagWeatherForecastModel
     {
-        public Info info { get; set; }
-        public Municipality[] municipalities { get; set; }
+        public SiagForecastInfo info { get; set; }
+        public SiagMunicipality[] municipalities { get; set; }
     }
 
-    public class Info
+    public class SiagForecastInfo
     {
         public string model { get; set; }
         public DateTime currentModelRun { get; set; }
@@ -29,7 +29,7 @@ namespace SIAG.Model
         public int absPrecMax { get; set; }
     }
 
-    public class Municipality
+    public class SiagMunicipality
     {
         public string code { get; set; }
         public string nameDe { get; set; }
@@ -86,7 +86,6 @@ namespace SIAG.Model
         public Datum[] data { get; set; }
     }
     
-
     public class Temp3
     {
         public string nameDe { get; set; }
@@ -97,7 +96,6 @@ namespace SIAG.Model
         public DatumFloat[] data { get; set; }
     }
     
-
     public class Ssd24
     {
         public string nameDe { get; set; }
@@ -128,7 +126,6 @@ namespace SIAG.Model
         public Datum[] data { get; set; }
     }
 
-
     public class Precsum3
     {
         public string nameDe { get; set; }
@@ -149,7 +146,6 @@ namespace SIAG.Model
         public Datum[] data { get; set; }
     }
 
-
     public class Symbols3
     {
         public string nameDe { get; set; }
@@ -158,7 +154,6 @@ namespace SIAG.Model
         public string nameRm { get; set; }
         public DatumString[] data { get; set; }
     }
-
 
     public class Winddir3
     {
@@ -169,7 +164,6 @@ namespace SIAG.Model
         public string nameRm { get; set; }
         public string unit { get; set; }
     }
-
 
     public class Windspd3
     {
@@ -189,6 +183,4 @@ namespace SIAG.Model
         public string nameEn { get; set; }
         public string nameRm { get; set; }
     }
-
-
 }

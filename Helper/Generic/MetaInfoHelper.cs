@@ -73,6 +73,8 @@ namespace Helper
                 WeatherHistoryLinked wh => GetMetaDataForWeatherHistory(wh),
                 WeatherLinked we => GetMetaDataForWeather(we),
                 WeatherDistrictLinked wd => GetMetaDataForWeatherDistrict(wd),
+                WeatherRealTimeLinked wr => GetMetaDataForWeatherRealTime(wr),
+                WeatherForecastLinked wf => GetMetaDataForWeatherForecast(wf),
                 TourismMetaData tm => GetMetaDataForMetaData(tm),
                 _ => throw new Exception("not known odh type")
             };            
@@ -326,6 +328,20 @@ namespace Helper
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherDistrictLinked>(data);
 
             return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.date, Source = "siag", Reduced = false };
+        }
+
+        public static Metadata GetMetaDataForWeatherRealTime(WeatherRealTimeLinked data)
+        {
+            string type = ODHTypeHelper.TranslateType2TypeString<WeatherRealTimeLinked>(data);
+
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.lastUpdated, Source = "siag", Reduced = false };
+        }
+
+        public static Metadata GetMetaDataForWeatherForecast(WeatherForecastLinked data)
+        {
+            string type = ODHTypeHelper.TranslateType2TypeString<WeatherForecastLinked>(data);
+
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };
         }
 
         public static Metadata GetMetaDataForMetaData(TourismMetaData data)

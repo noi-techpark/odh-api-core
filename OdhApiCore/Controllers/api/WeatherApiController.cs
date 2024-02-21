@@ -311,7 +311,7 @@ namespace OdhApiCore.Controllers
             {
                 var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-                return await GetWeatherMobilityForecast(pagenumber, pagesize, language ?? "en", locfilter, geosearchresult, cancellationToken);
+                return await GetWeatherForecastFromFile(pagenumber, pagesize, language ?? "en", locfilter, geosearchresult, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -742,7 +742,7 @@ namespace OdhApiCore.Controllers
         }
 
         /// GET Bezirkswetter by LocFilter LIVE Request
-        private async Task<IActionResult> GetWeatherMobilityForecast(
+        private async Task<IActionResult> GetWeatherForecastFromFile(
             uint? pagenumber,
             int? pagesize,
             string language,
@@ -774,9 +774,38 @@ namespace OdhApiCore.Controllers
             {
                 string json = r.ReadToEnd();
                 siagweatherforecast = JsonConvert.DeserializeObject<SiagWeatherForecastModel>(json);
-            }            
+            }
 
-            return Ok(siagweatherforecast);            
+            //Parse
+            var parsed = await GetWeatherData.GetWeatherForeCastAsync(language, null, siagweatherforecast);
+
+            foreach(var forecast in parsed)
+            {
+                if(forecast != null)
+                {
+                    forecast._Meta = MetadataHelper.GetMetadataobject<WeatherForecastLinked>(forecast);                    
+                }
+                    
+            }
+
+            if (pagenumber != null)
+            {
+                return Ok(ResponseHelpers.GetResult(
+                   pagenumber.Value,
+                   1,
+                   (uint)parsed.Count(),
+                   null,
+                   parsed,
+                   Url));
+            }
+            else
+            {
+                //Compatibility Hack
+                if (parsed.Count() == 1)
+                    return Ok(parsed.FirstOrDefault());
+                else
+                    return Ok(parsed);
+            }
         }
 
         #endregion

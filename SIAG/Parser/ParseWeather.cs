@@ -2,9 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.Auth.AccessControlPolicy;
 using DataModel;
 using Helper;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using SIAG.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -461,7 +464,7 @@ namespace SIAG
         public static WeatherLinked ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson, string source)
         {
             var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(weatherresponsejson);
-            
+
             try
             {
                 WeatherLinked myweather = new WeatherLinked();
@@ -564,14 +567,14 @@ namespace SIAG
                     mymountaintomorrow.WindDesc = siagweather.mountainTomorrow.wind.description;
                     mymountaintomorrow.WindImgUrl = siagweather.mountainTomorrow.wind.imageUrl;
 
-                    myweather.Mountain.Add(mymountaintomorrow);                   
+                    myweather.Mountain.Add(mymountaintomorrow);
                 }
 
                 //Today Info
                 if (siagweather.today != null)
                 {
                     Conditions myconditiontoday = new Conditions();
-                    
+
                     myconditiontoday.Date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
                     myconditiontoday.WeatherCondition = siagweather.today.conditions;
                     myconditiontoday.WeatherImgUrl = siagweather.today.imageUrl;
@@ -621,7 +624,7 @@ namespace SIAG
                             mystationdatatoday.WeatherImgUrl = stationtoday.symbol.imageUrl;
                             mystationdatatoday.MaxTemp = Convert.ToInt32(stationtoday.max);
                             mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.min);
-                            
+
                             myweather.Stationdata.Add(mystationdatatoday);
 
                             i++;
@@ -631,7 +634,7 @@ namespace SIAG
 
                 //Tomorrow info
                 if (siagweather.tomorrow != null)
-                {                    
+                {
                     Conditions myconditiontomorrow = new Conditions();
 
                     myconditiontomorrow.Date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour); //TODO CHeck
@@ -648,14 +651,14 @@ namespace SIAG
                     myconditiontomorrow.TempMinmax = Convert.ToInt32(siagweather.tomorrow.tMinMax);
                     myconditiontomorrow.TempMinmin = Convert.ToInt32(siagweather.tomorrow.tMinMin);
 
-                    myweather.Conditions.Add(myconditiontomorrow);                 
+                    myweather.Conditions.Add(myconditiontomorrow);
                 }
 
                 //Stationdata today
                 if (siagweather.tomorrow != null)
-                {                    
+                {
                     var stationstomorrow = siagweather.tomorrow.stationData;
-                    
+
                     if (stationstomorrow != null)
                     {
                         int j = 1;
@@ -690,7 +693,7 @@ namespace SIAG
 
                             j++;
                         }
-                    }                    
+                    }
                 }
 
                 return myweather;
@@ -724,7 +727,7 @@ namespace SIAG
 
                     if (stationstoday != null)
                     {
-                      
+
                         var stationtoday = stationstoday[stationindex - 1];
 
                         DataModel.Stationdata mystationdatatoday = new DataModel.Stationdata();
@@ -799,7 +802,7 @@ namespace SIAG
             catch (Exception)
             {
                 return null;
-            }         
+            }
 
         }
 
@@ -870,7 +873,300 @@ namespace SIAG
                 return null;
             }
 
-          
+
         }
+
+        public static WeatherForecastLinked ParseWeatherForecastFromJsonFile(string lang, SiagMunicipality siagforecast, SiagForecastInfo siagforecastinfo)
+        {
+            WeatherForecastLinked weatherforecast = new WeatherForecastLinked();
+
+            weatherforecast.Date = siagforecastinfo.currentModelRun;
+            weatherforecast.FirstImport = siagforecastinfo.fileCreationDate;
+            weatherforecast.LastChange = siagforecastinfo.fileCreationDate;
+            weatherforecast.Language = lang;
+            weatherforecast.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather("province");
+
+            //Municipalityinfo merge?
+            //weatherforecast.GpsInfo
+            //weatherforecast.LocationInfo
+
+            weatherforecast.Id = "forecast_" + siagforecast.code;
+
+            weatherforecast.Municipality = GetNameInLanguage(lang, siagforecast);
+            weatherforecast.MunicipalityIstatCode = siagforecast.code;
+
+            weatherforecast.ForeCastDaily = new List<Forecast24Hours>();
+
+            //Forecast24Hours
+            foreach (var measurement24 in GetAllPossible24hDates(siagforecast))
+            {
+                Forecast24Hours forecast24Hours = new Forecast24Hours();
+
+                forecast24Hours.Date = measurement24.Key;
+                
+                foreach(var grouped in measurement24)
+                {
+                    if (grouped.forecastdata.ContainsKey("ssd24"))
+                        forecast24Hours.SunshineDuration = grouped.forecastdata["ssd24"];
+                    if(grouped.forecastdata.ContainsKey("tempMin24"))
+                        forecast24Hours.MinTemp = grouped.forecastdata["tempMin24"];
+                    if (grouped.forecastdata.ContainsKey("tempMax24"))
+                        forecast24Hours.MaxTemp = grouped.forecastdata["tempMax24"];
+                    if(grouped.forecastdata.ContainsKey("precProb24"))
+                        forecast24Hours.PrecipitationProbability =  grouped.forecastdata["precProb24"];
+                    if (grouped.forecastdata.ContainsKey("precSum24"))
+                        forecast24Hours.Precipitation = grouped.forecastdata["precSum24"];
+                    if (grouped.forecastdatastr.ContainsKey("symbols24")) 
+                        forecast24Hours.WeatherCode = GetWeatherCodeTrimmed(grouped.forecastdatastr["symbols24"]);
+                    if (grouped.forecastdatastr.ContainsKey("symbols24")) 
+                        forecast24Hours.WeatherImgUrl = String.Format("https://daten.buergernetz.bz.it/services/weather/graphics/icons/imgsource/wetter/icon_{0}.png", GetWeatherCodeAsInteger(grouped.forecastdatastr["symbols24"]));
+                    if (grouped.forecastdatastr.ContainsKey("symbols24")) 
+                        forecast24Hours.WeatherDesc = GetMappedWeatherDesc(lang, grouped.forecastdatastr["symbols24"]);
+                }
+
+                weatherforecast.ForeCastDaily.Add(forecast24Hours);
+            }
+
+            weatherforecast.Forecast3HoursInterval = new List<Forecast3Hours>();
+            //Forecast3Hours
+            foreach (var measurement3 in GetAllPossible3hDates(siagforecast))
+            {
+                Forecast3Hours forecast3Hours = new Forecast3Hours();
+
+                forecast3Hours.Date = measurement3.Key;
+
+                foreach(var grouped in  measurement3)
+                {
+                    if (grouped.forecastdatafloat.ContainsKey("precSum3")) 
+                        forecast3Hours.Precipitation =  grouped.forecastdatafloat["precSum3"];
+                    if (grouped.forecastdata.ContainsKey("precProb3")) 
+                        forecast3Hours.PrecipitationProbability =  grouped.forecastdata["precProb3"];
+                    if (grouped.forecastdatafloat.ContainsKey("temp3")) 
+                        forecast3Hours.Temperature =  grouped.forecastdatafloat["temp3"];
+                    if (grouped.forecastdata.ContainsKey("windDir3")) 
+                        forecast3Hours.WindDirection =  grouped.forecastdata["windDir3"];
+                    if (grouped.forecastdata.ContainsKey("windSpd3")) 
+                        forecast3Hours.WindSpeed =  grouped.forecastdata["windSpd3"];
+                    if (grouped.forecastdatastr.ContainsKey("symbols3")) 
+                        forecast3Hours.WeatherCode =  GetWeatherCodeTrimmed(grouped.forecastdatastr["symbols3"]);
+                    if (grouped.forecastdatastr.ContainsKey("symbols3")) 
+                        forecast3Hours.WeatherImgUrl =  String.Format("https://daten.buergernetz.bz.it/services/weather/graphics/icons/imgsource/wetter/icon_{0}.png", GetWeatherCodeAsInteger(grouped.forecastdatastr["symbols3"]));
+                    if (grouped.forecastdatastr.ContainsKey("symbols3")) 
+                        forecast3Hours.WeatherDesc =  GetMappedWeatherDesc(lang, grouped.forecastdatastr["symbols3"]);
+                }
+
+                weatherforecast.Forecast3HoursInterval.Add(forecast3Hours);
+            }
+            
+            return weatherforecast;
+        }
+
+        #region Forecast Helpers
+        public static string GetNameInLanguage(string lang, SiagMunicipality siagforecast)
+        {
+            if (lang == "de")
+                return siagforecast.nameDe;
+            else if (lang == "it")
+                return siagforecast.nameIt;
+            else if (lang == "en")
+                return siagforecast.nameEn;
+            else if (lang == "ld")
+                return siagforecast.nameRm;
+            else
+                return siagforecast.nameEn;
+        }
+
+        public static string GetWeatherCodeTrimmed(string weathercode)
+        {            
+            if (weathercode.Contains("_n"))
+                return weathercode.Replace("_n", "");
+            if (weathercode.Contains("_d"))
+                return weathercode.Replace("_d", "");
+            else
+                return weathercode;
+        }
+
+        public static string GetWeatherCodeAsInteger(string weathercode)
+        {
+            var weathercodetoconvert = GetWeatherCodeTrimmed(weathercode);
+
+            if (!String.IsNullOrEmpty(weathercodetoconvert) && weathercodetoconvert.Length == 1)
+            {
+                var charr = weathercodetoconvert.ToCharArray();
+
+                int index = (int)(charr.FirstOrDefault()) % 32;
+                //int index = char.ToUpper(c) - 64;
+
+                return index.ToString();
+            }
+
+            return "";
+        }
+
+        public static IEnumerable<IGrouping<DateTime, SiagForecastMeasurement>> GetAllPossible24hDates(SiagMunicipality siagforecast)
+        {
+            var mylist = new List<SiagForecastMeasurement>();
+
+            foreach(var data in siagforecast.tempMin24.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "tempMin24", data.value));
+            }
+            foreach (var data in siagforecast.tempMax24.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "tempMax24", data.value));
+            }
+            foreach (var data in siagforecast.ssd24.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "ssd24", data.value));
+            }
+            foreach (var data in siagforecast.precProb24.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "precProb24", data.value));
+            }
+            foreach (var data in siagforecast.precSum24.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "precSum24", data.value));
+            }
+            foreach (var data in siagforecast.symbols24.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "symbols24", null, null, data.value));
+            }
+
+            return mylist.OrderBy(x => x.forecastdate).GroupBy(x => x.forecastdate).ToList();
+        }
+
+        public static IEnumerable<IGrouping<DateTime, SiagForecastMeasurement>> GetAllPossible3hDates(SiagMunicipality siagforecast)
+        {
+            var mylist = new List<SiagForecastMeasurement>();
+
+            foreach (var data in siagforecast.temp3.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "temp3", null, data.value));
+            }
+            foreach (var data in siagforecast.precProb3.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "precProb3", data.value));
+            }
+            foreach (var data in siagforecast.precSum3.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "precSum3", null, data.value));
+            }
+            foreach (var data in siagforecast.windSpd3.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "windSpd3", data.value));
+            }
+            foreach (var data in siagforecast.windDir3.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "windDir3", data.value));
+            }
+            foreach (var data in siagforecast.symbols3.data)
+            {
+                mylist.Add(new SiagForecastMeasurement(data.date, "symbols3", null, null, data.value));
+            }
+
+            return mylist.OrderBy(x => x.forecastdate).GroupBy(x => x.forecastdate).ToList();
+        }
+
+        public static string GetMappedWeatherDesc(string lang, string code)
+        {
+            return (GetWeatherCodeTrimmed(code), lang) switch
+            {
+                ("a","de") => "Wolkenlos",
+                ("a", "it") => "Sereno",
+                ("a", "en") => "sunny",
+
+                ("b", "de") => "Heiter",
+                ("b", "it") => "Poco Nuvoloso",
+                ("b", "en") => "partly cloudy",
+
+                ("c", "de") => "Wolkig",
+                ("c", "it") => "Nuvoloso",
+                ("c", "en") => "cloudy",
+
+                ("d", "de") => "Stark bewölkt",
+                ("d", "it") => "Molto nuvoloso",
+                ("d", "en") => "very cloudy",
+
+                ("e", "de") => "Bedeckt",
+                ("e", "it") => "Coperto",
+                ("e", "en") => "overcast",
+
+                ("f", "de") => "Wolkig, mäßiger Regen",
+                ("f", "it") => "Nuvoloso, piogge moderate",
+                ("f", "en") => "cloudy with moderate rain",
+
+                ("g", "de") => "Wolkig, starker Regen",
+                ("g", "it") => "Nuvoloso, piogge intense",
+                ("g", "en") => "cloudy with intense rain",
+
+                ("h", "de") => "Bedeckt, mäßiger Regen",
+                ("h", "it") => "Coperto, piogge moderate",
+                ("h", "en") => "overcast with moderate rain",
+
+                ("i", "de") => "Bedeckt, starker Regen",
+                ("i", "it") => "Coperto, piogge intense",
+                ("i", "en") => "overcast with intense rain",
+
+                ("j", "de") => "Bedeckt, leichter Regen",
+                ("j", "it") => "Coperto, piogge deboli",
+                ("j", "en") => "overcast with light rain",
+
+                ("k", "de") => "Durchscheinende Bewölkung",
+                ("k", "it") => "Nuvolositá translucida",
+                ("k", "en") => "translucent cloudy",
+
+                ("l", "de") => "Wolkig, leichter Schneefall",
+                ("l", "it") => "Nuvoloso, nevicate deboli",
+                ("l", "en") => "cloudy with light snow",
+
+                ("m", "de") => "Wolkig, starker Schneefall",
+                ("m", "it") => "Nuvoloso, nevicate intense",
+                ("m", "en") => "cloudy with heavy snow",
+
+                ("n", "de") => "Bedeckt, leichter Schneefall",
+                ("n", "it") => "Coperto, nevicate deboli",
+                ("n", "en") => "overcast with light snow",
+
+                ("o", "de") => "Bedeckt, mäßiger Schneefall",
+                ("o", "it") => "Coperto, nevicate moderate",
+                ("o", "en") => "overcast with moderate snow",
+
+                _ => ""
+            };
+
+        }
+
+        #endregion
+    }
+
+    public class SiagForecastMeasurement
+    {
+        public SiagForecastMeasurement(DateTime _forecastdate, string _type, int? _forecastvalue, float? _forecastvaluefloat = null, string? _forecastvaluestr = null)
+        {
+            forecastdate = _forecastdate;
+            if (_forecastvalue != null)
+                forecastdata = new Dictionary<string, int> { { _type, _forecastvalue.Value } };
+            else
+                forecastdata = new Dictionary<string, int>();
+
+
+            if (_forecastvaluestr != null)
+                forecastdatastr = new Dictionary<string, string> { { _type, _forecastvaluestr } };
+            else
+                forecastdatastr = new Dictionary<string, string>();
+
+
+            if (_forecastvaluefloat != null)
+                forecastdatafloat= new Dictionary<string, float> { { _type, _forecastvaluefloat.Value } };
+            else
+                forecastdatafloat = new Dictionary<string, float>();
+        }
+
+        public DateTime forecastdate { get; set; }
+
+        public Dictionary<string, int> forecastdata { get; set; }
+
+        public Dictionary<string, float> forecastdatafloat { get; set; }
+        public Dictionary<string, string> forecastdatastr { get; set; }
     }
 }

@@ -1904,6 +1904,11 @@ namespace DataModel
         }
     }
 
+    public class WeatherRealTimeLinked: WeatherRealTime, IMetaData
+    {
+        public Metadata? _Meta { get; set; }
+    }
+
     public class WeatherForecastLinked : WeatherForecast, IMetaData
     {
         public Metadata? _Meta { get; set; }
