@@ -1131,6 +1131,46 @@ namespace SIAG
                 ("o", "it") => "Coperto, nevicate moderate",
                 ("o", "en") => "overcast with moderate snow",
 
+                ("p", "de") => "Bedeckt, starker Schneefall",
+                ("p", "it") => "Coperto, nevicate intense",
+                ("p", "en") => "overcast with intense snow",
+
+                ("q", "de") => "Wolkig, Schneeregen",
+                ("q", "it") => "Nuvoloso, piogga e neve",
+                ("q", "en") => "cloudy with rain and snow",
+
+                ("r", "de") => "Bedeckt, Schneeregen",
+                ("r", "it") => "Coperto, pioggia e neve",
+                ("r", "en") => "overcast with rain and snow",
+
+                ("s", "de") => "Hochnebel",
+                ("s", "it") => "Nuvolosità bassa",
+                ("s", "en") => "low cloudiness",
+
+                ("t", "de") => "Nebel",
+                ("t", "it") => "Nebbia",
+                ("t", "en") => "Fog",
+
+                ("u", "de") => "Wolkig, Gewitter mit mäßigen Schauern",
+                ("u", "it") => "Nuvoloso, temporali con moderati rovesci",
+                ("u", "en") => "cloudy, thunderstorms with moderate showers",
+
+                ("v", "de") => "Bedeckt, Gewitter mit starken Schauern",
+                ("v", "it") => "Coperto, temporali con rovesci intensi",
+                ("v", "en") => "cloudy, thunderstorms with intense showers",
+
+                ("w", "de") => "Wolkig, Gewitter mit mäßigen Schneeregenschauern",
+                ("w", "it") => "Nuvoloso, temporali con moderati rovesci nevosi e piovosi",
+                ("w", "en") => "cloudy, thunderstorms with moderate snowy and rainy showers",
+
+                ("x", "de") => "Bedeckt, Gewitter mit starken Schneeregenschauern",
+                ("x", "it") => "Coperto, temporali con intensi rovesci nevosi e piovosi",
+                ("x", "en") => "cloudy, thunderstorms with intense snowy and rainy showers",
+
+                ("y", "de") => "Wolkig, Gewitter mit mäßigen Schneeschauern",
+                ("y", "it") => "Nuvoloso, temporali con moderati rovesci nevosi",
+                ("y", "en") => "cloudy, thunderstorms with moderate snowy showers",
+
                 _ => ""
             };
 
