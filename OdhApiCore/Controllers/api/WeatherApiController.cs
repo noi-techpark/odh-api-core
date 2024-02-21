@@ -35,6 +35,7 @@ using Schema.NET;
 using SIAG.Model;
 using Humanizer.Localisation;
 using System.Drawing;
+using Geo.Measure;
 
 namespace OdhApiCore.Controllers
 {
@@ -761,18 +762,33 @@ namespace OdhApiCore.Controllers
             IEnumerable<MunicipalityLinked> municipalities = new List<MunicipalityLinked>();
 
             List<string> municipalitycodes = new List<string>();
+            List<string> municipalityids = new List<string>();
+
+            if (locfilter != null && locfilter.Contains("mun"))
+                municipalityids = CommonListCreator.CreateDistrictIdList(locfilter, "mun");
 
             //Generate from GPS
-            //generate from locfilter
+            var query =
+                QueryFactory.Query()
+                   .Select("data->>'IstatNumber'")
+                   .From("municipalities")
+                   .When(municipalityids.Count > 0, x => x.WhereIn("id", municipalityids) )
+                   .GeoSearchFilterAndOrderby_GeneratedColumns(geosearchresult);
 
+
+            municipalities = await query.GetObjectListAsync<MunicipalityLinked>();
+
+            //generate from locfilter
             if (includemunicipalities)
             {
-                var query =
+                var querytoinclude =
                 QueryFactory.Query()
                    .Select("data")
-                   .From("municipalities");
+                   .From("municipalities")
+                   .GeoSearchFilterAndOrderby_GeneratedColumns(geosearchresult);
 
-                municipalities = await query.GetObjectListAsync<MunicipalityLinked>();
+
+                municipalities = await querytoinclude.GetObjectListAsync<MunicipalityLinked>();
             }
 
             //Get Data and parse
