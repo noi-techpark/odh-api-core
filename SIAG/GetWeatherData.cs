@@ -159,7 +159,7 @@ namespace SIAG
             return bezirksweatherlist;
         }
 
-        public static async Task<IEnumerable<WeatherRealTime>> GetCurrentRealTimeWEatherAsync(string lang)
+        public static async Task<IEnumerable<WeatherRealTimeLinked>> GetCurrentRealTimeWEatherAsync(string lang)
         {
             HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
 
@@ -169,9 +169,9 @@ namespace SIAG
             dynamic? stuff = JsonConvert.DeserializeObject(weatherresponsetask);
 
             if (stuff is not { })
-                return Enumerable.Empty<WeatherRealTime>();
+                return Enumerable.Empty<WeatherRealTimeLinked>();
 
-            List<WeatherRealTime> myrealtimeweatherlist = new List<WeatherRealTime>();
+            List<WeatherRealTimeLinked> myrealtimeweatherlist = new List<WeatherRealTimeLinked>();
 
             CultureInfo myculture = new CultureInfo("de-DE");
 
@@ -179,9 +179,8 @@ namespace SIAG
             {
                 if (row.t != "--")
                 {
-
-                    WeatherRealTime myrealtimeweather = new WeatherRealTime();
-
+                    WeatherRealTimeLinked myrealtimeweather = new WeatherRealTimeLinked();
+                    myrealtimeweather.Id = row.id;
                     myrealtimeweather.altitude = Convert.ToDouble(row.altitude, CultureInfo.InvariantCulture);
                     myrealtimeweather.latitude = Convert.ToDouble(row.latitude.Value.Replace(',', '.'), CultureInfo.InvariantCulture);
                     myrealtimeweather.longitude = Convert.ToDouble(row.longitude.Value.Replace(',', '.'), CultureInfo.InvariantCulture);
@@ -229,7 +228,7 @@ namespace SIAG
             return myrealtimeweatherlist.ToList();
         }
 
-        public static async Task<WeatherRealTime?> GetCurrentRealTimeWEatherSingleAsync(string lang, string stationid)
+        public static async Task<WeatherRealTimeLinked?> GetCurrentRealTimeWEatherSingleAsync(string lang, string stationid)
         {
             HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
 
@@ -238,7 +237,7 @@ namespace SIAG
 
             dynamic? stuff = JsonConvert.DeserializeObject(weatherresponsetask);
 
-            List<WeatherRealTime> myrealtimeweatherlist = new List<WeatherRealTime>();
+            List<WeatherRealTimeLinked> myrealtimeweatherlist = new List<WeatherRealTimeLinked>();
 
             CultureInfo myculture = new CultureInfo("de-DE");
 
@@ -247,9 +246,9 @@ namespace SIAG
 
             if (row?.t != "--")
             {
+                WeatherRealTimeLinked myrealtimeweather = new WeatherRealTimeLinked();
 
-                WeatherRealTime myrealtimeweather = new WeatherRealTime();
-
+                myrealtimeweather.Id = row.id;
                 myrealtimeweather.altitude = Convert.ToDouble(row.altitude, CultureInfo.InvariantCulture);
                 myrealtimeweather.latitude = Convert.ToDouble(row.latitude.Value.Replace(',', '.'), CultureInfo.InvariantCulture);
                 myrealtimeweather.longitude = Convert.ToDouble(row.longitude.Value.Replace(',', '.'), CultureInfo.InvariantCulture);

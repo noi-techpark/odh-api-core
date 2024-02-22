@@ -97,6 +97,7 @@ namespace Helper
                 Weather or WeatherLinked => "weather",
                 BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
                 WeatherForecast or WeatherForecastLinked => "weatherforecast",
+                WeatherRealTimeLinked => "weatherrealtime",
                 TourismMetaData => "odhmetadata",
                 TagLinked => "tag",                
                 _ => throw new Exception("not known odh type")
@@ -232,6 +233,7 @@ namespace Helper
                 "weather" => typeof(WeatherLinked),
                 "weatherdistrict" => typeof(WeatherDistrictLinked),
                 "weatherforecast" => typeof(WeatherForecastLinked),
+                "weatherrealtime" => typeof(WeatherRealTimeLinked),
                 "odhmetadata" => typeof(TourismMetaData),
                 "tag" => typeof(TagLinked),
                 _ => throw new Exception("not known odh type")
@@ -334,8 +336,6 @@ namespace Helper
         //TODO Migrate from Metagenerator
 
         #endregion
-
-       
 
         #region TypeIdConverter
 
