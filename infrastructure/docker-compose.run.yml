@@ -22,7 +22,7 @@ services:
       ASPNETCORE_EBMSConfig__ServiceUrl: ${EBMS_SERVICEURL}
       ASPNETCORE_DSSConfig__Username: ${DSS_USER}
       ASPNETCORE_DSSConfig__Password: ${DSS_PSWD}
-      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}
+      ASPNETCORE_DSSConfig__ServiceUrl: ${DSS_SERVICEURL}      
       ASPNETCORE_A22Config__Username: ${A22_USER}
       ASPNETCORE_A22Config__Password: ${A22_PSWD}
       ASPNETCORE_A22Config__ServiceUrl: ${A22_SERVICEURL}
@@ -46,7 +46,7 @@ services:
       ASPNETCORE_NinjaConfig__ServiceUrl: ${NINJA_SERVICEURL}
       ASPNETCORE_LoopTecConfig__Username: ${LOOPTEC_USER}
       ASPNETCORE_LoopTecConfig__Password: ${LOOPTEC_PSWD}
-      ASPNETCORE_LoopTecConfig__ServiceUrl: ${LOOPTEC_SERVICEURL}
+      ASPNETCORE_LoopTecConfig__ServiceUrl: ${LOOPTEC_SERVICEURL}            
       ASPNETCORE_XmlConfig__Xmldir: ${XMLDIR}
       ASPNETCORE_XmlConfig__XmldirWeather: ${XMLDIR}
       ASPNETCORE_S3ImageresizerConfig__Url: ${IMG_URL}
@@ -61,15 +61,12 @@ services:
       ASPNETCORE_DataBrowserConfig__Url: ${DATABROWSER_URL}
       ASPNETCORE_RavenConfig__ServiceUrl: ${RAVEN_SERVICEURL}
       ASPNETCORE_RavenConfig__Username: ${RAVEN_USER}
-      ASPNETCORE_RavenConfig__Password: ${RAVEN_PSWD}
+      ASPNETCORE_RavenConfig__Password: ${RAVEN_PSWD}      
       ASPNETCORE_FCMConfig__noicommunityapp__ServerKey: ${NOICOMMUNITY_SERVERKEY}
       ASPNETCORE_FCMConfig__noicommunityapp__SenderId: ${NOICOMMUNITY_SENDERID}
       ASPNETCORE_NotifierConfig__idm-marketplace__Url: ${MARKETPLACE_PUSH_URL}
       ASPNETCORE_NotifierConfig__idm-marketplace__User: ${MARKETPLACE_PUSH_USER}
       ASPNETCORE_NotifierConfig__idm-marketplace__Password: ${MARKETPLACE_PUSH_PSWD}
-      ASPNETCORE_S3Config__dc-meteorology-province-forecast__Filename: ${S3_WEATHERFORECAST_FILENAME}
-      ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessKey: ${S3_WEATHERFORECAST_ACCESSKEY}
-      ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessSecretKey: ${S3_WEATHERFORECAST_SECRET}
     restart: unless-stopped
     ports:
       - "${SERVER_PORT}:80"
