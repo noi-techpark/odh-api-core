@@ -135,6 +135,9 @@ jobs:
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
           X_RAVEN_PSWD: ${{ secrets.RAVEN_PSWD_TEST }}         
           X_API_URL: ${{ env.API_URL }}
+          X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
+          X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
+          X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -246,6 +249,10 @@ jobs:
           X_MARKETPLACE_PUSH_URL: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_URL }}
           X_MARKETPLACE_PUSH_USER: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_USERNAME }}
           X_MARKETPLACE_PUSH_PSWD: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_PASSWORD }}
+
+          X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
+          X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
+          X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2

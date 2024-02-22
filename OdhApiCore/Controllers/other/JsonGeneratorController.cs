@@ -22,6 +22,7 @@ using OdhApiCore.GenericHelpers;
 using AspNetCore.CacheOutput;
 using Amazon.S3.Transfer;
 using Amazon.S3;
+using Helper.S3;
 
 namespace OdhApiCore.Controllers.other
 {
@@ -194,18 +195,11 @@ namespace OdhApiCore.Controllers.other
                 if (!settings.S3Config.ContainsKey("dc-meteorology-province-forecast"))
                     throw new Exception("No weatherforecast file found");
 
-                var s3bucket = settings.S3Config["dc-meteorology-province-forecast"];
-
-                TransferUtility fileTransferUtility =
-                    new TransferUtility(new AmazonS3Client(s3bucket.AccessKey, s3bucket.AccessSecretKey, Amazon.RegionEndpoint.EUWest1));
-
-                var request = new TransferUtilityDownloadRequest()
-                {
-                    BucketName = s3bucket.Bucket,
-                    Key = s3bucket.Filename,
-                    FilePath = settings.JsonConfig.Jsondir + s3bucket.Filename
-                };
-                await fileTransferUtility.DownloadAsync(request);
+                await GetDataFromS3.GetFileFromS3("dc-meteorology-province-forecast",
+                    settings.S3Config["dc-meteorology-province-forecast"].AccessKey,
+                    settings.S3Config["dc-meteorology-province-forecast"].AccessSecretKey,
+                    settings.S3Config["dc-meteorology-province-forecast"].Filename,
+                    settings.JsonConfig.Jsondir);
 
                 var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "Taglist", "Download Json Weatherforecast succeeded", true);
 

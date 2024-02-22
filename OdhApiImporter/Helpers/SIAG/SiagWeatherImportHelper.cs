@@ -51,6 +51,8 @@ namespace OdhApiImporter.Helpers
             string? weatherresponsetasken = "";
             string source = "opendata";
 
+
+
             if (!String.IsNullOrEmpty(id))
             {
                 weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source, id);
@@ -62,6 +64,9 @@ namespace OdhApiImporter.Helpers
                 weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
                 weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("it", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
                 weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("en", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+                
+                //if id is empty retrieve also DistrictWeather and WeatherForecast
+
             }
 
             if (!String.IsNullOrEmpty(weatherresponsetaskde) && !String.IsNullOrEmpty(weatherresponsetaskit) && !String.IsNullOrEmpty(weatherresponsetasken))
