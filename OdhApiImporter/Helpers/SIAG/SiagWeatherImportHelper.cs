@@ -15,6 +15,7 @@ using System.Xml.Linq;
 using Helper;
 using SIAG.Model;
 using System.IO;
+using Helper.S3;
 
 namespace OdhApiImporter.Helpers
 {
@@ -77,7 +78,7 @@ namespace OdhApiImporter.Helpers
                 weatherdistrictit = await GetWeatherData.GetCurrentBezirkWeatherAsync("it", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
                 weatherdistricten = await GetWeatherData.GetCurrentBezirkWeatherAsync("en", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
 
-                siagweatherforecast = await GetWeatherForecastFromS3();
+                siagweatherforecast = await SaveAndGetWeatherForecastFromS3();
             }
 
 
@@ -162,12 +163,17 @@ namespace OdhApiImporter.Helpers
                 throw new Exception("No weatherdata received from source!");
         }
 
-        private async Task<SiagWeatherForecastModel> GetWeatherForecastFromS3()
+        private async Task<SiagWeatherForecastModel> SaveAndGetWeatherForecastFromS3()
         {
             if (!settings.S3Config.ContainsKey("dc-meteorology-province-forecast"))
                 throw new Exception("No weatherforecast file found");
 
-           
+            await GetDataFromS3.GetFileFromS3("dc-meteorology-province-forecast",
+                   settings.S3Config["dc-meteorology-province-forecast"].AccessKey,
+                   settings.S3Config["dc-meteorology-province-forecast"].AccessSecretKey,
+                   settings.S3Config["dc-meteorology-province-forecast"].Filename,
+                   settings.JsonConfig.Jsondir);
+
             using (StreamReader r = new StreamReader(settings.JsonConfig.Jsondir + settings.S3Config["dc-meteorology-province-forecast"].Filename))
             {
                 string json = r.ReadToEnd();
