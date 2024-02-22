@@ -74,9 +74,9 @@ namespace OdhApiImporter.Helpers
                 weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("en", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
 
                 //if id is empty retrieve also DistrictWeather and WeatherForecast
-                weatherdistrictde = await GetWeatherData.GetCurrentBezirkWeatherAsync("de", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
-                weatherdistrictit = await GetWeatherData.GetCurrentBezirkWeatherAsync("it", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
-                weatherdistricten = await GetWeatherData.GetCurrentBezirkWeatherAsync("en", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+                weatherdistrictde = await GetWeatherData.GetCurrentBezirkWeatherAsync("de", "1,2,3,4,5,6,7", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+                weatherdistrictit = await GetWeatherData.GetCurrentBezirkWeatherAsync("it", "1,2,3,4,5,6,7", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+                weatherdistricten = await GetWeatherData.GetCurrentBezirkWeatherAsync("en", "1,2,3,4,5,6,7", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
 
                 siagweatherforecast = await SaveAndGetWeatherForecastFromS3();
             }
