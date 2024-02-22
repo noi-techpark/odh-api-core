@@ -1587,7 +1587,13 @@ namespace DataModel
         }
 
         public int Id { get; set; }
+
+        public string? Language { get; set; }
+
         public string? DistrictName { get; set; }
+        //public Dictionary<string, string>? District { get; set; }
+
+
         [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
         public DateTime date { get { return this.Date; } }
 
@@ -1609,6 +1615,9 @@ namespace DataModel
 
         public string? WeatherCode { get; set; }
         public string? WeatherDesc { get; set; }
+
+        //public Dictionary<string, string>? WeatherDescription { get; set; }
+
         public string? WeatherImgUrl { get; set; }
 
         //Compatibility

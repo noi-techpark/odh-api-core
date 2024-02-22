@@ -819,6 +819,7 @@ namespace SIAG
                 myweather.DistrictName = siagdistrictweather.district.name;
                 myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
                 myweather.Date = Convert.ToDateTime(siagdistrictweather.date.ToShortDateString() + " " + siagdistrictweather.hour);
+                myweather.Language = lang;
 
                 List<BezirksForecast> mybezirksforecastlist = new List<BezirksForecast>();
 
@@ -875,6 +876,30 @@ namespace SIAG
 
 
         }
+
+        //public static WeatherDistrictLinked MergeBezirksWetterIntoOne(IEnumerable<WeatherDistrictLinked> weatherDistrictlist)
+        //{
+        //    var weatherDistrictmerged = weatherDistrictlist.FirstOrDefault();
+        //    weatherDistrictmerged.District = new Dictionary<string, string>();
+
+        //    //District name
+        //    foreach (var weatherDistrict in weatherDistrictlist)
+        //    {
+        //        weatherDistrictmerged.District.TryAddOrUpdate(weatherDistrict.Language, weatherDistrict.DistrictName);                
+
+        //        for(int i = 0; i <= weatherDistrict.BezirksForecast.Count; i++)
+        //        {
+        //            if (weatherDistrictmerged.BezirksForecast.ElementAt(i).WeatherDescription == null)
+        //                weatherDistrictmerged.BezirksForecast.ElementAt(i).WeatherDescription = new Dictionary<string, string>();
+
+        //            weatherDistrictmerged.BezirksForecast.ElementAt(i).WeatherDescription.TryAddOrUpdate(weatherDistrict.Language, weatherDistrict.BezirksForecast.ElementAt(i).WeatherDesc);
+        //        }
+        //    }
+
+        //    //Forecast
+
+        //    return weatherDistrictmerged;
+        //}
 
         public static WeatherForecastLinked ParseWeatherForecastFromJsonFile(string lang, SiagMunicipality siagforecast, SiagForecastInfo siagforecastinfo)
         {
