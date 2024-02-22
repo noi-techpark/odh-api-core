@@ -83,6 +83,9 @@ jobs:
           X_API_URL: ${{ env.API_URL }}
           X_NOICOMMUNITY_SERVERKEY: ${{ secrets.NOICOMMUNITY_SERVERKEY_TEST }}
           X_NOICOMMUNITY_SENDERID: ${{ secrets.NOICOMMUNITY_SENDERID_TEST }}
+          X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
+          X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
+          X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -110,6 +113,7 @@ jobs:
           curl "${{ env.API_URL }}ODH/Taglist"
           curl "${{ env.API_URL }}ODH/OdhTagAutoPublishlist"
           curl "${{ env.API_URL }}ODH/OdhTagCategorieslist"
+          curl "${{ env.API_URL }}ODH/WeatherForecast"
 
   deploy-prod-api:
     runs-on: ubuntu-20.04
@@ -164,6 +168,9 @@ jobs:
           X_API_URL: ${{ env.API_URL }}
           X_NOICOMMUNITY_SERVERKEY: ${{ secrets.NOICOMMUNITY_SERVERKEY_TEST }}
           X_NOICOMMUNITY_SENDERID: ${{ secrets.NOICOMMUNITY_SENDERID_TEST }}
+          X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
+          X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
+          X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -191,3 +198,4 @@ jobs:
           curl "${{ env.API_URL }}ODH/Taglist"
           curl "${{ env.API_URL }}ODH/OdhTagAutoPublishlist"
           curl "${{ env.API_URL }}ODH/OdhTagCategorieslist"
+          curl "${{ env.API_URL }}ODH/WeatherForecast"

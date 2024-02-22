@@ -1702,6 +1702,11 @@ namespace DataModel
             Weather = new Dictionary<string, Weather>();
         }
         public IDictionary<string, Weather> Weather { get; set; }
+
+        public IDictionary<string, WeatherForecast> WeatherForecast { get; set; }
+
+        public IDictionary<string, BezirksWeather> WeatherDistrict { get; set; }
+
         public LicenseInfo? LicenseInfo { get; set; }
 
         public List<string> HasLanguage { get; set; }
