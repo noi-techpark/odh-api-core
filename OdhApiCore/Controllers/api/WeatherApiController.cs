@@ -762,17 +762,32 @@ namespace OdhApiCore.Controllers
 
             List<string> municipalitycodes = new List<string>();
             List<string> municipalityids = new List<string>();
+            List<string> tvids = new List<string>();
+            List<string> regids = new List<string>();
 
             //Locfilter stuff
-            if (locfilter != null && locfilter.Contains("mun"))
-                municipalityids = CommonListCreator.CreateDistrictIdList(locfilter, "mun");
+            if (locfilter != null)
+            {
+                foreach(var locfiltersplitted in locfilter.Split(","))
+                {
+                    if (locfilter.Contains("mun"))
+                        municipalityids.AddRange(CommonListCreator.CreateDistrictIdList(locfiltersplitted, "mun"));
+                    else if (locfilter.Contains("tvs"))
+                        regids.AddRange(CommonListCreator.CreateDistrictIdList(locfiltersplitted, "tvs"));
+                    else if (locfilter.Contains("reg"))
+                        regids.AddRange(CommonListCreator.CreateDistrictIdList(locfiltersplitted, "reg"));
+                }
+
+            }
 
             //Generate from GPS
             var query =
                 QueryFactory.Query()
                    .SelectRaw($"id, data#>>'\\{{IstatNumber\\}}' as \"istatnumber\", data#>>'\\{{Detail,{language},Title\\}}' as \"name\"")
                    .From("municipalities")
-                   .When(municipalityids.Count > 0, x => x.WhereIn("id", municipalityids) )
+                   .When(municipalityids.Count > 0, x => x.WhereIn("id", municipalityids))
+                   .When(tvids.Count > 0, x => x.WhereIn("data->>'TourismvereinId'", tvids))
+                   .When(regids.Count > 0, x => x.WhereIn("data->>'RegionId'", regids))
                    .GeoSearchFilterAndOrderby_GeneratedColumns(geosearchresult);
 
             municipalities = await query.GetAsync<MunicipalityIdIstatNumber>();
