@@ -895,6 +895,14 @@ namespace SIAG
             weatherforecast.Shortname = GetNameInLanguage(lang, siagforecast);
             weatherforecast.MunicipalityIstatCode = siagforecast.code;
 
+            weatherforecast.MunicipalityName = new Dictionary<string, string>()
+            {
+                { "de", siagforecast.nameDe },
+                { "it", siagforecast.nameIt },
+                { "en", siagforecast.nameEn },
+                { "ld", siagforecast.nameRm }
+            };
+
             weatherforecast.ForeCastDaily = new List<Forecast24Hours>();
 
             //Forecast24Hours
@@ -922,6 +930,15 @@ namespace SIAG
                         forecast24Hours.WeatherImgUrl = String.Format("https://daten.buergernetz.bz.it/services/weather/graphics/icons/imgsource/wetter/icon_{0}.png", GetWeatherCodeAsInteger(grouped.forecastdatastr["symbols24"]));
                     if (grouped.forecastdatastr.ContainsKey("symbols24")) 
                         forecast24Hours.WeatherDesc = GetMappedWeatherDesc(lang, grouped.forecastdatastr["symbols24"]);
+                    if (grouped.forecastdatastr.ContainsKey("symbols24"))
+                        forecast24Hours.WeatherDescription = new Dictionary<string, string>()
+                                                                {
+                                                                    { "de", GetMappedWeatherDesc("de", grouped.forecastdatastr["symbols24"]) },
+                                                                    { "it", GetMappedWeatherDesc("it", grouped.forecastdatastr["symbols24"]) },
+                                                                    { "en", GetMappedWeatherDesc("en", grouped.forecastdatastr["symbols24"]) }
+                                                                };
+
+                    ;
                 }
 
                 weatherforecast.ForeCastDaily.Add(forecast24Hours);
@@ -953,6 +970,13 @@ namespace SIAG
                         forecast3Hours.WeatherImgUrl =  String.Format("https://daten.buergernetz.bz.it/services/weather/graphics/icons/imgsource/wetter/icon_{0}.png", GetWeatherCodeAsInteger(grouped.forecastdatastr["symbols3"]));
                     if (grouped.forecastdatastr.ContainsKey("symbols3")) 
                         forecast3Hours.WeatherDesc =  GetMappedWeatherDesc(lang, grouped.forecastdatastr["symbols3"]);
+                    if (grouped.forecastdatastr.ContainsKey("symbols24"))
+                        forecast3Hours.WeatherDescription = new Dictionary<string, string>()
+                                                                {
+                                                                    { "de", GetMappedWeatherDesc("de", grouped.forecastdatastr["symbols24"]) },
+                                                                    { "it", GetMappedWeatherDesc("it", grouped.forecastdatastr["symbols24"]) },
+                                                                    { "en", GetMappedWeatherDesc("en", grouped.forecastdatastr["symbols24"]) }
+                                                                };
                 }
 
                 weatherforecast.Forecast3HoursInterval.Add(forecast3Hours);

@@ -15,7 +15,7 @@ namespace Helper
     public static class JsonTransformerMethods
     {
         private static readonly HashSet<string> Languages = new HashSet<string> {
-            "de", "it", "en", "cs", "fr", "nl", "pl", "ru"
+            "de", "it", "en", "cs", "fr", "nl", "pl", "ru", "ld"
         };
 
         private static bool IsLanguageKey(string key) =>

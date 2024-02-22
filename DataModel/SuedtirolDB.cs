@@ -1700,10 +1700,11 @@ namespace DataModel
         public WeatherHistory()
         {
             Weather = new Dictionary<string, Weather>();
+            WeatherDistrict = new Dictionary<string, IEnumerable<BezirksWeather>>();
         }
         public IDictionary<string, Weather> Weather { get; set; }
 
-        public IDictionary<string, IEnumerable<WeatherForecast>> WeatherForecast { get; set; }
+        public IEnumerable<WeatherForecast> WeatherForecast { get; set; }
 
         public IDictionary<string, IEnumerable<BezirksWeather>> WeatherDistrict { get; set; }
 
@@ -1737,6 +1738,8 @@ namespace DataModel
         
         public string Shortname { get; set; }
 
+        public Dictionary<string, string> MunicipalityName { get; set; }
+
         public ICollection<Forecast24Hours> ForeCastDaily { get; set; }
 
         public ICollection<Forecast3Hours> Forecast3HoursInterval { get; set; }
@@ -1765,6 +1768,9 @@ namespace DataModel
         [SwaggerSchema("Weather Desciption")]
         public string? WeatherDesc { get; set; }
 
+        [SwaggerSchema("Weather Desciption multi language")]
+        public Dictionary<string,string>? WeatherDescription { get; set; }
+
         [SwaggerSchema("Weather ImageUrl")]
         public string? WeatherImgUrl { get; set; }
     }
@@ -1787,6 +1793,9 @@ namespace DataModel
 
         [SwaggerSchema("Weather Code")]
         public string? WeatherDesc { get; set; }
+
+        [SwaggerSchema("Weather Desciption multi language")]
+        public Dictionary<string, string>? WeatherDescription { get; set; }
 
         [SwaggerSchema("Weather ImageUrl")]
         public string? WeatherImgUrl { get; set; }

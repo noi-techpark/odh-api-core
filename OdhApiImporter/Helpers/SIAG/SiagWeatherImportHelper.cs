@@ -135,9 +135,7 @@ namespace OdhApiImporter.Helpers
                     myweatherhistory.WeatherDistrict.Add("en", await SIAG.GetWeatherData.ParseSiagBezirkWeatherDataToODHWeather(weatherdistricten, "en", true, source));
 
                     //WeatherForecast
-                    myweatherhistory.WeatherForecast.Add("de", await GetWeatherData.GetWeatherForeCastAsync("de", null, siagweatherforecast));
-                    myweatherhistory.WeatherForecast.Add("de", await GetWeatherData.GetWeatherForeCastAsync("it", null, siagweatherforecast));
-                    myweatherhistory.WeatherForecast.Add("de", await GetWeatherData.GetWeatherForeCastAsync("en", null, siagweatherforecast));
+                    myweatherhistory.WeatherForecast = await GetWeatherData.GetWeatherForeCastAsync("de", null, siagweatherforecast);                    
                 }               
 
 
