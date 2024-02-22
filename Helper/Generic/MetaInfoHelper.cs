@@ -319,7 +319,7 @@ namespace Helper
         {
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherLinked>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.date, Source = "siag", Reduced = false };            
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };            
         }
 
         //Hack because WeatherLinked is not IIdentifiable so return directly
@@ -327,7 +327,7 @@ namespace Helper
         {
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherDistrictLinked>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.date, Source = "siag", Reduced = false };
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };
         }
 
         public static Metadata GetMetaDataForWeatherRealTime(WeatherRealTimeLinked data)

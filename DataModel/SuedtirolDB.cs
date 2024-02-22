@@ -1415,7 +1415,7 @@ namespace DataModel
             this.Conditions = new HashSet<Conditions>();
             this.Stationdata = new HashSet<Stationdata>();
         }
-        
+
         [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
         public DateTime date { get { return this.Date; } }
         [SwaggerDeprecated("Obsolete, use EvolutionTitle", "2024-02-28", "2024-12-31")]
@@ -1445,11 +1445,11 @@ namespace DataModel
         [SwaggerDeprecated("Obsolete, use Date","2024-02-28","2024-12-31")]
         public DateTime date { get { return this.Date; } }
         [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
-        public string? Weatherdesc { get { return this.Weatherdesc; } }
+        public string? Weatherdesc { get { return this.WeatherDesc; } }
         [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
         public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
         [SwaggerDeprecated("Obsolete, use BulletinStatus", "2024-02-28", "2024-12-31")]
-        public int bulletinStatus { get { return this.bulletinStatus; } }
+        public int bulletinStatus { get { return this.BulletinStatus; } }
 
 
         public DateTime Date { get; set; }

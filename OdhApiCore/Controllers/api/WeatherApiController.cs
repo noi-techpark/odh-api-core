@@ -622,8 +622,9 @@ namespace OdhApiCore.Controllers
             if (weatherresult != null)
             {
                 weatherresult._Meta = MetadataHelper.GetMetadataobject<WeatherLinked>(weatherresult);
+                var weatherresultraw = new JsonRaw(weatherresult);
 
-                List<JsonRaw> data = new List<JsonRaw>() { new JsonRaw(weatherresult) };
+                var data = new List<JsonRaw>() { weatherresultraw };
                 var dataTransformed =
                     data.Select(
                         raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
