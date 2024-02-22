@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using System.Threading;
 using System.Xml.Linq;
 using Helper;
+using SIAG.Model;
+using System.IO;
 
 namespace OdhApiImporter.Helpers
 {
@@ -51,7 +53,13 @@ namespace OdhApiImporter.Helpers
             string? weatherresponsetasken = "";
             string source = "opendata";
 
+            IEnumerable<WeatherDistrictLinked> weatherdistrictde = default(IEnumerable<WeatherDistrictLinked>);
+            IEnumerable<WeatherDistrictLinked> weatherdistrictit = default(IEnumerable<WeatherDistrictLinked>);
+            IEnumerable<WeatherDistrictLinked> weatherdistricten = default(IEnumerable<WeatherDistrictLinked>);
 
+            IEnumerable<WeatherForecastLinked> weatherforecastde = default(IEnumerable<WeatherForecastLinked>);
+            IEnumerable<WeatherForecastLinked> weatherforecastit = default(IEnumerable<WeatherForecastLinked>);
+            IEnumerable<WeatherForecastLinked> weatherforecasten = default(IEnumerable<WeatherForecastLinked>);
 
             if (!String.IsNullOrEmpty(id))
             {
@@ -64,8 +72,16 @@ namespace OdhApiImporter.Helpers
                 weatherresponsetaskde = await SIAG.GetWeatherData.GetSiagWeatherData("de", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
                 weatherresponsetaskit = await SIAG.GetWeatherData.GetSiagWeatherData("it", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
                 weatherresponsetasken = await SIAG.GetWeatherData.GetSiagWeatherData("en", settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
-                
+
                 //if id is empty retrieve also DistrictWeather and WeatherForecast
+                weatherdistrictde = await GetWeatherData.GetCurrentBezirkWeatherAsync("de", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+                weatherdistrictit = await GetWeatherData.GetCurrentBezirkWeatherAsync("it", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+                weatherdistricten = await GetWeatherData.GetCurrentBezirkWeatherAsync("en", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+
+                //WeatherForecast
+                weatherforecastde = await GetWeatherData.GetWeatherForeCastAsync("de", null, await GetWeatherForecastFromS3());
+                weatherforecastit = await GetWeatherData.GetWeatherForeCastAsync("it", null, await GetWeatherForecastFromS3());
+                weatherforecasten = await GetWeatherData.GetWeatherForeCastAsync("en", null, await GetWeatherForecastFromS3());
 
             }
 
@@ -131,6 +147,24 @@ namespace OdhApiImporter.Helpers
             else
                 throw new Exception("No weatherdata received from source!");
         }
-        
+
+        private async Task<SiagWeatherForecastModel> GetWeatherForecastFromS3()
+        {
+            if (!settings.S3Config.ContainsKey("dc-meteorology-province-forecast"))
+                throw new Exception("No weatherforecast file found");
+
+           
+            using (StreamReader r = new StreamReader(settings.JsonConfig.Jsondir + settings.S3Config["dc-meteorology-province-forecast"].Filename))
+            {
+                string json = r.ReadToEnd();
+
+                if (json != null)
+                    return JsonConvert.DeserializeObject<SiagWeatherForecastModel>(json);
+                else
+                    throw new Exception("Unable to parse file");
+            }
+        }
+
+
     }
 }

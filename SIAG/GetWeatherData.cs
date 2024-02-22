@@ -97,7 +97,12 @@ namespace SIAG
             var currentbezirksidlist = new List<string>();
 
             if (!String.IsNullOrEmpty(bezirksid))
-                currentbezirksidlist.Add(bezirksid);
+            {
+                foreach (var bezirkid in bezirksid.Split(","))
+                {
+                    currentbezirksidlist.Add(bezirkid);
+                }
+            }    
             else if (!String.IsNullOrEmpty(tvrid))
             {
                 var bezirkweatherinfo = XDocument.Load(xmldir + "BezirkWeather.xml");
