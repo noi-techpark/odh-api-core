@@ -1703,9 +1703,9 @@ namespace DataModel
         }
         public IDictionary<string, Weather> Weather { get; set; }
 
-        public IDictionary<string, WeatherForecast> WeatherForecast { get; set; }
+        public IDictionary<string, IEnumerable<WeatherForecast>> WeatherForecast { get; set; }
 
-        public IDictionary<string, BezirksWeather> WeatherDistrict { get; set; }
+        public IDictionary<string, IEnumerable<BezirksWeather>> WeatherDistrict { get; set; }
 
         public LicenseInfo? LicenseInfo { get; set; }
 

@@ -51,15 +51,14 @@ namespace OdhApiImporter.Helpers
             string? weatherresponsetaskde = "";
             string? weatherresponsetaskit = "";
             string? weatherresponsetasken = "";
+
+            var weatherdistrictde = default(IEnumerable<string>);
+            var weatherdistrictit = default(IEnumerable<string>);
+            var weatherdistricten = default(IEnumerable<string>);
+
+            SiagWeatherForecastModel siagweatherforecast = default(SiagWeatherForecastModel);
+
             string source = "opendata";
-
-            IEnumerable<WeatherDistrictLinked> weatherdistrictde = default(IEnumerable<WeatherDistrictLinked>);
-            IEnumerable<WeatherDistrictLinked> weatherdistrictit = default(IEnumerable<WeatherDistrictLinked>);
-            IEnumerable<WeatherDistrictLinked> weatherdistricten = default(IEnumerable<WeatherDistrictLinked>);
-
-            IEnumerable<WeatherForecastLinked> weatherforecastde = default(IEnumerable<WeatherForecastLinked>);
-            IEnumerable<WeatherForecastLinked> weatherforecastit = default(IEnumerable<WeatherForecastLinked>);
-            IEnumerable<WeatherForecastLinked> weatherforecasten = default(IEnumerable<WeatherForecastLinked>);
 
             if (!String.IsNullOrEmpty(id))
             {
@@ -78,21 +77,29 @@ namespace OdhApiImporter.Helpers
                 weatherdistrictit = await GetWeatherData.GetCurrentBezirkWeatherAsync("it", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
                 weatherdistricten = await GetWeatherData.GetCurrentBezirkWeatherAsync("en", "1,2,3,4,5,6,7,8", null, null, null, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
 
-                //WeatherForecast
-                weatherforecastde = await GetWeatherData.GetWeatherForeCastAsync("de", null, await GetWeatherForecastFromS3());
-                weatherforecastit = await GetWeatherData.GetWeatherForeCastAsync("it", null, await GetWeatherForecastFromS3());
-                weatherforecasten = await GetWeatherData.GetWeatherForeCastAsync("en", null, await GetWeatherForecastFromS3());
-
+                siagweatherforecast = await GetWeatherForecastFromS3();
             }
+
+
 
             if (!String.IsNullOrEmpty(weatherresponsetaskde) && !String.IsNullOrEmpty(weatherresponsetaskit) && !String.IsNullOrEmpty(weatherresponsetasken))
             {
                 //Save all Responses to rawdata table
+                bool saveadditionalweather = false;
 
+                if(weatherdistrictde != null && weatherdistrictit != null && weatherdistricten != null && siagweatherforecast != null)
+                    saveadditionalweather = true;
+
+                //Weather
                 var siagweatherde = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeather>(weatherresponsetaskde);
                 var siagweatherit = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeather>(weatherresponsetaskit);
                 var siagweatheren = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeather>(weatherresponsetasken);
 
+                var siagweatherdistrictde = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeatherDistrict>(weatherresponsetaskde);
+                var siagweatherdistrictit = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeatherDistrict>(weatherresponsetaskit);
+                var siagweatherdistricten = JsonConvert.DeserializeObject<SIAG.WeatherModel.SiagWeatherDistrict>(weatherresponsetasken);
+
+             
                 RawDataStore rawData = new RawDataStore();
                 rawData.importdate = DateTime.Now;
                 rawData.type = "weather";
@@ -100,37 +107,44 @@ namespace OdhApiImporter.Helpers
                 rawData.datasource = "siag";
                 rawData.sourceinterface = "weatherbulletin";
                 rawData.sourceurl = "http://daten.buergernetz.bz.it/services/weather/bulletin";
-                rawData.raw = JsonConvert.SerializeObject(new { de = siagweatherde, it = siagweatherit, en = siagweatheren });
+                rawData.raw = JsonConvert.SerializeObject(new
+                {
+                    de = siagweatherde, it = siagweatherit, en = siagweatheren,
+                    WeatherDistrict = saveadditionalweather ? new { de = siagweatherdistrictde, it = siagweatherdistrictit, en = siagweatherdistricten } : null,
+                    WeatherForecast = saveadditionalweather ? new { siagweatherforecast } : null
+                });
                 rawData.license = "open";
                 rawData.rawformat = "json";
 
                 var insertresultraw = await QueryFactory.Query("rawdata")
                       .InsertGetIdAsync<int>(rawData);
+                
+               var myweatherhistory = new WeatherHistoryLinked();
+               myweatherhistory.Id = siagweatherde.id.ToString();
+                
+                myweatherhistory.Weather.Add("de", await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("de", settings.XmlConfig.XmldirWeather, weatherresponsetaskde, true, source));
+                myweatherhistory.Weather.Add("it", await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("it", settings.XmlConfig.XmldirWeather, weatherresponsetaskit, true, source));
+                myweatherhistory.Weather.Add("en", await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("en", settings.XmlConfig.XmldirWeather, weatherresponsetasken, true, source));
 
-                //Save parsed Response to measurement history table
-                var odhweatherresultde = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("de", settings.XmlConfig.XmldirWeather, weatherresponsetaskde, true, source);
-                var odhweatherresultit = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("it", settings.XmlConfig.XmldirWeather, weatherresponsetaskit, true, source);
-                var odhweatherresulten = await SIAG.GetWeatherData.ParseSiagWeatherDataToODHWeather("en", settings.XmlConfig.XmldirWeather, weatherresponsetasken, true, source);
+                if (saveadditionalweather)
+                {
+                    //WeatherDistrict                    
+                    myweatherhistory.WeatherDistrict.Add("de", await SIAG.GetWeatherData.ParseSiagBezirkWeatherDataToODHWeather(weatherdistrictde, "de", true, source));
+                    myweatherhistory.WeatherDistrict.Add("it", await SIAG.GetWeatherData.ParseSiagBezirkWeatherDataToODHWeather(weatherdistrictit, "it", true, source));
+                    myweatherhistory.WeatherDistrict.Add("en", await SIAG.GetWeatherData.ParseSiagBezirkWeatherDataToODHWeather(weatherdistricten, "en", true, source));
 
-                //Insert into Measuringhistorytable
-                //var insertresultde = await QueryFactory.Query("weatherdatahistory")
-                //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_de", data = new JsonRaw(odhweatherresultde), raw = weatherresponsetaskde });
-                //var insertresultit = await QueryFactory.Query("weatherdatahistory")
-                //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_it", data = new JsonRaw(odhweatherresultit), raw = weatherresponsetaskit });
-                //var insertresulten = await QueryFactory.Query("weatherdatahistory")
-                //      .InsertAsync(new JsonBDataRaw { id = odhweatherresultde.Id + "_en", data = new JsonRaw(odhweatherresulten), raw = weatherresponsetasken });
+                    //WeatherForecast
+                    myweatherhistory.WeatherForecast.Add("de", await GetWeatherData.GetWeatherForeCastAsync("de", null, siagweatherforecast));
+                    myweatherhistory.WeatherForecast.Add("de", await GetWeatherData.GetWeatherForeCastAsync("it", null, siagweatherforecast));
+                    myweatherhistory.WeatherForecast.Add("de", await GetWeatherData.GetWeatherForeCastAsync("en", null, siagweatherforecast));
+                }               
 
-                var myweatherhistory = new WeatherHistoryLinked();
 
-                myweatherhistory.Id = odhweatherresultde.Id.ToString();
-                myweatherhistory.Weather.Add("de", odhweatherresultde);
-                myweatherhistory.Weather.Add("it", odhweatherresultit);
-                myweatherhistory.Weather.Add("en", odhweatherresulten);
                 myweatherhistory.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
                 myweatherhistory.FirstImport = DateTime.Now;
                 myweatherhistory.HasLanguage = new List<string>() { "de", "it", "en" };
-                myweatherhistory.LastChange = odhweatherresultde.date;
-                myweatherhistory.Shortname = odhweatherresultde.evolutiontitle;
+                myweatherhistory.LastChange = siagweatherde.date;
+                myweatherhistory.Shortname = siagweatherde.evolutionTitle;
 
 
                 var insertresult = await QueryFactory.UpsertData<WeatherHistoryLinked>(myweatherhistory, "weatherdatahistory", insertresultraw, "siag.weather.import", importerURL, true);

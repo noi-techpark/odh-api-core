@@ -703,9 +703,11 @@ namespace OdhApiCore.Controllers
             }
 
             var weatherresult = await GetWeatherData.GetCurrentBezirkWeatherAsync(language, bezirksid, tvrid, regid, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
+            var weatherparsed = await GetWeatherData.ParseSiagBezirkWeatherDataToODHWeather(weatherresult, language, true, source);
+            
             var data = new List<JsonRaw>();
 
-            foreach (var wresult in weatherresult)
+            foreach (var wresult in weatherparsed)
             {
                 if (wresult != null)
                 {
