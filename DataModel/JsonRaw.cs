@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using static Dapper.SqlMapper;
 
@@ -57,5 +58,13 @@ namespace DataModel
         }
 
         public static explicit operator JsonRaw(string x) => new JsonRaw(x);
-    }    
+    }
+    
+    public class JsonRawUtils
+    {
+        public static IEnumerable<JsonRaw> ConvertObjectToJsonRaw<T>(IEnumerable<T> obj)
+        {
+            return obj.Select(x => new JsonRaw(x)).ToList();
+        }
+    }
 }

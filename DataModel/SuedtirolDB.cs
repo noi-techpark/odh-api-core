@@ -1416,71 +1416,117 @@ namespace DataModel
             this.Stationdata = new HashSet<Stationdata>();
         }
 
-        public int Id { get; set; }
-        public DateTime date { get; set; }
-        public string? evolutiontitle { get; set; }
-        public string? evolution { get; set; }
-        public string? language { get; set; }
+        [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
+        public DateTime date { get { return this.Date; } }
+        [SwaggerDeprecated("Obsolete, use EvolutionTitle", "2024-02-28", "2024-12-31")]
+        public string? evolutiontitle { get { return this.EvolutionTitle; } }
+        [SwaggerDeprecated("Obsolete, use Evolution", "2024-02-28", "2024-12-31")]
+        public string? evolution { get { return this.Evolution; } }
+        [SwaggerDeprecated("Obsolete, use Language", "2024-02-28", "2024-12-31")]
+        public string? language { get { return this.Language; } }
 
+
+        public DateTime Date { get; set; }
+        public string? EvolutionTitle { get; set; }
+        public string? Evolution { get; set; }
+        public string? Language { get; set; }
+
+
+        public int Id { get; set; }
         public ICollection<Conditions> Conditions { get; set; }
         public ICollection<Forecast> Forecast { get; set; }
         public ICollection<Mountain> Mountain { get; set; }
         public ICollection<Stationdata> Stationdata { get; set; }
-
         public LicenseInfo? LicenseInfo { get; set; }
     }
 
     public class Conditions
     {
-        public DateTime date { get; set; }
+        [SwaggerDeprecated("Obsolete, use Date","2024-02-28","2024-12-31")]
+        public DateTime date { get { return this.Date; } }
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc { get { return this.WeatherDesc; } }
+        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
+        [SwaggerDeprecated("Obsolete, use BulletinStatus", "2024-02-28", "2024-12-31")]
+        public int bulletinStatus { get { return this.BulletinStatus; } }
+
+
+        public DateTime Date { get; set; }
         public string? Title { get; set; }
-        public string? WeatherCondition { get; set; }
-        public string? WeatherImgurl { get; set; }
+        public string? WeatherCondition { get; set; }      
         public string? Temperatures { get; set; }
-        public string? Weatherdesc { get; set; }
-
-        //Compatibility
-        //public string? WeatherCode { get { return this.Weathercode; } }
-        public string? WeatherDesc { get { return this.Weatherdesc; } }
-        public string? WeatherImgUrl { get { return this.WeatherImgurl; } }
-
-        //NEW
+        public string? WeatherDesc { get; set; }
+        public string? WeatherImgUrl { get; set; }
         public string? Reliability { get; set; }
         public int TempMaxmax { get; set; }
         public int TempMaxmin { get; set; }
         public int TempMinmax { get; set; }
         public int TempMinmin { get; set; }
-        public int bulletinStatus { get; set; }
+        public int BulletinStatus { get; set; }
     }
 
     public class Forecast
     {
-        public DateTime date { get; set; }
+        [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
+        public DateTime date { get { return this.Date; } }
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc { get { return this.WeatherDesc; } }
+        [SwaggerDeprecated("Obsolete, use WeatherCode", "2024-02-28", "2024-12-31")]
+        public string? Weathercode { get { return this.WeatherCode; } }
+        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
+
+
+        public DateTime Date { get; set; }
+
         public int TempMaxmax { get; set; }
         public int TempMaxmin { get; set; }
         public int TempMinmax { get; set; }
         public int TempMinmin { get; set; }
-        public string? Weatherdesc { get; set; }
-        public string? Weathercode { get; set; }
-        public string? WeatherImgurl { get; set; }
-
-        //Compatibility
-        public string? WeatherCode { get { return this.Weathercode; } }
-        public string? WeatherDesc { get { return this.Weatherdesc; } }
-        public string? WeatherImgUrl { get { return this.WeatherImgurl; } }
-
+                
+        public string? WeatherCode { get; set; }
+        public string? WeatherDesc { get; set; }
+        public string? WeatherImgUrl { get; set; }
 
         public string? Reliability { get; set; }
     }
 
     public class Mountain
     {
-        public DateTime date { get; set; }
+        [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
+        public DateTime date { get { return this.Date; } }
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc { get { return this.WeatherDesc; } }
+        [SwaggerDeprecated("Obsolete, use MountainImgUrl", "2024-02-28", "2024-12-31")]
+        public string? MountainImgurl { get { return this.MountainImgUrl; } }
+        [SwaggerDeprecated("Obsolete, use NorthCode", "2024-02-28", "2024-12-31")] 
+        public string? Northcode { get { return this.NorthCode; } }
+        [SwaggerDeprecated("Obsolete, use NorthDesc", "2024-02-28", "2024-12-31")]
+        public string? Northdesc { get { return this.NorthDesc; } }
+        [SwaggerDeprecated("Obsolete, use NorthImgUrl", "2024-02-28", "2024-12-31")]
+        public string? Northimgurl { get { return this.NorthImgUrl; } }
+        [SwaggerDeprecated("Obsolete, use SouthCode", "2024-02-28", "2024-12-31")]
+        public string? Southcode { get { return this.SouthCode; } }
+        [SwaggerDeprecated("Obsolete, use SouthDesc", "2024-02-28", "2024-12-31")]
+        public string? Southdesc { get { return this.SouthDesc; } }
+        [SwaggerDeprecated("Obsolete, use SouthImgUrl", "2024-02-28", "2024-12-31")]
+        public string? Southimgurl { get { return this.SouthImgUrl; } }
+        [SwaggerDeprecated("Obsolete, use WindCode", "2024-02-28", "2024-12-31")]
+        public string? Windcode { get { return this.WindCode; } }
+        [SwaggerDeprecated("Obsolete, use WindDesc", "2024-02-28", "2024-12-31")]
+        public string? Winddesc { get { return this.WindDesc; } }
+        [SwaggerDeprecated("Obsolete, use WindImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WindImgurl { get { return this.WindImgUrl; } }
+
+
+        public DateTime Date { get; set; }
+
         public string? Title { get; set; }
+        public string? WeatherDesc { get; set; }
         public string? Conditions { get; set; }
-        public string? Weatherdesc { get; set; }
         public string? Zerolimit { get; set; }
-        public string? MountainImgurl { get; set; }
+        
         public string? Reliability { get; set; }
 
         public string? Sunrise { get; set; }
@@ -1488,46 +1534,49 @@ namespace DataModel
         public string? Moonrise { get; set; }
         public string? Moonset { get; set; }
 
-        public string? Northcode { get; set; }
-        public string? Northdesc { get; set; }
-        public string? Northimgurl { get; set; }
-        public string? Southcode { get; set; }
-        public string? Southdesc { get; set; }
-        public string? Southimgurl { get; set; }
+        public string? MountainImgUrl { get; set; }
 
         public int Temp1000 { get; set; }
         public int Temp2000 { get; set; }
         public int Temp3000 { get; set; }
         public int Temp4000 { get; set; }
 
-        public string? Windcode { get; set; }
-        public string? Winddesc { get; set; }
-        public string? WindImgurl { get; set; }
+        public string? NorthCode { get; set; }
+        public string? NorthDesc { get; set; }
+        public string? NorthImgUrl { get; set; }
+        public string? SouthCode { get; set; }
+        public string? SouthDesc { get; set; }
+        public string? SouthImgUrl { get; set; }
+        public string? WindCode { get; set; }
+        public string? WindDesc { get; set; }
+        public string? WindImgUrl { get; set; }
 
         public List<string> Snowlimit { get; set; }
     }
 
     public class Stationdata
     {
-        public DateTime date { get; set; }
+        [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
+        public DateTime date { get { return this.Date; } }
+        [SwaggerDeprecated("Obsolete, use MaxTemp", "2024-02-28", "2024-12-31")]
+        public int Maxtemp { get { return this.MaxTemp; } }
+        [SwaggerDeprecated("Obsolete, use WeatherCode", "2024-02-28", "2024-12-31")]
+        public string? Weathercode { get { return this.WeatherCode; } }
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc { get { return this.WeatherDesc; } }
+        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
 
+        public DateTime Date { get; set; }
         public int Id { get; set; }
         public string? CityName { get; set; }
 
         public string? WeatherCode { get; set; }
         public string? WeatherDesc { get; set; }
-        public string? WeatherImgUrl { get; set; }
+        public string? WeatherImgUrl { get; set; }       
 
-        //Compatibility
-        public string? Weathercode { get { return this.WeatherCode; } }
-        public string? Weatherdesc { get { return this.WeatherDesc; } }
-        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
-
-        public int MinTemp { get; set; }
-        public int Maxtemp { get; set; }
-
-        //Compatibility Reasons
-        public int MaxTemp { get { return Maxtemp; } }
+        public int MinTemp { get; set; }        
+        public int MaxTemp { get; set; }
     }
 
     public class BezirksWeather
@@ -1538,8 +1587,17 @@ namespace DataModel
         }
 
         public int Id { get; set; }
+
+        public string? Language { get; set; }
+
         public string? DistrictName { get; set; }
-        public DateTime date { get; set; }
+        //public Dictionary<string, string>? District { get; set; }
+
+
+        [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
+        public DateTime date { get { return this.Date; } }
+
+        public DateTime Date { get; set; }
 
         public List<string>? TourismVereinIds { get; set; }
 
@@ -1550,14 +1608,24 @@ namespace DataModel
 
     public class BezirksForecast
     {
-        public DateTime date { get; set; }
+        [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
+        public DateTime date { get { return this.Date; } }
+
+        public DateTime Date { get; set; }
+
         public string? WeatherCode { get; set; }
         public string? WeatherDesc { get; set; }
+
+        //public Dictionary<string, string>? WeatherDescription { get; set; }
+
         public string? WeatherImgUrl { get; set; }
 
         //Compatibility
+        [SwaggerDeprecated("Obsolete, use WeatherCode", "2024-02-28", "2024-12-31")] 
         public string? Weathercode { get { return this.WeatherCode; } }
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")] 
         public string? Weatherdesc { get { return this.WeatherDesc; } }
+        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")] 
         public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
 
 
@@ -1581,8 +1649,10 @@ namespace DataModel
         public int? Reliability { get; set; }
     }
 
-    public class WeatherRealTime
+    public class WeatherRealTime: IIdentifiable
     {
+        public string Id { get; set; }
+
         public double altitude { get; set; }
         [SwaggerSchema("Indicates whether the weather stations are: [1] in the valley, [2] gauge stations, [3] on the mountain")]
         public int categoryId { get; set; }
@@ -1639,8 +1709,14 @@ namespace DataModel
         public WeatherHistory()
         {
             Weather = new Dictionary<string, Weather>();
+            WeatherDistrict = new Dictionary<string, IEnumerable<BezirksWeather>>();
         }
         public IDictionary<string, Weather> Weather { get; set; }
+
+        public IEnumerable<WeatherForecast> WeatherForecast { get; set; }
+
+        public IDictionary<string, IEnumerable<BezirksWeather>> WeatherDistrict { get; set; }
+
         public LicenseInfo? LicenseInfo { get; set; }
 
         public List<string> HasLanguage { get; set; }
@@ -1650,6 +1726,97 @@ namespace DataModel
         public string? Shortname { get; set; }
         public string Id { get; set; }
     }
+    public class WeatherForecast : IIdentifiable, IImportDateassigneable, ILicenseInfo, IShortName
+    {
+        public DateTime Date { get; set; }
+
+        //"absTempMin": -10,
+		//"absTempMax": 20,
+		//"absPrecMin": 0,
+		//"absPrecMax": 10
+
+        public string Id { get; set; }
+        public string? Language { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        public IEnumerable<GpsInfo> GpsInfo { get; set; }
+
+        public string MunicipalityIstatCode { get; set; }
+        
+        public string Shortname { get; set; }
+
+        public Dictionary<string, string> MunicipalityName { get; set; }
+
+        public ICollection<Forecast24Hours> ForeCastDaily { get; set; }
+
+        public ICollection<Forecast3Hours> Forecast3HoursInterval { get; set; }
+    }
+
+    public class Forecast24Hours
+    {
+        public DateTime Date { get; set; }
+
+        [SwaggerSchema("Minimum Temperature in °C")]
+        public int? MinTemp { get; set; }
+        [SwaggerSchema("Maximum Temperature in °C")]
+        public int? MaxTemp { get; set; }
+        [SwaggerSchema("Sunshine Duration in Hours h")]
+        public int? SunshineDuration { get; set; }
+
+        [SwaggerSchema("Maximimum Precipitation Probability in Percent %")]
+        public int? PrecipitationProbability { get; set; }
+
+        [SwaggerSchema("24 hour Precipitation sum in mm")]
+        public int? Precipitation { get; set; }
+
+        [SwaggerSchema("Weather Code")]
+        public string? WeatherCode { get; set; }
+
+        [SwaggerSchema("Weather Desciption")]
+        public string? WeatherDesc { get; set; }
+
+        [SwaggerSchema("Weather Desciption multi language")]
+        public Dictionary<string,string>? WeatherDescription { get; set; }
+
+        [SwaggerSchema("Weather ImageUrl")]
+        public string? WeatherImgUrl { get; set; }
+    }
+
+    public class Forecast3Hours
+    {
+        public DateTime Date { get; set; }
+
+        [SwaggerSchema("Temperature in °C")]
+        public float? Temperature { get; set; }
+
+        [SwaggerSchema("Precipitation Probability in Percent %")]
+        public int? PrecipitationProbability { get; set; }
+
+        [SwaggerSchema("Precipitation in mm")]
+        public float? Precipitation { get; set; }
+
+        [SwaggerSchema("Weather Code")]
+        public string? WeatherCode { get; set; }
+
+        [SwaggerSchema("Weather Code")]
+        public string? WeatherDesc { get; set; }
+
+        [SwaggerSchema("Weather Desciption multi language")]
+        public Dictionary<string, string>? WeatherDescription { get; set; }
+
+        [SwaggerSchema("Weather ImageUrl")]
+        public string? WeatherImgUrl { get; set; }
+
+        [SwaggerSchema("WindDirection in °")]
+        public int? WindDirection { get; set; }
+
+        [SwaggerSchema("WindSpeed in m/s")]
+        public int? WindSpeed { get; set; }
+    }
+
+
 
     #endregion   
 

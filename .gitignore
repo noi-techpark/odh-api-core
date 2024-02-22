@@ -177,3 +177,4 @@ $RECYCLE.BIN/
 /OdhApiCore/wwwroot/json
 /OdhApiCore/.env
 /OdhApiImporter/.env
+/OdhApiImporter/json/SMOS_MCPL-WX_EXP_SIAG.JSON
