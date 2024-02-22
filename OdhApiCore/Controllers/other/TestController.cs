@@ -189,11 +189,11 @@ namespace OdhApiCore.Controllers.api
         }
 
         //Not working
-        [HttpGet, Route("TestSomething")]
-        public IActionResult GetTestSomething()
-        {
-            return Ok(new { settings.S3Config, settings.NotifierConfig  });
-        }
+        //[HttpGet, Route("TestSomething")]
+        //public IActionResult GetTestSomething()
+        //{
+        //    return Ok(new { settings.S3Config, settings.NotifierConfig  });
+        //}
 
 
         //[TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
