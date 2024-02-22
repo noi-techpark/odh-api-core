@@ -20,6 +20,9 @@ using SqlKata.Execution;
 using OdhApiCore.Filters;
 using OdhApiCore.GenericHelpers;
 using AspNetCore.CacheOutput;
+using Amazon.S3.Transfer;
+using Amazon.S3;
+using Helper.S3;
 
 namespace OdhApiCore.Controllers.other
 {
@@ -181,6 +184,37 @@ namespace OdhApiCore.Controllers.other
         }
 
         #endregion
-        
+
+        #region Weather
+
+        [HttpGet, Route("ODH/WeatherForecast")]
+        public async Task<IActionResult> DownloadWeatherForecastJsonFromS3(CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (!settings.S3Config.ContainsKey("dc-meteorology-province-forecast"))
+                    throw new Exception("No weatherforecast file found");
+
+                await GetDataFromS3.GetFileFromS3("dc-meteorology-province-forecast",
+                    settings.S3Config["dc-meteorology-province-forecast"].AccessKey,
+                    settings.S3Config["dc-meteorology-province-forecast"].AccessSecretKey,
+                    settings.S3Config["dc-meteorology-province-forecast"].Filename,
+                    settings.JsonConfig.Jsondir);
+
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "Taglist", "Download Json Weatherforecast succeeded", true);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "Weatherforecast", "Download Json Weatherforecast failed", ex, true);
+
+                return BadRequest(result);
+            }
+        }
+
+
+        #endregion
+
     }
 }

@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.4.10" />
     <PackageReference Include="Combinatorics" Version="2.0.0" />
     <PackageReference Include="JsonDiffPatch.Net" Version="2.3.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.0" />

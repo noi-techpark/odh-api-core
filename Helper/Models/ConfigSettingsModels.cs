@@ -27,6 +27,8 @@ namespace Helper
         List<FCMConfig> FCMConfig { get; }
         List<NotifierConfig> NotifierConfig { get; }
 
+        IDictionary<string, S3Config> S3Config { get; }
+
         MssConfig MssConfig { get; }
         LcsConfig LcsConfig { get; }
         CDBConfig CDBConfig { get; }
@@ -402,6 +404,22 @@ namespace Helper
         public string User { get; private set; }
         public string Password { get; private set; }
         public string ServiceUrl { get; private set; }
+    }
+
+    public class S3Config
+    {
+        public S3Config(string accesskey, string secretkey, string bucket, string filename)
+        {
+            this.AccessKey = accesskey;
+            this.AccessSecretKey = secretkey;
+            this.Bucket = bucket;
+            this.Filename = filename;
+        }
+
+        public string AccessKey { get; private set; }
+        public string AccessSecretKey { get; private set; }
+        public string Bucket { get; private set; }
+        public string Filename { get; private set; }
     }
 
     #endregion

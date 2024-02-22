@@ -2,6 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.Runtime;
+using Amazon.S3.Model;
+using Amazon.S3;
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
@@ -21,9 +24,19 @@ using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon;
+using Amazon.S3.Transfer;
+using SharpCompress.Common;
+using Schema.NET;
+using SIAG.Model;
+using Humanizer.Localisation;
+using System.Drawing;
+using Geo.Measure;
+using SIAG.WeatherModel;
 
 namespace OdhApiCore.Controllers
 {
@@ -61,11 +74,13 @@ namespace OdhApiCore.Controllers
             string? locfilter = null,
             bool extended = true,
             string? source = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await Get(pagenumber, pagesize, language ?? "en", locfilter, extended, source ?? "opendata", null, cancellationToken);
+                return await Get(pagenumber, pagesize, language ?? "en", locfilter, extended, source ?? "opendata", null, fields: fields ?? Array.Empty<string>(), cancellationToken);
             }
             catch (Exception ex)
             {
@@ -87,11 +102,13 @@ namespace OdhApiCore.Controllers
             string id,
             string? language = "en",
             string? source = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await Get(null, null, language ?? "en", null, true, source ?? "opendata", id, cancellationToken);
+                return await Get(null, null, language ?? "en", null, true, source ?? "opendata", id, fields: fields ?? Array.Empty<string>(), cancellationToken);
             }
             catch (Exception ex)
             {
@@ -186,11 +203,13 @@ namespace OdhApiCore.Controllers
             string? locfilter = null,
             string? language = "en",   
             string? source = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetBezirksWetter(pagenumber, pagesize, language ?? "en", locfilter, source ?? "opendata", cancellationToken);
+                return await GetBezirksWetter(pagenumber, pagesize, language ?? "en", locfilter, source ?? "opendata", fields: fields ?? Array.Empty<string>(), cancellationToken);
             }
             catch (Exception ex)
             {
@@ -212,11 +231,13 @@ namespace OdhApiCore.Controllers
             string id,
             string? language = "en",
             string? source = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
-                return await GetBezirksWetter(null, null, language ?? "en", id, source ?? "opendata", cancellationToken);
+                return await GetBezirksWetter(null, null, language ?? "en", id, source ?? "opendata", fields: fields ?? Array.Empty<string>(), cancellationToken);
             }
             catch (Exception ex)
             {
@@ -240,13 +261,15 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
                 var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", null, geosearchresult, cancellationToken);
+                return await GetRealTimeWeather(pagenumber, pagesize, language ?? "en", null, fields: fields ?? Array.Empty<string>(), geosearchresult, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -267,11 +290,13 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetRealtimeWeatherSingle(
             string id,
             string? language = "en",
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             CancellationToken cancellationToken = default)
         {
             try
             {             
-                return await GetRealTimeWeather(null, null, language ?? "en", id, null, cancellationToken);
+                return await GetRealTimeWeather(null, null, language ?? "en", id, fields: fields ?? Array.Empty<string>(), null, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -282,7 +307,8 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Weather Forecast 
         /// </summary>
-        /// <param name="language">Language</param>        
+        /// <param name="language">Language</param>
+        /// <param name="locfilter">Locfilter (possible values: filter on reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction))</param>
         /// <returns>WeatherForecast Object</returns>
         [ProducesResponseType(typeof(IEnumerable<WeatherRealTime>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -291,7 +317,10 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetWeatherForecast(
             uint? pagenumber = null,
             PageSize pagesize = null!,
+            string? locfilter = null,
             string? language = "en",
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
@@ -301,7 +330,7 @@ namespace OdhApiCore.Controllers
             {
                 var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-                return await GetWeatherForecast(pagenumber, pagesize, language ?? "en", null, geosearchresult, cancellationToken);
+                return await GetWeatherForecastFromFile(pagenumber, pagesize, fields: fields ?? Array.Empty<string>(), language ?? "en", null, locfilter, geosearchresult, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -309,6 +338,31 @@ namespace OdhApiCore.Controllers
             }
         }
 
+        /// <summary>
+        /// GET Weather Forecast Single
+        /// </summary>
+        /// <param name="language">Language</param>
+        /// <returns>WeatherForecast Object</returns>
+        [ProducesResponseType(typeof(WeatherRealTime), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("Weather/Forecast/{id}", Name = "SingleWeatherForecast")]
+        public async Task<IActionResult> GetWeatherForecastSingle(
+            string id,
+            string? language = "en",
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
+            string[]? fields = null,
+            CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await GetWeatherForecastFromFile(null, null, fields: fields ?? Array.Empty<string>(), language ?? "en", id, null, null, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { error = ex.Message });
+            }
+        }
 
         /// <summary>
         /// GET Measuringpoint LIST
@@ -520,6 +574,7 @@ namespace OdhApiCore.Controllers
             bool extended, 
             string source,
             string? id,
+            string[] fields,
             CancellationToken cancellationToken)
         {
             var weatherresult = default(WeatherLinked);
@@ -567,6 +622,12 @@ namespace OdhApiCore.Controllers
             if (weatherresult != null)
             {
                 weatherresult._Meta = MetadataHelper.GetMetadataobject<WeatherLinked>(weatherresult);
+                
+                var data = new List<JsonRaw>() { new JsonRaw(weatherresult) };
+                var dataTransformed =
+                    data.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );
 
                 if (pagenumber != null)
                 {
@@ -575,32 +636,33 @@ namespace OdhApiCore.Controllers
                         1,
                         1,
                         null,
-                        new List<WeatherLinked?>() { weatherresult },
+                        dataTransformed,
                         Url));
                 }
                 else
                 {
-                    return Ok(weatherresult);
+                    return Ok(dataTransformed.FirstOrDefault());
                 }
             }
             else
                 return BadRequest("something went wrong");
         }
-              
+
         /// GET Bezirkswetter by LocFilter LIVE Request
         private async Task<IActionResult> GetBezirksWetter(
-            uint? pagenumber, 
-            int? pagesize, 
-            string language, 
-            string? locfilter, 
+            uint? pagenumber,
+            int? pagesize,
+            string language,
+            string? locfilter,
             string source,
+            string[] fields,
             CancellationToken cancellationToken)
         {
             string bezirksid = "";
             string tvrid = "";
             string regid = "";
 
-            if(!String.IsNullOrEmpty(locfilter))
+            if (!String.IsNullOrEmpty(locfilter))
             {
                 int n;
                 if (int.TryParse(locfilter, out n))
@@ -638,64 +700,78 @@ namespace OdhApiCore.Controllers
                         tvrid = await query.FirstOrDefaultAsync<string>();
                     }
                 }
-            }            
+            }
 
             var weatherresult = await GetWeatherData.GetCurrentBezirkWeatherAsync(language, bezirksid, tvrid, regid, settings.XmlConfig.XmldirWeather, settings.SiagConfig.Username, settings.SiagConfig.Password, true, source);
-
-            foreach(var wresult in weatherresult)
-            {
-                if(wresult != null)
-                    wresult._Meta = MetadataHelper.GetMetadataobject<WeatherDistrictLinked>(wresult);
-            }
+            var weatherparsed = await GetWeatherData.ParseSiagBezirkWeatherDataToODHWeather(weatherresult, language, true, source);
             
+            var data = new List<JsonRaw>();
+
+            foreach (var wresult in weatherparsed)
+            {
+                if (wresult != null)
+                {
+                    wresult._Meta = MetadataHelper.GetMetadataobject<WeatherDistrictLinked>(wresult);
+
+                    data.Add(new JsonRaw(wresult));
+                }
+            }
+
+            var dataTransformed =
+                    data.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );
+
             if (pagenumber != null)
             {
                 return Ok(ResponseHelpers.GetResult(
                    pagenumber.Value,
                    1,
-                   (uint)weatherresult.Count(),
+                   (uint)dataTransformed.Count(),
                    null,
-                   weatherresult,
+                   dataTransformed,
                    Url));
             }
             else
             {
                 //Compatibility Hack
                 if (weatherresult.Count() == 1)
-                    return Ok(weatherresult.FirstOrDefault());
+                    return Ok(dataTransformed.FirstOrDefault());
                 else
-                    return Ok(weatherresult);
-            }            
+                    return Ok(dataTransformed);
+            }
         }
 
         /// GET Current Suedtirol Weather Realtime LIVE Request
         private async Task<IActionResult> GetRealTimeWeather(
-            uint? pagenumber, 
-            int? pagesize, 
-            string language, 
+            uint? pagenumber,
+            int? pagesize,            
+            string language,
             string? id,
+            string[] fields,
             PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
+
             var weatherresult = await GetWeatherData.GetCurrentRealTimeWEatherAsync(language);
-
-            //TODO add Transformer (Self link etc...) also verify on other methods
-
-            if(!String.IsNullOrEmpty(id))
+            foreach(var weather in weatherresult)
             {
-                var single = weatherresult.Where(x => x.id == id).FirstOrDefault();
-                if (single != null)
-                    return Ok(single);
-                else
-                    return NotFound("id unknown");
+                weather._Meta = MetadataHelper.GetMetadataobject<WeatherRealTimeLinked>(weather);
+            }
+            var data = new List<JsonRaw>();
+
+            if (!String.IsNullOrEmpty(id))
+            {
+                if(weatherresult.Where(x => x.id == id).Count() > 0)
+                    data.Add(new JsonRaw(weatherresult.Where(x => x.id == id).FirstOrDefault()));
             }
             else
             {
-                if(geosearchresult.geosearch)                    
+                if (geosearchresult.geosearch)
                 {
-                    Dictionary<double, WeatherRealTime> ordereddistance = new Dictionary<double, WeatherRealTime>();
+                    Dictionary<double, WeatherRealTimeLinked> ordereddistance = new Dictionary<double, WeatherRealTimeLinked>();
                     //TODO calculate distance and order by it NOT WORKING
-                    foreach(var weatherealtime in weatherresult)
+                    foreach (var weatherealtime in weatherresult)
                     {
                         var distance = DistanceCalculator.Distance(
                             geosearchresult.latitude,
@@ -705,30 +781,170 @@ namespace OdhApiCore.Controllers
                             'K'
                             );
 
-                        double radiusdistancem = distance * 1000; 
+                        double radiusdistancem = distance * 1000;
 
-                        if(radiusdistancem < geosearchresult.radius)
+                        if (radiusdistancem < geosearchresult.radius)
                             ordereddistance.Add(distance, weatherealtime);
                     }
-                    
+
                     weatherresult = ordereddistance.OrderBy(x => x.Key).Select(x => x.Value).ToList();
                 }
 
-                if (pagenumber != null)
-                {
-                    return Ok(ResponseHelpers.GetResult(
-                        pagenumber.Value,
-                        1,
-                        (uint)weatherresult.Count(),
-                        null,
-                        weatherresult,
-                        Url));
-                }
+                data = JsonRawUtils.ConvertObjectToJsonRaw(weatherresult).ToList();
+            }
+            
+
+            var dataTransformed =
+                data.Select(
+                    raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                );
+
+            if (pagenumber != null)
+            {
+                return Ok(ResponseHelpers.GetResult(
+                    pagenumber.Value,
+                    1,
+                    (uint)dataTransformed.Count(),
+                    null,
+                    dataTransformed,
+                    Url));
+            }
+            else
+            {
+                //Compatibility Hack
+                if (dataTransformed.Count() == 1)
+                    return Ok(dataTransformed.FirstOrDefault());
                 else
+                    return Ok(dataTransformed);
+            }
+        }
+
+        /// GET Bezirkswetter by LocFilter LIVE Request
+        private async Task<IActionResult> GetWeatherForecastFromFile(
+            uint? pagenumber,
+            int? pagesize,
+            string[] fields,
+            string language,
+            string? id,
+            string? locfilter,
+            PGGeoSearchResult geosearchresult,
+            CancellationToken cancellationToken)
+        {
+            IEnumerable<MunicipalityIdIstatNumber> municipalities = new List<MunicipalityIdIstatNumber>();
+
+            List<string> municipalitycodes = new List<string>();
+            List<string> municipalityids = new List<string>();
+            List<string> tvids = new List<string>();
+            List<string> regids = new List<string>();
+
+            if(id != null)
+                municipalitycodes.Add(id.Replace("forecast_", ""));
+
+            //Locfilter stuff
+            if (locfilter != null)
+            {
+                foreach(var locfiltersplitted in locfilter.Split(","))
                 {
-                    return Ok(weatherresult);
+                    if (locfiltersplitted.Contains("mun"))
+                        municipalityids.AddRange(CommonListCreator.CreateDistrictIdList(locfiltersplitted, "mun"));
+                    else if (locfiltersplitted.Contains("tvs"))
+                        regids.AddRange(CommonListCreator.CreateDistrictIdList(locfiltersplitted, "tvs"));
+                    else if (locfiltersplitted.Contains("reg"))
+                        regids.AddRange(CommonListCreator.CreateDistrictIdList(locfiltersplitted, "reg"));
                 }
-            }           
+
+            }
+
+            //Generate from GPS
+            var query =
+                QueryFactory.Query()
+                   .SelectRaw($"id, data#>>'\\{{IstatNumber\\}}' as \"istatnumber\", data#>>'\\{{Detail,{language},Title\\}}' as \"name\"")
+                   .From("municipalities")
+                   .When(municipalityids.Count > 0, x => x.WhereIn("id", municipalityids))
+                   .When(municipalitycodes.Count > 0, x => x.WhereInJsonb(municipalitycodes, "IstatNumber"))
+                   .When(tvids.Count > 0, x => x.WhereInJsonb(tvids, "TourismvereinId"))
+                   .When(regids.Count > 0, x => x.WhereInJsonb(regids, "RegionId"))
+                   .GeoSearchFilterAndOrderby_GeneratedColumns(geosearchresult);
+
+            municipalities = await query.GetAsync<MunicipalityIdIstatNumber>();
+
+            //Get Data and parse
+            var parsed = await GetWeatherData.GetWeatherForeCastAsync(language, municipalitycodes, await GetWeatherForecastFromS3());
+            var data = new List<JsonRaw>();
+
+            foreach (var forecast in parsed)
+            {
+                var municipality = municipalities.Where(x => x.istatnumber == forecast.MunicipalityIstatCode).FirstOrDefault();
+
+                if (forecast != null && municipality != null)
+                {
+                    //Todo filter Municipalities
+
+                    forecast._Meta = MetadataHelper.GetMetadataobject<WeatherForecastLinked>(forecast);
+
+                    if (municipality != null)
+                    {
+                        forecast.LocationInfo = new LocationInfoLinked() { MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality.id, Name = new Dictionary<string, string>() { { language, municipality.name } } } };
+                    }
+
+                    data.Add(new JsonRaw(forecast));
+                }
+            }
+
+            //var data = JsonRawUtils.ConvertObjectToJsonRaw(parsed);
+
+            var dataTransformed =
+                    data.Select(
+                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );
+
+            if (pagenumber != null)
+            {
+                return Ok(ResponseHelpers.GetResult(
+                   pagenumber.Value,
+                   1,
+                   (uint)dataTransformed.Count(),
+                   null,
+                   dataTransformed,
+                   Url));
+            }
+            else
+            {
+                //Compatibility Hack
+                if (parsed.Count() == 1)
+                    return Ok(dataTransformed.FirstOrDefault());
+                else
+                    return Ok(dataTransformed);
+            }
+        }
+
+        private async Task<SiagWeatherForecastModel> GetWeatherForecastFromS3()
+        {
+            if (!settings.S3Config.ContainsKey("dc-meteorology-province-forecast"))
+                throw new Exception("No weatherforecast file found");
+
+            //var s3bucket = settings.S3Config["dc-meteorology-province-forecast"];
+
+            //TransferUtility fileTransferUtility =
+            //    new TransferUtility(new AmazonS3Client(s3bucket.AccessKey, s3bucket.AccessSecretKey, Amazon.RegionEndpoint.EUWest1));
+
+            //var request = new TransferUtilityDownloadRequest()
+            //{
+            //    BucketName = s3bucket.Bucket,
+            //    Key = s3bucket.Filename,
+            //    FilePath = settings.JsonConfig.Jsondir + s3bucket.Filename
+            //};
+            //await fileTransferUtility.DownloadAsync(request);
+
+            using (StreamReader r = new StreamReader(settings.JsonConfig.Jsondir + settings.S3Config["dc-meteorology-province-forecast"].Filename))
+            {
+                string json = r.ReadToEnd();
+
+                if (json != null)
+                    return JsonConvert.DeserializeObject<SiagWeatherForecastModel>(json);
+                else
+                    throw new Exception("Unable to parse file");
+            }
         }
 
         #endregion
@@ -1012,5 +1228,12 @@ namespace OdhApiCore.Controllers
       
         #endregion
 
+    }
+
+    public class MunicipalityIdIstatNumber
+    {
+        public string id { get; set; }
+        public string istatnumber { get; set; }
+        public string name { get; set; }
     }
 }
