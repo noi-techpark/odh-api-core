@@ -192,9 +192,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestSomething")]
         public IActionResult GetTestSomething()
         {
-            return Ok(new List<string>() { settings.S3Config["dc-meteorology-province-forecast"].AccessKey, 
-                settings.S3Config["dc-meteorology-province-forecast"].AccessSecretKey, 
-                settings.S3Config["dc-meteorology-province-forecast"].Filename });
+            return Ok(new { settings.S3Config, settings.NotifierConfig  });
         }
 
 
