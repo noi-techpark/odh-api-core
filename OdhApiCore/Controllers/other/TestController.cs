@@ -188,14 +188,14 @@ namespace OdhApiCore.Controllers.api
             return Ok(municipalityreducedinfo);
         }
 
-        ////Not working
-        //[HttpGet, Route("TestDateTimeConversion6")]
-        //public IActionResult GetDatetimeConversiont6()
-        //{            
-        //    var date = Convert.ToDateTime("31/12/2020T18:00:00");
-
-        //    return Ok(date);
-        //}
+        //Not working
+        [HttpGet, Route("TestSomething")]
+        public IActionResult GetTestSomething()
+        {
+            return Ok(new List<string>() { settings.S3Config["dc-meteorology-province-forecast"].AccessKey, 
+                settings.S3Config["dc-meteorology-province-forecast"].AccessSecretKey, 
+                settings.S3Config["dc-meteorology-province-forecast"].Filename });
+        }
 
 
         //[TypeFilter(typeof(Filters.RequestInterceptorAttribute))]
