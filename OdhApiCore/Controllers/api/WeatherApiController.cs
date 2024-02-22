@@ -294,7 +294,8 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Weather Forecast 
         /// </summary>
-        /// <param name="language">Language</param>        
+        /// <param name="language">Language</param>
+        /// <param name="locfilter">Locfilter (possible values: filter on reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction))</param>
         /// <returns>WeatherForecast Object</returns>
         [ProducesResponseType(typeof(IEnumerable<WeatherRealTime>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -305,7 +306,6 @@ namespace OdhApiCore.Controllers
             PageSize pagesize = null!,
             string? locfilter = null,
             string? language = "en",
-            bool? includemunicipalities = true,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? latitude = null,
@@ -317,7 +317,7 @@ namespace OdhApiCore.Controllers
             {
                 var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
 
-                return await GetWeatherForecastFromFile(pagenumber, pagesize, fields: fields ?? Array.Empty<string>(), language ?? "en", locfilter, includemunicipalities ?? false, geosearchresult, cancellationToken);
+                return await GetWeatherForecastFromFile(pagenumber, pagesize, fields: fields ?? Array.Empty<string>(), language ?? "en", locfilter, geosearchresult, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -755,64 +755,46 @@ namespace OdhApiCore.Controllers
             string[] fields,
             string language,
             string? locfilter,
-            bool includemunicipalities,
             PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
-            IEnumerable<MunicipalityLinked> municipalities = new List<MunicipalityLinked>();
+            IEnumerable<MunicipalityIdIstatNumber> municipalities = new List<MunicipalityIdIstatNumber>();
 
             List<string> municipalitycodes = new List<string>();
             List<string> municipalityids = new List<string>();
 
+            //Locfilter stuff
             if (locfilter != null && locfilter.Contains("mun"))
                 municipalityids = CommonListCreator.CreateDistrictIdList(locfilter, "mun");
 
             //Generate from GPS
             var query =
                 QueryFactory.Query()
-                   .Select("data->>'IstatNumber'")
+                   .SelectRaw($"id, data#>>'\\{{IstatNumber\\}}' as \"istatnumber\", data#>>'\\{{Detail,{language},Title\\}}' as \"name\"")
                    .From("municipalities")
                    .When(municipalityids.Count > 0, x => x.WhereIn("id", municipalityids) )
                    .GeoSearchFilterAndOrderby_GeneratedColumns(geosearchresult);
 
-
-            municipalities = await query.GetObjectListAsync<MunicipalityLinked>();
-
-            //generate from locfilter
-            if (includemunicipalities)
-            {
-                var querytoinclude =
-                QueryFactory.Query()
-                   .Select("data")
-                   .From("municipalities")
-                   .GeoSearchFilterAndOrderby_GeneratedColumns(geosearchresult);
-
-
-                municipalities = await querytoinclude.GetObjectListAsync<MunicipalityLinked>();
-            }
+            municipalities = await query.GetAsync<MunicipalityIdIstatNumber>();
 
             //Get Data and parse
             var parsed = await GetWeatherData.GetWeatherForeCastAsync(language, municipalitycodes, await GetWeatherForecastFromS3());
             
-
             foreach (var forecast in parsed)
             {
-                if (forecast != null)
+                var municipality = municipalities.Where(x => x.istatnumber == forecast.MunicipalityIstatCode).FirstOrDefault();
+
+                if (forecast != null && municipality != null)
                 {
+                    //Todo filter Municipalities
+
                     forecast._Meta = MetadataHelper.GetMetadataobject<WeatherForecastLinked>(forecast);
 
-                    if (includemunicipalities)
+                    if (municipality != null)
                     {
-                        var municipality = municipalities.Where(x => x.IstatNumber == forecast.MunicipalityIstatCode).FirstOrDefault();
-
-                        if (municipality != null)
-                        {
-                            var municipalitynames = (from x in municipality.Detail
-                                                     select x).ToDictionary(x => x.Key, x => x.Value.Title);
-
-                            forecast.LocationInfo = new LocationInfoLinked() { MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality.Id, Name = municipalitynames } };
-                        }
+                        forecast.LocationInfo = new LocationInfoLinked() { MunicipalityInfo = new MunicipalityInfoLinked() { Id = municipality.id, Name = new Dictionary<string, string>() { { language, municipality.name } } } };
                     }
+                    
                 }
             }
 
@@ -848,29 +830,27 @@ namespace OdhApiCore.Controllers
             if (!settings.S3Config.ContainsKey("dc-meteorology-province-forecast"))
                 throw new Exception("No weatherforecast file found");
 
-            var s3bucket = settings.S3Config["dc-meteorology-province-forecast"];
+            //var s3bucket = settings.S3Config["dc-meteorology-province-forecast"];
 
-                TransferUtility fileTransferUtility =
-                    new TransferUtility(new AmazonS3Client(s3bucket.AccessKey, s3bucket.AccessSecretKey, Amazon.RegionEndpoint.EUWest1));
+            //TransferUtility fileTransferUtility =
+            //    new TransferUtility(new AmazonS3Client(s3bucket.AccessKey, s3bucket.AccessSecretKey, Amazon.RegionEndpoint.EUWest1));
 
-                var request = new TransferUtilityDownloadRequest()
-                {
-                    BucketName = s3bucket.Bucket,
-                    Key = s3bucket.Filename,
-                    FilePath = settings.JsonConfig.Jsondir + s3bucket.Filename
-                };
-                await fileTransferUtility.DownloadAsync(request);
+            //var request = new TransferUtilityDownloadRequest()
+            //{
+            //    BucketName = s3bucket.Bucket,
+            //    Key = s3bucket.Filename,
+            //    FilePath = settings.JsonConfig.Jsondir + s3bucket.Filename
+            //};
+            //await fileTransferUtility.DownloadAsync(request);
 
-                var siagweatherforecast = new SiagWeatherForecastModel();
+            using (StreamReader r = new StreamReader(settings.JsonConfig.Jsondir + settings.S3Config["dc-meteorology-province-forecast"].Filename))
+            {
+                string json = r.ReadToEnd();
 
-                using (StreamReader r = new StreamReader(settings.JsonConfig.Jsondir + s3bucket.Filename))
-                {
-                    string json = r.ReadToEnd();
-
-                    if (json != null)
-                        return JsonConvert.DeserializeObject<SiagWeatherForecastModel>(json);
-                    else
-                        throw new Exception("Unable to parse file");
+                if (json != null)
+                    return JsonConvert.DeserializeObject<SiagWeatherForecastModel>(json);
+                else
+                    throw new Exception("Unable to parse file");
             }
         }
 
@@ -1155,5 +1135,12 @@ namespace OdhApiCore.Controllers
       
         #endregion
 
+    }
+
+    public class MunicipalityIdIstatNumber
+    {
+        public string id { get; set; }
+        public string istatnumber { get; set; }
+        public string name { get; set; }
     }
 }

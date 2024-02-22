@@ -35,7 +35,8 @@ namespace OdhApiImporter
         private readonly PanocloudConfig panocloudConfig;
         private readonly A22Config a22Config;
 
-        private readonly List<NotifierConfig> notifierConfig;        
+        private readonly List<NotifierConfig> notifierConfig;
+        private readonly IDictionary<string, S3Config> s3Config;
 
         public Settings(IConfiguration configuration)
         {
@@ -91,7 +92,18 @@ namespace OdhApiImporter
                 {
                     this.notifierConfig.Add(new NotifierConfig(notifiercfg.Key, notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
                 }
-            }                
+            }
+
+            this.s3Config = new Dictionary<string, S3Config>();
+
+            var s3configdict = this.configuration.GetSection("S3Config").GetChildren();
+            if (s3configdict != null)
+            {
+                foreach (var s3cfg in s3configdict)
+                {
+                    this.s3Config.TryAddOrUpdate(s3cfg.Key, new S3Config(s3cfg.GetValue<string>("AccessKey", ""), s3cfg.GetValue<string>("AccessSecretKey", ""), s3cfg.Key, s3cfg.GetValue<string>("Filename", "")));
+                }
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -125,6 +137,6 @@ namespace OdhApiImporter
         public NoRateLimitConfig NoRateLimitConfig => throw new NotImplementedException();
         public List<FCMConfig> FCMConfig => throw new NotImplementedException();
         public PushServerConfig PushServerConfig => throw new NotImplementedException();
-        public IDictionary<string, S3Config> S3Config=> throw new NotImplementedException();
+        public IDictionary<string, S3Config> S3Config => this.s3Config;
     }
 }
