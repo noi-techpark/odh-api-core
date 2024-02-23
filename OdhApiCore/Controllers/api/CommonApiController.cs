@@ -1168,7 +1168,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("MetaRegion").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<MetaRegionLinked>(data, new DataInfo("metaregions", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1189,7 +1189,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Region").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<RegionLinked>(data, new DataInfo("regions", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1210,7 +1210,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("ExperienceArea").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<ExperienceAreaLinked>(data, new DataInfo("experienceareas", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1231,7 +1231,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("TourismAssociation").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<TourismvereinLinked>(data, new DataInfo("tvs", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1252,7 +1252,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Municipality").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<MunicipalityLinked>(data, new DataInfo("municipalities", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1273,7 +1273,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("District").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<DistrictLinked>(data, new DataInfo("districts", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1294,7 +1294,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Area").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<AreaLinked>(data, new DataInfo("areas", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1313,9 +1313,9 @@ namespace OdhApiCore.Controllers.api
         public Task<IActionResult> Post([FromBody] SkiRegionLinked data)
         {
             return DoAsyncReturn(async () =>
-            {  
+            {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("SkiRegion").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<SkiRegionLinked>(data, new DataInfo("skiregions", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1336,7 +1336,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("SkiArea").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<SkiAreaLinked>(data, new DataInfo("skiareas", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1357,7 +1357,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Create
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("WineAward").TryGetValue("Create", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
                 return await UpsertData<WineLinked>(data, new DataInfo("wines", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1379,7 +1379,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("MetaRegion").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
                 return await UpsertData<MetaRegionLinked>(data, new DataInfo("metaregions", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1401,7 +1401,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Region").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
                 return await UpsertData<RegionLinked>(data, new DataInfo("regions", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1423,7 +1423,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("ExperienceArea").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
                 return await UpsertData<ExperienceAreaLinked>(data, new DataInfo("experienceareas", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1445,7 +1445,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("TourismAssociation").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
                 return await UpsertData<TourismvereinLinked>(data, new DataInfo("tvs", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1467,7 +1467,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Municipality").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
                 return await UpsertData<MunicipalityLinked>(data, new DataInfo("municipalities", CRUDOperation.Update), new CompareConfig(true, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1489,7 +1489,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("District").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
                 return await UpsertData<DistrictLinked>(data, new DataInfo("districts", CRUDOperation.Update), new CompareConfig(true, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1511,7 +1511,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Area").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
                 return await UpsertData<AreaLinked>(data, new DataInfo("areas", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1533,7 +1533,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("SkiRegion").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
                 return await UpsertData<SkiRegionLinked>(data, new DataInfo("skiregions", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1555,7 +1555,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("SkiArea").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
                 return await UpsertData<SkiAreaLinked>(data, new DataInfo("skiareas", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1577,7 +1577,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("WineAward").TryGetValue("Update", out var additionalfilter);
 
                 data.Id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
                 return await UpsertData<WineLinked>(data, new DataInfo("wines", CRUDOperation.Update), new CompareConfig(true,true), new CRUDConstraints(additionalfilter,UserRolesToFilter));
@@ -1598,7 +1598,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("MetaRegion").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
                 return await DeleteData<MetaRegionLinked>(id, new DataInfo("metaregions", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1619,7 +1619,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Region").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
                 return await DeleteData<RegionLinked>(id, new DataInfo("regions", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1640,7 +1640,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("ExperienceArea").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
                 return await DeleteData<ExperienceAreaLinked>(id, new DataInfo("experienceareas", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1661,7 +1661,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("TourismAssociation").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
                 return await DeleteData<TourismvereinLinked>(id, new DataInfo("tvs", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1682,7 +1682,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Municipality").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
                 return await DeleteData<MunicipalityLinked>(id, new DataInfo("municipalities", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1703,7 +1703,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("District").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
                 return await DeleteData<DistrictLinked>(id, new DataInfo("districts", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1724,7 +1724,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Area").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
                 return await DeleteData<AreaLinked>(id, new DataInfo("areas", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1745,7 +1745,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("SkiRegion").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
                 return await DeleteData<SkiRegionLinked>(id, new DataInfo("skiregions", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1766,7 +1766,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("SkiArea").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
                 return await DeleteData<SkiAreaLinked>(id, new DataInfo("skiareas", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -1787,7 +1787,7 @@ namespace OdhApiCore.Controllers.api
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Delete
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("WineAward").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
                 return await DeleteData<WineLinked>(id, new DataInfo("wines", CRUDOperation.Delete), new CRUDConstraints(additionalfilter,UserRolesToFilter));

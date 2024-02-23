@@ -1254,7 +1254,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Additional Read Filters to Add Check
-                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Weather/Measuringpoint").TryGetValue("Create", out var additionalfilter);
 
                 measuringpoint.Id = Helper.IdGenerator.GenerateIDFromType(measuringpoint);
 
@@ -1280,7 +1280,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Additional Read Filters to Add Check
-                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Weather/Measuringpoint").TryGetValue("Update", out var additionalfilter);
 
                 measuringpoint.Id = Helper.IdGenerator.CheckIdFromType<MeasuringpointLinked>(id);
 
@@ -1303,7 +1303,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Additional Read Filters to Add Check
-                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Weather/Measuringpoint").TryGetValue("Delete", out var additionalfilter);
 
                 id = Helper.IdGenerator.CheckIdFromType<MeasuringpointLinked>(id);
 
