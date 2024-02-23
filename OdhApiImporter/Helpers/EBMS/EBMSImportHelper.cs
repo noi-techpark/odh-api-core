@@ -28,8 +28,10 @@ namespace OdhApiImporter.Helpers
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             var resulttuple = GetEBMSData.GetEbmsEvents(settings.EbmsConfig.ServiceUrl, settings.EbmsConfig.User, settings.EbmsConfig.Password);
-         
-            var currenteventshort = await GetAllEventsShort(DateTime.Now);
+
+            //To check we have to use here not DateTime.Now but DateTime now from our timezone
+            var currentdate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome"));
+            var currenteventshort = await GetAllEventsShort(currentdate);
 
             var updateresult = await ImportData(resulttuple, cancellationToken);
             
@@ -279,6 +281,8 @@ namespace OdhApiImporter.Helpers
                         //TODO CHECK IF IT WORKS
                         if (eventshorttodeactivate != null)
                         {
+                            eventshorttodeactivate.Display1 = "N";
+
                             await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
                             deletecounter++;
                         }

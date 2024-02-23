@@ -147,6 +147,30 @@ namespace OdhApiCore.Controllers.api
             return Ok(date);
         }
 
+        [HttpGet, Route("GetSystemTimezones")]
+        public IActionResult GetSystemTimezones()
+        {
+            List<string> timezones = new List<string>();
+            foreach (TimeZoneInfo z in TimeZoneInfo.GetSystemTimeZones())
+            {
+                timezones.Add(z.Id);
+            }
+            return Ok(timezones);
+        }
+
+        [HttpGet, Route("GetTimeZoneTest")]
+        public IActionResult GetTimeZoneTest()
+        {
+            var currentdate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome"));
+            var date = DateTime.Now;
+
+            return Ok(new { date, currentdate });
+        }
+
+        
+
+
+
         [ProducesResponseType(typeof(IEnumerable<ObjectwithDeprecated>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
