@@ -20,13 +20,18 @@ namespace OdhApiCore.GenericHelpers
 
             //foreach(var deprecatedprop in deprecatedprops)
             //{
-                
+
             //}
 
-            return deprecatedprops.Select(x => new DeprecationInfo() { 
-                Name = x.Name, 
-                Description = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().Description, 
-                Type = x.PropertyType.ToString() }).ToList();
+            return deprecatedprops.Select(x => new DeprecationInfo() {
+                Name = x.Name,
+                Description = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().Description,
+                Type = x.PropertyType.ToString(),
+                DeprecationDate = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().DeprecationDate,
+                RemovedAfter = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().RemovedAfter,
+            })
+            .ToList();
+                
         }
     }
 
@@ -36,6 +41,6 @@ namespace OdhApiCore.GenericHelpers
         public string? Type { get; set; }
         public string? Description { get; set; }
         public DateTime? DeprecationDate { get; set; }
-        public DateTime? RemovedAfter { get; }
+        public DateTime? RemovedAfter { get; set; }
     }
 }

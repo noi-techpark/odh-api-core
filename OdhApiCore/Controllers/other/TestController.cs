@@ -143,7 +143,20 @@ namespace OdhApiCore.Controllers.api
             return Ok(date);
         }
 
-        [ProducesResponseType(typeof(IEnumerable<ObjectwithDeprecated>), StatusCodes.Status200OK)]
+        [HttpGet, Route("GetSystemTimezones")]
+        public IActionResult GetSystemTimezones()
+        {
+            List<string> timezones = new List<string>();
+            foreach (TimeZoneInfo z in TimeZoneInfo.GetSystemTimeZones())
+            {
+                timezones.Add(z.Id);
+            }
+            return Ok(timezones);
+        }
+
+      
+
+    [ProducesResponseType(typeof(IEnumerable<ObjectwithDeprecated>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("TestDeprecated")]
@@ -222,12 +235,12 @@ namespace OdhApiCore.Controllers.api
         //    return this.Content(User.Identity?.Name + " WithRole working", "application/json", Encoding.UTF8);
         //}
 
-        [Authorize(Roles = "Hallihallo")]
-        [HttpGet, Route("WithRole2")]
-        public IActionResult GetWithRole2(CancellationToken cancellationToken)
-        {
-            return this.Content(User.Identity?.Name + " WithRole2 working", "application/json", Encoding.UTF8);
-        }
+        //[Authorize(Roles = "Hallihallo")]
+        //[HttpGet, Route("WithRole2")]
+        //public IActionResult GetWithRole2(CancellationToken cancellationToken)
+        //{
+        //    return this.Content(User.Identity?.Name + " WithRole2 working", "application/json", Encoding.UTF8);
+        //}
 
         //[HttpGet, Route("Environment")]
         //public IActionResult GetEnvironmentV(CancellationToken cancellationToken)
