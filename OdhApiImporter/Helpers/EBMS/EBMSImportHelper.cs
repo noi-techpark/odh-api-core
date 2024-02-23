@@ -30,8 +30,8 @@ namespace OdhApiImporter.Helpers
             var resulttuple = GetEBMSData.GetEbmsEvents(settings.EbmsConfig.ServiceUrl, settings.EbmsConfig.User, settings.EbmsConfig.Password);
 
             //To check we have to use here not DateTime.Now but DateTime now from our timezone
-            DateTime nowdate = DateTime.Now; //TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.F);
-            var currenteventshort = await GetAllEventsShort(nowdate);
+            var currentdate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome"));
+            var currenteventshort = await GetAllEventsShort(currentdate);
 
             var updateresult = await ImportData(resulttuple, cancellationToken);
             
@@ -281,6 +281,8 @@ namespace OdhApiImporter.Helpers
                         //TODO CHECK IF IT WORKS
                         if (eventshorttodeactivate != null)
                         {
+                            eventshorttodeactivate.Display1 = "N";
+
                             await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
                             deletecounter++;
                         }

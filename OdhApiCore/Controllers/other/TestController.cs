@@ -154,9 +154,20 @@ namespace OdhApiCore.Controllers.api
             return Ok(timezones);
         }
 
-      
+        [HttpGet, Route("GetTimeZoneTest")]
+        public IActionResult GetTimeZoneTest()
+        {
+            var currentdate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome"));
+            var date = DateTime.Now;
 
-    [ProducesResponseType(typeof(IEnumerable<ObjectwithDeprecated>), StatusCodes.Status200OK)]
+            return Ok(new { date, currentdate });
+        }
+
+        
+
+
+
+        [ProducesResponseType(typeof(IEnumerable<ObjectwithDeprecated>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("TestDeprecated")]
