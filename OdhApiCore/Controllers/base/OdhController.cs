@@ -61,7 +61,7 @@ namespace OdhApiCore.Controllers
         }
 
         //Hack Method for Search api which passes endpoint
-        protected IEnumerable<string> UserRolesToFilterSearchApi(string endpoint)
+        protected IEnumerable<string> UserRolesToFilterEndpoint(string endpoint)
         {
             return GetEndPointAccessRole(endpoint);
         }

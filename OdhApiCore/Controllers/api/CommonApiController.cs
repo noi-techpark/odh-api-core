@@ -1003,7 +1003,8 @@ namespace OdhApiCore.Controllers.api
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language, 
                                                lastchange: commonhelper.lastchange, additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort)
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint)); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
                 // Get paginated data
                 var data =
@@ -1032,7 +1033,9 @@ namespace OdhApiCore.Controllers.api
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language,
                                                lastchange: commonhelper.lastchange, additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
+                        .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort)
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
+
 
                 // Get paginated data
                 var data =
@@ -1074,7 +1077,8 @@ namespace OdhApiCore.Controllers.api
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
                                                searchfilter: searchfilter, language: language, additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort)
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
 
                 // Get paginated data
                 var data =
@@ -1103,7 +1107,8 @@ namespace OdhApiCore.Controllers.api
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
                                                searchfilter: searchfilter, language: language, additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
-                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort)
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
 
                 // Get paginated data
                 var data =
@@ -1142,7 +1147,7 @@ namespace OdhApiCore.Controllers.api
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                        .FilterDataByAccessRoles(UserRolesToFilter);
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 

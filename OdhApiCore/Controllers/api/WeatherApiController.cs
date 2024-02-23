@@ -1077,7 +1077,7 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Additional Read Filters to Add Check
-                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Weather/Measuringpoint").TryGetValue("Read", out var additionalfilter);
 
                 //Fix add are to every arefilter item
                 string? areafilterwithprefix = String.IsNullOrEmpty(areafilter) ? "" : "are" + areafilter;
@@ -1098,7 +1098,7 @@ namespace OdhApiCore.Controllers
                             sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
                             additionalfilter: additionalfilter,
-                            userroles: UserRolesToFilter)
+                            userroles: UserRolesToFilterEndpoint("Weather/Measuringpoint"))
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -1153,14 +1153,14 @@ namespace OdhApiCore.Controllers
             return DoAsyncReturn(async () =>
             {
                 //Additional Read Filters to Add Check
-                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+                AdditionalFiltersToAddEndpoint("Weather/Measuringpoint").TryGetValue("Read", out var additionalfilter);
 
                 var query =
                     QueryFactory.Query("measuringpoints")
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                        .FilterDataByAccessRoles(UserRolesToFilter);
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint("Weather/Measuringpoint"));
 
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();

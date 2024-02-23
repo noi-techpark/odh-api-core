@@ -185,7 +185,7 @@ namespace OdhApiCore.Controllers
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
-                .FilterDataByAccessRoles(UserRolesToFilterSearchApi(endpoint))
+                .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint))
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .ApplyRawFilter(rawfilter)
                 .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'")
