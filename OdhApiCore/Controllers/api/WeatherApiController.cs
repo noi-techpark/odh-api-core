@@ -629,7 +629,7 @@ namespace OdhApiCore.Controllers
                 var data = new List<JsonRaw>() { new JsonRaw(weatherresult) };
                 var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 if (pagenumber != null)
@@ -722,7 +722,7 @@ namespace OdhApiCore.Controllers
 
             var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
             if (pagenumber != null)
@@ -799,7 +799,7 @@ namespace OdhApiCore.Controllers
 
             var dataTransformed =
                 data.Select(
-                    raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                    raw => raw.TransformRawData(language, fields, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
                 );
 
             if (pagenumber != null)
@@ -898,7 +898,7 @@ namespace OdhApiCore.Controllers
 
             var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
             if (pagenumber != null)
