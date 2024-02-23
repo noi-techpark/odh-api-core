@@ -5,6 +5,8 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -29,8 +32,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class SourceController : OdhController
     {
-        public SourceController(IWebHostEnvironment env, ISettings settings, ILogger<SourceController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public SourceController(IWebHostEnvironment env, ISettings settings, ILogger<SourceController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -113,6 +116,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var idlist = Helper.CommonListCreator.CreateIdList(idfilter);
 
                 var query =
@@ -124,14 +130,12 @@ namespace OdhApiCore.Controllers
                         idlist: idlist,
                         searchfilter: searchfilter,
                         language: language,
-                        filterClosedData: FilterClosedData, userroles: UserRolesToFilter
+                        additionalfilter: additionalfilter,
+                        userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'");
-
-                var fieldsTohide = FieldsToHide;
-
-
+                
                 // Get paginated data
                 var data =
                     await query
@@ -141,7 +145,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -161,15 +165,17 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var data = await QueryFactory.Query("sources")
                     .Select("data")
                     .Where("id", id.ToLower())
-                    .When(FilterClosedData, q => q.FilterClosedData())
+                    .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                    .FilterDataByAccessRoles(UserRolesToFilter)
                     .FirstOrDefaultAsync<JsonRaw>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields,  filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -182,18 +188,22 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="Source">SourceLinked Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataCreate,SourceManager,SourceCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,SourceManager,SourceCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Source")]
         public Task<IActionResult> Post([FromBody] SourceLinked source)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 source.Id = source.Key.ToLower().Replace(" ", "") ?? Helper.IdGenerator.GenerateIDFromType(source);
 
                 if (source.LicenseInfo == null)
                     source.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<SourceLinked>(source, "sources", true);
+                return await UpsertData<SourceLinked>(source, new DataInfo("sources", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -203,15 +213,19 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Source Id</param>
         /// <param name="source">Source Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataModify,SourceManager,SourceModify,SourceUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,SourceManager,SourceModify,SourceUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Source/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] SourceLinked source)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 source.Id = Helper.IdGenerator.CheckIdFromType<SourceLinked>(id);
 
-                return await UpsertData<SourceLinked>(source, "sources", false, true);
+                return await UpsertData<SourceLinked>(source, new DataInfo("sources", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -220,15 +234,19 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Source Id</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataDelete,SourceManager,SourceDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,SourceManager,SourceDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Source/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<SourceLinked>(id);
 
-                return await DeleteData(id, "sources");
+                return await DeleteData<SourceLinked>(id, new DataInfo("sources", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

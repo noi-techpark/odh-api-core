@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Controllers.api;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using Schema.NET;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
@@ -33,7 +35,7 @@ namespace OdhApiCore.Controllers
         private static string absoluteUri = "";
         private readonly ISettings settings;
 
-        public MetaDataController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory) : base(env, settings, logger, queryFactory)
+        public MetaDataController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier) : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }
@@ -140,7 +142,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: new List<string>())
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: null)
                     );
 
                 //TODO WRITE A NEW urlGenerator for metadata
@@ -168,10 +170,8 @@ namespace OdhApiCore.Controllers
                         .Where("id", id.ToLower());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: null);
             });
         }
 
@@ -198,7 +198,7 @@ namespace OdhApiCore.Controllers
                 //GENERATE ID
                 metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
                 
-                return await UpsertData<TourismMetaData>(metadata, "metadata", true);
+                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(null, UserRolesToFilter));
             });
         }
 
@@ -222,7 +222,7 @@ namespace OdhApiCore.Controllers
                 //Check ID uppercase lowercase
                 metadata.Id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
-                return await UpsertData<TourismMetaData>(metadata, "metadata", false, true);
+                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(null, UserRolesToFilter));
             });
         }
 
@@ -245,7 +245,7 @@ namespace OdhApiCore.Controllers
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
-                return await DeleteData(id, "metadata");
+                return await DeleteData<TourismMetaData>(id, new DataInfo("metadata", CRUDOperation.Delete), new CRUDConstraints(null, UserRolesToFilter));
             });
         }
 

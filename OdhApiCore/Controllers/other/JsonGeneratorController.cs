@@ -20,6 +20,7 @@ using SqlKata.Execution;
 using OdhApiCore.Filters;
 using OdhApiCore.GenericHelpers;
 using AspNetCore.CacheOutput;
+using OdhNotifier;
 using Amazon.S3.Transfer;
 using Amazon.S3;
 using Helper.S3;
@@ -32,8 +33,8 @@ namespace OdhApiCore.Controllers.other
     {        
         private readonly ISettings settings;
 
-        public JsonGeneratorController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public JsonGeneratorController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }

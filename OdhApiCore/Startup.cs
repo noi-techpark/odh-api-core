@@ -6,6 +6,7 @@ using AspNetCore.CacheOutput.InMemory.Extensions;
 using DataModel;
 using Helper;
 using Helper.Factories;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Connections;
@@ -26,12 +27,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Npgsql;
 using OdhApiCore.Controllers;
 using OdhApiCore.Swagger;
+using OdhNotifier;
 using Schema.NET;
 using Serilog;
 using Serilog.Core;
@@ -101,7 +104,7 @@ namespace OdhApiCore
             services.AddDistributedMemoryCache();
 
             services.AddHealthChecks()
-                .AddCheck("self", () => HealthCheckResult.Healthy())                
+                .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
 
             //TO Remove old Quota Config
@@ -267,7 +270,7 @@ namespace OdhApiCore
             });
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
-            services.AddResponseCompression( options =>
+            services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
                 options.Providers.Add<GzipCompressionProvider>();
@@ -283,11 +286,11 @@ namespace OdhApiCore
                             .SetIsOriginAllowed(hostName => true);
                 });
             });
-            
+
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());                
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 //{
                 //    CamelCaseText = true
                 //});
@@ -297,7 +300,8 @@ namespace OdhApiCore
 
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
-      
+            services.AddScoped<IOdhPushNotifier, OdhPushNotifier>();
+
             //Initialize JWT Authentication
             services.AddAuthentication(options =>
                 {
@@ -306,39 +310,38 @@ namespace OdhApiCore
                 })
                     .AddJwtBearer(jwtBearerOptions =>
                 {
-                    jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");                    
+                    jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");
                     //jwtBearerOptions.Audience = "account";                
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = "preferred_username",
                         ValidateAudience = false,
-                        ValidateLifetime = true,                        
+                        ValidateLifetime = true,
                         ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
                         ValidateIssuer = true,
                         //RoleClaimTypeRetriever
                         //RoleClaimType = "resource_access.odh-api-core.roles"  //TO TEST 
                     };
                     jwtBearerOptions.Events = new JwtBearerEvents()
-                    {   
-                    //    OnTokenValidated = context =>
-                    //    {
-                    //        var jwt = (context.SecurityToken as JwtSecurityToken);
-                            
-                    //        RoleHelper.AddRoleClaims(context.Principal);
-                    //        return Task.CompletedTask;
-                    //    },
+                    {
+                        //When switching to Authorization Services this is not needed anymore
+                        //OnTokenValidated = context =>
+                        //{
+                        //    RoleHelper.AddRoleClaims(context.Principal, "odh-api-core");
+                        //    return Task.CompletedTask;
+                        //},
                         OnAuthenticationFailed = c =>
                         {
-                            c.NoResult();                            
+                            c.NoResult();
                             c.Response.StatusCode = 401;
                             c.Response.ContentType = "text/plain";
 
                             //Generate Log
                             HttpRequestExtensions.GenerateLogResponse(c.HttpContext);
-                            
+
                             return c.Response.WriteAsync("");
                             //return Task.CompletedTask;
-                        },                        
+                        },
                         //OnChallenge = c =>
                         //{
                         //    c.HandleResponse();
@@ -359,15 +362,16 @@ namespace OdhApiCore
                     options.OutputFormatters.Add(new Formatters.RawdataOutputFormatter());
                     options.FormatterMappings.SetMediaTypeMappingForFormat("rawdata", "application/rawdata");
                 });
-                //.AddJsonOptions(options =>
-                //{
-                //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = new DefaultContractResolver();
-                //});
-            
+            //.AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = new DefaultContractResolver();
+            //});
+
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { 
-                    Title = "Open Data Hub Tourism Api", 
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Open Data Hub Tourism Api",
                     Version = "v1",
                     Description = "Open Data Hub Tourism Api based on .Net Core with PostgreSQL",
                     TermsOfService = new System.Uri("https://opendatahub.readthedocs.io/en/latest/"),
@@ -377,7 +381,7 @@ namespace OdhApiCore
                         Email = "help@opendatahub.com",
                         Url = new System.Uri("https://opendatahub.com/"),
                     },
-                });                               
+                });
                 c.MapType<LegacyBool>(() => new OpenApiSchema
                 {
                     Type = "boolean"
@@ -400,7 +404,7 @@ namespace OdhApiCore
                     {
                         Password = new OpenApiOAuthFlow
                         {
-                           TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
+                            TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
                         },
                         ClientCredentials = new OpenApiOAuthFlow
                         {
@@ -414,7 +418,7 @@ namespace OdhApiCore
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
                 c.SchemaFilter<DeprecatedAttributeSchemaFilter>();
                 c.SchemaFilter<EnumAttributeSchemaFilter>();
-                c.EnableAnnotations();                       
+                c.EnableAnnotations();
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{
                 //    {
@@ -430,14 +434,14 @@ namespace OdhApiCore
                 //});                
             });
             services.AddSwaggerGenNewtonsoftSupport();
-            
+
             //Use server side caching of the swagger doc
             services.Replace(ServiceDescriptor.Transient<ISwaggerProvider, CachingSwaggerProvider>());
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;                
-            });            
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+            });
 
             //services.AddHttpContextAccessor();
         }
@@ -449,7 +453,7 @@ namespace OdhApiCore
             //// TODO: Move to Production
             //app.UseClientRateLimiting();
             //app.UseIpRateLimiting();
-           
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -468,12 +472,12 @@ namespace OdhApiCore
                 {
                     //Activate Browser Cache of the swagger file for 1 day                                        
                     if (ctx.File.Name.ToLower() == "swagger.json")
-                        {
-                            ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=86400");
-                        }
+                    {
+                        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=86400");
+                    }
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
                     ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-                },                
+                },
             });
 
             app.UseRouting();
@@ -489,20 +493,20 @@ namespace OdhApiCore
             app.UseSwagger(c =>
             {
                 c.PreSerializeFilters.Add((swagger, httpReq) =>
-                {                    
-                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };                    
+                {
+                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
                 });
             });
 
             app.ApplicationServices.SaveSwaggerJson(Configuration.GetSection("ApiConfig").GetValue<string>("Url"), Configuration.GetSection("JsonConfig").GetValue<string>("Jsondir"));
             //app.UseSaveSwaggerJson(Configuration);
-            
+
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Open Data Hub Tourism API V1");
                 //c.SwaggerEndpoint("/json/swagger.json", "Open Data Hub Tourism API V1");
-                c.RoutePrefix = "swagger";               
+                c.RoutePrefix = "swagger";
                 c.OAuthClientSecret("");
                 c.OAuthRealm("noi");
                 c.EnableDeepLinking();
@@ -514,6 +518,8 @@ namespace OdhApiCore
             //}
 
             app.UseRateLimiting();
+
+            app.UseKeycloakAuthorizationService();
 
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);
@@ -538,7 +544,7 @@ namespace OdhApiCore
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");                
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
             app.UseHealthChecks("/self", new HealthCheckOptions
@@ -553,22 +559,5 @@ namespace OdhApiCore
         }
     }
 
-    //public class RoleHelper
-    //{
-    //    public static void AddRoleClaims(ClaimsPrincipal principal)
-    //    {
-    //        var claimsIdentity = principal.Identity as ClaimsIdentity;
-    //        if (claimsIdentity != null)
-    //        {
-    //            //if (claimsIdentity.HasClaim("role", "AdminRoleNameFromToken"))
-    //            //{
-    //            //    if (!claimsIdentity.HasClaim("role", Role.Administrator.ToString()))
-    //            //    {
-    //            //        claimsIdentity.AddClaim(new Claim("role", Role.Administrator.ToString()));
-    //            //    }
-    //            //}
-    //        }
-    //    }
-    //}
-    
+   
 }

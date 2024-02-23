@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OdhNotifier;
 using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers.alpinebits
@@ -26,8 +27,8 @@ namespace OdhApiCore.Controllers.alpinebits
     {
         private readonly ISettings settings;
 
-        public AlpineBitsController(IWebHostEnvironment env, ISettings settings, ILogger<AlpineBitsController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public AlpineBitsController(IWebHostEnvironment env, ISettings settings, ILogger<AlpineBitsController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }

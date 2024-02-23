@@ -159,9 +159,7 @@ namespace OdhApiCore
         public LoopTecConfig LoopTecConfig => throw new NotImplementedException();
 
         public RavenConfig RavenConfig => this.ravenConfig;
-
         public List<NotifierConfig> NotifierConfig => this.notifierConfig;
-
         public IDictionary<string, S3Config> S3Config => this.s3Config;
     }
 }

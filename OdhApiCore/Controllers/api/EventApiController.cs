@@ -5,6 +5,8 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -30,8 +33,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class EventController : OdhController
     {        
-        public EventController(IWebHostEnvironment env, ISettings settings, ILogger<EventController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public EventController(IWebHostEnvironment env, ISettings settings, ILogger<EventController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -217,6 +220,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 EventHelper myeventhelper = await EventHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, rancfilter, topicfilter, orgfilter, begindate, enddate,
                     active, smgactive, smgtags, lastchange, langfilter, source, publishedon,
@@ -236,8 +242,9 @@ namespace OdhApiCore.Controllers
                             regionlist: myeventhelper.regionlist, topiclist: myeventhelper.topicrids, sourcelist: myeventhelper.sourcelist,
                             languagelist: myeventhelper.languagelist, begindate: myeventhelper.begin, enddate: myeventhelper.end,
                             activefilter: myeventhelper.active, smgactivefilter: myeventhelper.smgactive, publishedonlist: myeventhelper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange, 
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                          .ApplyRawFilter(rawfilter)
                          //.OrderByRawIfNotNull(sortifseednull)
                          .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
@@ -253,12 +260,10 @@ namespace OdhApiCore.Controllers
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -283,19 +288,19 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("events")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.When(FilterClosedData, q => q.FilterClosedData());
-                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
-
-                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -314,21 +319,16 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("eventtypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 var data = await query.GetAsync<JsonRaw?>();
 
-                var dataTransformed =
+                return
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );                 
             });
         }
 
@@ -343,14 +343,11 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("eventtypes")
                         .Select("data")
-                        .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-
-                var fieldsTohide = FieldsToHide;
-
+                        .Where("id", id.ToUpper());
+                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -365,16 +362,20 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
-        [Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
         [HttpPost, Route("Event")]
         public Task<IActionResult> Post([FromBody] EventLinked odhevent)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 odhevent.Id = Helper.IdGenerator.GenerateIDFromType(odhevent);
                 odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<EventLinked>(odhevent, "events", true);
+                return await UpsertData<EventLinked>(odhevent, new DataInfo("events", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -386,16 +387,20 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
-        [Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify,EventUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
+        //[Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify,EventUpdate")]
         [HttpPut, Route("Event/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] EventLinked odhevent)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 odhevent.Id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
                 odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<EventLinked>(odhevent, "events", false, true);
+                return await UpsertData<EventLinked>(odhevent, new DataInfo("events", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -406,15 +411,19 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetEventList))]
-        [Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Event/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
 
-                return await DeleteData(id, "events");
+                return await DeleteData<EventLinked>(id, new DataInfo("events", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

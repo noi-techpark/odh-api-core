@@ -2143,7 +2143,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware
     {
         public EventShort()
         {
@@ -2316,7 +2316,7 @@ namespace DataModel
         //Zeiten (diese sind relevant, diese anzeigen)
         public List<RoomBooked>? RoomBooked { get; set; }
 
-        public List<ImageGallery>? ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
         public string? VideoUrl { get; set; }
         public List<string>? TechnologyFields { get; set; }
 
@@ -2516,7 +2516,7 @@ namespace DataModel
         public string? EventLocation { get; set; }
 
         public string? CompanyName { get; set; }
-        public List<ImageGallery>? ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
         public string? VideoUrl { get; set; }
         public Nullable<bool> ActiveWeb { get; set; }
 

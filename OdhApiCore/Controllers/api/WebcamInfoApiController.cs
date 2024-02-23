@@ -5,6 +5,8 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -30,8 +33,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class WebcamInfoController : OdhController
     {        
-        public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<WebcamInfoController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public WebcamInfoController(IWebHostEnvironment env, ISettings settings, ILogger<WebcamInfoController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -132,6 +135,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 WebcamInfoHelper mywebcaminfohelper = WebcamInfoHelper.Create(
                     source, idfilter, active, smgactive, lastchange, publishedon);
 
@@ -143,7 +149,9 @@ namespace OdhApiCore.Controllers
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
-                            languagelist: new List<string>(), filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            languagelist: new List<string>(), 
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -154,11 +162,9 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
-                var fieldsTohide = FieldsToHide;
-
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -178,19 +184,20 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("webcams")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.When(FilterClosedData, q => q.FilterClosedData());
-                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
 
-                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -204,7 +211,8 @@ namespace OdhApiCore.Controllers
         /// <param name="webcam">WebcamInfo Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,WebcamManager,WebcamCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
+        //[Authorize(Roles = "DataWriter,DataCreate,WebcamManager,WebcamCreate")]
         [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpPost, Route("WebcamInfo")]
         public Task<IActionResult> Post([FromBody] WebcamInfoLinked webcam)
@@ -216,9 +224,12 @@ namespace OdhApiCore.Controllers
             
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 webcam.Id = Helper.IdGenerator.GenerateIDFromType(webcam);
 
-                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", true);
+                return await UpsertData<WebcamInfoLinked>(webcam, new DataInfo("webcams", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -229,7 +240,8 @@ namespace OdhApiCore.Controllers
         /// <param name="webcam">WebcamInfo Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify,WebcamUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
+        //[Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify,WebcamUpdate")]
         [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpPut, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
@@ -238,9 +250,12 @@ namespace OdhApiCore.Controllers
             
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 webcam.Id = Helper.IdGenerator.CheckIdFromType<WebcamInfoLinked>(id);
 
-                return await UpsertData<WebcamInfoLinked>(webcam, "webcams", false, true);
+                return await UpsertData<WebcamInfoLinked>(webcam, new DataInfo("webcams", CRUDOperation.Update), new CompareConfig(true, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -250,7 +265,8 @@ namespace OdhApiCore.Controllers
         /// <param name="id">WebcamInfo Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
+        //[Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
         [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
         [HttpDelete, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Delete(string id)
@@ -259,12 +275,14 @@ namespace OdhApiCore.Controllers
 
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<WebcamInfoLinked>(id);
 
-                return await DeleteData(id, "webcams");
+                return await DeleteData<WebcamInfoLinked>(id, new DataInfo("webcams", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
-
 
         #endregion
     }

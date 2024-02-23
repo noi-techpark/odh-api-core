@@ -4,12 +4,15 @@
 
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -22,8 +25,8 @@ namespace OdhApiCore.Controllers.api
 {
     public class CommonController : OdhController
     {
-        public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<CommonController> logger, QueryFactory queryFactory)
-       : base(env, settings, logger, queryFactory)
+        public CommonController(IWebHostEnvironment env, ISettings settings, ILogger<CommonController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+       : base(env, settings, logger, queryFactory, odhpushnotifier)
         {            
         }
 
@@ -93,12 +96,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "metaregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "MetaRegion", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "metaregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "MetaRegion", removenullvalues: removenullvalues, cancellationToken);
             }                
         }
 
@@ -125,7 +128,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {            
-            return await CommonGetSingleHelper(id: id, tablename: "metaregions", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "metaregions", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "MetaRegion", removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -191,12 +194,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "experienceareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "ExperienceArea", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "experienceareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "ExperienceArea", removenullvalues: removenullvalues, cancellationToken);
             }
         }
 
@@ -222,7 +225,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "experienceareas", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "experienceareas", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "ExperienceArea", removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -286,12 +289,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "regions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "Region", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "regions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "Region", removenullvalues: removenullvalues, cancellationToken);
             }
         }
 
@@ -317,7 +320,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "regions", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "regions", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "Region", removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -381,12 +384,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "tvs", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "TourismAssociation", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "tvs", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "TourismAssociation", removenullvalues: removenullvalues, cancellationToken);
             }
 
         }
@@ -413,7 +416,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "tvs", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "tvs", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "TourismAssociation", removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -479,12 +482,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "municipalities", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "Municipality", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "municipalities", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "Municipality", removenullvalues: removenullvalues, cancellationToken);
             }
 
         }
@@ -511,7 +514,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "municipalities", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "municipalities", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "Municipality", removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -577,12 +580,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "districts", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                    language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                    language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "District", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "districts", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                    language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);                
+                    language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "District", removenullvalues: removenullvalues, cancellationToken);                
             }
 
         }
@@ -609,7 +612,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "districts", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "districts", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "District", removenullvalues: removenullvalues, cancellationToken);
         }
 
 
@@ -667,12 +670,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "areas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, endpoint: "Area", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "areas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, endpoint: "Area", removenullvalues: removenullvalues, cancellationToken);
             }
         }
 
@@ -698,7 +701,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "areas", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues : removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "areas", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "Area", removenullvalues : removenullvalues, cancellationToken);
         }
 
 
@@ -759,12 +762,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "skiregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, endpoint: "SkiRegion", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "skiregions", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: new PGGeoSearchResult(), rawfilter: rawfilter, rawsort: rawsort, endpoint: "SkiRegion", removenullvalues: removenullvalues, cancellationToken);
             }
         }
 
@@ -790,7 +793,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "skiregions", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "skiregions", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "SkiRegion", removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -855,12 +858,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await CommonGetPagedListHelper(pagenumber.Value, pagesize, tablename: "skiareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "SkiArea", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await CommonGetListHelper(tablename: "skiareas", seed: seed, publishedon: publishedon, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, endpoint: "SkiArea", removenullvalues: removenullvalues, cancellationToken);
             }
         }
 
@@ -886,7 +889,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "skiareas", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "skiareas", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "SkiArea", removenullvalues: removenullvalues, cancellationToken);
         }
 
 
@@ -950,12 +953,12 @@ namespace OdhApiCore.Controllers.api
             if (pagenumber.HasValue)
             {
                 return await WineGetPagedListHelper(pagenumber.Value, pagesize, tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, endpoint: "WineAward", removenullvalues: removenullvalues, cancellationToken);
             }
             else
             {
                 return await WineGetListHelper(tablename: "wines", seed: seed, searchfilter: searchfilter, fields: fields ?? Array.Empty<string>(),
-                language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                language: language, commonhelper, rawfilter: rawfilter, rawsort: rawsort, endpoint: "WineAward", removenullvalues: removenullvalues, cancellationToken);
             }
         }
 
@@ -978,24 +981,27 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await CommonGetSingleHelper(id: id, tablename: "wines", fields: fields ?? Array.Empty<string>(), language: language, removenullvalues: removenullvalues, cancellationToken);
+            return await CommonGetSingleHelper(id: id, tablename: "wines", fields: fields ?? Array.Empty<string>(), language: language, endpoint: "WineAward", removenullvalues: removenullvalues, cancellationToken);
         }
 
         #endregion
 
         #region GETTER
 
-        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? publishedon, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetListHelper(string tablename, string? seed, string? publishedon, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, string endpoint, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAddEndpoint(endpoint).TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language, 
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               lastchange: commonhelper.lastchange, additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1003,29 +1009,28 @@ namespace OdhApiCore.Controllers.api
                 var data =
                     await query
                         .GetAsync<JsonRaw>();
-                
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                                
+                return
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );                
             });
         }
 
-        private Task<IActionResult> CommonGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? publishedon, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? publishedon, string? searchfilter, string[] fields, string? language, CommonHelper commonhelper, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, string endpoint, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAddEndpoint(endpoint).TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
                         .From(tablename)
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, commonhelper.smgtaglist,
                                                activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive, publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, searchfilter: searchfilter, language: language,
-                                               lastchange: commonhelper.lastchange, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               lastchange: commonhelper.lastchange, additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -1035,12 +1040,10 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -1056,17 +1059,20 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
-        private Task<IActionResult> WineGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> WineGetListHelper(string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, string endpoint, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAddEndpoint(endpoint).TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query()
                         .SelectRaw("data")
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               searchfilter: searchfilter, language: language, additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1074,20 +1080,19 @@ namespace OdhApiCore.Controllers.api
                 var data =
                     await query
                         .GetAsync<JsonRaw>();
-                
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                             
+                return
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );                
             });
         }
 
-        private Task<IActionResult> WineGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> WineGetPagedListHelper(uint pagenumber, int? pagesize, string tablename, string? seed, string? searchfilter, string[] fields, string? language, WineHelper winehelper, string? rawfilter, string? rawsort, string endpoint, bool removenullvalues, CancellationToken cancellationToken)
         {
+            //Additional Read Filters to Add Check
+            AdditionalFiltersToAddEndpoint(endpoint).TryGetValue("Read", out var additionalfilter);
+
             return DoAsyncReturn(async () =>
             {
                 var query =
@@ -1096,7 +1101,7 @@ namespace OdhApiCore.Controllers.api
                         .From(tablename)
                         .WineWhereExpression(languagelist: new List<string>(), lastchange: winehelper.lastchange, wineid: winehelper.wineidlist, companyid: winehelper.companyidlist,
                                              activefilter: winehelper.active, odhactivefilter: winehelper.smgactive, sourcelist: winehelper.sourcelist,
-                                               searchfilter: searchfilter, language: language, filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               searchfilter: searchfilter, language: language, additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
@@ -1106,12 +1111,10 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-
-                var fieldsTohide = FieldsToHide;
-
+             
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -1127,22 +1130,23 @@ namespace OdhApiCore.Controllers.api
             });
         }
 
-
-        private Task<IActionResult> CommonGetSingleHelper(string id, string tablename, string[] fields, string? language, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> CommonGetSingleHelper(string id, string tablename, string[] fields, string? language, string endpoint, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAddEndpoint(endpoint).TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query(tablename)
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                
-                var fieldsTohide = FieldsToHide;
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -1156,14 +1160,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">MetaRegion Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,MetaRegionCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,MetaRegionCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("MetaRegion")]
         public Task<IActionResult> Post([FromBody] MetaRegionLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<MetaRegionLinked>(data, "metaregions", true);
+                return await UpsertData<MetaRegionLinked>(data, new DataInfo("metaregions", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1173,14 +1181,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Region Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,RegionCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,RegionCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Region")]
         public Task<IActionResult> Post([FromBody] RegionLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<RegionLinked>(data, "regions", true);
+                return await UpsertData<RegionLinked>(data, new DataInfo("regions", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1190,14 +1202,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">ExperienceArea Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,ExperienceAreaCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,ExperienceAreaCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("ExperienceArea")]
         public Task<IActionResult> Post([FromBody] ExperienceAreaLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas", true);
+                return await UpsertData<ExperienceAreaLinked>(data, new DataInfo("experienceareas", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1207,14 +1223,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">TourismAssociation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,TourismAssociationCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,TourismAssociationCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("TourismAssociation")]
         public Task<IActionResult> Post([FromBody] TourismvereinLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<TourismvereinLinked>(data, "tvs", true);
+                return await UpsertData<TourismvereinLinked>(data, new DataInfo("tvs", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1224,14 +1244,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Municipality Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,MunicipalityCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,MunicipalityCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Municipality")]
         public Task<IActionResult> Post([FromBody] MunicipalityLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<MunicipalityLinked>(data, "municipalities", true);
+                return await UpsertData<MunicipalityLinked>(data, new DataInfo("municipalities", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1241,14 +1265,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">District Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,DistrictCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,DistrictCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("District")]
         public Task<IActionResult> Post([FromBody] DistrictLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<DistrictLinked>(data, "districts", true);
+                return await UpsertData<DistrictLinked>(data, new DataInfo("districts", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1258,14 +1286,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Area Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,AreaCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,AreaCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Area")]
         public Task<IActionResult> Post([FromBody] AreaLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<AreaLinked>(data, "areas", true);
+                return await UpsertData<AreaLinked>(data, new DataInfo("areas", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1275,14 +1307,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">SkiRegion Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,SkiRegionCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,SkiRegionCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("SkiRegion")]
         public Task<IActionResult> Post([FromBody] SkiRegionLinked data)
         {
             return DoAsyncReturn(async () =>
-            {
+            {  
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<SkiRegionLinked>(data, "skiregions", true);
+                return await UpsertData<SkiRegionLinked>(data, new DataInfo("skiregions", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1292,14 +1328,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">SkiArea Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,SkiAreaCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,SkiAreaCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("SkiArea")]
         public Task<IActionResult> Post([FromBody] SkiAreaLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<SkiAreaLinked>(data, "skiareas", true);
+                return await UpsertData<SkiAreaLinked>(data, new DataInfo("skiareas", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1309,14 +1349,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Wine Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,WineAwardCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,CommonManager,CommonCreate,WineAwardCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("WineAward")]
         public Task<IActionResult> Post([FromBody] WineLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.GenerateIDFromType(data);
-                return await UpsertData<WineLinked>(data, "wines", true);
+                return await UpsertData<WineLinked>(data, new DataInfo("wines", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1327,14 +1371,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">MetaRegion Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,MetaRegionUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,MetaRegionUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("MetaRegion/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] MetaRegionLinked data)
         {
             return DoAsyncReturn(async () =>
-            {                
+            {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
-                return await UpsertData<MetaRegionLinked>(data, "metaregions", false, true);
+                return await UpsertData<MetaRegionLinked>(data, new DataInfo("metaregions", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1345,14 +1393,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Region Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,RegionUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,RegionUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Region/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] RegionLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
-                return await UpsertData<RegionLinked>(data, "regions", false, true);
+                return await UpsertData<RegionLinked>(data, new DataInfo("regions", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1363,14 +1415,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">ExperienceArea Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,ExperienceAreaUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,ExperienceAreaUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("ExperienceArea/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ExperienceAreaLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
-                return await UpsertData<ExperienceAreaLinked>(data, "experienceareas", false, true);
+                return await UpsertData<ExperienceAreaLinked>(data, new DataInfo("experienceareas", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1381,14 +1437,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">TourismAssociation Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,TourismAssociationUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,TourismAssociationUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("TourismAssociation/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] TourismvereinLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
-                return await UpsertData<TourismvereinLinked>(data, "tvs", false, true);
+                return await UpsertData<TourismvereinLinked>(data, new DataInfo("tvs", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1399,14 +1459,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Municipality Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,MunicipalityUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,MunicipalityUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Municipality/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] MunicipalityLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
-                return await UpsertData<MunicipalityLinked>(data, "municipalities", false, true);
+                return await UpsertData<MunicipalityLinked>(data, new DataInfo("municipalities", CRUDOperation.Update), new CompareConfig(true, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1417,14 +1481,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">District Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,DistrictUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,DistrictUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("District/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] DistrictLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
-                return await UpsertData<DistrictLinked>(data, "districts", false, true);
+                return await UpsertData<DistrictLinked>(data, new DataInfo("districts", CRUDOperation.Update), new CompareConfig(true, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1435,14 +1503,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">Area Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,AreaUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,AreaUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Area/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] AreaLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
-                return await UpsertData<AreaLinked>(data, "areas", false, true);
+                return await UpsertData<AreaLinked>(data, new DataInfo("areas", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1453,14 +1525,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">SkiRegion Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,SkiRegionUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,SkiRegionUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("SkiRegion/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] SkiRegionLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
-                return await UpsertData<SkiRegionLinked>(data, "skiregions", false, true);
+                return await UpsertData<SkiRegionLinked>(data, new DataInfo("skiregions", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1471,14 +1547,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">SkiArea Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,SkiAreaUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,SkiAreaUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("SkiArea/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] SkiAreaLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
-                return await UpsertData<SkiAreaLinked>(data, "skiareas", false, true);
+                return await UpsertData<SkiAreaLinked>(data, new DataInfo("skiareas", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1489,14 +1569,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="data">WineAward Object</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,WineAwardUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,CommonManager,CommonModify,CommonUpdate,WineAwardUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("WineAward/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WineLinked data)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Update
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 data.Id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
-                return await UpsertData<WineLinked>(data, "wines", false, true);
+                return await UpsertData<WineLinked>(data, new DataInfo("wines", CRUDOperation.Update), new CompareConfig(true,true), new CRUDConstraints(additionalfilter,UserRolesToFilter));
             });
         }
 
@@ -1506,14 +1590,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">MetaRegion Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,MetaRegionDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,MetaRegionDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("MetaRegion/{id}")]
         public Task<IActionResult> DeleteMetaRegion(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
-                return await DeleteData(id, "metaregions");
+                return await DeleteData<MetaRegionLinked>(id, new DataInfo("metaregions", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1523,14 +1611,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Region Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,RegionDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,RegionDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Region/{id}")]
         public Task<IActionResult> DeleteRegion(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
-                return await DeleteData(id, "regions");
+                return await DeleteData<RegionLinked>(id, new DataInfo("regions", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1540,14 +1632,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ExperienceArea Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,ExperienceAreaDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,ExperienceAreaDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("ExperienceArea/{id}")]
         public Task<IActionResult> DeleteExperienceArea(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
-                return await DeleteData(id, "experienceareas");
+                return await DeleteData<ExperienceAreaLinked>(id, new DataInfo("experienceareas", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1557,14 +1653,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">TourismAssociation Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,TourismAssociationDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,TourismAssociationDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("TourismAssociation/{id}")]
         public Task<IActionResult> DeleteTourismAssociation(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
-                return await DeleteData(id, "tvs");
+                return await DeleteData<TourismvereinLinked>(id, new DataInfo("tvs", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1574,14 +1674,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Municipality Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,MunicipalityDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,MunicipalityDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Municipality/{id}")]
         public Task<IActionResult> DeleteMunicipality(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
-                return await DeleteData(id, "municipalities");
+                return await DeleteData<MunicipalityLinked>(id, new DataInfo("municipalities", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1591,14 +1695,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">District Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,DistrictDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,DistrictDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("District/{id}")]
         public Task<IActionResult> DeleteDistrict(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
-                return await DeleteData(id, "districts");
+                return await DeleteData<DistrictLinked>(id, new DataInfo("districts", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1608,14 +1716,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Area Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,AreaDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,AreaDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Area/{id}")]
         public Task<IActionResult> DeleteArea(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
-                return await DeleteData(id, "areas");
+                return await DeleteData<AreaLinked>(id, new DataInfo("areas", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1625,14 +1737,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">SkiRegion Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,SkiRegionDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,SkiRegionDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("SkiRegion/{id}")]
         public Task<IActionResult> DeleteSkiRegion(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
-                return await DeleteData(id, "skiregions");
+                return await DeleteData<SkiRegionLinked>(id, new DataInfo("skiregions", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1642,14 +1758,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">SkiArea Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,SkiAreaDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,SkiAreaDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("SkiArea/{id}")]
         public Task<IActionResult> DeleteSkiArea(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
-                return await DeleteData(id, "skiareas");
+                return await DeleteData<SkiAreaLinked>(id, new DataInfo("skiareas", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1659,14 +1779,18 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">WineAward Id</param>
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,WineAwardDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,CommonManager,CommonDelete,WineAwardDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("WineAward/{id}")]
         public Task<IActionResult> DeleteWineAward(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
-                return await DeleteData(id, "wines");
+                return await DeleteData<WineLinked>(id, new DataInfo("wines", CRUDOperation.Delete), new CRUDConstraints(additionalfilter,UserRolesToFilter));
             });
         }
 

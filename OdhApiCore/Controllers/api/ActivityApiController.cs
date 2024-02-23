@@ -23,6 +23,9 @@ using Swashbuckle.AspNetCore.Annotations;
 using OdhApiCore.Filters;
 using ServiceReferenceLCS;
 using OdhApiCore.Controllers.api;
+using Helper.Identity;
+using OdhNotifier;
+using Helper.Generic;
 
 namespace OdhApiCore.Controllers
 {
@@ -34,8 +37,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class ActivityController : OdhController
     {     
-        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public ActivityController(IWebHostEnvironment env, ISettings settings, ILogger<ActivityController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -245,6 +248,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     QueryFactory, activitytype, subtypefilter, idfilter, locfilter, areafilter, distancefilter,
                     altitudefilter, durationfilter, highlightfilter, difficultyfilter, active, smgactive, smgtags, lastchange, langfilter,
@@ -268,7 +274,8 @@ namespace OdhApiCore.Controllers
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: myactivityhelper.lastchange, 
                             languagelist: myactivityhelper.languagelist, 
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -278,11 +285,10 @@ namespace OdhApiCore.Controllers
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-                var fieldsTohide = FieldsToHide;
-
+                
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -307,18 +313,19 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("activities")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-                        //.When(FilterClosedData, q => q.FilterClosedData());
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -336,21 +343,17 @@ namespace OdhApiCore.Controllers
             {
                 var query =
                     QueryFactory.Query("activitytypes")
-                        .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .SelectRaw("data")                        
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                
+                return
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );                
             });
         }
 
@@ -365,14 +368,12 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("activitytypes")
                         .Select("data")
-                         //.WhereJsonb("Key", "ilike", id)
-                        .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());                
+                        //.WhereJsonb("Key", "ilike", id)
+                        .Where("id", id.ToLower());             
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -387,16 +388,20 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
-        [Authorize(Roles = "DataWriter,DataCreate,ActivityManager,ActivityCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,ActivityManager,ActivityCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Activity")]
         public Task<IActionResult> Post([FromBody] LTSActivityLinked activity)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 activity.Id = Helper.IdGenerator.GenerateIDFromType(activity);
                 activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSActivityLinked>(activity, "activities", true);
+                return await UpsertData<LTSActivityLinked>(activity, new DataInfo("activities", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -408,16 +413,20 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
-        [Authorize(Roles = "DataWriter,DataModify,ActivityManager,ActivityModify,ActivityUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,ActivityManager,ActivityModify,ActivityUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Activity/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] LTSActivityLinked activity)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 activity.Id = Helper.IdGenerator.CheckIdFromType<LTSActivityLinked>(id);
                 activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<LTSActivityLinked>(activity, "activities", false, true);
+                return await UpsertData<LTSActivityLinked>(activity, new DataInfo("activities", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -428,15 +437,19 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetActivityList))]
-        [Authorize(Roles = "DataWriter,DataDelete,ActivityManager,ActivityDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,ActivityManager,ActivityDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Activity/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<LTSActivityLinked>(id);
 
-                return await DeleteData(id, "activities");
+                return await DeleteData<LTSActivityLinked>(id, new DataInfo("activities", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

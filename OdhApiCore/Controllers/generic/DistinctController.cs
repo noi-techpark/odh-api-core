@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata;
 using SqlKata.Execution;
@@ -29,8 +30,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class DistinctController : OdhController
     {        
-        public DistinctController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public DistinctController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -128,8 +129,7 @@ namespace OdhApiCore.Controllers
                         // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
                         .OrderByRawIfNotNull(rawsort)
                         //.ApplyOrdering_GeneratedColumns(null, null, rawsort)
-
-                        .FilterDataByAccessRoles(UserRolesList);
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 //TODOS Metadata api support
            

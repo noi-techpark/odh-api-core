@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
+using OdhNotifier;
 using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers.api
@@ -29,8 +30,8 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly IHttpClientFactory httpClientFactory;
 
-        public LocationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
-           : base(env, settings, logger, queryFactory)
+        public LocationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.httpClientFactory = httpClientFactory;
         }

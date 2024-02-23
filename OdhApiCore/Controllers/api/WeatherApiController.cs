@@ -8,6 +8,8 @@ using Amazon.S3;
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using LCS;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +20,7 @@ using Newtonsoft.Json;
 using Npgsql;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SIAG;
 using SqlKata;
@@ -49,8 +52,8 @@ namespace OdhApiCore.Controllers
     {
         private readonly ISettings settings;
         
-        public WeatherController(IWebHostEnvironment env, ISettings settings, ILogger<WeatherController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public WeatherController(IWebHostEnvironment env, ISettings settings, ILogger<WeatherController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;            
         }
@@ -626,7 +629,7 @@ namespace OdhApiCore.Controllers
                 var data = new List<JsonRaw>() { new JsonRaw(weatherresult) };
                 var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 if (pagenumber != null)
@@ -719,7 +722,7 @@ namespace OdhApiCore.Controllers
 
             var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
             if (pagenumber != null)
@@ -796,7 +799,7 @@ namespace OdhApiCore.Controllers
 
             var dataTransformed =
                 data.Select(
-                    raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                    raw => raw.TransformRawData(language, fields, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
                 );
 
             if (pagenumber != null)
@@ -895,7 +898,7 @@ namespace OdhApiCore.Controllers
 
             var dataTransformed =
                     data.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: false, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
             if (pagenumber != null)
@@ -970,7 +973,10 @@ namespace OdhApiCore.Controllers
            CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
-            {                
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 WeatherHelper myweatherhelper = await WeatherHelper.CreateAsync(QueryFactory, idfilter, locfilter, language, datefrom, dateto, lastchange, cancellationToken);
 
                 var query =
@@ -980,7 +986,8 @@ namespace OdhApiCore.Controllers
                         .WeatherHistoryWhereExpression(
                             languagelist: myweatherhelper.languagelist, idlist: myweatherhelper.idlist, sourcelist: new List<string>(), begindate: myweatherhelper.datefrom,
                             enddate: myweatherhelper.dateto, searchfilter: searchfilter, language: language, lastchange: myweatherhelper.lastchange,
-                            filterClosedData: false, userroles: UserRolesToFilter)
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
                 //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//
@@ -992,11 +999,9 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
-                var fieldsTohide = FieldsToHide;
-
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 //return dataTransformed;
@@ -1024,17 +1029,20 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("weatherdatahistory")
                         .Select("data")
-                        .Where("id", id.ToUpper());
-                        //Disable temporary there is no meta info .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .Where("id", id.ToUpper())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
-                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
 
         }
@@ -1068,6 +1076,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 //Fix add are to every arefilter item
                 string? areafilterwithprefix = String.IsNullOrEmpty(areafilter) ? "" : "are" + areafilter;
                 //string? skiarefilterwithprefix = String.IsNullOrEmpty(skiareafilter) ? "" : "ska" + skiareafilter;
@@ -1086,7 +1097,8 @@ namespace OdhApiCore.Controllers
                             activefilter: mymeasuringpointshelper.active, smgactivefilter: mymeasuringpointshelper.smgactive, publishedonlist: mymeasuringpointshelper.publishedonlist,
                             sourcelist: mymeasuringpointshelper.sourcelist,
                             searchfilter: searchfilter, language: language, lastchange: mymeasuringpointshelper.lastchange,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -1099,12 +1111,10 @@ namespace OdhApiCore.Controllers
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-
-                    var fieldsTohide = FieldsToHide;
-
+                    
                     var dataTransformed =
                         data.List.Select(
-                            raw => raw.TransformRawData(language, fields, checkCC0: false, filterClosedData: false, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                         );
                     
                     uint totalpages = (uint)data.TotalPages;
@@ -1124,14 +1134,10 @@ namespace OdhApiCore.Controllers
                             await query
                                 .GetAsync<JsonRaw>();
 
-                    var fieldsTohide = FieldsToHide;
-
-                    var dataTransformed =
+                    return
                         data.Select(
-                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                         );
-
-                    return dataTransformed;
                 }
             });
         }
@@ -1146,19 +1152,20 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("measuringpoints")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-                        //.When(FilterClosedData, q => q.FilterClosedData());
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
 
-                var fieldsTohide = FieldsToHide;
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
 
         }
@@ -1225,9 +1232,86 @@ namespace OdhApiCore.Controllers
 
             return mysnowreport;
         }
-      
+
         #endregion
 
+        #region POST PUT DELETE Measuringpoint
+
+        /// <summary>
+        /// POST Insert new Measuringpoint
+        /// </summary>
+        /// <param name="measuringpoint">Measuringpoint Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [AuthorizeODH(PermissionAction.Create)]
+        //[Authorize(Roles = "DataWriter,DataCreate,MeasuringpointManager,MeasuringpointCreate")]
+        //[InvalidateCacheOutput(typeof(MeasuringpointController), nameof(Get))]
+        [HttpPost, Route("Weather/Measuringpoint")]
+        public Task<IActionResult> Post([FromBody] MeasuringpointLinked measuringpoint)
+        {
+            measuringpoint.LicenseInfo = LicenseHelper.GetLicenseforMeasuringpoint(measuringpoint);
+
+            return DoAsyncReturn(async () =>
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
+                measuringpoint.Id = Helper.IdGenerator.GenerateIDFromType(measuringpoint);
+
+                return await UpsertData<MeasuringpointLinked>(measuringpoint, new DataInfo("measuringpoints", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+            });
+        }
+
+        /// <summary>
+        /// PUT Modify existing Measuringpoint
+        /// </summary>
+        /// <param name="id">Measuringpoint Id</param>
+        /// <param name="measuringpoint">Measuringpoint Object</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [AuthorizeODH(PermissionAction.Update)]
+        //[Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify,WebcamUpdate")]
+        //[InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        [HttpPut, Route("Weather/Measuringpoint/{id}")]
+        public Task<IActionResult> Put(string id, [FromBody] MeasuringpointLinked measuringpoint)
+        {
+            measuringpoint.LicenseInfo = LicenseHelper.GetLicenseforMeasuringpoint(measuringpoint);
+
+            return DoAsyncReturn(async () =>
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
+                measuringpoint.Id = Helper.IdGenerator.CheckIdFromType<MeasuringpointLinked>(id);
+
+                return await UpsertData<MeasuringpointLinked>(measuringpoint, new DataInfo("measuringpoints", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+            });
+        }
+
+        /// <summary>
+        /// DELETE Measuringpoint by Id
+        /// </summary>
+        /// <param name="id">Measuringpoint Id</param>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [AuthorizeODH(PermissionAction.Delete)]
+        //[Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
+        //[InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        [HttpDelete, Route("Weather/Measuringpoint/{id}")]
+        public Task<IActionResult> Delete(string id)
+        {
+            return DoAsyncReturn(async () =>
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
+                id = Helper.IdGenerator.CheckIdFromType<MeasuringpointLinked>(id);
+
+                return await DeleteData<MeasuringpointLinked>(id, new DataInfo("measuringpoints", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+            });
+        }
+
+        #endregion
     }
 
     public class MunicipalityIdIstatNumber

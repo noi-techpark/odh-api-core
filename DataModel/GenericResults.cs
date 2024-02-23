@@ -118,6 +118,8 @@ namespace DataModel
     public struct PGCRUDResult
     {
         public string id { get; init; }
+
+        public string? odhtype { get; init; }
         public string operation { get; init; }
         public int? updated { get; init; }
         public int? created { get; init; }
@@ -125,13 +127,17 @@ namespace DataModel
 
         public int? error { get; init; }
 
+        public string? errorreason { get; init; }
+
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
-        public int? objectimageschanged { get; init; }
+        public int? objectimagechanged { get; init; }
 
         public ICollection<string>? pushchannels { get; init; }
 
-        public JToken? changes { get; init; } 
+        public JToken? changes { get; init; }
+
+        public IDictionary<string, NotifierResponse>? pushed { get; set; }
     }
 
     public struct JsonGenerationResult

@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OdhApiCore.GenericHelpers;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata;
 using SqlKata.Execution;
@@ -32,8 +33,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class DeprecatedController : OdhController
     {        
-        public DeprecatedController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public DeprecatedController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

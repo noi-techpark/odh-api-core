@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using SqlKata;
 using SqlKata.Execution;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -1746,12 +1747,72 @@ namespace Helper
                 return q;
             });
 
-        //Filter Out Reduced
-        public static Query FilterReducedDataByRoles(this Query query) =>
-            query.WhereRaw("gen_reduced = false");
+        ////Filter Out Reduced
+        //public static Query FilterReducedDataByRoles(this Query query) =>
+        //    query.WhereRaw("gen_reduced = false");
 
         #endregion
 
+        #region AdditionalFilter
+       
+        public static Query FilterAdditionalDataByCondition(this Query query, string? condition)
+        {
+            if (condition != null && condition.Contains("="))
+            {
+                var splittedcondition = condition.Split("&").Select(x => x.Split("=")).Select(x => new ReadCondition() { Column = x[0], Value = x[1] });
+
+                var itemstoadd = splittedcondition.GroupBy(x => x.Column).Where(g => g.Count() == 1).ToList();
+                foreach (var item in itemstoadd)
+                {
+                    query.GetAdditionalFilterQueryByInput(item.Key, item.Select(x => x.Value).FirstOrDefault());
+                }
+
+                var itemstomerge = splittedcondition.GroupBy(x => x.Column).Where(g => g.Count() > 1).ToList();
+                foreach (var item in itemstomerge)
+                {
+                    query.GetAdditionalFilterQueryByInput(item.Key, item.Select(x => x.Value).ToList());
+                }
+            }
+
+            return query;
+        }
+
+        public static Query GetAdditionalFilterQueryByInput(this Query query, string input, string value)
+        {
+            switch (input)
+            {
+                case "source":
+                    return query.Where("gen_source", value);
+                case "accessrole":
+                    return query.WhereRaw("gen_access_role @> array\\[$$\\]", value);
+                default:
+                    return query.Where("data->>'" + input + "'", value);
+            }
+        }
+
+        public static Query GetAdditionalFilterQueryByInput(this Query query, string input, List<string> value)
+        {
+            switch (input)
+            {
+                case "source":
+                    return query.WhereIn("gen_source", value);
+                case "accessrole":
+                    return query.WhereRaw("gen_access_role @> array\\[$$\\]", value);
+                default:
+                    return query.WhereIn("data->>'" + input + "'", value);
+            }
+        }
+
+
+
+        #endregion
+    }
+
+    public class ReadCondition
+    {
+        public string Column { get; set; }
+        public string Query { get; set; }
+        public string Value { get; set; }
     }
 
 

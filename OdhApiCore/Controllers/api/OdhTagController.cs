@@ -5,6 +5,8 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -14,7 +16,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -29,8 +33,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class ODHTagController : OdhController
     {
-        public ODHTagController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public ODHTagController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -132,16 +136,9 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
-            {
-                //Hack
-                //if (validforentity != null && validforentity.Contains("odhactivitypoi"))
-                //{
-                //    validforentity = validforentity.Replace("odhactivitypoi", "smgpoi");
-                //}
-                //if (maintype != null && maintype.Contains("odhactivitypoi"))
-                //{
-                //    maintype = maintype.Replace("odhactivitypoi", "smgpoi");
-                //}
+            {                
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
@@ -160,14 +157,13 @@ namespace OdhApiCore.Controllers
                         publishedonlist: publishedonlist,
                         displayascategory: displayascategory,
                         searchfilter: searchfilter,
-                        language: language,                        
-                        filterClosedData: FilterClosedData, userroles: UserRolesToFilter
+                        language: language,             
+                        additionalfilter: additionalfilter,
+                        userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 if (pagenumber != null)
                 {
 
@@ -180,7 +176,7 @@ namespace OdhApiCore.Controllers
 
                     var dataTransformed =
                         data.List.Select(
-                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                         );
 
                     uint totalpages = (uint)data.TotalPages;
@@ -198,7 +194,7 @@ namespace OdhApiCore.Controllers
                 {
                     var data = await query.GetAsync<JsonRaw>();
 
-                    return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
+                    return data.Select(raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null));
                 }                
             });
         }      
@@ -207,15 +203,18 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
-                var data = await QueryFactory.Query("smgtags")
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
+                var query = QueryFactory.Query("smgtags")
                     .Select("data")
                     .Where("id", id.ToLower())
-                    .When(FilterClosedData, q => q.FilterClosedData())
-                    .FirstOrDefaultAsync<JsonRaw>();
+                    .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                    .FilterDataByAccessRoles(UserRolesToFilter);
 
-                var fieldsTohide = FieldsToHide;
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -230,15 +229,19 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
-        [Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpPost, Route("ODHTag")]
         public Task<IActionResult> Post([FromBody] ODHTagLinked odhtag)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 odhtag.Id = Helper.IdGenerator.GenerateIDFromType(odhtag);
 
-                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", true);
+                return await UpsertData<ODHTagLinked>(odhtag, new DataInfo("smgtags", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -250,15 +253,19 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
-        [Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify,ODHTagUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify,ODHTagUpdate")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpPut, Route("ODHTag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHTagLinked odhtag)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 odhtag.Id = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
 
-                return await UpsertData<ODHTagLinked>(odhtag, "smgtags", false, true);
+                return await UpsertData<ODHTagLinked>(odhtag, new DataInfo("smgtags", CRUDOperation.Update), new CompareConfig(true, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -269,15 +276,19 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
-        [Authorize(Roles = "DataWriter,DataDelete,ODHTagManager,ODHTagDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,ODHTagManager,ODHTagDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("ODHTag/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<ODHTagLinked>(id);
 
-                return await DeleteData(id, "smgtags");
+                return await DeleteData<ODHTagLinked>(id, new DataInfo("smgtags", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

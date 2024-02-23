@@ -48,8 +48,7 @@ namespace OdhApiCoreTests.Helper
                         searchfilter: null,
                         language: null,
                         lastchange: null,
-                        filterClosedData: false,
-                        reducedData: true,
+                        additionalfilter: null,
                         userroles: new List<string>() { "STA" }
                     );
 
@@ -91,9 +90,8 @@ namespace OdhApiCoreTests.Helper
                         smgactivefilter: null,
                         searchfilter: null,
                         language: null,
-                        lastchange: null,                        
-                        filterClosedData: true,
-                        reducedData: true,
+                        lastchange: null,
+                        additionalfilter: null,
                         new List<string>() { "ANONYMOUS" }
                     );
 
@@ -135,9 +133,9 @@ namespace OdhApiCoreTests.Helper
                         smgactivefilter: null,
                         searchfilter: null,
                         language: null,
-                        lastchange: null,                        
-                        filterClosedData: false,
-                        reducedData: false, userroles: new List<string>() { "IDM" }
+                        lastchange: null,
+                        additionalfilter: null,
+                        userroles: new List<string>() { "IDM" }
                     );
 
             var result = compiler.Compile(query);
