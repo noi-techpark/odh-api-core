@@ -2430,6 +2430,10 @@ namespace DataModel
         }
 
         public AgeRange? TypicalAgeRange { get; set; }
+        
+        
+        //TODO use active?
+        //public bool? Active { get; set; }
     }
 
     public class RoomBooked

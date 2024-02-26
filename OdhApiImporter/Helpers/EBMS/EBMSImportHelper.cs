@@ -281,7 +281,7 @@ namespace OdhApiImporter.Helpers
                         //TODO CHECK IF IT WORKS
                         if (eventshorttodeactivate != null)
                         {
-                            eventshorttodeactivate.Display1 = "N";
+                            //TODO Work With Active....
 
                             await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
                             deletecounter++;
