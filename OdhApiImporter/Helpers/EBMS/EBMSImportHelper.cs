@@ -284,6 +284,25 @@ namespace OdhApiImporter.Helpers
                             //TODO Work With Active....
 
                             await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
+
+                            //LOG the Deletion
+                            Console.WriteLine(JsonConvert.SerializeObject(new PGCRUDResult() { 
+                                id = eventshorttodeactivate.Id, 
+                                changes = null,
+                                pushed = null,
+                                pushchannels = null
+                                objectchanged = null,
+                                objectimagechanged = null,
+                                compareobject = false,                                
+                                created = 0,
+                                deleted = 1,
+                                updated = 0,                                
+                                error = 0,                                
+                                errorreason = null,                                
+                                odhtype= "eventshort",
+                                operation = "Delete"                             
+                            }));
+
                             deletecounter++;
                         }
                     }
