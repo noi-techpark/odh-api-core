@@ -290,7 +290,7 @@ namespace OdhApiImporter.Helpers
                                 id = eventshorttodeactivate.Id, 
                                 changes = null,
                                 pushed = null,
-                                pushchannels = null
+                                pushchannels = null,
                                 objectchanged = null,
                                 objectimagechanged = null,
                                 compareobject = false,                                
