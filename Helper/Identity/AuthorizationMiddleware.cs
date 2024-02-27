@@ -112,7 +112,7 @@ namespace Helper.Identity
 
                 var responseobject = new List<KeyCloakPermissions>();
 
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
 
                     //Parse JSON Response to
