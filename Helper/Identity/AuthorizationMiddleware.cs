@@ -103,12 +103,22 @@ namespace Helper.Identity
                 using var request = new HttpRequestMessage(HttpMethod.Post, authorizationendpoint + "protocol/openid-connect/token") { Content = new FormUrlEncodedContent(body) };
                 using var response = await client.SendAsync(request);
 
-                if (response.StatusCode != HttpStatusCode.OK)
-                    throw new Exception("Error on getting data " + response.StatusCode.ToString());
+                //if (response.StatusCode != HttpStatusCode.OK)
+                //{
+                    //Return directly?? Handle Access Denied error when no Role defined in Permissions is found
 
-                //Parse JSON Response to
-                var responsecontent = await response.Content.ReadAsStringAsync();
-                var responseobject = JsonConvert.DeserializeObject<List<KeyCloakPermissions>>(responsecontent);
+                    //throw new Exception("Error on getting data " + response.StatusCode.ToString());
+                //}
+
+                var responseobject = new List<KeyCloakPermissions>();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+
+                    //Parse JSON Response to
+                    var responsecontent = await response.Content.ReadAsStringAsync();
+                    responseobject = JsonConvert.DeserializeObject<List<KeyCloakPermissions>>(responsecontent);
+                }
 
                 return responseobject;
             }            
