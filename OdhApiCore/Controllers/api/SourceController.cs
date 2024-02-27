@@ -69,7 +69,7 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {         
-            return await Get(pagenumber, pagesize, language, idlist,
+            return await Get(pagenumber, pagesize, idlist, language,
                 fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
