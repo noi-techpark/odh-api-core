@@ -577,7 +577,7 @@ namespace DataModel
         }
 
         //Overwrites The Features
-        public new ICollection<TopicLinked> Topics { get; set; }
+        public new ICollection<TopicLinked>? Topics { get; set; }
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked? LocationInfo { get; set; }
@@ -585,7 +585,7 @@ namespace DataModel
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
 
-        public ICollection<GpsInfo> GpsInfo { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
 
         //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
 

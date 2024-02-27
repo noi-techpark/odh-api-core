@@ -43,7 +43,7 @@ namespace DataModel
     public interface ISource
     {
         [SwaggerSchema("Source of the Data")]
-        string? Source { get; set; }
+        string Source { get; set; }
     }
 
     public interface IImportDateassigneable
@@ -525,8 +525,8 @@ namespace DataModel
         public string? AreaRadius { get; set; }
 
 
-        public Nullable<int> AltitudeFrom { get; set; }
-        public Nullable<int> AltitudeTo { get; set; }
+        public int? AltitudeFrom { get; set; }
+        public int? AltitudeTo { get; set; }
 
 
         public IDictionary<string, string> SkiRegionName { get; set; }
@@ -787,7 +787,7 @@ namespace DataModel
 
         public ICollection<string>? PublishedOn { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
@@ -900,7 +900,7 @@ namespace DataModel
 
         public string? LTSId { get; set; }
         public string? HGVId { get; set; }
-        public string? Source { get; set; }
+        public string Source { get; set; }
         public string? RoomCode { get; set; }
         public Nullable<int> Roommax { get; set; }
         public Nullable<int> Roommin { get; set; }
@@ -1069,7 +1069,7 @@ namespace DataModel
         //New published on List
         public ICollection<string>? PublishedOn { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -1113,8 +1113,8 @@ namespace DataModel
         public bool Active { get; set; }
         public string? Shortname { get; set; }
 
-        public Nullable<DateTime> DateBegin { get; set; }
-        public Nullable<DateTime> DateEnd { get; set; }
+        public DateTime? DateBegin { get; set; }
+        public DateTime? DateEnd { get; set; }
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
@@ -1137,7 +1137,7 @@ namespace DataModel
 
         [SwaggerDeprecated("Obsolete")]
         public string? Type { get; set; }
-        public string Pdf { get; set; }
+        public string? Pdf { get; set; }
 
         public string? DistrictId { get; set; }
         public ICollection<string>? DistrictIds { get; set; }
@@ -1169,13 +1169,13 @@ namespace DataModel
         public ICollection<string>? HasLanguage { get; set; }
 
         [SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
-        public Nullable<DateTime> NextBeginDate { get; set; }
+        public DateTime? NextBeginDate { get; set; }
 
         public string Source { get; set; }
         public bool? GrpEvent { get; set; }
         public bool? EventBenefit { get; set; }
         public EventBooking? EventBooking { get; set; }
-        public ICollection<LTSTags> LTSTags { get; set; }
+        public ICollection<LTSTags>? LTSTags { get; set; }
 
         public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
 
@@ -1184,13 +1184,13 @@ namespace DataModel
 
         public IDictionary<string, ICollection<string>> Hashtag { get; set; }
 
-        public EventOperationScheduleOverview EventOperationScheduleOverview { get; set; }
+        public EventOperationScheduleOverview? EventOperationScheduleOverview { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
 
-        public string ClassificationRID { get; set; }
+        public string? ClassificationRID { get; set; }
 
-        public ICollection<EventCrossSelling> EventCrossSelling { get; set; }
+        public ICollection<EventCrossSelling>? EventCrossSelling { get; set; }
         public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -1249,7 +1249,6 @@ namespace DataModel
         public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
-
         public string? Shortname { get; set; }
 
         public DateTime? FirstImport { get; set; }
@@ -1259,7 +1258,7 @@ namespace DataModel
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         
-        public ICollection<string> SmgTags { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
 
         public LocationInfo LocationInfo { get; set; }
         public ICollection<string> HasLanguage { get; set; }
@@ -1325,7 +1324,7 @@ namespace DataModel
         public string? Id { get; set; }
         public bool Active { get; set; }
         public string? Shortname { get; set; }
-        public bool Highlight { get; set; }
+        public bool? Highlight { get; set; }
 
         //Activity SubType
         public string? Type { get; set; }
@@ -1394,7 +1393,7 @@ namespace DataModel
 
         public ICollection<string>? PublishedOn { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -1903,7 +1902,7 @@ namespace DataModel
 
         public ICollection<string>? PublishedOn { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
     }
 
     public class Season
@@ -1998,7 +1997,7 @@ namespace DataModel
         
         public ICollection<string>? PublishedOn { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
@@ -2121,7 +2120,7 @@ namespace DataModel
         public DateTime LastSnowDate { get; set; }
         public List<WeatherObservation>? WeatherObservation { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         ////GPS
         //public string Gpstype { get; set; }
@@ -2156,7 +2155,7 @@ namespace DataModel
         public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         [SwaggerEnum(new[] { "NOI", "EC" })]
         public string EventLocation { get; set; }
@@ -2331,8 +2330,7 @@ namespace DataModel
                 }
                 else
                     return null;
-            }
-            //get; set; 
+            }            
         }
 
         public IDictionary<string, List<Document>?> Documents { get; set; }
@@ -2584,7 +2582,7 @@ namespace DataModel
         public string? Streamurl { get; set; }
         public string? Previewurl { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         ////NEW Webcam Properties
         //public string Streamurl { get; set; }
@@ -2619,7 +2617,6 @@ namespace DataModel
 
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
-        // public new string? Source { get; set; }
         public ICollection<PublishedonObject>? WebcamAssignedOn { get; set; }
 
         public ICollection<string>? AreaIds { get; set; }
@@ -2780,7 +2777,7 @@ namespace DataModel
 
         public ICollection<string>? HasLanguage { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
@@ -2899,7 +2896,7 @@ namespace DataModel
         [SwaggerEnum(new[] { "accommodation", "accommodationroom", "event", "odhactivitypoi", "measuringpoint", "webcam", "article", "venue", "eventshort", "experiencearea", "region", "metaregion", "tourismassociation", "municipality", "district", "area", "wineaward", "skiarea", "skiregion", "odhtag", "publisher", "tag", "weatherhistory", "weather", "weatherdistrict", "weatherforecast", "weatherrealtime", "snowreport", "odhmetadata", "package", "ltsactivity", "ltspoi", "ltsgastronomy" })]
         public string Type { get; set; }
         public DateTime? LastUpdate { get; set; }
-        public string? Source { get; set; }
+        public string Source { get; set; }
         public bool Reduced { get; set; }
 
         public UpdateInfo? UpdateInfo { get; set; }
@@ -3082,7 +3079,7 @@ namespace DataModel
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public bool Active { get; set; }
         public string? CustomId { get; set; }
         public string? Shortname { get; set; }
@@ -3090,7 +3087,7 @@ namespace DataModel
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public Nullable<double> Altitude { get; set; }
+        public double? Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -3112,12 +3109,11 @@ namespace DataModel
 
         public ICollection<string>? PublishedOn { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
-
     }
 
     //BaseInfos for ODHActivityPois / Activities / Pois
@@ -3226,7 +3222,7 @@ namespace DataModel
 
         public ICollection<string>? PublishedOn { get; set; }
 
-        public string? Source { get; set; }
+        public string Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 

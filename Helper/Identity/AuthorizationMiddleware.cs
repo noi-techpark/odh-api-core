@@ -40,14 +40,7 @@ namespace Helper.Identity
             {
                 return;
             }
-
-            //// If no config present do nothing
-            //if (ratelimitconfig is null)
-            //{
-            //    await _next(context);
-            //    return;
-            //}
-
+            
             //GET BEARER TOKEN from Authorization Header
             var bearertoken = "";
            
