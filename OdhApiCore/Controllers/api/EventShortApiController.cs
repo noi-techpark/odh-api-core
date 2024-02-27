@@ -681,11 +681,11 @@ namespace OdhApiCore.Controllers.api
                     
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
-                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }) && eventshort.EventLocation != "VV")
-                        throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+                    //if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }) && eventshort.EventLocation != "VV")
+                    //    throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
-                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }))
-                        eventshort.Source = User.Identity != null ? User.Identity.Name :"";
+                    //if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }))
+                    //    eventshort.Source = User.Identity != null ? User.Identity.Name :"";
 
                     if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
                         throw new Exception("Start + End Time not set correctly");

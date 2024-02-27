@@ -94,7 +94,6 @@ namespace Helper
         }
 
         #region PG CRUD Helpers
-
       
         /// <summary>
         /// Inserts or Updates the Data
@@ -168,7 +167,13 @@ namespace Helper
                 dataconfig.Operation = CRUDOperation.Create;
 
                 if (data is IPublishedOn)
-                    channelstopublish.AddRange((data as IPublishedOn).PublishedOn);  
+                {
+                    if ((data as IPublishedOn).PublishedOn == null)
+                        (data as IPublishedOn).PublishedOn = new List<string>();
+
+                    channelstopublish.AddRange((data as IPublishedOn).PublishedOn);
+                }
+                    
                 
                 //On insert always set the object and image to changed
                 objectchangedcount = 1;
@@ -202,7 +207,13 @@ namespace Helper
 
                 //Add all Publishedonfields before and after change
                 if (data is IPublishedOn && queryresult is IPublishedOn)
+                {
+                    if ((data as IPublishedOn).PublishedOn == null)
+                        (data as IPublishedOn).PublishedOn = new List<string>();
+
                     channelstopublish.AddRange((data as IPublishedOn).PublishedOn.UnionIfNotNull((queryresult as IPublishedOn).PublishedOn));
+                }
+
 
                 updateresult = await QueryFactory
                     .Query(dataconfig.Table)
@@ -260,7 +271,9 @@ namespace Helper
                 }
 
                 if (queryresult is IPublishedOn && ((IPublishedOn)queryresult).PublishedOn != null)
+                {
                     channelstopublish.AddRange(((IPublishedOn)queryresult).PublishedOn);
+                }                    
 
                 deleteresult = await QueryFactory.Query(dataconfig.Table).Where("id", idtodelete)
                         .DeleteAsync();
