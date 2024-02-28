@@ -2026,7 +2026,10 @@ namespace DataModel
 
         public string? Id { get; set; }
 
+        [SwaggerDeprecated("Obsolete use Type")]
         public string? OdhType { get; set; }
+
+        public string? Type { get; set; }
 
         //private string swaggerUrl = default!;
         public string? SwaggerUrl { get; set; }
@@ -2054,20 +2057,10 @@ namespace DataModel
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string> PathParam { get; set; }
 
-        //[SwaggerEnum(new[] { "Y", "N" })]
         public string? BaseUrl { get; set; }
-
-        //public string Source { get; set; }
-
-        //public string License { get; set; } = default!;
-
-        //public string LicenseType { get; set; }
-
-        //public string LicenseInfo { get; set; }
-
+     
         public bool Deprecated { get; set; }
-
-        public bool SingleDataset { get; set; }
+        
         public Metadata? _Meta { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }

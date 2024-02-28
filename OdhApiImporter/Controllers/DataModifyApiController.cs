@@ -287,10 +287,10 @@ namespace OdhApiImporter.Controllers
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ResaveMetaData")]
-        public async Task<IActionResult> ResaveMetaData(CancellationToken cancellationToken)
+        public async Task<IActionResult> ResaveMetaData(bool correcturls = false, CancellationToken cancellationToken)
         {
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.ResaveMetaData(Request.Host.ToString());
+            var objectscount = await customdataoperation.ResaveMetaData(Request.Host.ToString(), correcturls);
 
             return Ok(new UpdateResult
             {

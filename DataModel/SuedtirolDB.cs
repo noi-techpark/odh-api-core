@@ -3014,7 +3014,10 @@ namespace DataModel
 
         public string? Url { get; set; }
 
+        [SwaggerSchema("Interfaces that are offered by the source")]
         public ICollection<string>? Interfaces { get; set; }
+
+        public ICollection<string> Types { get; set; }
     }
 
 
