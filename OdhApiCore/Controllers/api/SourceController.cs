@@ -44,6 +44,7 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="idlist">IDFilter (Separator ',' List of IDs, 'null' = No Filter), (default:'null')</param>/// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
+        /// <param name="typeslist">Type Filter (Separator ',' Filter Sources by Type ('accommodation','event','odhactivitypoi','webcam','region','municipality','district','tourismassocation','weather','measuringpoint','weatherhistory','weatherforecast','accommodationroom','venue','article','eventshort','wineaward','tag','odhtag'), (default:'null')</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
@@ -61,6 +62,7 @@ namespace OdhApiCore.Controllers
             PageSize pagesize = null!, 
             string? language = null,
             string? idlist = null,
+            string? typeslist = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -69,7 +71,7 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {         
-            return await Get(pagenumber, pagesize, idlist, language,
+            return await Get(pagenumber, pagesize, idlist, typeslist, language,
                 fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
@@ -110,7 +112,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(
-            uint? pagenumber, int? pagesize, string? idfilter, string? language, string[] fields,
+            uint? pagenumber, int? pagesize, string? idfilter, string? typefilter, string? language, string[] fields,
             string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
@@ -120,6 +122,7 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
                 var idlist = Helper.CommonListCreator.CreateIdList(idfilter);
+                var typeslist = Helper.CommonListCreator.CreateIdList(typefilter);
 
                 var query =
                     QueryFactory.Query()
@@ -128,6 +131,7 @@ namespace OdhApiCore.Controllers
                     .SourcesWhereExpression(
                         languagelist: new List<string>(),
                         idlist: idlist,
+                        typeslist: typeslist,
                         searchfilter: searchfilter,
                         language: language,
                         additionalfilter: additionalfilter,

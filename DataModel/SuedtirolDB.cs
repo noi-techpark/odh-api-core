@@ -3834,8 +3834,7 @@ namespace DataModel
                 "ltsgastronomy" => "Gastronomy",
                 "event" => "Event",
                 "odhactivitypoi" => "ODHActivityPoi",
-                "package" => "Package",
-                "measuringpoint" => "Weather/Measuringpoint",
+                "package" => "Package",                
                 "webcam" => "WebcamInfo",
                 "article" => "Article",
                 "venue" => "Venue",
@@ -3853,9 +3852,15 @@ namespace DataModel
                 "odhtag" => "ODHTag",
                 "publisher" => "Publisher",
                 "source" => "Source",
-                "weatherhistory" => "Weather/History",
+                "weather" => "Weather",
+                "weatherhistory" => "WeatherHistory",
+                "measuringpoint" => "Weather/Measuringpoint",
+                "weatherdistrict" => "Weather/District",
+                "weatherforecast" => "Weather/Forecast",
+                "weatherrealtime" => "Weather/Realtime",
+                "snowreport" => "Weather/Snowreport",
                 "odhmetadata" => "MetaData",
-                "tag" => "Tag",
+                "tag" => "Tag",                
                 _ => throw new Exception("not known odh type")
             };
         }

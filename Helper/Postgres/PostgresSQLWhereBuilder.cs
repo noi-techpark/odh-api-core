@@ -5,6 +5,7 @@
 using SqlKata;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Helper
@@ -828,7 +829,7 @@ namespace Helper
 
         public static Query SourcesWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
-            IReadOnlyCollection<string> idlist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typeslist,
             string? searchfilter, string? language,
             string? additionalfilter,
             IEnumerable<string> userroles)
@@ -842,6 +843,7 @@ namespace Helper
             return query
                 .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
                 .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
+                .When(typeslist != null && typeslist.Count > 0, q => query.WhereInJsonb(typeslist, "data->>'Types'"))
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles);
         }

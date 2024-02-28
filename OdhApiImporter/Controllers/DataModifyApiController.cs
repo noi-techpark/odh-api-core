@@ -307,6 +307,28 @@ namespace OdhApiImporter.Controllers
             });
         }
 
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ResaveTags")]
+        public async Task<IActionResult> ResaveTags(bool correcturls = false)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.ResaveTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Resave Tags",
+                updatetype = "custom",
+                otherinfo = Request.Host.ToString(),
+                message = "Done",
+                recordsmodified = 0,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
         #endregion
 
         #region ODHTag

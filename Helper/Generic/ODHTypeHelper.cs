@@ -49,7 +49,9 @@ namespace Helper
                 "tag",
                 "weatherdistrict",
                 "weather",
-                "weatherforecast"
+                "weatherforecast",
+                "weatherrealtime",
+                "snowreport"
             };
         }
 
@@ -97,9 +99,10 @@ namespace Helper
                 Weather or WeatherLinked => "weather",
                 BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
                 WeatherForecast or WeatherForecastLinked => "weatherforecast",
-                WeatherRealTimeLinked => "weatherrealtime",
+                WeatherRealTimeLinked or WeatherRealTimeLinked => "weatherrealtime",
                 TourismMetaData => "odhmetadata",
                 TagLinked => "tag",                
+                SnowReportBaseData => "snowreport",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -234,6 +237,7 @@ namespace Helper
                 "weatherdistrict" => typeof(WeatherDistrictLinked),
                 "weatherforecast" => typeof(WeatherForecastLinked),
                 "weatherrealtime" => typeof(WeatherRealTimeLinked),
+                "snowreport" => typeof(SnowReportBaseData),
                 "odhmetadata" => typeof(TourismMetaData),
                 "tag" => typeof(TagLinked),
                 _ => throw new Exception("not known odh type")
