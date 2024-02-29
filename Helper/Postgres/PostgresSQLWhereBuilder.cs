@@ -193,7 +193,8 @@ namespace Helper
                 .HighlightFilter(highlight)                
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                  .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Poi
@@ -237,7 +238,8 @@ namespace Helper
                 .HighlightFilter(highlight)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Gastronomy
@@ -281,7 +283,8 @@ namespace Helper
                 .DishCodeFilter(dishcodeslist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Activity
@@ -349,7 +352,8 @@ namespace Helper
                 //.When(tagdict != null && tagdict.ContainsKey("or") && tagdict["or"].Any(), q => q.TaggingFilter_OR(tagdict!["or"]))
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Article
@@ -445,7 +449,8 @@ namespace Helper
                 .EventOrgFilter(orglist)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                                
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))                            
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Accommodation
@@ -499,7 +504,8 @@ namespace Helper
                 .AccoAltitudeFilter(altitude, altitudemin, altitudemax)
                 .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)                
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Common
@@ -587,7 +593,8 @@ namespace Helper
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
                 .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         public static Query WeatherHistoryWhereExpression(
@@ -654,7 +661,8 @@ namespace Helper
                 .SkiAreaFilterMeasuringpoints(skiarealist)
                 .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Eventshort
@@ -755,7 +763,8 @@ namespace Helper
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
                 .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
 

@@ -1736,7 +1736,7 @@ namespace Helper
         #region Filter by Roles
 
         public static Query FilterDataByAccessRoles(this Query query, IEnumerable<string> roles) =>
-            query.Where(q =>
+            query.When(roles.Contains("ANONYMOUS"), q => q.Where(q =>
             {
                 foreach (var item in roles)
                 {
@@ -1744,17 +1744,20 @@ namespace Helper
                         "gen_access_role @> array\\[$$\\]", item.ToUpper()
                     );
                 }
+                
                 return q;
-            });
+            }));
 
         ////Filter Out Reduced
-        //public static Query FilterReducedDataByRoles(this Query query) =>
-        //    query.WhereRaw("gen_reduced = false");
+        public static Query FilterReducedDataByRoles(this Query query, IEnumerable<string> roles) =>
+            //Special Rule, if Role IDM is there filter out all reduced data
+            query.When(roles.Any(x => x == "IDM"), q => q.Where("gen_reduced", false));
+    
 
         #endregion
 
         #region AdditionalFilter
-       
+
         public static Query FilterAdditionalDataByCondition(this Query query, string? condition)
         {
             if (condition != null && condition.Contains("="))
@@ -1794,8 +1797,6 @@ namespace Helper
         {
             switch (input)
             {
-
-
                 case "source":
                     return query.WhereIn("gen_source", values);
                 case "accessrole":

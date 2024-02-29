@@ -130,11 +130,6 @@ namespace OdhApiCore.Controllers
                             rolelist.Add(role);
                         }
                     }
-
-                    //foreach(var role in dict["Read"].Split("&").Where(x => x.Contains("accessrole")).FirstOrDefault().Split("=").LastOrDefault().Split(","))
-                    //{
-                    //        rolelist.Add(role);                    
-                    //}
                 }
             }
 

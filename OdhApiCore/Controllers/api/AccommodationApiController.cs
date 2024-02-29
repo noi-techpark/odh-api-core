@@ -727,11 +727,15 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("accommodations")
                         .Select("data")
                         .Where("gen_hgvid", "ILIKE", id)
-                        .FilterDataByAccessRoles(UserRolesToFilter);
+                        .FilterDataByAccessRoles(UserRolesToFilter)
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 
@@ -775,6 +779,7 @@ namespace OdhApiCore.Controllers
 
                 var languagelist = Helper.CommonListCreator.CreateIdList(langfilter);
                 var sourcelist = Helper.CommonListCreator.CreateIdList(sourcefilter);
+                var userroles = UserRolesToFilter;
 
                 var query =
                     QueryFactory.Query("accommodationrooms")
@@ -786,7 +791,9 @@ namespace OdhApiCore.Controllers
                         .SearchFilter(PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort)
-                        .FilterDataByAccessRoles(UserRolesToFilter);
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(userroles)
+                        .FilterReducedDataByRoles(userroles);
 
                 var data = await query.GetAsync<JsonRaw?>(cancellationToken: cancellationToken);
                 
@@ -817,7 +824,8 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("accommodationrooms")
                         .Select("data")
-                        .Where("id", id.ToUpper())                        
+                        .Where("id", id.ToUpper())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
                         .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
