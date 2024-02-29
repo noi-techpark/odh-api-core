@@ -77,7 +77,7 @@ namespace Helper
 
             var result = await query.GetAsync<JsonRaw>();
             return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value, settings)!) ?? default!;
-        }       
+        }
 
         //Using System.Text.Json
         //public static async Task<IEnumerable<T>> GetObjectListAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull

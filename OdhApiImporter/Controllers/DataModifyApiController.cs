@@ -343,7 +343,20 @@ namespace OdhApiImporter.Controllers
             
             switch(odhtype)
             {
-                case "accommodation": objectscount = await customdataoperation.ResaveSourcesOnType<AccommodationLinked>(odhtype, sourcetofilter, sourcetochange); ; 
+                case "accommodation": 
+                    objectscount = await customdataoperation.ResaveSourcesOnType<AccommodationLinked>(odhtype, sourcetofilter, sourcetochange); ; 
+                    break;
+                case "accommodationroom":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<AccommodationRoomLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "package":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<PackageLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "odhactivitypoi":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<ODHActivityPoiLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "event":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<EventLinked>(odhtype, sourcetofilter, sourcetochange); ;
                     break;
             }
 
