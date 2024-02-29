@@ -502,7 +502,7 @@ namespace Helper
                 "ltsactivity" => "Activity",
                 "ltspoi" => "Poi",
                 "ltsgastronomy" => "Gastronomy",
-                "measuringpoint" => "Measuringpoint",
+                "measuringpoint" => "Weather/Measuringpoint",
                 "article" => "Article",
                 "municipality" => "Municipality",
                 "district" => "District",
@@ -512,6 +512,18 @@ namespace Helper
                 "metaregion" => "MetaRegion",
                 "area" => "Area",
                 "wineaward" => "Wine",
+                "odhmetadata" => "MetaData",
+                "odhtag" => "ODHTag",
+                "tag" => "Tag",
+                "publisher" => "Publisher",
+                "source" => "Source",
+                "weatherhistory" => "WeatherHistory",
+                "weatherdistrict" => "Weather/District",
+                "weatherforecast" => "Weather/Forecast",
+                "weatherrealtime" => "Weather/Realtime",
+                "snowreport" => "Weather/SnowReport",
+                "weather" => "Weather",
+
                 _ => throw new Exception("not known odh type")
             };
         }
