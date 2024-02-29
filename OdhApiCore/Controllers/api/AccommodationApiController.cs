@@ -825,7 +825,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("accommodationrooms")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>(cancellationToken: cancellationToken);
