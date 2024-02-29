@@ -156,7 +156,7 @@ namespace OdhApiImporter.Helpers
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("metadata");
+                   .From("tags");
 
             var data = await query.GetObjectListAsync<TagLinked>();
             int i = 0;
