@@ -62,7 +62,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetDistinctAsync(
             uint? pagenumber = null,
             PageSize pagesize = null!,
-            string? odhtype = null,
+            string? odhtype = null,            
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? seed = null,
@@ -118,7 +118,9 @@ namespace OdhApiCore.Controllers
                     string select = $@"jsonb_path_query(data, '$.{kataField}{nullexclude}')#>>'\{{\}}' as ""{asField}""";
 
                     selects.Add(select);
-                }            
+                }
+
+                string endpoint = ODHTypeHelper.TranslateTypeToEndPoint(odhtype);
 
                 var query =
                     QueryFactory.Query()
@@ -129,7 +131,7 @@ namespace OdhApiCore.Controllers
                         // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
                         .OrderByRawIfNotNull(rawsort)
                         //.ApplyOrdering_GeneratedColumns(null, null, rawsort)
-                        .FilterDataByAccessRoles(UserRolesToFilter);
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
 
                 //TODOS Metadata api support
            

@@ -159,7 +159,7 @@ namespace Helper
             if (queryresult == null)
             {
                 if (dataconfig.ErrorWhendataIsNew)
-                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Found", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
+                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Data to update Not Found", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
 
                 createresult = await QueryFactory.Query(dataconfig.Table)
                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
@@ -182,7 +182,7 @@ namespace Helper
             else
             {
                 if (dataconfig.ErrorWhendataExists)
-                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
+                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Data exists already", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
 
                 //Compare the data
                 if (compareConfig.CompareData && queryresult != null)
@@ -260,7 +260,7 @@ namespace Helper
 
             if (queryresult == null)
             {
-                return new PGCRUDResult() { id = idtodelete, odhtype = null, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Found", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
+                return new PGCRUDResult() { id = idtodelete, odhtype = null, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Data Not Found", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
             }
             else
             {
