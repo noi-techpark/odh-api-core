@@ -79,6 +79,15 @@ namespace Helper
             return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value, settings)!) ?? default!;
         }
 
+        public static async Task<IEnumerable<T>> GetObjectListDynamicAsync<T>(this Query query, T mydata, CancellationToken cancellationToken = default) where T : notnull
+        {
+            //using this ContractResolver avoids duplicate Lists
+            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+
+            var result = await query.GetAsync<JsonRaw>();
+            return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value, settings)!) ?? default!;
+        }
+
         //Using System.Text.Json
         //public static async Task<IEnumerable<T>> GetObjectListAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         //{

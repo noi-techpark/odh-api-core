@@ -175,6 +175,41 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> ResaveSourcesOnType(string odhtype, string sourcetofilter, string sourcetochange)
+        {
+            string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
+            var mytype = ODHTypeHelper.TranslateTypeString2Type(odhtype);
+
+            var myobject = Activator.CreateInstance(mytype);
+
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From(table)
+                   .WhereJsonb("Source", sourcetofilter);
+
+            //not working
+            var data = await query.GetObjectListDynamicAsync(myobject);
+
+            int i = 0;
+
+            foreach (var tag in data)
+            {
+                if(tag is IIdentifiable)
+                {                 
+                    if (tag is ISource)
+                        ((ISource)tag).Source = sourcetochange;
+
+                    //Save to DB                 
+                    var queryresult = await QueryFactory.Query(table).Where("id", ((IIdentifiable)tag).Id)
+                        .UpdateAsync(new JsonBData() { id = ((IIdentifiable)tag).Id ?? "", data = new JsonRaw(tag) });
+
+                    i = i + queryresult;
+                }
+            }
+
+            return i;
+        }       
+
 
         public async Task<int> UpdateAllEventShortstonewDataModel()
         {

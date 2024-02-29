@@ -331,6 +331,32 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region Generic
+
+        //[Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ResaveSourcefield")]
+        public async Task<IActionResult> ResaveSource(string odhtype, string sourcetofilter, string sourcetochange)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.ResaveSourcesOnType(odhtype, sourcetofilter, sourcetochange);
+
+            return Ok(new UpdateResult
+            {
+                operation = "Resave Tags",
+                updatetype = "custom",
+                otherinfo = Request.Host.ToString(),
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        #endregion
+
         #region ODHTag
 
         [Authorize(Roles = "DataPush")]
