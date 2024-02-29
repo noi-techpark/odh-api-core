@@ -852,7 +852,7 @@ namespace Helper
             return query
                 .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
                 .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
-                .When(typeslist != null && typeslist.Count > 0, q => query.WhereInJsonb(typeslist, "Types"))
+                .When(typeslist != null && typeslist.Count > 0, q => query.SourceTypeFilter(typeslist))
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles);
         }

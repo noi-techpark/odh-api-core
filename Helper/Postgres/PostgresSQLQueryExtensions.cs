@@ -954,6 +954,12 @@ namespace Helper
                 id => id.ToUpper()
             );
 
+        public static Query SourceTypeFilter(this Query query, IReadOnlyCollection<string> typeslist) =>
+           query.WhereInJsonb(
+           typeslist,
+           sourcetype => new { Types = new[] { sourcetype.ToLower() } }
+       );
+
         //public static Query VenueHasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
         //    query.WhereInJsonb(
         //       languagelist,
@@ -983,14 +989,14 @@ namespace Helper
 
 
         //Standard JSON Filter
-        public static Query FilterClosedData(this Query query) =>
-            query.Where(q =>
-                q.WhereRaw(
-                    "data#>>'\\{LicenseInfo,ClosedData\\}' IS NULL"
-                ).OrWhereRaw(
-                    "data#>>'\\{LicenseInfo,ClosedData\\}' = 'false'"
-                )
-            );
+        //public static Query FilterClosedData(this Query query) =>
+        //    query.Where(q =>
+        //        q.WhereRaw(
+        //            "data#>>'\\{LicenseInfo,ClosedData\\}' IS NULL"
+        //        ).OrWhereRaw(
+        //            "data#>>'\\{LicenseInfo,ClosedData\\}' = 'false'"
+        //        )
+        //    );
 
         //public static Query FilterClosedDataVenues(this Query query) =>
         //    query.Where(q =>
