@@ -1790,16 +1790,18 @@ namespace Helper
             }
         }
 
-        public static Query GetAdditionalFilterQueryByInput(this Query query, string input, List<string> value)
+        public static Query GetAdditionalFilterQueryByInput(this Query query, string input, List<string> values)
         {
             switch (input)
             {
+
+
                 case "source":
-                    return query.WhereIn("gen_source", value);
+                    return query.WhereIn("gen_source", values);
                 case "accessrole":
-                    return query.WhereRaw("gen_access_role @> array\\[$$\\]", value);
+                    return query.FilterDataByAccessRoles(values);
                 default:
-                    return query.WhereIn("data->>'" + input + "'", value);
+                    return query.WhereIn("data->>'" + input + "'", values);
             }
         }
 

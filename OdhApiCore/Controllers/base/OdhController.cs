@@ -122,11 +122,19 @@ namespace OdhApiCore.Controllers
             if(dict.ContainsKey("Read"))
             {
                 if(dict["Read"].Split("&").Any(x => x.Contains("accessrole")))
-                {                    
-                    foreach(var role in dict["Read"].Split("&").Where(x => x.Contains("accessrole")).FirstOrDefault().Split("=").LastOrDefault().Split(","))
+                {       
+                    foreach(var tocheck in dict["Read"].Split("&").Where(x => x.Contains("accessrole")))
                     {
-                            rolelist.Add(role);                    
+                        foreach(var role in tocheck.Split("=").LastOrDefault().Split(","))
+                        {
+                            rolelist.Add(role);
+                        }
                     }
+
+                    //foreach(var role in dict["Read"].Split("&").Where(x => x.Contains("accessrole")).FirstOrDefault().Split("=").LastOrDefault().Split(","))
+                    //{
+                    //        rolelist.Add(role);                    
+                    //}
                 }
             }
 
