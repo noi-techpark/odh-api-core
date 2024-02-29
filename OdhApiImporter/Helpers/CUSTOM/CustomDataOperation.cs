@@ -12,6 +12,10 @@ using Helper;
 using Microsoft.FSharp.Control;
 using System.Diagnostics;
 using Helper.Generic;
+using Helper.JsonHelpers;
+using Newtonsoft.Json;
+using SqlKata;
+using System.Threading;
 
 namespace OdhApiImporter.Helpers
 {
@@ -175,26 +179,25 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> ResaveSourcesOnType(string odhtype, string sourcetofilter, string sourcetochange)
+        public async Task<int> ResaveSourcesOnType<T>(string odhtype, string sourcetofilter, string sourcetochange) where T : notnull
         {
             string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
             var mytype = ODHTypeHelper.TranslateTypeString2Type(odhtype);
-
-            var myobject = Activator.CreateInstance(mytype);
-
+            
             var query = QueryFactory.Query()
                    .SelectRaw("data")
                    .From(table)
                    .WhereJsonb("Source", sourcetofilter);
 
             //not working
-            var data = await query.GetObjectListDynamicAsync(myobject);
+            var data = await query.GetObjectListAsync<T>();
 
             int i = 0;
 
             foreach (var tag in data)
-            {
-                if(tag is IIdentifiable)
+            {                
+
+                if (tag is IIdentifiable)
                 {                 
                     if (tag is ISource)
                         ((ISource)tag).Source = sourcetochange;
@@ -208,7 +211,7 @@ namespace OdhApiImporter.Helpers
             }
 
             return i;
-        }       
+        }        
 
 
         public async Task<int> UpdateAllEventShortstonewDataModel()

@@ -338,7 +338,14 @@ namespace OdhApiImporter.Controllers
         public async Task<IActionResult> ResaveSource(string odhtype, string sourcetofilter, string sourcetochange)
         {
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.ResaveSourcesOnType(odhtype, sourcetofilter, sourcetochange);
+
+            var objectscount = 0;
+            
+            switch(odhtype)
+            {
+                case "accommodation": objectscount = await customdataoperation.ResaveSourcesOnType<AccommodationLinked>(odhtype, sourcetofilter, sourcetochange); ; 
+                    break;
+            }
 
             return Ok(new UpdateResult
             {
