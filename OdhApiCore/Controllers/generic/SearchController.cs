@@ -39,6 +39,7 @@ namespace OdhApiCore.Controllers
         /// GET Search over all Entities 
         /// </summary>
         /// <param name="odhtype">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
+        /// <param name="type">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
         /// <param name="term">Term to Search for <a href="https://github.com/noi-techpark/odh-docs/wiki/Search-over-all-Entities-in-ODH-Tourism-api" target="_blank">Wiki</a></param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language ('null' all languages are displayed)</param>
         /// <param name="limitto">Limit search to n items per entity</param>
@@ -64,6 +65,7 @@ namespace OdhApiCore.Controllers
             string term, 
             string? language = "en",
             string? odhtype = null,
+            string? type = null,
             bool searchbasetext = false,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? filteronfields = null,
@@ -79,7 +81,7 @@ namespace OdhApiCore.Controllers
             var fieldstodisplay = fields ?? Array.Empty<string>();
             var fieldstosearchon = filteronfields ?? Array.Empty<string>();
 
-            return await Get(language: language ?? "en", validforentity: odhtype, fields: fieldstodisplay,
+            return await Get(language: language ?? "en", validforentity: odhtype ?? type, fields: fieldstodisplay,
                   searchfilter: term, searchontext: searchbasetext, passedfieldstosearchon: fieldstosearchon, locfilter: locfilter,
                   rawfilter: rawfilter, rawsort: rawsort, limitto: limitto, removenullvalues: removenullvalues, cancellationToken);
         }

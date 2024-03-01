@@ -47,6 +47,7 @@ namespace OdhApiCore.Controllers
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="odhtype">Mandatory search trough Entities (metadata, accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... null = search trough all entities)</param>
+        /// <param name="type">Mandatory search trough Entities (metadata, accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... null = search trough all entities)</param>
         /// <param name="fields">Mandatory Select a field for the Distinct Query, example fields=Source, arrays are selected with a [*] example HasLanguage[*] / Features[*].Id  (Only one field supported). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
@@ -66,6 +67,7 @@ namespace OdhApiCore.Controllers
             uint? pagenumber = null,
             PageSize pagesize = null!,
             string? odhtype = null,
+            string? type = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? seed = null,
@@ -76,9 +78,8 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             var fieldstodisplay = fields ?? Array.Empty<string>();
-
           
-            return await GetDeprecated(pagenumber, pagesize, odhtype, fieldstodisplay, seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
+            return await GetDeprecated(pagenumber, pagesize, odhtype ?? type, fieldstodisplay, seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
         }
 
         //TODO Get openapi file and parse trough an render to output
@@ -93,9 +94,7 @@ namespace OdhApiCore.Controllers
                 var responsecontent = await response.Content.ReadAsStringAsync();
 
                 JObject? obj = JsonConvert.DeserializeObject<JObject>(responsecontent);
-
-                //obj["dialog"]["prompt"]
-
+                
                 return Ok(obj);
             }
         }
