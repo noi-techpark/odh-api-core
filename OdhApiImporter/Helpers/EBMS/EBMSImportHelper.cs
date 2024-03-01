@@ -274,8 +274,7 @@ namespace OdhApiImporter.Helpers
                 {
                     foreach (var idtodelete in idstodelete)
                     {
-                        //Set to inactive or delete?
-
+                        //Set to inactive
                         var eventshorttodeactivate = eventshortinDB.Where(x => x.EventId == idtodelete).FirstOrDefault();
 
                         //TODO CHECK IF IT WORKS
@@ -283,27 +282,13 @@ namespace OdhApiImporter.Helpers
                         {
                             //Work With Active instead of deleting....
                             eventshorttodeactivate.Active = false;
+                            eventshorttodeactivate.LastChange = DateTime.Now;
 
-                            await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower())
+                            var updated = await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower())
                                 .UpdateAsync(new JsonBData() { id = eventshorttodeactivate.Id?.ToLower() ?? "", data = new JsonRaw(eventshorttodeactivate) });
-                     
+
                             //LOG the Deletion
-                            Console.WriteLine(JsonConvert.SerializeObject(new PGCRUDResult() { 
-                                id = eventshorttodeactivate.Id, 
-                                changes = null,
-                                pushed = null,
-                                pushchannels = null,
-                                objectchanged = 1,
-                                objectimagechanged = null,
-                                compareobject = false,                                
-                                created = 0,
-                                deleted = 0,
-                                updated = 1,                                
-                                error = 0,                                
-                                errorreason = null,                                
-                                odhtype= "eventshort",
-                                operation = "Delete"                             
-                            }));
+                            WriteLog.LogToConsole(eventshorttodeactivate.Id, "dataimport", "single.eventeuracnoi.deactivate", new ImportLog() { sourceid = eventshorttodeactivate.Id, sourceinterface = "ebms.eventeuracnoi", success = updated > 0 ? true : false, error = "" });
 
                             deletecounter++;
                         }

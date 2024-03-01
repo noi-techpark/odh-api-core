@@ -202,6 +202,8 @@ namespace OdhApiImporter.Helpers
 
                         updateresult = await QueryFactory.Query("events").Where("id", eventid)
                                         .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+
+                        WriteLog.LogToConsole(eventid, "dataimport", "single.mobilityculture.deactivate", new ImportLog() { sourceid = eventid, sourceinterface = "mobility.culture", success = updateresult > 0 ? true : false, error = "" });
                     }
                 }
             }
