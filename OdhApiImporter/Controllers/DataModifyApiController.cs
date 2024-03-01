@@ -387,6 +387,9 @@ namespace OdhApiImporter.Controllers
                 case "weatherhistory":
                     objectscount = await customdataoperation.ResaveSourcesOnType<WeatherHistoryLinked>(odhtype, sourcetofilter, sourcetochange); ;
                     break;
+                case "area":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<AreaLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
             }
 
             return Ok(new UpdateResult
