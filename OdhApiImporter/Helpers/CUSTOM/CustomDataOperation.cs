@@ -184,16 +184,16 @@ namespace OdhApiImporter.Helpers
         {
             string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
             var mytype = ODHTypeHelper.TranslateTypeString2Type(odhtype);
-            
+
+
             var query = QueryFactory.Query()
                    .SelectRaw("data")
                    .From(table)
-                   .WhereJsonb("Source", sourcetofilter);
+                   .When(sourcetofilter != "null", x => x.WhereJsonb("Source", sourcetofilter))
+                   .When(sourcetofilter == "null", x => x.WhereRaw("data->>'Source' is null"));
 
-           
             var data = await query.GetObjectListAsync<T>();
             
-
             int i = 0;
 
             foreach (var tag in data)
