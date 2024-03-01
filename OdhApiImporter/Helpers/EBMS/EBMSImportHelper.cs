@@ -281,22 +281,24 @@ namespace OdhApiImporter.Helpers
                         //TODO CHECK IF IT WORKS
                         if (eventshorttodeactivate != null)
                         {
-                            //TODO Work With Active....
+                            //Work With Active instead of deleting....
+                            eventshorttodeactivate.Active = false;
 
-                            await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
-
+                            await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower())
+                                .UpdateAsync(new JsonBData() { id = eventshorttodeactivate.Id?.ToLower() ?? "", data = new JsonRaw(eventshorttodeactivate) });
+                     
                             //LOG the Deletion
                             Console.WriteLine(JsonConvert.SerializeObject(new PGCRUDResult() { 
                                 id = eventshorttodeactivate.Id, 
                                 changes = null,
                                 pushed = null,
                                 pushchannels = null,
-                                objectchanged = null,
+                                objectchanged = 1,
                                 objectimagechanged = null,
                                 compareobject = false,                                
                                 created = 0,
-                                deleted = 1,
-                                updated = 0,                                
+                                deleted = 0,
+                                updated = 1,                                
                                 error = 0,                                
                                 errorreason = null,                                
                                 odhtype= "eventshort",
@@ -319,7 +321,9 @@ namespace OdhApiImporter.Helpers
             var query =
                          QueryFactory.Query("eventeuracnoi")
                              .Select("data")
-                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = $$)", "EBMS");
+                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = $$)", "ebms")
+                             .Where("gen_active", true);
+
 
             return await query.GetObjectListAsync<EventShortLinked>();
         }

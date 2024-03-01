@@ -55,7 +55,7 @@ namespace EBMS
                 //CUSTOM Props
 
                 eventtosave.Id = "eventshort-" + myevent.EventId;
-                eventtosave.Source = "EBMS";
+                eventtosave.Source = "ebms";
 
                 //ADD MAPPING
                 var ebmsrid = new Dictionary<string, string>() { { "id", myevent.EventId.ToString() } };
@@ -147,6 +147,8 @@ namespace EBMS
                 eventtosave.Display8 = myevent.Display8;
                 eventtosave.Display9 = myevent.Display9;
                 //eventtosave.Display9 = (EventShortDisplay)Enum.Parse(typeof(EventShortDisplay), myevent.Display9);
+
+                eventtosave.Active = true;
 
                 if (myevent.Company != null)
                 {

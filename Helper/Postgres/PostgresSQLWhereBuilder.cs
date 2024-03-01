@@ -670,7 +670,8 @@ namespace Helper
             this Query query, 
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
             IReadOnlyCollection<string> eventlocationlist, IReadOnlyCollection<string> webaddresslist,
-            string? activefilter, bool? websiteactivefilter, bool? communityactivefilter,
+            bool? activefilter,
+            string? todayactivefilter, bool? websiteactivefilter, bool? communityactivefilter,
             DateTime? start, DateTime? end,
             IReadOnlyCollection<string> publishedonlist,
             string? searchfilter,
@@ -682,8 +683,8 @@ namespace Helper
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, sourcelist, eventlocationlist, webaddresslist,
-                activefilter, start, end,
-                searchfilter,
+                todayactivefilter, start, end,
+                searchfilter, activefilter,
                 language, lastchange
             );
 
@@ -694,9 +695,9 @@ namespace Helper
                 .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .EventShortLocationFilter(eventlocationlist)
                 .EventShortWebaddressFilter(webaddresslist)
-                //.ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.EventShortActiveFilter(activefilter)
+                .ActiveFilter_GeneratedColumn(activefilter)                
                 //.OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)                
-                .EventShortActiveFilter(activefilter)
+                .EventShortTodayActiveFilter(todayactivefilter)
                 .EventShortWebsiteActiveFilter(websiteactivefilter)
                 .EventShortCommunityActiveFilter(communityactivefilter)
                 //.EventShortDateFilterEnd(start, end, !getbyrooms)

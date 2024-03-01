@@ -2142,7 +2142,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware //, IActivateable
     {
         public EventShort()
         {
@@ -2240,7 +2240,7 @@ namespace DataModel
         [SwaggerDeprecated("Deprecated")]
         [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
         [SwaggerEnum(new[] { "Y", "N" })]
-        [SwaggerSchema("Active")]
+        [SwaggerSchema("Active Today.noi.bz")]
         public string? Display1 { get; set; }
 
         [SwaggerDeprecated("Deprecated")]
@@ -2428,10 +2428,10 @@ namespace DataModel
         }
 
         public AgeRange? TypicalAgeRange { get; set; }
-        
-        
-        //TODO use active?
-        //public bool? Active { get; set; }
+       
+
+        //Use Active for filtering out not active events
+        public bool? Active { get; set; }
     }
 
     public class RoomBooked

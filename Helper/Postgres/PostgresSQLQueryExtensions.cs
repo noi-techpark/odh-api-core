@@ -701,7 +701,7 @@ namespace Helper
                id => id
            );
 
-        public static Query EventShortActiveFilter(this Query query, string? active) =>
+        public static Query EventShortTodayActiveFilter(this Query query, string? active) =>
             query.When(
                 active != null,
                 query => query.WhereJsonb(

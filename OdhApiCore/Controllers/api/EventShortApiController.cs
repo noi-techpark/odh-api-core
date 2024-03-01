@@ -57,7 +57,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
         /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>
-        /// <param name="onlyactive">'true' if only Events marked as Active should be returned</param>        
+        /// <param name="onlyactive">'true' if only Events marked as Active for today.noi.bz.it should be returned</param>        
         /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>        
         /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>        
         /// <param name="eventids">comma separated list of event ids</param>
@@ -69,6 +69,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="optimizedates">Optimizes dates, cuts out all Rooms with Comment "x", revisits and corrects start + enddate</param>
+        /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'true')</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
@@ -93,6 +94,7 @@ namespace OdhApiCore.Controllers.api
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
+            bool active = true,
             string? eventids = null,
             string? webaddress = null,
             string? sortorder = "ASC",
@@ -115,7 +117,8 @@ namespace OdhApiCore.Controllers.api
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
-                   webaddressfilter: webaddress, active: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, optimizedates: optimizedates,
+                   webaddressfilter: webaddress, activetoday: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, 
+                   active: active, optimizedates: optimizedates,
                    sortorder: sortorder, seed: seed, lastchange: lastchange, publishedon: publishedon, 
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
                    cancellationToken: cancellationToken);
@@ -160,8 +163,9 @@ namespace OdhApiCore.Controllers.api
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
         /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>    
-        /// <param name="onlyactive">'true' if only Events marked as Active should be returned</param>        
+        /// <param name="onlyactive">'true' if only Events marked as Active for today.noi.bz.it should be returned</param>        
         /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>        
+        /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'true')</param>
         /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>        
         /// <param name="eventids">comma separated list of event ids</param>
         /// <param name="webaddress">Filter by WebAddress Field</param>
@@ -190,6 +194,7 @@ namespace OdhApiCore.Controllers.api
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
+            bool active = true,
             string? eventids = null, 
             string? webaddress = null,
             string? language = null,
@@ -209,7 +214,7 @@ namespace OdhApiCore.Controllers.api
                 updatefrom = lastchange;
 
             return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, 
-                websiteactive.Value, communityactive.Value, eventids, webaddress, publishedon, updatefrom, language, null, 
+                websiteactive.Value, communityactive.Value, active, eventids, webaddress, publishedon, updatefrom, language, null, 
                 searchfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
@@ -290,7 +295,8 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
-            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, bool? websiteactive, bool? communityactive, bool optimizedates, string? sortorder, string? seed,
+            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? activetoday, bool? websiteactive, bool? communityactive, 
+            bool active, bool optimizedates, string? sortorder, string? seed,
             string? lastchange, string? publishedon, string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -299,7 +305,7 @@ namespace OdhApiCore.Controllers.api
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);                
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                    sourcefilter, eventlocationfilter, active, websiteactive, communityactive, idfilter, webaddressfilter, lastchange, sortorder, publishedon);
+                    sourcefilter, eventlocationfilter, activetoday, websiteactive, communityactive, active, idfilter, webaddressfilter, lastchange, sortorder, publishedon);
 
                 var query =
                    QueryFactory.Query()
@@ -308,8 +314,9 @@ namespace OdhApiCore.Controllers.api
                        .EventShortWhereExpression(
                            idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
                            eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
-                           start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
-                           websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
+                           start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
+                           websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter, 
+                           activefilter: myeventshorthelper.activefilter,
                            publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
                            additionalfilter: additionalfilter,
                            userroles: UserRolesToFilter, getbyrooms: false)
@@ -375,14 +382,15 @@ namespace OdhApiCore.Controllers.api
 
         private async Task<IActionResult> GetEventShortListbyRoomBooked(
             string? startdate, string? enddate, string? datetimeformat, string? sourcefilter, string? eventlocationfilter, 
-            bool? active, bool? websiteactive, bool? communityactive, string? idfilter, string? webaddressfilter, string? publishedon, string? lastchange, string? language, string? sortorder, 
+            bool? todayactive, bool? websiteactive, bool? communityactive, bool active, string? idfilter, string? webaddressfilter, string? publishedon, string? lastchange, string? language, string? sortorder, 
             string? searchfilter, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             //Additional Read Filters to Add Check
             AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
             EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                  sourcefilter, eventlocationfilter, active, websiteactive, communityactive, idfilter, webaddressfilter, lastchange, sortorder, publishedon);
+                  sourcefilter, eventlocationfilter, todayactive, websiteactive, communityactive, active,
+                  idfilter, webaddressfilter, lastchange, sortorder, publishedon);
 
             var query =
                QueryFactory.Query()
@@ -391,8 +399,9 @@ namespace OdhApiCore.Controllers.api
                    .EventShortWhereExpression(
                        idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
                        eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
-                       start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
+                       start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
                        websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
+                       activefilter: myeventshorthelper.activefilter,
                        publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
                        additionalfilter: additionalfilter,
                        userroles: UserRolesToFilter, getbyrooms: false)
@@ -674,19 +683,16 @@ namespace OdhApiCore.Controllers.api
                 {
                     //Adding Source content if not defined
                     if (String.IsNullOrEmpty(eventshort.Source))
-                        eventshort.Source = "Content";
+                        eventshort.Source = "noi";
+
+                    //TOCHECK Set as active on first import?
+                    eventshort.Active = true;
 
                     if (eventshort.EventLocation == null)
                         throw new Exception("EvenLocation needed");
                     
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
-
-                    //if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }) && eventshort.EventLocation != "VV")
-                    //    throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
-
-                    //if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }))
-                    //    eventshort.Source = User.Identity != null ? User.Identity.Name :"";
-
+                 
                     if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
                         throw new Exception("Start + End Time not set correctly");
 
@@ -829,7 +835,7 @@ namespace OdhApiCore.Controllers.api
                 {
                     //Adding Source content if not defined
                     if (String.IsNullOrEmpty(eventshort.Source))
-                        eventshort.Source = "Content";
+                        eventshort.Source = "noi";
 
                     if (eventshort.EventLocation == null)
                         throw new Exception("Eventlocation needed");
