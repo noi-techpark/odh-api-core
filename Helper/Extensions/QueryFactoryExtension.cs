@@ -79,6 +79,62 @@ namespace Helper
             return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value, settings)!) ?? default!;
         }
 
+        #region Using Reflection
+        public static async Task<IIdentifiable> GetObjectSingleAsync<T>(this Query query, Type type, CancellationToken cancellationToken = default)
+        {
+            //using this ContractResolver avoids duplicate Lists
+            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+            var method = typeof(JsonConvert)
+                .GetMethods()
+                .Where(x => x.Name == "DeserializeObject")
+                .Where(x => x.IsGenericMethod)
+                .Where(x => x.GetParameters().Any(x => x.Name!.Equals("settings")));
+
+            var resultraw = await query.FirstOrDefaultAsync<JsonRaw>();
+
+            var methodinfo = method.FirstOrDefault()!.MakeGenericMethod(type);
+            //var parseddata = methodinfo.Invoke(null, new object[] { datar.Value });
+            var parseddata = methodinfo.Invoke(null, new object[] { resultraw.Value, settings });
+            if (parseddata != null)
+                return parseddata as IIdentifiable;
+            else 
+                return null;
+        }
+
+        //Implementation with refletion not using Generics
+        public static async Task<IEnumerable<IIdentifiable>> GetObjectListAsync(this Query query, Type type, CancellationToken cancellationToken = default)
+        {
+            //using this ContractResolver avoids duplicate Lists
+            //Reflection Json Deserialize
+            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+            List<IIdentifiable> datalist = new List<IIdentifiable>();
+
+            var method = typeof(JsonConvert)
+                .GetMethods()
+                .Where(x => x.Name == "DeserializeObject")
+                .Where(x => x.IsGenericMethod)
+                .Where(x => x.GetParameters().Any(x => x.Name!.Equals("settings")));
+
+            var dataraw = await query.GetAsync<JsonRaw>();
+
+            foreach (var datar in dataraw)
+            {
+                var methodinfo = method.FirstOrDefault()!.MakeGenericMethod(type);
+                //var parseddata = methodinfo.Invoke(null, new object[] { datar.Value });
+                var parseddata = methodinfo.Invoke(null, new object[] { datar.Value, settings });
+                if(parseddata != null)
+                    datalist.Add(parseddata as IIdentifiable);
+            }
+
+            //End reflection Json Deserialize
+
+            return datalist;
+        }
+
+
+
+        #endregion
+
         //Using System.Text.Json
         //public static async Task<IEnumerable<T>> GetObjectListAsyncV2<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
         //{

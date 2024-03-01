@@ -192,29 +192,7 @@ namespace OdhApiImporter.Helpers
 
            
             var data = await query.GetObjectListAsync<T>();
-
-
-            //Reflection Json Deserialize
-            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
-            var dataraw = await query.GetAsync<JsonRaw>();
-            List<IIdentifiable> test = new List<IIdentifiable>();
-
-
-            var method = typeof(JsonConvert)
-                .GetMethods()
-                .Where(x => x.Name == "DeserializeObject")
-                .Where(x => x.IsGenericMethod)
-                .Where(x => x.GetParameters().Any(x => x.Name!.Equals("settings")));
-
-            foreach (var datar in dataraw)
-            {
-                var methodinfo = method.FirstOrDefault().MakeGenericMethod(mytype); 
-                //var parseddata = methodinfo.Invoke(null, new object[] { datar.Value });
-                var parseddata = methodinfo.Invoke(null, new object[] { datar.Value, settings });
-                test.Add(parseddata as IIdentifiable);
-            }
-
-            //End reflection Json Deserialize
+            
 
             int i = 0;
 
