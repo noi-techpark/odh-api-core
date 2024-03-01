@@ -333,7 +333,7 @@ namespace OdhApiImporter.Controllers
 
         #region Generic
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ResaveSourcefield")]
         public async Task<IActionResult> ResaveSource(string odhtype, string sourcetofilter, string sourcetochange)
         {
@@ -358,13 +358,40 @@ namespace OdhApiImporter.Controllers
                 case "event":
                     objectscount = await customdataoperation.ResaveSourcesOnType<EventLinked>(odhtype, sourcetofilter, sourcetochange); ;
                     break;
+                case "article":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<ArticlesLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "ltsactivity":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<LTSActivityLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "ltspoi":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<LTSPoiLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "ltsgastronomy":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<GastronomyLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "webcam":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<WebcamInfoLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "wineaward":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<WineLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "venue":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<VenueLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "eventshort":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<EventShortLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "weatherhistory":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<WeatherHistoryLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
             }
 
             return Ok(new UpdateResult
             {
-                operation = "Resave Tags",
+                operation = "Resave Source",
                 updatetype = "custom",
-                otherinfo = Request.Host.ToString(),
+                otherinfo = odhtype,
                 message = "Done",
                 recordsmodified = objectscount,
                 created = 0,
