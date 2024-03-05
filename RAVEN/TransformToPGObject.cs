@@ -133,9 +133,13 @@ namespace RAVEN
             if (data.Source != null)
                 data.Source = data.Source.ToLower();
 
+            //Hack for Source magnolia, content, common
+            if (data.Source == "magnolia" || data.Source == "content" || data.Source == "common")
+                data.Source = "idm";
+
             if (data.SyncSourceInterface != null)
                 data.SyncSourceInterface = data.SyncSourceInterface.ToLower();
-
+            
             if (data.SmgTags != null && data.SmgTags.Count > 0)
                 data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
             
@@ -213,7 +217,7 @@ namespace RAVEN
                 data.LTSId = data.LTSId.ToUpper();
 
             //fix if source is null
-            string datasource = data.Source;
+            string datasource = data.Source.ToLower();
 
             if (datasource == null)
             {
@@ -289,7 +293,7 @@ namespace RAVEN
             data2.WayNumber = data.WayNumber;
             data2.Number = data.Number;
             data2.LicenseInfo = data.LicenseInfo;
-            data2.Source = data.Source;
+            data2.Source = data.Source.ToLower();
 
             data2.Id = data2.Id.ToUpper();
 
@@ -331,6 +335,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "lts";
+            else
+                data.Source = data.Source.ToLower();
 
             data.PublishedOn = new List<string>();
 
@@ -348,6 +354,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<ArticlesLinked>(data, MetadataHelper.GetMetadataforArticle); //GetMetadata(data.Id, "article", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("article", data.SmgActive);
@@ -365,6 +373,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "hgv";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<PackageLinked>(data, MetadataHelper.GetMetadataforPackage); //GetMetadata(data.Id, "package", "hgv", data.LastUpdate);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("package", data.SmgActive);
@@ -461,6 +471,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "lts";
+            else
+                data.Source = data.Source.ToLower();
 
             data.PublishedOn = new List<string>();
 
@@ -509,6 +521,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 gastro.Source = "lts";
+            else
+                gastro.Source = data.Source.ToLower();
 
             gastro.PublishedOn = new List<string>();
 
@@ -530,10 +544,6 @@ namespace RAVEN
             if (data.SmgActive == null)
                 data.SmgActive = false;
 
-            string sourcemeta = data.Source.ToLower();
-            if (sourcemeta == "content")
-                sourcemeta = "idm";
-
             data.WebCamProperties = new WebcamProperties();
             data.WebCamProperties.WebcamUrl = data.Webcamurl;
             data.WebCamProperties.PreviewUrl = data.Previewurl;
@@ -550,8 +560,8 @@ namespace RAVEN
             }
 
 
-            if (String.IsNullOrEmpty(data.Source))
-                data.Source = sourcemeta;
+            if (String.IsNullOrEmpty(data.Source) || data.Source.ToLower() == "content")
+                data.Source = "idm";
             else
                 data.Source = data.Source.ToLower();
 
@@ -613,13 +623,9 @@ namespace RAVEN
 
             if (data.SmgTags != null && data.SmgTags.Count > 0)
                 webcam.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
-
-            string sourcemeta = data.Source.ToLower();
-            if (sourcemeta == "content")
-                sourcemeta = "idm";
-
-            if (String.IsNullOrEmpty(data.Source))
-                webcam.Source = sourcemeta;
+            
+            if (String.IsNullOrEmpty(data.Source) || data.Source.ToLower() == "content")
+                webcam.Source = "idm";
             else
                 webcam.Source = data.Source.ToLower();
 
@@ -754,7 +760,7 @@ namespace RAVEN
             venueLinked.OperationSchedule = destinationdata.odhdata.OperationSchedule;
             venueLinked.Shortname = destinationdata.odhdata.Shortname;
             venueLinked.SmgTags = destinationdata.odhdata.SmgTags;
-            venueLinked.Source = destinationdata.odhdata.Source;
+            venueLinked.Source = destinationdata.odhdata.Source.ToLower();
             venueLinked.SyncSourceInterface = destinationdata.odhdata.SyncSourceInterface;
             venueLinked.VenueCategory = destinationdata.odhdata.VenueCategory;
             venueLinked._Meta = destinationdata._Meta;
@@ -771,6 +777,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<MetaRegionLinked>(data, MetadataHelper.GetMetadataforMetaRegion); //GetMetadata(data.Id, "metaregion", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("metaregion", data.SmgActive);
@@ -813,6 +821,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 linked.Source = "idm";
+            else
+                linked.Source = data.Source.ToLower();
 
             linked._Meta = MetadataHelper.GetMetadataobject<MetaRegionLinked>(linked, MetadataHelper.GetMetadataforMetaRegion); //GetMetadata(data.Id, "metaregion", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("metaregion", data.SmgActive);
@@ -828,6 +838,8 @@ namespace RAVEN
             
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<RegionLinked>(data, MetadataHelper.GetMetadataforRegion); //GetMetadata(data.Id, "region", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("region", data.SmgActive);
@@ -868,6 +880,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 linked.Source = "idm";
+            else
+                linked.Source = data.Source.ToLower();
 
             linked._Meta = MetadataHelper.GetMetadataobject<RegionLinked>(linked, MetadataHelper.GetMetadataforRegion); //GetMetadata(data.Id, "region", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("region", data.SmgActive);
@@ -883,6 +897,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<TourismvereinLinked>(data, MetadataHelper.GetMetadataforTourismverein);  //GetMetadata(data.Id, "tourismassociation", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("tourismassociation", data.SmgActive);
@@ -923,6 +939,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 linked.Source = "idm";
+            else
+                linked.Source = data.Source.ToLower();
 
             linked._Meta = MetadataHelper.GetMetadataobject<TourismvereinLinked>(linked, MetadataHelper.GetMetadataforTourismverein);  //GetMetadata(data.Id, "tourismassociation", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("tourismassociation", data.SmgActive);
@@ -938,6 +956,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<MunicipalityLinked>(data, MetadataHelper.GetMetadataforMunicipality); //GetMetadata(data.Id, "municipality", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("municipality", data.SmgActive);
@@ -982,6 +1002,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 linked.Source = "idm";
+            else
+                linked.Source = data.Source.ToLower();
 
             linked._Meta = MetadataHelper.GetMetadataobject<MunicipalityLinked>(linked, MetadataHelper.GetMetadataforMunicipality); //GetMetadata(data.Id, "municipality", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("municipality", data.SmgActive);
@@ -997,6 +1019,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<DistrictLinked>(data, MetadataHelper.GetMetadataforDistrict); //GetMetadata(data.Id, "district", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("district", data.SmgActive);
@@ -1040,6 +1064,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 linked.Source = "idm";
+            else
+                linked.Source = data.Source.ToLower();
 
             linked._Meta = MetadataHelper.GetMetadataobject<DistrictLinked>(linked, MetadataHelper.GetMetadataforDistrict); //GetMetadata(data.Id, "district", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("district", data.SmgActive);
@@ -1055,6 +1081,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<ExperienceAreaLinked>(data, MetadataHelper.GetMetadataforExperienceArea); //GetMetadata(data.Id, "experiencearea", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("experiencearea", data.SmgActive);
@@ -1095,6 +1123,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 linked.Source = "idm";
+            else
+                linked.Source = data.Source.ToLower();
 
             linked._Meta = MetadataHelper.GetMetadataobject<ExperienceAreaLinked>(linked, MetadataHelper.GetMetadataforExperienceArea); //GetMetadata(data.Id, "experiencearea", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("experiencearea", data.SmgActive);
@@ -1107,6 +1137,11 @@ namespace RAVEN
             data.Id = data.Id.ToUpper();            
             data._Meta = MetadataHelper.GetMetadataobject<AreaLinked>(data, MetadataHelper.GetMetadataforArea); //GetMetadata(data.Id, "area", "lts", data.LastChange);            
 
+            if (String.IsNullOrEmpty(data.Source))
+                data.Source = "lts";
+            else
+                data.Source = data.Source.ToLower();
+
             return data;
         }
 
@@ -1118,6 +1153,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<SkiAreaLinked>(data, MetadataHelper.GetMetadataforSkiArea); //GetMetadata(data.Id, "skiarea", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiarea", data.SmgActive);
@@ -1173,6 +1210,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 linked.Source = "idm";
+            else
+                linked.Source = data.Source.ToLower();
 
             linked._Meta = MetadataHelper.GetMetadataobject<SkiAreaLinked>(linked, MetadataHelper.GetMetadataforSkiArea); //GetMetadata(data.Id, "skiarea", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiarea", data.SmgActive);
@@ -1189,6 +1228,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "idm";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<SkiRegionLinked>(data, MetadataHelper.GetMetadataforSkiRegion); //GetMetadata(data.Id, "skiregion", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiregion", data.SmgActive);
@@ -1226,6 +1267,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 linked.Source = "idm";
+            else
+                linked.Source = data.Source.ToLower();
 
             linked._Meta = MetadataHelper.GetMetadataobject<SkiRegionLinked>(linked, MetadataHelper.GetMetadataforSkiRegion); //GetMetadata(data.Id, "skiregion", "idm", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("skiregion", data.SmgActive);
@@ -1239,6 +1282,8 @@ namespace RAVEN
 
             if (String.IsNullOrEmpty(data.Source))
                 data.Source = "suedtirolwein";
+            else
+                data.Source = data.Source.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<WineLinked>(data, MetadataHelper.GetMetadataforWineAward);  //GetMetadata(data.Id, "wineaward", "suedtirolwein", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("wine", data.SmgActive);

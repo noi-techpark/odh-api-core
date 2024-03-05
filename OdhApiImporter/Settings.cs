@@ -36,6 +36,7 @@ namespace OdhApiImporter
         private readonly A22Config a22Config;
 
         private readonly List<NotifierConfig> notifierConfig;
+        private readonly IDictionary<string, S3Config> s3Config;
 
         public Settings(IConfiguration configuration)
         {
@@ -81,18 +82,28 @@ namespace OdhApiImporter
             this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("DocUrl", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
-          
-            var notifierconfiglist = this.configuration.GetSection("NotifierConfig").GetChildren();
+                      
             this.notifierConfig = new List<NotifierConfig>();
 
             var notifierconfigdict = this.configuration.GetSection("NotifierConfig").GetChildren();
             if (notifierconfigdict != null)
             {
-                foreach (var notifiercfg in notifierconfiglist)
+                foreach (var notifiercfg in notifierconfigdict)
                 {
                     this.notifierConfig.Add(new NotifierConfig(notifiercfg.Key, notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
                 }
-            }                
+            }
+
+            this.s3Config = new Dictionary<string, S3Config>();
+
+            var s3configdict = this.configuration.GetSection("S3Config").GetChildren();
+            if (s3configdict != null)
+            {
+                foreach (var s3cfg in s3configdict)
+                {
+                    this.s3Config.TryAddOrUpdate(s3cfg.Key, new S3Config(s3cfg.GetValue<string>("AccessKey", ""), s3cfg.GetValue<string>("AccessSecretKey", ""), s3cfg.Key, s3cfg.GetValue<string>("Filename", "")));
+                }
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -126,5 +137,6 @@ namespace OdhApiImporter
         public NoRateLimitConfig NoRateLimitConfig => throw new NotImplementedException();
         public List<FCMConfig> FCMConfig => throw new NotImplementedException();
         public PushServerConfig PushServerConfig => throw new NotImplementedException();
+        public IDictionary<string, S3Config> S3Config => this.s3Config;
     }
 }

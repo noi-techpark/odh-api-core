@@ -13,12 +13,34 @@ namespace OdhApiCore.GenericHelpers
 {
     public class GetDeprecatedFieldsByAttributes
     {
-        public static IEnumerable<string> GetDeprecatedFields(Type type)
+        public static IEnumerable<DeprecationInfo> GetDeprecatedFields(Type type)
         {
             var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             var deprecatedprops = props.Where(p => p.GetCustomAttribute(typeof(SwaggerDeprecatedAttribute), true) != null);
 
-            return deprecatedprops.Select(x => x.Name).ToList();
+            //foreach(var deprecatedprop in deprecatedprops)
+            //{
+
+            //}
+
+            return deprecatedprops.Select(x => new DeprecationInfo() {
+                Name = x.Name,
+                Description = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().Description,
+                Type = x.PropertyType.ToString(),
+                DeprecationDate = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().DeprecationDate,
+                RemovedAfter = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().RemovedAfter,
+            })
+            .ToList();
+                
         }
+    }
+
+    public class DeprecationInfo
+    {
+        public string? Name { get; set; }
+        public string? Type { get; set; }
+        public string? Description { get; set; }
+        public DateTime? DeprecationDate { get; set; }
+        public DateTime? RemovedAfter { get; set; }
     }
 }

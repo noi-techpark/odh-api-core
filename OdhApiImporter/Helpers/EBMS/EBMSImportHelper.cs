@@ -108,7 +108,7 @@ namespace OdhApiImporter.Helpers
                 if (eventindb != null)
                 {                 
                     changedonDB = eventindb.ChangedOn;
-                    imagegallery = eventindb.ImageGallery;
+                    imagegallery = eventindb.ImageGallery != null ? eventindb.ImageGallery.ToList() : null;
                     eventTextDE = eventindb.EventTextDE;
                     eventTextIT = eventindb.EventTextIT;
                     eventTextEN = eventindb.EventTextEN;
@@ -274,16 +274,22 @@ namespace OdhApiImporter.Helpers
                 {
                     foreach (var idtodelete in idstodelete)
                     {
-                        //Set to inactive or delete?
-
+                        //Set to inactive
                         var eventshorttodeactivate = eventshortinDB.Where(x => x.EventId == idtodelete).FirstOrDefault();
 
                         //TODO CHECK IF IT WORKS
                         if (eventshorttodeactivate != null)
                         {
-                            eventshorttodeactivate.Display1 = "N";
+                           //Work With Active instead of deleting....
+                            eventshorttodeactivate.Active = false;
+                            eventshorttodeactivate.LastChange = DateTime.Now;
 
-                            await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower()).DeleteAsync();
+                            var updated = await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower())
+                                .UpdateAsync(new JsonBData() { id = eventshorttodeactivate.Id?.ToLower() ?? "", data = new JsonRaw(eventshorttodeactivate) });
+
+                            //LOG the Deletion
+                            WriteLog.LogToConsole(eventshorttodeactivate.Id, "dataimport", "single.eventeuracnoi.deactivate", new ImportLog() { sourceid = eventshorttodeactivate.Id, sourceinterface = "ebms.eventeuracnoi", success = updated > 0 ? true : false, error = "" });
+
                             deletecounter++;
                         }
                     }
@@ -300,7 +306,9 @@ namespace OdhApiImporter.Helpers
             var query =
                          QueryFactory.Query("eventeuracnoi")
                              .Select("data")
-                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = $$)", "EBMS");
+                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = $$)", "ebms")
+                             .Where("gen_active", true);
+
 
             return await query.GetObjectListAsync<EventShortLinked>();
         }

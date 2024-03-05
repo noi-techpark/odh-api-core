@@ -118,9 +118,9 @@ namespace OdhApiImporter.Helpers
                 var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
 
                 if(deletedisableresult.Item1 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
                 else if (deletedisableresult.Item2 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
 
 
                 deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -201,7 +201,7 @@ namespace OdhApiImporter.Helpers
                         data.SmgActive = false;
 
                         updateresult = await QueryFactory.Query("events").Where("id", eventid)
-                                        .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+                                        .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });                        
                     }
                 }
             }

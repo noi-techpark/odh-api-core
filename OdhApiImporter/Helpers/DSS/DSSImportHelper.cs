@@ -17,6 +17,7 @@ using System.Linq;
 using System.Xml.Linq;
 using ServiceReferenceLCS;
 using System.Collections;
+using Helper.Generic;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -477,7 +478,7 @@ namespace OdhApiImporter.Helpers.DSS
             var activity = TransformODHActivityPoiToActivity(odhactivitypoi);
             
             //Insert in Table
-            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, "activities", "dss." + entitytype + ".import", importerURL);
+            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, new DataInfo("activities", CRUDOperation.Update),new EditInfo("dss." + entitytype + ".import", importerURL), new CRUDConstraints(), new CompareConfig(false,false));
 
             return pgcrudresult;
         }

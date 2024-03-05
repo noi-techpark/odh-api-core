@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata;
 using SqlKata.Execution;
@@ -29,8 +30,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class DistinctController : OdhController
     {        
-        public DistinctController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public DistinctController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -43,6 +44,7 @@ namespace OdhApiCore.Controllers
         /// <param name="pagesize">Elements per Page, (default:10)</param>
         /// <param name="seed">Seed '1 - 10' for Random Sorting, '0' generates a Random Seed, 'null' disables Random Sorting, (default:null)</param>
         /// <param name="odhtype">Mandatory search trough Entities (metadata, accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
+        /// <param name="type">Mandatory search trough Entities (metadata, accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
         /// <param name="fields">Mandatory Select a field for the Distinct Query, example fields=Source, arrays are selected with a [*] example HasLanguage[*] / Features[*].Id  (Only one field supported). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
@@ -62,6 +64,7 @@ namespace OdhApiCore.Controllers
             uint? pagenumber = null,
             PageSize pagesize = null!,
             string? odhtype = null,
+            string? type = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? seed = null,
@@ -82,8 +85,8 @@ namespace OdhApiCore.Controllers
             //let more non array fields pass, if arrays are selected then only one field is allowed
             if (fieldstodisplay.Count() > 1 && (fieldstodisplay.Any(x => x.Contains("[*]")) || fieldstodisplay.Any(x => x.Contains("[]"))))
                 return BadRequest("On Array fields, currently only one field supported");
-      
-            return await GetDistinct(pagenumber, pagesize, odhtype, fieldstodisplay, seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
+                  
+            return await GetDistinct(pagenumber, pagesize, odhtype ?? type, fieldstodisplay, seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
         }
 
         #endregion
@@ -117,7 +120,9 @@ namespace OdhApiCore.Controllers
                     string select = $@"jsonb_path_query(data, '$.{kataField}{nullexclude}')#>>'\{{\}}' as ""{asField}""";
 
                     selects.Add(select);
-                }            
+                }
+
+                string endpoint = ODHTypeHelper.TranslateTypeToEndPoint(odhtype);
 
                 var query =
                     QueryFactory.Query()
@@ -128,8 +133,7 @@ namespace OdhApiCore.Controllers
                         // .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData)
                         .OrderByRawIfNotNull(rawsort)
                         //.ApplyOrdering_GeneratedColumns(null, null, rawsort)
-
-                        .FilterDataByAccessRoles(UserRolesList);
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
 
                 //TODOS Metadata api support
            

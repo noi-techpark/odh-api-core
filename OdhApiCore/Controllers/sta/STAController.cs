@@ -22,6 +22,8 @@ using AspNetCore.CacheOutput;
 using System.IO;
 using OdhApiCore.GenericHelpers;
 using OdhApiCore.Controllers.helper;
+using OdhNotifier;
+using Helper.Generic;
 
 namespace OdhApiCore.Controllers.sta
 {
@@ -32,8 +34,8 @@ namespace OdhApiCore.Controllers.sta
         private readonly IWebHostEnvironment env;
         private readonly ISettings settings;
 
-        public STAController(IWebHostEnvironment env, ISettings settings, ILogger<STAController> logger, QueryFactory queryFactory)
-         : base(env, settings, logger, queryFactory)
+        public STAController(IWebHostEnvironment env, ISettings settings, ILogger<STAController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+         : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.env = env;
             this.settings = settings;
@@ -227,7 +229,7 @@ namespace OdhApiCore.Controllers.sta
                     //Save to PG
                     //Check if data exists                    
 
-                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, "smgpois", "sta.import", "importer");
+                    var result = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi!, new DataInfo("smgpois", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("sta.import", "importer"), new CRUDConstraints(null, new List<string>()), new CompareConfig(false, false));
 
                     if(result.updated != null)
                         updatecounter = updatecounter + result.updated.Value;

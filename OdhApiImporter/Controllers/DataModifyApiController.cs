@@ -57,7 +57,9 @@ namespace OdhApiImporter.Controllers
 
             //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
 
-            objectscount = await customdataoperation.UpdateAllEventShortstEventDocumentField();
+            //objectscount = await customdataoperation.UpdateAllEventShortstEventDocumentField();
+
+            objectscount = await customdataoperation.UpdateAllEventShortstActiveFieldToTrue();
 
             return Ok(new UpdateResult
             {
@@ -287,10 +289,10 @@ namespace OdhApiImporter.Controllers
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ResaveMetaData")]
-        public async Task<IActionResult> ResaveMetaData(CancellationToken cancellationToken)
+        public async Task<IActionResult> ResaveMetaData(bool correcturls = false)
         {
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.ResaveMetaData(Request.Host.ToString());
+            var objectscount = await customdataoperation.ResaveMetaData(Request.Host.ToString(), correcturls);
 
             return Ok(new UpdateResult
             {
@@ -299,6 +301,104 @@ namespace OdhApiImporter.Controllers
                 otherinfo = Request.Host.ToString(),
                 message = "Done",
                 recordsmodified = 0,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ResaveTags")]
+        public async Task<IActionResult> ResaveTags(bool correcturls = false)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.ResaveTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Resave Tags",
+                updatetype = "custom",
+                otherinfo = Request.Host.ToString(),
+                message = "Done",
+                recordsmodified = 0,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        #endregion
+
+        #region Generic
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ResaveSourcefield")]
+        public async Task<IActionResult> ResaveSource(string odhtype, string sourcetofilter, string sourcetochange)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+
+            var objectscount = 0;
+            
+            switch(odhtype)
+            {
+                case "accommodation": 
+                    objectscount = await customdataoperation.ResaveSourcesOnType<AccommodationLinked>(odhtype, sourcetofilter, sourcetochange); ; 
+                    break;
+                case "accommodationroom":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<AccommodationRoomLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "package":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<PackageLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "odhactivitypoi":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<ODHActivityPoiLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "event":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<EventLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "article":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<ArticlesLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "ltsactivity":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<LTSActivityLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "ltspoi":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<LTSPoiLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "ltsgastronomy":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<GastronomyLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "webcam":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<WebcamInfoLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "wineaward":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<WineLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "venue":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<VenueLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "eventshort":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<EventShortLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "weatherhistory":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<WeatherHistoryLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+                case "area":
+                    objectscount = await customdataoperation.ResaveSourcesOnType<AreaLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    break;
+            }
+
+            return Ok(new UpdateResult
+            {
+                operation = "Resave Source",
+                updatetype = "custom",
+                otherinfo = odhtype,
+                message = "Done",
+                recordsmodified = objectscount,
                 created = 0,
                 deleted = 0,
                 id = "",

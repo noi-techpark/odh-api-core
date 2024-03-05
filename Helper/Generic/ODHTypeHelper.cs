@@ -46,7 +46,12 @@ namespace Helper
                 "source",
                 "weatherhistory",
                 "odhmetadata",
-                "tag"
+                "tag",
+                "weatherdistrict",
+                "weather",
+                "weatherforecast",
+                "weatherrealtime",
+                "snowreport"
             };
         }
 
@@ -93,8 +98,11 @@ namespace Helper
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
                 Weather or WeatherLinked => "weather",
                 BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
+                WeatherForecast or WeatherForecastLinked => "weatherforecast",
+                WeatherRealTimeLinked or WeatherRealTimeLinked => "weatherrealtime",
                 TourismMetaData => "odhmetadata",
                 TagLinked => "tag",                
+                SnowReportBaseData => "snowreport",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -225,6 +233,11 @@ namespace Helper
                 "publisher" => typeof(PublisherLinked),
                 "source" => typeof(SourceLinked),
                 "weatherhistory" => typeof(WeatherHistoryLinked),
+                "weather" => typeof(WeatherLinked),
+                "weatherdistrict" => typeof(WeatherDistrictLinked),
+                "weatherforecast" => typeof(WeatherForecastLinked),
+                "weatherrealtime" => typeof(WeatherRealTimeLinked),
+                "snowreport" => typeof(SnowReportBaseData),
                 "odhmetadata" => typeof(TourismMetaData),
                 "tag" => typeof(TagLinked),
                 _ => throw new Exception("not known odh type")
@@ -327,8 +340,6 @@ namespace Helper
         //TODO Migrate from Metagenerator
 
         #endregion
-
-       
 
         #region TypeIdConverter
 
@@ -473,6 +484,50 @@ namespace Helper
                 _ => throw new Exception("not known odh type")
             };
         }
+
+        public static string TranslateTypeToEndPoint(string odhtype)
+        {
+            return odhtype switch
+            {
+                "accommodation" => "Accommodation",
+                "odhactivitypoi" => "ODHActivityPoi",
+                "event" => "Event",
+                "region" => "Region",
+                "skiarea" => "SkiArea",
+                "tourismassociation" => "TourismAssociation",
+                "webcam" => "WebcamInfo",
+                "venue" => "Venue",
+                "accommodationroom" => "AccommodationRoom",
+                "package" => "Package",
+                "ltsactivity" => "Activity",
+                "ltspoi" => "Poi",
+                "ltsgastronomy" => "Gastronomy",
+                "measuringpoint" => "Weather/Measuringpoint",
+                "article" => "Article",
+                "municipality" => "Municipality",
+                "district" => "District",
+                "skiregion" => "SkiRegion",
+                "eventshort" => "EventShort",
+                "experiencearea" => "ExperienceArea",
+                "metaregion" => "MetaRegion",
+                "area" => "Area",
+                "wineaward" => "Wine",
+                "odhmetadata" => "MetaData",
+                "odhtag" => "ODHTag",
+                "tag" => "Tag",
+                "publisher" => "Publisher",
+                "source" => "Source",
+                "weatherhistory" => "WeatherHistory",
+                "weatherdistrict" => "Weather/District",
+                "weatherforecast" => "Weather/Forecast",
+                "weatherrealtime" => "Weather/Realtime",
+                "snowreport" => "Weather/SnowReport",
+                "weather" => "Weather",
+
+                _ => throw new Exception("not known odh type")
+            };
+        }
+
 
         #endregion
 

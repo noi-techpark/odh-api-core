@@ -21,6 +21,7 @@ using System.Dynamic;
 using Dapper;
 using Newtonsoft.Json.Linq;
 using System.Data;
+using OdhNotifier;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -32,8 +33,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class CompatiblityApiController : OdhController
     {
-        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public CompatiblityApiController(IWebHostEnvironment env, ISettings settings, ILogger<CompatiblityApiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -116,6 +117,10 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAddEndpoint("Poi").TryGetValue("Read", out var additionalfilter);
+
                 PoiHelper mypoihelper = await PoiHelper.CreateAsync(
                     QueryFactory, poitype: poitype, subtypefilter: subtypefilter, idfilter: null, locfilter: locfilter, areafilter: areafilter,
                     highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, lastchange: null, langfilter: language, cancellationToken);
@@ -136,7 +141,7 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: mypoihelper.tourismvereinlist, regionlist: mypoihelper.regionlist,
                             arealist: mypoihelper.arealist, highlight: mypoihelper.highlight, activefilter: mypoihelper.active,
                             smgactivefilter: mypoihelper.smgactive, searchfilter: searchfilter, language: language, lastchange: null, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                            additionalfilter: additionalfilter, userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -242,6 +247,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("Activity").TryGetValue("Read", out var additionalfilter);
+
                 ActivityHelper myactivityhelper = await ActivityHelper.CreateAsync(
                     QueryFactory, activitytype: activitytype, subtypefilter: subtypefilter, idfilter: null,
                     locfilter: locfilter, areafilter: areafilter, distancefilter: distancefilter,
@@ -272,7 +279,7 @@ namespace OdhApiCore.Controllers.api
                             altitudemax: myactivityhelper.altitudemax, highlight: myactivityhelper.highlight,
                             activefilter: myactivityhelper.active, smgactivefilter: myactivityhelper.smgactive,
                             searchfilter: null, language: language, lastchange: null, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
@@ -370,6 +377,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("Gastronomy").TryGetValue("Read", out var additionalfilter);
+
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
                     QueryFactory, idfilter: null, locfilter: locfilter, categorycodefilter: categorycodefilter,
                     dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter,
@@ -394,7 +403,7 @@ namespace OdhApiCore.Controllers.api
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: null, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                            additionalfilter: additionalfilter, userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -469,19 +478,21 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("ODHTag").TryGetValue("Read", out var additionalfilter);
+
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{TagName,{language}\\}}' as \"Name\"";
 
-            //Hack
-            if (validforentity == "odhactivitypoi")
-            {
-                validforentity.Replace("odhactivitypoi", "smgpoi");
-            }            
+                //Hack
+                if (validforentity == "odhactivitypoi")
+                {
+                    validforentity.Replace("odhactivitypoi", "smgpoi");
+                }
 
-            var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
-            //var maintypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+                //var maintypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            //Custom Fields filter
-            if (fields.Length > 0)
+                //Custom Fields filter
+                if (fields.Length > 0)
                     select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 var query =
@@ -497,7 +508,8 @@ namespace OdhApiCore.Controllers.api
                             displayascategory: null,
                             searchfilter: searchfilter,
                             language: language,
-                            filterClosedData: FilterClosedData, userroles: UserRolesToFilter
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter
                             )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
@@ -589,6 +601,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("Poi").TryGetValue("ODHActivityPoi", out var additionalfilter);
+
                 ODHActivityPoiHelper helper = await ODHActivityPoiHelper.CreateAsync(
                     queryFactory: QueryFactory, typefilter: type, subtypefilter: subtype, level3typefilter: level3type, idfilter: null, locfilter: locfilter, areafilter: areafilter,
                     languagefilter: language, sourcefilter: source, highlightfilter: highlightfilter, activefilter: active, smgactivefilter: smgactive, smgtags: smgtags, smgtagsand: null, lastchange: null,
@@ -618,8 +632,8 @@ namespace OdhApiCore.Controllers.api
                             distancemin: helper.distancemin, distancemax: helper.distancemax, duration: helper.duration, durationmin: helper.durationmin,
                             durationmax: helper.durationmax, altitude: helper.altitude, altitudemin: helper.altitudemin, altitudemax: helper.altitudemax,
                             hasimage: helper.hasimage, tagdict: helper.tagdict, publishedonlist: helper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData, 
-                            userroles: UserRolesToFilter
+                            searchfilter: searchfilter, language: language, lastchange: null,
+                            additionalfilter: additionalfilter, userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -720,6 +734,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("Event").TryGetValue("Read", out var additionalfilter);
+
                 EventHelper helper = await EventHelper.CreateAsync(
                     QueryFactory, null, locfilter, rancfilter, topicfilter, orgfilter, begindate,
                     enddate, active, smgactive, smgtagfilter, null, langfilter, source, null, cancellationToken);
@@ -741,7 +757,9 @@ namespace OdhApiCore.Controllers.api
                             tourismvereinlist: helper.tourismvereinlist, regionlist: helper.regionlist,
                             orglist: helper.orgidlist, sourcelist: helper.sourcelist, begindate: helper.begin, enddate: helper.end, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, languagelist: helper.languagelist, publishedonlist: helper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                            searchfilter: searchfilter, language: language, lastchange: null, 
+                            additionalfilter: additionalfilter, 
+                            userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
@@ -833,6 +851,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("Article").TryGetValue("Read", out var additionalfilter);
+
                 ArticleHelper helper = ArticleHelper.Create(
                     articletype, articlesubtype, null, language, null, active, smgactive, smgtags, articledate, articledateto, source, null, publishedon);
 
@@ -852,7 +872,9 @@ namespace OdhApiCore.Controllers.api
                             smgtaglist: helper.smgtaglist, highlight: helper.highlight, activefilter: helper.active,
                             smgactivefilter: helper.smgactive, articledate: helper.articledate, articledateto: helper.articledateto, sourcelist: helper.sourcelist,
                             publishedonlist: helper.publishedonlist,
-                            searchfilter: searchfilter, language: language, lastchange: null, filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter
+                            searchfilter: searchfilter, language: language, lastchange: null,
+                            additionalfilter: additionalfilter, 
+                            userroles: UserRolesToFilter
                         )
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort);
@@ -953,6 +975,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("Accommodation").TryGetValue("Read", out var additionalfilter);
+
                 AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                     QueryFactory, idfilter: null, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                     featurefilter: featurefilter, featureidfilter: featureridfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: null, smgtags: smgtagfilter, activefilter: active,
@@ -980,7 +1004,7 @@ namespace OdhApiCore.Controllers.api
                             altitudemin: myhelper.altitudemin, altitudemax: myhelper.altitudemax,
                             activefilter: myhelper.active, smgactivefilter: myhelper.smgactive, publishedonlist: myhelper.publishedonlist, sourcelist: new List<string>(),
                             searchfilter: searchfilter, language: language, lastchange: myhelper.lastchange, languagelist: new List<string>(),
-                            filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            additionalfilter: additionalfilter, userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 
@@ -1046,6 +1070,7 @@ namespace OdhApiCore.Controllers.api
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
+            bool active = true,
             string? webaddress = null,
             string? sortorder = "ASC",
             string? lastchange = null,
@@ -1058,17 +1083,20 @@ namespace OdhApiCore.Controllers.api
         {
             return GetEventShortReduced(fields: fields ?? Array.Empty<string>(), language, searchfilter,
                 startdate, enddate, datetimeformat, source, eventlocation, webaddress,
-                onlyactive.Value, websiteactive.Value, communityactive.Value, sortorder, null, rawfilter, rawsort, cancellationToken);
+                onlyactive.Value, websiteactive.Value, communityactive.Value, active, sortorder, null, rawfilter, rawsort, cancellationToken);
         }
 
 
         private Task<IActionResult> GetEventShortReduced(
          string[] fields, string language, string? searchfilter, string? startdate, string? enddate, string? datetimeformat,
-         string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, bool? websiteactive, bool? communityactive, string? sortorder,
+         string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? todayactive, bool? websiteactive, bool? communityactive, 
+         bool active, string? sortorder,
          string? lastchange, string? rawfilter, string? rawsort, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("EventShort").TryGetValue("Read", out var additionalfilter);
+
                 string select = $"data#>>'\\{{Id\\}}' as \"Id\", data#>>'\\{{EventDescription{language.ToUpper()}\\}}' as \"Name\"";
 
                 string orderby = $"data#>>'\\{{EventDescription{language.ToUpper()}\\}}' {sortorder}";
@@ -1078,7 +1106,7 @@ namespace OdhApiCore.Controllers.api
                     select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                    sourcefilter, eventlocationfilter, active, websiteactive, communityactive, null, webaddressfilter, lastchange, sortorder, null);
+                    sourcefilter, eventlocationfilter, todayactive, websiteactive, communityactive, active, null, webaddressfilter, lastchange, sortorder, null);
 
                 var query =
                    (XQuery)QueryFactory.Query()
@@ -1087,11 +1115,11 @@ namespace OdhApiCore.Controllers.api
                        .EventShortWhereExpression(
                            idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
                            eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
-                           start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
+                           start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
                            websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
-                           publishedonlist: myeventshorthelper.publishedonlist,
-                           searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
-                           filterClosedData: FilterClosedData, userroles: UserRolesToFilter, getbyrooms: false)
+                           activefilter: myeventshorthelper.activefilter, publishedonlist: myeventshorthelper.publishedonlist,
+                           searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange, additionalfilter: additionalfilter,
+                           userroles: UserRolesToFilter, getbyrooms: false)
                        .ApplyRawFilter(rawfilter)
                        .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, orderby);
 
@@ -1136,8 +1164,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, null, null, cancellationToken);
+            AdditionalFiltersToAddEndpoint("MetaRegion").TryGetValue("Read", out var additionalfilter);
 
-            return await GetCommonReduced("metaregions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
+            return await GetCommonReduced("metaregions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, additionalfilter, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -1169,8 +1198,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, null, null, cancellationToken);
+            AdditionalFiltersToAddEndpoint("ExperienceArea").TryGetValue("Read", out var additionalfilter);
 
-            return await GetCommonReduced("experienceareas", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
+            return await GetCommonReduced("experienceareas", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, additionalfilter, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -1201,8 +1231,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null,null, null, null, cancellationToken);
+            AdditionalFiltersToAddEndpoint("Region").TryGetValue("Read", out var additionalfilter);
 
-            return await GetCommonReduced("regions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
+            return await GetCommonReduced("regions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, additionalfilter, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -1233,8 +1264,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, null, null, cancellationToken);
+            AdditionalFiltersToAddEndpoint("TourismOrganization").TryGetValue("Read", out var additionalfilter);
 
-            return await GetCommonReduced("tvs", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
+            return await GetCommonReduced("tvs", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, additionalfilter, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -1266,8 +1298,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, null, null, cancellationToken);
+            AdditionalFiltersToAddEndpoint("Municipality").TryGetValue("Read", out var additionalfilter);
 
-            return await GetCommonReduced("municipalities", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
+            return await GetCommonReduced("municipalities", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, additionalfilter, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -1299,8 +1332,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, visibleinsearch, null, null, null, null, null, null, cancellationToken);
+            AdditionalFiltersToAddEndpoint("District").TryGetValue("Read", out var additionalfilter);
 
-            return await GetCommonReduced("districts", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
+            return await GetCommonReduced("districts", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, additionalfilter, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -1331,8 +1365,9 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, null, null, cancellationToken);
+            AdditionalFiltersToAddEndpoint("SkiRegion").TryGetValue("Read", out var additionalfilter);
 
-            return await GetCommonReduced("skiregions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
+            return await GetCommonReduced("skiregions", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, additionalfilter, geosearchresult, cancellationToken);
         }
 
         /// <summary>
@@ -1363,11 +1398,12 @@ namespace OdhApiCore.Controllers.api
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
             CommonHelper commonhelper = await CommonHelper.CreateAsync(QueryFactory, null, language, null, null, null, null, null, null, null, cancellationToken);
+            AdditionalFiltersToAddEndpoint("Poi").TryGetValue("SkiArea", out var additionalfilter);
 
-            return await GetCommonReduced("skiareas", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, geosearchresult, cancellationToken);
+            return await GetCommonReduced("skiareas", searchfilter, language, commonhelper, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, additionalfilter, geosearchresult, cancellationToken);
         }
 
-        private Task<IActionResult> GetCommonReduced(string tablename, string? searchfilter, string? language, CommonHelper commonhelper, string[] fields, string? rawfilter, string? rawsort, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        private Task<IActionResult> GetCommonReduced(string tablename, string? searchfilter, string? language, CommonHelper commonhelper, string[] fields, string? rawfilter, string? rawsort, string? additionalfilter, PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
@@ -1385,8 +1421,9 @@ namespace OdhApiCore.Controllers.api
                         .CommonWhereExpression(idlist: commonhelper.idlist, languagelist: commonhelper.languagelist, visibleinsearch: commonhelper.visibleinsearch, 
                         smgtaglist: commonhelper.smgtaglist, activefilter: commonhelper.active, odhactivefilter: commonhelper.smgactive,
                                                publishedonlist: commonhelper.publishedonlist, sourcelist: commonhelper.sourcelist, 
-                                               searchfilter: searchfilter, language: language, lastchange: commonhelper.lastchange, 
-                                               filterClosedData: FilterClosedData, userroles: UserRolesToFilter)
+                                               searchfilter: searchfilter, language: language, lastchange: commonhelper.lastchange,
+                                               additionalfilter: additionalfilter,
+                                               userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort, orderby);
                 //.OrderByRaw(orderby)
@@ -1454,6 +1491,8 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                AdditionalFiltersToAddEndpoint("WebcamInfo").TryGetValue("SkiArea", out var additionalfilter);
+
                 WebcamInfoHelper mywebcaminfohelper = WebcamInfoHelper.Create(
                     source, null, active, smgactive, lastchange, null);
 
@@ -1472,7 +1511,9 @@ namespace OdhApiCore.Controllers.api
                             idlist: mywebcaminfohelper.idlist, sourcelist: mywebcaminfohelper.sourcelist,
                             activefilter: mywebcaminfohelper.active, smgactivefilter: mywebcaminfohelper.smgactive, publishedonlist: mywebcaminfohelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: mywebcaminfohelper.lastchange,
-                            languagelist: new List<string>(), filterClosedData: FilterClosedData, reducedData: ReducedData, userroles: UserRolesToFilter)
+                            languagelist: new List<string>(),
+                            additionalfilter: additionalfilter, 
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(geosearchresult, rawsort);
 

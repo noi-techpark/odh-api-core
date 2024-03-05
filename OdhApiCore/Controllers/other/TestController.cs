@@ -24,6 +24,7 @@ using System.Globalization;
 using System.Net.Http;
 using Swashbuckle.AspNetCore.Annotations;
 using DataModel.Annotations;
+using OdhNotifier;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -36,8 +37,8 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
-            : base(env, settings, logger, queryFactory)
+        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.httpClientFactory = httpClientFactory;
             this.settings = settings;
@@ -65,12 +66,7 @@ namespace OdhApiCore.Controllers.api
             return Ok(JsonConvert.SerializeObject(settings.NoRateLimitConfig));
         }
 
-        [HttpGet, Route("TestField2Hide")]
-        public IActionResult GetFieldToHide()
-        {
-
-            return Ok(JsonConvert.SerializeObject(FieldsToHide));
-        }
+        
 
 
         [HttpGet, Route("UrlHelper", Name = "UrlHelperTest")]
@@ -212,13 +208,11 @@ namespace OdhApiCore.Controllers.api
             return Ok(municipalityreducedinfo);
         }
 
-        ////Not working
-        //[HttpGet, Route("TestDateTimeConversion6")]
-        //public IActionResult GetDatetimeConversiont6()
-        //{            
-        //    var date = Convert.ToDateTime("31/12/2020T18:00:00");
-
-        //    return Ok(date);
+        //Not working
+        //[HttpGet, Route("TestSomething")]
+        //public IActionResult GetTestSomething()
+        //{
+        //    return Ok(new { settings.S3Config, settings.NotifierConfig  });
         //}
 
 
@@ -252,12 +246,12 @@ namespace OdhApiCore.Controllers.api
         //    return this.Content(User.Identity?.Name + " WithRole working", "application/json", Encoding.UTF8);
         //}
 
-        [Authorize(Roles = "Hallihallo")]
-        [HttpGet, Route("WithRole2")]
-        public IActionResult GetWithRole2(CancellationToken cancellationToken)
-        {
-            return this.Content(User.Identity?.Name + " WithRole2 working", "application/json", Encoding.UTF8);
-        }
+        //[Authorize(Roles = "Hallihallo")]
+        //[HttpGet, Route("WithRole2")]
+        //public IActionResult GetWithRole2(CancellationToken cancellationToken)
+        //{
+        //    return this.Content(User.Identity?.Name + " WithRole2 working", "application/json", Encoding.UTF8);
+        //}
 
         //[HttpGet, Route("Environment")]
         //public IActionResult GetEnvironmentV(CancellationToken cancellationToken)

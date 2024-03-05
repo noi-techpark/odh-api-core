@@ -5,6 +5,8 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -28,8 +31,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class TagController : OdhController
     {
-        public TagController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public TagController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -132,6 +135,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var sourcelist = Helper.CommonListCreator.CreateIdList(source);
@@ -150,13 +156,12 @@ namespace OdhApiCore.Controllers
                         displayascategory: displayascategory,
                         searchfilter: searchfilter,
                         language: language,
-                        filterClosedData: FilterClosedData, userroles: UserRolesToFilter
+                        additionalfilter: additionalfilter,
+                        userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{MainEntity\\}', data#>>'\\{Shortname\\}'");
-
-            var fieldsTohide = FieldsToHide;
-
+            
                 if (pagenumber != null)
                 {
 
@@ -169,7 +174,7 @@ namespace OdhApiCore.Controllers
 
                     var dataTransformed =
                         data.List.Select(
-                            raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                            raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                         );
 
                     uint totalpages = (uint)data.TotalPages;
@@ -187,7 +192,7 @@ namespace OdhApiCore.Controllers
                 {
                     var data = await query.GetAsync<JsonRaw>();
 
-                    return data.Select(raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide));
+                    return data.Select(raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null));
                 }
             });
         }      
@@ -196,15 +201,17 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var data = await QueryFactory.Query("tags")
                     .Select("data")
                     .Where("id", id.ToLower())
-                    .When(FilterClosedData, q => q.FilterClosedData())
+                    .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                    .FilterDataByAccessRoles(UserRolesToFilter)
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -219,14 +226,18 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetTagAsync))]
-        [Authorize(Roles = "DataWriter,DataCreate,TagManager,TagCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,TagManager,TagCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Tag")]
         public Task<IActionResult> Post([FromBody] TagLinked tag)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 tag.Id = !String.IsNullOrEmpty(tag.Id) ? tag.Id.ToUpper() : "noId";
-                return await UpsertData<TagLinked>(tag, "tags");
+                return await UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -238,14 +249,18 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetTagAsync))]
-        [Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify,TagUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify,TagUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Tag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] TagLinked tag)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 tag.Id = id.ToUpper();
-                return await UpsertData<TagLinked>(tag, "tags");
+                return await UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -256,14 +271,18 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetTagAsync))]
-        [Authorize(Roles = "DataWriter,DataDelete,TagManager,TagDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,TagManager,TagDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Tag/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = id.ToUpper();
-                return await DeleteData(id, "tags");
+                return await DeleteData<TagLinked>(id, new DataInfo("tags", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

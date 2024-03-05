@@ -577,7 +577,7 @@ namespace DataModel
         }
 
         //Overwrites The Features
-        public new ICollection<TopicLinked> Topics { get; set; }
+        public new ICollection<TopicLinked>? Topics { get; set; }
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked? LocationInfo { get; set; }
@@ -585,7 +585,7 @@ namespace DataModel
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
 
-        public ICollection<GpsInfo> GpsInfo { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
 
         //Overwrite Latitude/Longitude/GpsType/Altitude/AltitudeUnitofMeasure and set it to obsolete and readonly
 
@@ -1904,6 +1904,27 @@ namespace DataModel
         }
     }
 
+    public class WeatherRealTimeLinked: WeatherRealTime, IMetaData
+    {
+        public Metadata? _Meta { get; set; }
+    }
+
+    public class WeatherForecastLinked : WeatherForecast, IMetaData
+    {
+        public Metadata? _Meta { get; set; }
+
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public string? Self
+        {
+            get
+            {
+                return ODHConstant.ApplicationURL + "Weather/Forecast/" + this.Id;
+            }
+        }
+
+        public LocationInfoLinked LocationInfo { get; set; }
+    }    
+
     public class ODHTagLinked : SmgTags, IMetaData
     {
         public Metadata? _Meta { get; set; }
@@ -2005,7 +2026,10 @@ namespace DataModel
 
         public string? Id { get; set; }
 
+        [SwaggerDeprecated("Obsolete use Type")]
         public string? OdhType { get; set; }
+
+        public string? Type { get; set; }
 
         //private string swaggerUrl = default!;
         public string? SwaggerUrl { get; set; }
@@ -2033,20 +2057,10 @@ namespace DataModel
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public ICollection<string> PathParam { get; set; }
 
-        //[SwaggerEnum(new[] { "Y", "N" })]
         public string? BaseUrl { get; set; }
-
-        //public string Source { get; set; }
-
-        //public string License { get; set; } = default!;
-
-        //public string LicenseType { get; set; }
-
-        //public string LicenseInfo { get; set; }
-
+     
         public bool Deprecated { get; set; }
-
-        public bool SingleDataset { get; set; }
+        
         public Metadata? _Meta { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }

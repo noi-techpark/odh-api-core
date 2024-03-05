@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OdhNotifier;
 using PushServer;
 using SqlKata.Execution;
 using System;
@@ -21,8 +22,8 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly ISettings settings;
 
-        public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }
@@ -45,8 +46,8 @@ namespace OdhApiCore.Controllers.api
             var query =
               QueryFactory.Query(mytable)
                   .Select("data")
-                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
-                  .When(FilterClosedData, q => q.FilterClosedData());
+                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
+                  //.When(FilterClosedData, q => q.FilterClosedData());
 
             // TODO: Create a logic that constructs a message out of the object
 
@@ -100,11 +101,10 @@ namespace OdhApiCore.Controllers.api
                 var query =
                   QueryFactory.Query(mytable)
                       .Select("data")
-                      .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
-                      .When(FilterClosedData, q => q.FilterClosedData());
+                      .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
+                      //.When(FilterClosedData, q => q.FilterClosedData());
 
-                var fieldsTohide = FieldsToHide;
-
+               
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 if (data is not { })

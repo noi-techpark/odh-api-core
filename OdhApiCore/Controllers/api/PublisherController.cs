@@ -5,6 +5,8 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -29,8 +32,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class PublisherController : OdhController
     {
-        public PublisherController(IWebHostEnvironment env, ISettings settings, ILogger<PublisherController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public PublisherController(IWebHostEnvironment env, ISettings settings, ILogger<PublisherController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -116,6 +119,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var sourcelist = Helper.CommonListCreator.CreateIdList(source);
                 var idlist = Helper.CommonListCreator.CreateIdList(idfilter);
 
@@ -129,14 +135,13 @@ namespace OdhApiCore.Controllers
                         sourcelist: sourcelist,
                         searchfilter: searchfilter,
                         language: language,
-                        filterClosedData: FilterClosedData, userroles: UserRolesToFilter
+                        additionalfilter: additionalfilter,
+                        userroles: UserRolesToFilter
                         )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "data#>>'\\{Shortname\\}'");
 
-                var fieldsTohide = FieldsToHide;
-
-
+               
                 // Get paginated data
                 var data =
                     await query
@@ -146,7 +151,7 @@ namespace OdhApiCore.Controllers
 
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -166,15 +171,17 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var data = await QueryFactory.Query("publishers")
                     .Select("data")
                     .Where("id", id.ToLower())
-                    .When(FilterClosedData, q => q.FilterClosedData())
+                    .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                    .FilterDataByAccessRoles(UserRolesToFilter)
                     .FirstOrDefaultAsync<JsonRaw>();
 
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -187,18 +194,22 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="publisher">PublisherLinked Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataCreate,PublisherManager,PublisherCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,PublisherManager,PublisherCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Publisher")]
         public Task<IActionResult> Post([FromBody] PublisherLinked publisher)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 publisher.Id = publisher.Key.ToLower().Replace(" ", "") ?? Helper.IdGenerator.GenerateIDFromType(publisher);
 
                 if (publisher.LicenseInfo == null)
                     publisher.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<PublisherLinked>(publisher, "publishers", true);
+                return await UpsertData<PublisherLinked>(publisher, new DataInfo("publishers", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -208,15 +219,19 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Publisher Id</param>
         /// <param name="publisher">Publisher Object</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataModify,PublisherManager,PublisherModify,PublisherUpdate")]
+        //[Authorize(Roles = "DataWriter,DataModify,PublisherManager,PublisherModify,PublisherUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Publisher/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] PublisherLinked publisher)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 publisher.Id = Helper.IdGenerator.CheckIdFromType<PublisherLinked>(id);
 
-                return await UpsertData<PublisherLinked>(publisher, "publishers", false, true);
+                return await UpsertData<PublisherLinked>(publisher, new DataInfo("publishers", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -225,15 +240,21 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Publisher Id</param>
         /// <returns>Http Response</returns>
-        [Authorize(Roles = "DataWriter,DataDelete,PublisherManager,PublisherDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,PublisherManager,PublisherDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Publisher/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<PublisherLinked>(id);
 
-                return await DeleteData(id, "publishers");
+                //return await DeleteData<PublisherLinked>(id, "publishers", additionalfilter); // Does not implement IPublishedOn
+
+                return await DeleteData<PublisherLinked>(id, new DataInfo("publishers", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

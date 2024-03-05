@@ -11,6 +11,12 @@ using System.Threading.Tasks;
 using Helper;
 using Microsoft.FSharp.Control;
 using System.Diagnostics;
+using Helper.Generic;
+using Helper.JsonHelpers;
+using Newtonsoft.Json;
+using SqlKata;
+using System.Threading;
+using System.Reflection;
 
 namespace OdhApiImporter.Helpers
 {
@@ -98,7 +104,7 @@ namespace OdhApiImporter.Helpers
             //};
         //}
 
-        public async Task<int> ResaveMetaData(string host)
+        public async Task<int> ResaveMetaData(string host, bool correcturls)
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
@@ -117,16 +123,14 @@ namespace OdhApiImporter.Helpers
 
                 //modify domain
 
-                if (!host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
+                if (correcturls && !host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
                 {
                     metadata.BaseUrl = "https://tourism.api.opendatahub.com";
                     if(!String.IsNullOrEmpty(metadata.SwaggerUrl))
-                        metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");
-
-                    
+                        metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");                    
                 }
 
-                if (metadata.ImageGallery != null && metadata.ImageGallery.Count() > 0)
+                if (correcturls && !host.StartsWith("importer.tourism") && metadata.ImageGallery != null && metadata.ImageGallery.Count() > 0)
                 {
                     foreach (var image in metadata.ImageGallery)
                     {
@@ -137,12 +141,99 @@ namespace OdhApiImporter.Helpers
                     }
                 }
 
+
+                metadata.Type = metadata.OdhType;
                 metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
 
 
                 //Save tp DB                 
                 var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
                     .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> ResaveTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("tags");
+
+            var data = await query.GetObjectListAsync<TagLinked>();
+            int i = 0;
+
+            foreach (var tag in data)
+            {
+                tag._Meta.Type = "tag";
+                
+                //Save to DB                 
+                var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
+                    .UpdateAsync(new JsonBData() { id = tag.Id?.ToLower() ?? "", data = new JsonRaw(tag) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> ResaveSourcesOnType<T>(string odhtype, string sourcetofilter, string sourcetochange) where T : notnull
+        {
+            string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
+            var mytype = ODHTypeHelper.TranslateTypeString2Type(odhtype);
+
+
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From(table)
+                   .When(sourcetofilter != "null", x => x.WhereJsonb("Source", sourcetofilter))
+                   .When(sourcetofilter == "null", x => x.WhereRaw("data->>'Source' is null"));
+
+            var data = await query.GetObjectListAsync<T>();
+            
+            int i = 0;
+
+            foreach (var tag in data)
+            {                
+
+                if (tag is IIdentifiable)
+                {                 
+                    if (tag is ISource)
+                        ((ISource)tag).Source = sourcetochange;
+
+                    //Save to DB                 
+                    var queryresult = await QueryFactory.Query(table).Where("id", ((IIdentifiable)tag).Id)
+                        .UpdateAsync(new JsonBData() { id = ((IIdentifiable)tag).Id ?? "", data = new JsonRaw(tag) });
+
+                    i = i + queryresult;
+                }
+            }
+
+            return i;
+        }
+
+        public async Task<int> UpdateAllEventShortstActiveFieldToTrue()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                eventshort.Active = true;
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
 
                 i++;
             }
@@ -490,7 +581,7 @@ namespace OdhApiImporter.Helpers
                     myarticle.SmgTags = new List<string>() { "important" };
                 }
 
-                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, "articles", "article.modify", "importer");
+                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, new DataInfo("articles", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("article.modify", "importer"), new CRUDConstraints(), new CompareConfig(false,false));
 
                 if(pgcrudresult.created != null)
                     crudcount = crudcount + pgcrudresult.created.Value;

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using SqlKata;
 using SqlKata.Execution;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -700,7 +701,7 @@ namespace Helper
                id => id
            );
 
-        public static Query EventShortActiveFilter(this Query query, string? active) =>
+        public static Query EventShortTodayActiveFilter(this Query query, string? active) =>
             query.When(
                 active != null,
                 query => query.WhereJsonb(
@@ -953,6 +954,12 @@ namespace Helper
                 id => id.ToUpper()
             );
 
+        public static Query SourceTypeFilter(this Query query, IReadOnlyCollection<string> typeslist) =>
+           query.WhereInJsonb(
+           typeslist,
+           sourcetype => new { Types = new[] { sourcetype.ToLower() } }
+       );
+
         //public static Query VenueHasLanguageFilter(this Query query, IReadOnlyCollection<string> languagelist) =>
         //    query.WhereInJsonb(
         //       languagelist,
@@ -982,14 +989,14 @@ namespace Helper
 
 
         //Standard JSON Filter
-        public static Query FilterClosedData(this Query query) =>
-            query.Where(q =>
-                q.WhereRaw(
-                    "data#>>'\\{LicenseInfo,ClosedData\\}' IS NULL"
-                ).OrWhereRaw(
-                    "data#>>'\\{LicenseInfo,ClosedData\\}' = 'false'"
-                )
-            );
+        //public static Query FilterClosedData(this Query query) =>
+        //    query.Where(q =>
+        //        q.WhereRaw(
+        //            "data#>>'\\{LicenseInfo,ClosedData\\}' IS NULL"
+        //        ).OrWhereRaw(
+        //            "data#>>'\\{LicenseInfo,ClosedData\\}' = 'false'"
+        //        )
+        //    );
 
         //public static Query FilterClosedDataVenues(this Query query) =>
         //    query.Where(q =>
@@ -1735,7 +1742,7 @@ namespace Helper
         #region Filter by Roles
 
         public static Query FilterDataByAccessRoles(this Query query, IEnumerable<string> roles) =>
-            query.Where(q =>
+            query.When(roles.Contains("ANONYMOUS"), q => q.Where(q =>
             {
                 foreach (var item in roles)
                 {
@@ -1743,15 +1750,78 @@ namespace Helper
                         "gen_access_role @> array\\[$$\\]", item.ToUpper()
                     );
                 }
+                
                 return q;
-            });
+            }));
 
-        //Filter Out Reduced
-        public static Query FilterReducedDataByRoles(this Query query) =>
-            query.WhereRaw("gen_reduced = false");
+        ////Filter Out Reduced
+        public static Query FilterReducedDataByRoles(this Query query, IEnumerable<string> roles) =>
+            //Special Rule, if Role IDM is there filter out all reduced data
+            query.When(roles.Any(x => x == "IDM"), q => q.Where("gen_reduced", false));
+    
 
         #endregion
 
+        #region AdditionalFilter
+
+        public static Query FilterAdditionalDataByCondition(this Query query, string? condition)
+        {
+            if (condition != null && condition.Contains("="))
+            {
+                var splittedcondition = condition.Split("&").Select(x => x.Split("=")).Select(x => new ReadCondition() { Column = x[0], Value = x[1] });
+
+                var itemstoadd = splittedcondition.GroupBy(x => x.Column).Where(g => g.Count() == 1).ToList();
+                foreach (var item in itemstoadd)
+                {
+                    query.GetAdditionalFilterQueryByInput(item.Key, item.Select(x => x.Value).FirstOrDefault());
+                }
+
+                var itemstomerge = splittedcondition.GroupBy(x => x.Column).Where(g => g.Count() > 1).ToList();
+                foreach (var item in itemstomerge)
+                {
+                    query.GetAdditionalFilterQueryByInput(item.Key, item.Select(x => x.Value).ToList());
+                }
+            }
+
+            return query;
+        }
+
+        public static Query GetAdditionalFilterQueryByInput(this Query query, string input, string value)
+        {
+            switch (input)
+            {
+                case "source":
+                    return query.Where("gen_source", value);
+                case "accessrole":
+                    return query.WhereRaw("gen_access_role @> array\\[$$\\]", value);
+                default:
+                    return query.Where("data->>'" + input + "'", value);
+            }
+        }
+
+        public static Query GetAdditionalFilterQueryByInput(this Query query, string input, List<string> values)
+        {
+            switch (input)
+            {
+                case "source":
+                    return query.WhereIn("gen_source", values);
+                case "accessrole":
+                    return query.FilterDataByAccessRoles(values);
+                default:
+                    return query.WhereIn("data->>'" + input + "'", values);
+            }
+        }
+
+
+
+        #endregion
+    }
+
+    public class ReadCondition
+    {
+        public string Column { get; set; }
+        public string Query { get; set; }
+        public string Value { get; set; }
     }
 
 
