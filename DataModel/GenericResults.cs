@@ -174,8 +174,10 @@ namespace DataModel
                 updated = updatedetail.updated + updated;
                 deleted = updatedetail.deleted + deleted;
                 error = updatedetail.error + error;
-                objectchanged = updatedetail.objectchanged + objectchanged;
-                objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
+                if(updatedetail.objectchanged != null)
+                    objectchanged =  updatedetail.objectchanged + objectchanged;
+                if (updatedetail.objectimagechanged != null)
+                    objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
 
                 if (updatedetail.changes != null)
                 {
