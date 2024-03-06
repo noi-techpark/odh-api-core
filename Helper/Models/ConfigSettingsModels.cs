@@ -433,6 +433,7 @@ namespace Helper
         public string NotifyType { get; set; }
         public string Mode { get; set; }
         public bool HasImagechanged { get; set; }
+        public bool? Roomschanged { get; set; }
         public bool IsDelete { get; set; }
         public string Destination { get; set; }
         public string UdateMode { get; set; }

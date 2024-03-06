@@ -369,6 +369,7 @@ namespace DataModel
         public string origin { get; set; }
         public string destination { get; set; }
         public bool? imageupdate { get; set; }
+        public bool? roomsupdate { get; set; }
         public string updatemode { get; set; }
 
         public string? response { get; set; }
@@ -382,6 +383,7 @@ namespace DataModel
     {
         public string Id { get; set; }
         public bool? HasImageChanged { get; set; }
+        public bool? Roomschanged { get; set; }
         public bool? IsDeleteOperation { get; set; }
         public string ItemId { get; set; }
         public string Type { get; set; }

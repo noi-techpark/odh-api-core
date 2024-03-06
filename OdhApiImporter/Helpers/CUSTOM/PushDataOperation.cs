@@ -51,7 +51,7 @@ namespace OdhApiImporter.Helpers
             {
                 if (data.PublishedOn != null && data.PublishedOn.Contains("idm-marketplace"))
                 {
-                    var pushresults = await OdhPushnotifier.PushToPublishedOnServices(data.Id, "odhactivitypoi", "forced", false, false, "api", new List<string>() { "idm-marketplace" });
+                    var pushresults = await OdhPushnotifier.PushToPublishedOnServices(data.Id, "odhactivitypoi", "forced", null, false, "api", new List<string>() { "idm-marketplace" });
                     pushresultlist.Add(data.Id, pushresults);
                 }
             }

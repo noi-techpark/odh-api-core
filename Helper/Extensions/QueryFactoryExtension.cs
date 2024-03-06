@@ -252,7 +252,7 @@ namespace Helper
 
 
                 //Compare Image Gallery Check if this works with a cast to IImageGalleryAware
-                if (compareConfig.CompareImages && queryresult != null && data is IImageGalleryAware && queryresult is IImageGallery)
+                if (compareConfig.CompareImages && queryresult != null && data is IImageGalleryAware && queryresult is IImageGalleryAware)
                 {
                     imagesequal = EqualityHelper.CompareImageGallery((data as IImageGalleryAware).ImageGallery, (queryresult as IImageGalleryAware).ImageGallery, new List<string>() { });
                     if (imagesequal)

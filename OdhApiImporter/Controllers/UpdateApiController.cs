@@ -166,7 +166,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                var resulttuple = await OdhPushnotifier.PushCustomObjectsToPublishedonService(new List<string>() { publishedon }, idlist, odhtype);
+                var resulttuple = await OdhPushnotifier.PushCustomObjectsToPublishedonService(new List<string>() { publishedon }, idlist, odhtype, null);
 
                 updatedetail = new UpdateDetailFailureQueue()
                 {
