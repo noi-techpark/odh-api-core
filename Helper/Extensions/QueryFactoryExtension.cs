@@ -183,6 +183,7 @@ namespace Helper
                       .Select("data")
                       .Where("id", data.Id)
                       .When(constraints.AccessRole.Count() > 0, q => q.FilterDataByAccessRoles(constraints.AccessRole))
+                      //.When(!String.IsNullOrEmpty(constraints.Condition), q => q.FilterAdditionalDataByCondition(constraints.Condition))
                       .GetObjectSingleAsync<T>();
 
             int createresult = 0;

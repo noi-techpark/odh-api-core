@@ -25,11 +25,9 @@ namespace Helper
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
             //If source is already set use the old source
-            if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
-                source = data._Meta.Source;            
-
+            //if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
+            //    source = data._Meta.Source;            
             
-
             return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
                
@@ -266,6 +264,7 @@ namespace Helper
             {
                 "content" => "noi",
                 "ebms" => "eurac",
+                "nobis" => "nobis",
                 _ => sourcemeta,
             };
             return GetMetadata(data, sourcestr, data.LastChange, false);
