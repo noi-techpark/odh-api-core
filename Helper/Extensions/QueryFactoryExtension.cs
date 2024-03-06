@@ -230,11 +230,14 @@ namespace Helper
 
                     channelstopublish.AddRange((data as IPublishedOn).PublishedOn);
                 }
-                    
-                
-                //On insert always set the object and image to changed
-                objectchangedcount = 1;
-                objectimagechangedcount = 1;
+
+
+                //On insert always set the object and image to changed only if compareresult deactivated
+                if (compareConfig.CompareData)
+                {
+                    objectchangedcount = 1;
+                    objectimagechangedcount = 1;
+                }
             }
             else
             {

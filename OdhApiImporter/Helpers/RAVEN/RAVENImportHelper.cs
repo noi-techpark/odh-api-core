@@ -51,7 +51,7 @@ namespace OdhApiImporter.Helpers
             {
                 case "accommodation":
                     var updateresultstomerge = new List<UpdateDetail>();
-
+                    
                     mydata = await GetDataFromRaven.GetRavenData<AccommodationRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<AccommodationRaven, AccommodationLinked>((AccommodationRaven)mydata, TransformToPGObject.GetAccommodationPGObject);
@@ -61,9 +61,8 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((AccommodationLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations", true, true, true);
-
-                    updateresultstomerge.Add(myupdateresult);
+                    var myupdateresultacco = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations", true, true, true);
+                    updateresultstomerge.Add(myupdateresultacco);
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<AccommodationLinked>((AccommodationLinked)mypgdata) == true)
@@ -125,12 +124,12 @@ namespace OdhApiImporter.Helpers
                                 roomschanged = true;
 
                             updateresultstomerge.Add(accoroomresult);
-                        }
+                        }                        
+                    }
 
-                        //Merge with updateresult
-                        myupdateresult = GenericResultsHelper.MergeUpdateDetail(updateresultstomerge);
-                    }                                      
-                    
+                    //Merge with updateresult
+                    myupdateresult = GenericResultsHelper.MergeUpdateDetail(updateresultstomerge);
+
                     //Remove Exception not all accommodations have rooms
                     //else
                     //    throw new Exception("No data found!");
@@ -547,10 +546,10 @@ namespace OdhApiImporter.Helpers
             }
 
             var mergelist = new List<UpdateDetail>() { myupdateresult };
-            
+
             if (updateresultreduced.updated != null || updateresultreduced.created != null || updateresultreduced.deleted != null)
                 mergelist.Add(updateresultreduced);
-            
+
             return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(mergelist));
         }
 
