@@ -50,6 +50,8 @@ namespace OdhApiImporter.Helpers
             switch (datatype.ToLower())
             {
                 case "accommodation":
+                    var updateresultstomerge = new List<UpdateDetail>();
+
                     mydata = await GetDataFromRaven.GetRavenData<AccommodationRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
                         mypgdata = TransformToPGObject.GetPGObject<AccommodationRaven, AccommodationLinked>((AccommodationRaven)mydata, TransformToPGObject.GetAccommodationPGObject);
@@ -60,6 +62,8 @@ namespace OdhApiImporter.Helpers
                     ((AccommodationLinked)mypgdata).CreatePublishedOnList();
 
                     myupdateresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations", true, true, true);
+
+                    updateresultstomerge.Add(myupdateresult);
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<AccommodationLinked>((AccommodationLinked)mypgdata) == true)
@@ -93,8 +97,7 @@ namespace OdhApiImporter.Helpers
                             {
                                 var roomdeleteresult = await DeleteRavenObjectFromPG<AccommodationRoomLinked>(roomid, "accommodationrooms", false);
 
-                                //Merge with updateresult
-                                myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, roomdeleteresult });
+                                updateresultstomerge.Add(roomdeleteresult);
 
                                 roomschanged = true;
                             }
@@ -108,6 +111,7 @@ namespace OdhApiImporter.Helpers
                         if (((AccommodationLinked)mypgdata).AccoRoomInfo != null && ((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
                             roomsourcecheck = Tuple.Create("hgv", true);
 
+                  
                         foreach (var myroomdata in myroomdatalist)
                         {
                             var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
@@ -120,9 +124,11 @@ namespace OdhApiImporter.Helpers
                             if(accoroomresult.objectchanged > 0)
                                 roomschanged = true;
 
-                            //Merge with updateresult
-                            myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, accoroomresult, });
+                            updateresultstomerge.Add(accoroomresult);
                         }
+
+                        //Merge with updateresult
+                        myupdateresult = GenericResultsHelper.MergeUpdateDetail(updateresultstomerge);
                     }                                      
                     
                     //Remove Exception not all accommodations have rooms
