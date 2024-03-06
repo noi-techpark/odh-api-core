@@ -278,19 +278,23 @@ namespace OdhApiCore.Controllers
         }
 
         //PUSH Modified data
-        protected async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(PGCRUDResult myupdateresult, string id, string datatype, string pushorigin = "odh.api.push")
+        protected async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(PGCRUDResult myupdateresult, string id, string datatype, IDictionary<string, bool>? additionalpushinfo = null, string pushorigin = "odh.api.push")
         {
             IDictionary<string, NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
 
             //Check if data has changed and Push To all channels
             if (myupdateresult.error == 0 && myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0 && myupdateresult.pushchannels != null && myupdateresult.pushchannels.Count > 0)
             {
-                //Check if image has changed
-                bool hasimagechanged = false;
-                if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
-                    hasimagechanged = true;
+                if (additionalpushinfo == null)
+                    additionalpushinfo = new Dictionary<string, bool>();
 
-                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, hasimagechanged, false, "api", myupdateresult.pushchannels.ToList());
+                //Check if image has changed                
+                if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
+                    additionalpushinfo.TryAdd("imageschanged", true);
+                else
+                    additionalpushinfo.TryAdd("imageschanged", false);
+
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, additionalpushinfo, false, "api", myupdateresult.pushchannels.ToList());
             }
 
             return pushresults;
@@ -304,7 +308,7 @@ namespace OdhApiCore.Controllers
             //Check if data has changed and Push To all channels
             if (myupdateresult.deleted > 0 && myupdateresult.pushchannels.Count > 0)
             {
-                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, false, true, "api", myupdateresult.pushchannels.ToList());
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, null, true, "api", myupdateresult.pushchannels.ToList());
             }
 
             return pushresults;
