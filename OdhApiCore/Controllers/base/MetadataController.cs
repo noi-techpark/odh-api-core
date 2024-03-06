@@ -8,10 +8,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Amazon.Auth.AccessControlPolicy;
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
 using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -119,6 +121,9 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 if (rawsort == null)
                     rawsort = "Id";
 
@@ -131,6 +136,8 @@ namespace OdhApiCore.Controllers
                         .From("metadata")
                         .ApplyRawFilter(rawfilter)
                         .SearchFilter(searchfields.ToArray(), searchfilter)
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
                 // Get paginated data
@@ -164,12 +171,16 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
+                var data = await
                     QueryFactory.Query("metadata")
                         .Select("data")
-                        .Where("id", id.ToLower());
-
-                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+                        .Where("id", id.ToLower())
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter)
+                        .FirstOrDefaultAsync<JsonRaw?>();                
                 
                 return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: null);
             });
@@ -185,7 +196,7 @@ namespace OdhApiCore.Controllers
         /// <param name="metadata">TourismMetaData Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,MetaDataManager,MetaDataCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [InvalidateCacheOutput(nameof(Get))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -195,10 +206,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 //GENERATE ID
                 metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
                 
-                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(null, UserRolesToFilter));
+                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));                
             });
         }
 
@@ -209,7 +223,7 @@ namespace OdhApiCore.Controllers
         /// <param name="metadata">TourismMetaData Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,MetaDataManager,MetaDataUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [InvalidateCacheOutput(nameof(Get))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -219,10 +233,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 metadata.Id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
-                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(null, UserRolesToFilter));
+                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -232,7 +249,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">MetaData Id</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,MetaDataManager,MetaDataDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [InvalidateCacheOutput(nameof(Get))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -242,10 +259,13 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
-                return await DeleteData<TourismMetaData>(id, new DataInfo("metadata", CRUDOperation.Delete), new CRUDConstraints(null, UserRolesToFilter));
+                return await DeleteData<TourismMetaData>(id, new DataInfo("metadata", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -255,21 +275,21 @@ namespace OdhApiCore.Controllers
         #region HELPERS
 
         //Deprecated helper
-        private async Task<IEnumerable<TourismMetaData>> GetMetaData()
-        {
-            List<TourismMetaData> tourismdatalist = new List<TourismMetaData>();
+        //private async Task<IEnumerable<TourismMetaData>> GetMetaData()
+        //{
+        //    List<TourismMetaData> tourismdatalist = new List<TourismMetaData>();
 
-            string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"v1.json");
+        //    string fileName = Path.Combine(settings.JsonConfig.Jsondir, $"v1.json");
 
-            using (StreamReader r = new StreamReader(fileName))
-            {
-                string json = await r.ReadToEndAsync();
+        //    using (StreamReader r = new StreamReader(fileName))
+        //    {
+        //        string json = await r.ReadToEndAsync();
 
-                tourismdatalist = JsonConvert.DeserializeObject<List<TourismMetaData>>(json);
-            }
+        //        tourismdatalist = JsonConvert.DeserializeObject<List<TourismMetaData>>(json);
+        //    }
 
-            return tourismdatalist;
-        }                    
+        //    return tourismdatalist;
+        //}                    
 
         #endregion
     }
