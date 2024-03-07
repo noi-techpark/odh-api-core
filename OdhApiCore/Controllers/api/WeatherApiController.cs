@@ -313,7 +313,7 @@ namespace OdhApiCore.Controllers
         /// <param name="language">Language</param>
         /// <param name="locfilter">Locfilter (possible values: filter on reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction))</param>
         /// <returns>WeatherForecast Object</returns>
-        [ProducesResponseType(typeof(IEnumerable<WeatherRealTime>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<WeatherForecastLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Weather/Forecast")]
@@ -346,7 +346,7 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="language">Language</param>
         /// <returns>WeatherForecast Object</returns>
-        [ProducesResponseType(typeof(WeatherRealTime), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(WeatherForecastLinked), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("Weather/Forecast/{id}", Name = "SingleWeatherForecast")]
