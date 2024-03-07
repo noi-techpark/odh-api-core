@@ -705,6 +705,61 @@ namespace DataModel
         public string? Objectid { get; set; }
     }
 
+    public class IndependentMobilityData
+    {
+        public string? Type { get; set; }
+        public DateTime? SurveyDate { get; set; }
+
+        public string? SurveyType { get; set; }
+        public bool? HasRoof { get; set; }
+        public bool? VerticalIdentification { get; set; }
+        public bool? HorizontalIdentification { get; set; }
+        public bool? ChargingAccessible { get; set; }
+        [SwaggerSchema("Maximum operation height in cm")]
+        public int? MaxOperationHeight { get; set; }
+        [SwaggerSchema("Maximum operation height in cm")]
+        [SwaggerEnum(new[] { "Typ 1-Stecker", "Typ 2-Stecker", "Combo-Stecker", "CHAdeMO-Stecker", "Tesla Supercharger" })]
+        public string? ChargingCableType { get; set; }
+        public int? ChargingCableLength { get; set; }
+
+        public string? ChargingPistol { get; set; }
+
+        [SwaggerEnum(new[] { "Barrierefrei", "Bedingt zugänglich", "Nicht zugänglich" })]
+        public string? Barrierfree { get; set; }
+
+        //public ICollection<CarparkingArea> CarparkingArea { get; set; }
+
+        public CarparkingArea CarparkingAreaInColumns { get; set; }
+        public CarparkingArea CarparkingAreaInRows { get; set; }
+    }
+
+    public class CarparkingArea
+    {
+        //[SwaggerEnum(new[] { "column", "row" })]
+        //public string? Type { get; set; }
+
+        [SwaggerSchema("Eben (wenn Steigung <5% und Querneigung <3%)")]
+        public bool? Flat { get; set; }
+
+        [SwaggerSchema("Steigung % (wenn Steigung >5%)")] 
+        public int? Inclination { get; set; }
+
+        [SwaggerSchema("Querneigung % (wenn Querneigung >3%)")] 
+        public int? Crossfall { get; set; }
+        
+        [SwaggerEnum(new[] { "Barrierefrei", "Bedingt zugänglich", "Nicht zugänglich" })]
+        public string FloorCover { get; set; }
+
+        [SwaggerSchema("Width, (on column barrierfree = 350 cm), (on row barrierfree = 250 cm)")] 
+        public int? Width { get; set; }
+
+        [SwaggerSchema("Length, (on column barrierfree = 500 cm), (on row barrierfree = 650 cm)")]
+        public int? Length { get; set; }
+
+        [SwaggerSchema("Schraffurmarkierung")] 
+        public bool? HatchingMarked { get; set; }
+    }
+
     #endregion
 
     #region Accommodations

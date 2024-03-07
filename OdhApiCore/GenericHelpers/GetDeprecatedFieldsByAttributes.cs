@@ -26,12 +26,24 @@ namespace OdhApiCore.GenericHelpers
             return deprecatedprops.Select(x => new DeprecationInfo() {
                 Name = x.Name,
                 Description = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().Description,
-                Type = x.PropertyType.FullName,
+                Type = FriendlyName(x.PropertyType),
                 DeprecationDate = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().DeprecationDate,
                 RemovedAfter = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().RemovedAfter,
             })
             .ToList();
                 
+        }
+
+        public static string FriendlyName(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var namePrefix = type.Name.Split(new[] { '`' }, StringSplitOptions.RemoveEmptyEntries)[0];
+                var genericParameters = String.Join(", ", type.GetGenericArguments().Select(FriendlyName));
+                return namePrefix + "<" + genericParameters + ">";
+            }
+
+            return type.Name;
         }
     }
 
