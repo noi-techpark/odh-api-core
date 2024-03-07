@@ -82,7 +82,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize)]
+        [Authorize]
         [HttpPost, Route("v1/FileUpload/Doc")]
         public async Task<IActionResult> PostFormDataPDF(IFormCollection form)
         {
