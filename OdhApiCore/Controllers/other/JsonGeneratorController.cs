@@ -202,7 +202,7 @@ namespace OdhApiCore.Controllers.other
                     settings.S3Config["dc-meteorology-province-forecast"].Filename,
                     settings.JsonConfig.Jsondir);
 
-                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "Taglist", "Download Json Weatherforecast succeeded", true);
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "Weatherforecast", "Download Json Weatherforecast succeeded", true);
 
                 return Ok(result);
             }
