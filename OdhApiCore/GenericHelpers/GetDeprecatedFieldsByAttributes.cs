@@ -26,7 +26,7 @@ namespace OdhApiCore.GenericHelpers
             return deprecatedprops.Select(x => new DeprecationInfo() {
                 Name = x.Name,
                 Description = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().Description,
-                Type = x.PropertyType.ToString(),
+                Type = x.PropertyType.FullName,
                 DeprecationDate = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().DeprecationDate,
                 RemovedAfter = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().RemovedAfter,
             })
