@@ -17,8 +17,7 @@ namespace OdhApiCore.Controllers.other
     [ApiExplorerSettings(IgnoreApi = true)]
     public class GpxController : ControllerBase
     {
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
+        [ApiExplorerSettings(IgnoreApi = true)]        
         [HttpGet, Route("v1/Activity/Gpx/{tvid}/{gpxid}")]
         public Task GetActivityGpx(string tvid, string gpxid)
         {
@@ -27,16 +26,14 @@ namespace OdhApiCore.Controllers.other
             return this.HttpProxyAsync(url);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
+        [ApiExplorerSettings(IgnoreApi = true)]        
         [HttpGet, Route("v1/Activity/GpxByUrl/{gpxurl}")]
         public Task GetActivityGpxURL(string gpxurl)
         {            
             return this.HttpProxyAsync(gpxurl);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
+        [ApiExplorerSettings(IgnoreApi = true)]        
         [HttpGet, Route("v1/Poi/Gpx/{tvid}/{gpxid}")]
         public Task GetPoiGpx(string gpxid, string tvid)
         {
@@ -45,8 +42,7 @@ namespace OdhApiCore.Controllers.other
             return this.HttpProxyAsync(url);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        //[Authorize(Roles = "DataReader,ActivityReader,ODHPoiReader")]
+        [ApiExplorerSettings(IgnoreApi = true)]        
         [HttpGet, Route("v1/SmgPoiGpx/{gpxid}")]
         public IActionResult GetSmgPoiGpx(string gpxid)
         {
