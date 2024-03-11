@@ -245,7 +245,7 @@ namespace OdhApiImporter.Controllers
         }
 
         //EchargingStations
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("NINJA/Echarging/Update")]
         public async Task<IActionResult> UpdateAllNinjaEchargingData(CancellationToken cancellationToken = default)
         {

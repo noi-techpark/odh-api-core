@@ -55,8 +55,7 @@ namespace OdhApiImporter.Helpers
             List<string> idlistspreadsheet = new List<string>();
         
             //Get all sources
-            List<string> sourcelist = ninjadata.data.Select(x => x.porigin).ToList();
-
+            List<string> sourcelist = ninjadata.data.Select(x => x.porigin.ToLower()).Distinct().ToList();
 
             foreach (var data in ninjadata.data)
             {
