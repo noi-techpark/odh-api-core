@@ -36,7 +36,7 @@ namespace OdhApiImporter.Helpers
             return result;
         }
 
-        private async Task<NinjaObjectWithParent<NinjaEchargingPlug>> ImportList(CancellationToken cancellationToken)
+        private async Task<NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug>> ImportList(CancellationToken cancellationToken)
         {
             var response = await GetNinjaData.GetNinjaEchargingPlugs(settings.NinjaConfig.ServiceUrl);            
 
@@ -45,7 +45,7 @@ namespace OdhApiImporter.Helpers
             return response;
         }
 
-        private async Task<UpdateDetail> SaveEchargingstationsToPG(NinjaObjectWithParent<NinjaEchargingPlug> ninjadata)
+        private async Task<UpdateDetail> SaveEchargingstationsToPG(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
         {
             var newimportcounter = 0;
             var updateimportcounter = 0;
@@ -121,7 +121,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }
    
-        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, NinjaDataWithParent<NinjaEchargingPlug>> ninjadata)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>> ninjadata)
         {
             try
             {
@@ -143,7 +143,7 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<int> InsertInRawDataDB(KeyValuePair<string, NinjaDataWithParent<NinjaEchargingPlug>> ninjadata)
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>> ninjadata)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
