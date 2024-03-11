@@ -129,7 +129,7 @@ jobs:
           X_MUSPORT_SERVICEURL: "https://musport.prov.bz.it/musport/services/MuseumsService/"
           X_NINJA_USER: ${{ secrets.NINJA_USER_TEST }}
           X_NINJA_PASS: ${{ secrets.NINJA_PASS_TEST }}
-          X_NINJA_SERVICEURL: "https://mobility.api.opendatahub.com/v2/flat/Culture/"
+          X_NINJA_SERVICEURL: "https://mobility.api.opendatahub.com/v2/flat/"
           X_DATABROWSER_URL: "https://frontend.tourism.testingmachine.eu/"
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
@@ -243,7 +243,7 @@ jobs:
           X_MUSPORT_SERVICEURL: "https://musport.prov.bz.it/musport/services/MuseumsService/"
           X_NINJA_USER: ${{ secrets.NINJA_USER_TEST }}
           X_NINJA_PASS: ${{ secrets.NINJA_PASS_TEST }}
-          X_NINJA_SERVICEURL: "https://mobility.api.opendatahub.com/v2/flat/Culture/"
+          X_NINJA_SERVICEURL: "https://mobility.api.opendatahub.com/v2/flat/"
           
           X_API_URL: ${{ env.API_URL }}
           X_MARKETPLACE_PUSH_URL: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_URL }}

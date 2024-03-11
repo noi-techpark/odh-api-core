@@ -358,5 +358,20 @@ namespace NINJA.Parser
             else
                 throw new Exception("DateTime Parsing failed  input:" + datetimetoparse);
         }
+
+
+        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, NinjaData<NinjaEchargingPlug> data)
+        {
+            try
+            {
+                return null;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
     }
 }
