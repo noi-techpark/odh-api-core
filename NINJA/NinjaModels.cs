@@ -20,16 +20,36 @@ namespace NINJA
         public int limit { get; set; }
     }
 
+    public class NinjaObjectWithParent<T,V>
+    {
+        public int offset { get; set; }
+        public ICollection<NinjaDataWithParent<T,V>> data { get; set; }
+        public int limit { get; set; }
+    }
+
     public class NinjaData<T>
     {
         public Dictionary<string, T> tmetadata { get; set; }
-
         public T smetadata { get; set; }
         public NinjaCoordinates scoordinate { get; set; }
         public string sname { get; set; }
         public string sorigin { get; set; }
         public string stype { get; set; }
         public string scode { get; set; }
+        public bool sactive { get; set; }
+        public bool savailable { get; set; }
+    }
+
+    public class NinjaDataWithParent<T,V> : NinjaData<V>
+    {
+        public bool pactive { get; set; }
+        public bool pavailable { get; set; }
+        public NinjaCoordinates pcoordinate { get; set; }
+        public string pcode { get; set; }
+        public T pmetadata { get; set; }        
+        public string pname { get; set; }
+        public string porigin { get; set; }
+        public string ptype { get; set; }
     }
 
     public class NinjaCoordinates
@@ -38,6 +58,10 @@ namespace NINJA
         public double y { get; set; }
         public int srid { get; set; }
     }
+
+    #endregion
+
+    #region Ninja Culture Specific
 
     public class NinjaEvent
     {
@@ -82,6 +106,38 @@ namespace NINJA
         public string closing_days { get; set; }
         public string zipcode { get; set; }
         public string province { get; set; }
+    }
+
+    #endregion
+
+    #region Ninja Echarging Specific
+
+    public class NinjaEchargingStation
+    {
+        public string city { get; set; }
+        public string state { get; set; }
+        public string address { get; set; }
+        public string provider { get; set; }
+        public string accessInfo { get; set; }
+        public string accessType { get; set; }
+        public bool reservable { get; set; }
+        public string paymentInfo { get; set; }
+        public string municipality { get; set; }
+    }
+
+    public class NinjaEchargingPlug
+    {
+        ICollection<NinjaEchargingOutlet> outlets { get; set; }
+    }
+
+    public class NinjaEchargingOutlet
+    {
+        public string? id { get; set; }
+        public int? maxPower { get; set; }
+        public int? maxCurrent { get; set; }
+        public int? minCurrent { get; set; }
+        public bool? hasFixedCable { get; set; }
+        public string? outletTypeCode { get; set; }
     }
 
     #endregion
