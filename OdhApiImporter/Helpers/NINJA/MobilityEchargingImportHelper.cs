@@ -4,6 +4,7 @@
 
 using DataModel;
 using Helper;
+using Microsoft.FSharp.Control;
 using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
@@ -55,24 +56,23 @@ namespace OdhApiImporter.Helpers
             List<string> idlistspreadsheet = new List<string>();
         
             //Get all sources
-            List<string> sourcelist = ninjadata.data.Select(x => x.porigin.ToLower()).Distinct().ToList();
+            var sourcelist = GetAndParseProviderList(ninjadata);
 
             foreach (var data in ninjadata.data)
             {
-                string id = data.pcode;
+                string id = "echarging_" + data.pcode;
 
                 var objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data);
 
                 if (objecttosave != null)
                 {
-                    ////Setting Location Info
-                    ////Location Info (by GPS Point)
-                    //if (objecttosave.Latitude != 0 && objecttosave.Longitude != 0)
-                    //{
-                    //    await SetLocationInfo(objecttosave);
-                    //}
+                    //Setting Location Info                    
+                    if (objecttosave.GpsInfo != null)
+                    {
+                        await SetLocationInfo(objecttosave);
+                    }
 
-                    //objecttosave.Active = true;
+                    objecttosave.Active = true;
                     //objecttosave.SmgActive = true;
 
                     //var idtocheck = kvp.Key;
@@ -80,11 +80,11 @@ namespace OdhApiImporter.Helpers
                     //if (idtocheck.Length > 50)
                     //    idtocheck = idtocheck.Substring(0, 50);
 
-                    //var result = await InsertDataToDB(objecttosave, kvp);
+                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>(id, data));
 
-                    //newimportcounter = newimportcounter + result.created ?? 0;
-                    //updateimportcounter = updateimportcounter + result.updated ?? 0;
-                    //errorimportcounter = errorimportcounter + result.error ?? 0;
+                    newimportcounter = newimportcounter + result.created ?? 0;
+                    updateimportcounter = updateimportcounter + result.updated ?? 0;
+                    errorimportcounter = errorimportcounter + result.error ?? 0;
 
                     //idlistspreadsheet.Add(idtocheck.ToUpper());
 
@@ -100,7 +100,7 @@ namespace OdhApiImporter.Helpers
             }
 
             //Begin SetDataNotinListToInactive
-            var idlistdb = await GetAllDataBySource(sourcelist);
+            var idlistdb = await GetAllDataBySource(sourcelist.Select(x => x.Item1).Distinct().ToList());
 
             var idstodelete = idlistdb.Where(p => !idlistspreadsheet.Any(p2 => p2 == p));
 
@@ -118,7 +118,7 @@ namespace OdhApiImporter.Helpers
             }
 
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
-        }
+        }        
    
         private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>> ninjadata)
         {
@@ -211,48 +211,79 @@ namespace OdhApiImporter.Helpers
             return eventids.ToList();
         }
 
-        //private async Task SetLocationInfo(ODHActivityPoiLinked myodhactivitypoi)
-        //{
-        //    var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, myevent.Latitude, myevent.Longitude, 30000);
+        private async Task SetLocationInfo(ODHActivityPoiLinked odhactivitypoi)
+        {
+            var gpspoint = odhactivitypoi.GpsInfo.Where(x => x.Gpstype == "position").FirstOrDefault();
 
-        //    if (district == null)
-        //        return;
+            if(gpspoint != null)
+            {
+                var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, gpspoint.Latitude, gpspoint.Longitude, 30000);
+                if (district == null)
+                    return;                
 
-        //    myevent.DistrictId = district.Id;
-        //    myevent.DistrictIds = new List<string>() { district.Id };
+                var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+                if (locinfo != null)
+                {
+                    LocationInfoLinked locinfolinked = new LocationInfoLinked
+                    {
+                        DistrictInfo = new DistrictInfoLinked
+                        {
+                            Id = locinfo.DistrictInfo?.Id,
+                            Name = locinfo.DistrictInfo?.Name
+                        },
+                        MunicipalityInfo = new MunicipalityInfoLinked
+                        {
+                            Id = locinfo.MunicipalityInfo?.Id,
+                            Name = locinfo.MunicipalityInfo?.Name
+                        },
+                        TvInfo = new TvInfoLinked
+                        {
+                            Id = locinfo.TvInfo?.Id,
+                            Name = locinfo.TvInfo?.Name
+                        },
+                        RegionInfo = new RegionInfoLinked
+                        {
+                            Id = locinfo.RegionInfo?.Id,
+                            Name = locinfo.RegionInfo?.Name
+                        }
+                    };
 
-        //    var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
-        //    if (locinfo != null)
-        //    {
-        //        LocationInfoLinked locinfolinked = new LocationInfoLinked
-        //        {
-        //            DistrictInfo = new DistrictInfoLinked
-        //            {
-        //                Id = locinfo.DistrictInfo?.Id,
-        //                Name = locinfo.DistrictInfo?.Name
-        //            },
-        //            MunicipalityInfo = new MunicipalityInfoLinked
-        //            {
-        //                Id = locinfo.MunicipalityInfo?.Id,
-        //                Name = locinfo.MunicipalityInfo?.Name
-        //            },
-        //            TvInfo = new TvInfoLinked
-        //            {
-        //                Id = locinfo.TvInfo?.Id,
-        //                Name = locinfo.TvInfo?.Name
-        //            },
-        //            RegionInfo = new RegionInfoLinked
-        //            {
-        //                Id = locinfo.RegionInfo?.Id,
-        //                Name = locinfo.RegionInfo?.Name
-        //            }
-        //        };
-
-        //        myevent.LocationInfo = locinfolinked;
-        //    }
-        //}
+                    odhactivitypoi.LocationInfo = locinfolinked;
+                    odhactivitypoi.TourismorganizationId = locinfo.TvInfo?.Id;
+                }
+            }          
+        }
 
         #endregion
 
+
+        #region Speficif Helpers
+
+        private static List<Tuple<string, string>> GetDataProviderlist(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
+        {
+            //Get all sources
+            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider)).Distinct().ToList();
+        }
+
+        private static List<Tuple<string, string>> GetAndParseProviderList(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
+        {
+            var list = GetDataProviderlist(ninjadata);
+            var listtoreturn = new List<Tuple<string, string>>();
+
+            foreach(var data in list)
+            {
+                listtoreturn.Add(
+                    Tuple.Create(data.Item1 switch
+                    {
+                        "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy" => "spreadsheed",
+                        _ => data.Item1
+                    },
+                    data.Item2));
+            }
+
+            return listtoreturn;
+        }
+
+        #endregion
     }
 }

@@ -364,6 +364,10 @@ namespace NINJA.Parser
         {
             try
             {
+                ODHActivityPoiLinked echargingpoi = new ODHActivityPoiLinked();
+
+
+
                 return null;
             }
             catch (Exception e)
