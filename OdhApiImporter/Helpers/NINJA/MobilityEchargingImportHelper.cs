@@ -58,9 +58,9 @@ namespace OdhApiImporter.Helpers
             //Get all sources
             var sourcelist = GetAndParseProviderList(ninjadata);
 
-            foreach (var data in ninjadata.data)
+            foreach (var data in ninjadata.data.GroupBy(x => x.pcode))
             {
-                string id = "echarging_" + data.pcode;
+                string id = "echarging_" + data.FirstOrDefault().pcode;
 
                 var objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data);
 
@@ -80,7 +80,7 @@ namespace OdhApiImporter.Helpers
                     //if (idtocheck.Length > 50)
                     //    idtocheck = idtocheck.Substring(0, 50);
 
-                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>(id, data));
+                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>>(id, data));
 
                     newimportcounter = newimportcounter + result.created ?? 0;
                     updateimportcounter = updateimportcounter + result.updated ?? 0;
@@ -120,7 +120,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }        
    
-        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>> ninjadata)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>> ninjadata)
         {
             try
             {
@@ -142,12 +142,12 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<int> InsertInRawDataDB(KeyValuePair<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>> ninjadata)
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>> ninjadata)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
-                            datasource = ninjadata.Value.porigin,
+                            datasource = ninjadata.Value.FirstOrDefault().porigin,
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(ninjadata.Value),
                             sourceinterface = "echarging",

@@ -360,11 +360,50 @@ namespace NINJA.Parser
         }
 
 
-        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, NinjaData<NinjaEchargingPlug> data)
+        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>> data)
         {
             try
             {
                 ODHActivityPoiLinked echargingpoi = new ODHActivityPoiLinked();
+
+                //Adding Tags
+
+                echargingpoi.SmgTags = new List<string>()
+                {
+                    "poi",
+                    "e-tankstellen ladestationen"
+                };
+
+                echargingpoi.Tags = new List<Tags>()
+                {
+                    new Tags(){ Id = "poi", Source = "lts" },
+                    new Tags(){ Id = "electric charging stations", Source = "idm" }
+                };
+
+                echargingpoi.Id = id;
+
+                echargingpoi.Shortname = data.FirstOrDefault().pname;
+
+                //Detail
+                echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname });
+
+                //ContactInfo
+                echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.FirstOrDefault().pmetadata.address, City = data.FirstOrDefault().pmetadata.city });
+
+                //GpsInfo
+                //"pcoordinate": {
+                //    "x": 10.800483,
+                //    "y": 46.313481,
+                //    "srid": 4326
+                //    },
+                if(data.FirstOrDefault().pcoordinate != null && data.FirstOrDefault().pcoordinate.x > 0 && data.FirstOrDefault().pcoordinate.y > 0) {
+                    echargingpoi.GpsInfo.Add(new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.FirstOrDefault().pcoordinate.y, Longitude = data.FirstOrDefault().pcoordinate.x });
+                }
+
+                //Properties Echargingstation
+
+
+                
 
 
 
