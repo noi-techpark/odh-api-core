@@ -127,17 +127,17 @@ namespace NINJA
 
     public class NinjaEchargingPlug
     {
-        IDictionary<string, ICollection<NinjaEchargingOutlet>> outlets { get; set; }
+        ICollection<NinjaEchargingOutlet> outlets { get; set; }
     }
 
     public class NinjaEchargingOutlet
     {
-        public string id { get; set; }
-        public int maxPower { get; set; }
-        public int maxCurrent { get; set; }
-        public int minCurrent { get; set; }
-        public bool hasFixedCable { get; set; }
-        public string outletTypeCode { get; set; }
+        public string? id { get; set; }
+        public int? maxPower { get; set; }
+        public int? maxCurrent { get; set; }
+        public int? minCurrent { get; set; }
+        public bool? hasFixedCable { get; set; }
+        public string? outletTypeCode { get; set; }
     }
 
     #endregion

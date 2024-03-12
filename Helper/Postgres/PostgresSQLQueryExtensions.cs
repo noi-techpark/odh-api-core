@@ -1741,18 +1741,33 @@ namespace Helper
 
         #region Filter by Roles
 
-        public static Query FilterDataByAccessRoles(this Query query, IEnumerable<string> roles) =>
-            query.When(roles.Contains("ANONYMOUS"), q => q.Where(q =>
-            {
-                foreach (var item in roles)
-                {
-                    q = q.OrWhereRaw(
-                        "gen_access_role @> array\\[$$\\]", item.ToUpper()
-                    );
-                }
+
+        //TO REVISIT
+        //public static Query FilterDataByAccessRoles(this Query query, IEnumerable<string> roles) =>
+        //    query.When(roles.Contains("ANONYMOUS"), q => q.Where(q =>
+        //    {
+        //        foreach (var item in roles)
+        //        {
+        //            q = q.OrWhereRaw(
+        //                "gen_access_role @> array\\[$$\\]", item.ToUpper()
+        //            );
+        //        }
                 
-                return q;
-            }));
+        //        return q;
+        //    }));
+
+        public static Query FilterDataByAccessRoles(this Query query, IEnumerable<string> roles) =>
+           query.Where(q =>
+           {
+               foreach (var item in roles)
+               {
+                   q = q.OrWhereRaw(
+                       "gen_access_role @> array\\[$$\\]", item.ToUpper()
+                   );
+               }
+
+               return q;
+           });
 
         ////Filter Out Reduced
         public static Query FilterReducedDataByRoles(this Query query, IEnumerable<string> roles) =>

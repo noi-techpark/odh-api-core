@@ -43,7 +43,7 @@ namespace OdhApiCore.Controllers.sta
 
         #region GETTER
 
-        [OdhCacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
+        [OdhCacheOutput(ClientTimeSpan = 28800, ServerTimeSpan = 28800)]
         [HttpGet, Route("STA/ODHActivityPoi")]
         public async Task<IActionResult> GetODHActivityPoiListSTA(
             string language,
@@ -68,7 +68,7 @@ namespace OdhApiCore.Controllers.sta
             }
         }
 
-        [OdhCacheOutput(ClientTimeSpan = 14400, ServerTimeSpan = 14400)]
+        [OdhCacheOutput(ClientTimeSpan = 28800, ServerTimeSpan = 28800)]
         [HttpGet, Route("STA/Accommodation")]
         public async Task<IActionResult> GetAccommodationsSTA(
            string language,
