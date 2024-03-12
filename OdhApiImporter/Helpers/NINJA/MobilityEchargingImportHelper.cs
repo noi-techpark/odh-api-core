@@ -37,7 +37,7 @@ namespace OdhApiImporter.Helpers
             return result;
         }
 
-        private async Task<NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug>> ImportList(CancellationToken cancellationToken)
+        private async Task<NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>> ImportList(CancellationToken cancellationToken)
         {
             var response = await GetNinjaData.GetNinjaEchargingPlugs(settings.NinjaConfig.ServiceUrl);            
 
@@ -46,7 +46,7 @@ namespace OdhApiImporter.Helpers
             return response;
         }
 
-        private async Task<UpdateDetail> SaveEchargingstationsToPG(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
+        private async Task<UpdateDetail> SaveEchargingstationsToPG(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
         {
             var newimportcounter = 0;
             var updateimportcounter = 0;
@@ -80,7 +80,7 @@ namespace OdhApiImporter.Helpers
                     //if (idtocheck.Length > 50)
                     //    idtocheck = idtocheck.Substring(0, 50);
 
-                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>>(id, data));
+                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>>(id, data));
 
                     newimportcounter = newimportcounter + result.created ?? 0;
                     updateimportcounter = updateimportcounter + result.updated ?? 0;
@@ -120,7 +120,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }        
    
-        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>> ninjadata)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>> ninjadata)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<int> InsertInRawDataDB(KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>> ninjadata)
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>> ninjadata)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
@@ -259,13 +259,13 @@ namespace OdhApiImporter.Helpers
 
         #region Speficif Helpers
 
-        private static List<Tuple<string, string>> GetDataProviderlist(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
+        private static List<Tuple<string, string>> GetDataProviderlist(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
         {
             //Get all sources
             return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider)).Distinct().ToList();
         }
 
-        private static List<Tuple<string, string>> GetAndParseProviderList(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
+        private static List<Tuple<string, string>> GetAndParseProviderList(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
         {
             var list = GetDataProviderlist(ninjadata);
             var listtoreturn = new List<Tuple<string, string>>();

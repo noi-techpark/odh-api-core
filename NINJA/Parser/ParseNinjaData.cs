@@ -360,7 +360,7 @@ namespace NINJA.Parser
         }
 
 
-        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>> data)
+        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>> data)
         {
             try
             {

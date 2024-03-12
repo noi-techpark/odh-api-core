@@ -20,10 +20,10 @@ namespace NINJA
         public int limit { get; set; }
     }
 
-    public class NinjaObjectWithParent<T,V>
+    public class NinjaObjectWithParent<T, V>
     {
         public int offset { get; set; }
-        public ICollection<NinjaDataWithParent<T,V>> data { get; set; }
+        public ICollection<NinjaDataWithParent<T, V>> data { get; set; }
         public int limit { get; set; }
     }
 
@@ -40,13 +40,13 @@ namespace NINJA
         public bool savailable { get; set; }
     }
 
-    public class NinjaDataWithParent<T,V> : NinjaData<V>
+    public class NinjaDataWithParent<T, V> : NinjaData<T>
     {
         public bool pactive { get; set; }
         public bool pavailable { get; set; }
         public NinjaCoordinates pcoordinate { get; set; }
         public string pcode { get; set; }
-        public T pmetadata { get; set; }        
+        public V pmetadata { get; set; }
         public string pname { get; set; }
         public string porigin { get; set; }
         public string ptype { get; set; }
@@ -141,4 +141,6 @@ namespace NINJA
     }
 
     #endregion
+
 }
+
