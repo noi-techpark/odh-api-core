@@ -622,8 +622,9 @@ namespace DataModel
                 return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
-    }
 
+        public dynamic AdditionalProperties { get; set; }
+    }
 
     //TODO Move all properties to this section
     public class ODHActivityPoiProperties
@@ -705,7 +706,7 @@ namespace DataModel
         public string? Objectid { get; set; }
     }
 
-    public class IndependentMobilityData
+    public class EchargingDataProperties
     {
         //Mobility Provides
         //state (ACTIVE)
@@ -716,15 +717,28 @@ namespace DataModel
         //reservable (true/false)
         //paymentInfo 
         //outlets [ id, maxPower, maxCurrent, minCurrent, outletTypeCode (Type2Mennekes, CHAdeMO, CCS, 700 bar small vehicles, )  ]
+        
+        public int? Capacity { get; set; }
+        [SwaggerEnum(new[] { "UNAVAILABLE", "ACTIVE", "TEMPORARYUNAVAILABLE", "AVAILABLE", "UNKNOWN","FAULT", "PLANNED" })]
+        public string? State { get; set; }
 
-        public string? Type { get; set; }
+        [SwaggerEnum(new[] { "PUBLIC", "PRIVATE", "PRIVATE_WITHPUBLICACCESS" })]
+        public string? AccessType { get; set; }
+
+        //If accesstype public, or private_withpublicaccess set to true
+        public bool? ChargingStationAccessible { get; set; }
+
+        public IDictionary<string, string> AccessTypeInfo { get; set; }
+
         public DateTime? SurveyDate { get; set; }
-
         public string? SurveyType { get; set; }
+
+        public IDictionary<string,string> SurveyAnnotations { get; set; }
+
         public bool? HasRoof { get; set; }
         public bool? VerticalIdentification { get; set; }
-        public bool? HorizontalIdentification { get; set; }
-        public bool? ChargingAccessible { get; set; }
+        public bool? HorizontalIdentification { get; set; }        
+
         [SwaggerSchema("Maximum operation height in cm")]
         public int? MaxOperationHeight { get; set; }
         [SwaggerSchema("Maximum operation height in cm")]
@@ -732,18 +746,23 @@ namespace DataModel
         public string? ChargingCableType { get; set; }
         public int? ChargingCableLength { get; set; }
 
-        public string? ChargingPistol { get; set; }
+        [SwaggerSchema("Maximum operation height in cm (barrierfree = 90-120 cm)")]
+        public string? ChargingPistolOperationHeightMax { get; set; }
+
+        [SwaggerSchema("Stufenlose Gehsteiganbindung: zulässige maximale Steigung <5-8%) bodengleich an den Gehsteig angebunden")]
+        public bool? SteplessSidewalkConnection { get; set; }
+
 
         [SwaggerEnum(new[] { "Barrierefrei", "Bedingt zugänglich", "Nicht zugänglich" })]
         public string? Barrierfree { get; set; }
 
         //public ICollection<CarparkingArea> CarparkingArea { get; set; }
 
-        public CarparkingArea CarparkingAreaInColumns { get; set; }
-        public CarparkingArea CarparkingAreaInRows { get; set; }
+        public EchargingCarparkingArea CarparkingAreaInColumns { get; set; }
+        public EchargingCarparkingArea CarparkingAreaInRows { get; set; }
     }
 
-    public class CarparkingArea
+    public class EchargingCarparkingArea
     {
         //[SwaggerEnum(new[] { "column", "row" })]
         //public string? Type { get; set; }

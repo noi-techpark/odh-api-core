@@ -400,11 +400,22 @@ namespace NINJA.Parser
                 //    "srid": 4326
                 //    },
                 if(data.FirstOrDefault().pcoordinate != null && data.FirstOrDefault().pcoordinate.x > 0 && data.FirstOrDefault().pcoordinate.y > 0) {
+                    echargingpoi.GpsInfo = new List<GpsInfo>();
                     echargingpoi.GpsInfo.Add(new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.FirstOrDefault().pcoordinate.y, Longitude = data.FirstOrDefault().pcoordinate.x });
                 }
 
                 //Properties Echargingstation
+                EchargingDataProperties properties = new EchargingDataProperties();
 
+                properties.AccessType = data.FirstOrDefault().pmetadata.accessType;
+
+                properties.AccessTypeInfo = new Dictionary<string, string>();
+                properties.AccessTypeInfo.TryAddOrUpdate("en", data.FirstOrDefault().pmetadata.accessInfo);
+                properties.State = data.FirstOrDefault().pmetadata.state;
+                properties.Capacity = data.FirstOrDefault().pmetadata?.capacity;
+                properties.ChargingStationAccessible = data.FirstOrDefault().pmetadata.accessType != null && (data.FirstOrDefault().pmetadata.accessType.ToLower() == "public" || data.FirstOrDefault().pmetadata.accessType.ToLower() == "private_withpublicaccess") ? true : false;
+
+                echargingpoi.AdditionalProperties = properties;
 
                 //Mapping Object
                 //ADD MAPPING
