@@ -120,9 +120,11 @@ namespace NINJA
         public string provider { get; set; }
         public string accessInfo { get; set; }
         public string accessType { get; set; }
-        public bool reservable { get; set; }
+        public bool? reservable { get; set; }
         public string paymentInfo { get; set; }
         public string municipality { get; set; }
+
+        public int? capacity { get; set; }
     }
 
     public class NinjaEchargingPlug

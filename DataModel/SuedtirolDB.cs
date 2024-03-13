@@ -625,7 +625,7 @@ namespace DataModel
     }
 
 
-    //new to check
+    //TODO Move all properties to this section
     public class ODHActivityPoiProperties
     {
         public int? AgeFrom { get; set; }
@@ -707,6 +707,16 @@ namespace DataModel
 
     public class IndependentMobilityData
     {
+        //Mobility Provides
+        //state (ACTIVE)
+        //capacity (integer)
+        //provider
+        //accessInfo (FREE_PUBLICLY_ACCESSIBLE)
+        //accessType (PUBLIC)
+        //reservable (true/false)
+        //paymentInfo 
+        //outlets [ id, maxPower, maxCurrent, minCurrent, outletTypeCode (Type2Mennekes, CHAdeMO, CCS, 700 bar small vehicles, )  ]
+
         public string? Type { get; set; }
         public DateTime? SurveyDate { get; set; }
 

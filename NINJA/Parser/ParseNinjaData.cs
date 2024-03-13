@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using DataModel;
 using Helper;
+using Microsoft.FSharp.Control;
 
 namespace NINJA.Parser
 {
@@ -371,12 +372,14 @@ namespace NINJA.Parser
                 echargingpoi.SmgTags = new List<string>()
                 {
                     "poi",
+                    "mobilität",
                     "e-tankstellen ladestationen"
                 };
 
                 echargingpoi.Tags = new List<Tags>()
                 {
                     new Tags(){ Id = "poi", Source = "lts" },
+                    new Tags(){ Id = "mobility", Source = "lts" },
                     new Tags(){ Id = "electric charging stations", Source = "idm" }
                 };
 
@@ -385,10 +388,10 @@ namespace NINJA.Parser
                 echargingpoi.Shortname = data.FirstOrDefault().pname;
 
                 //Detail
-                echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname });
+                echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname, Language = "en" });
 
                 //ContactInfo
-                echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.FirstOrDefault().pmetadata.address, City = data.FirstOrDefault().pmetadata.city });
+                echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.FirstOrDefault().pmetadata.address, City = data.FirstOrDefault().pmetadata.city, Language = "en" });
 
                 //GpsInfo
                 //"pcoordinate": {
@@ -403,7 +406,12 @@ namespace NINJA.Parser
                 //Properties Echargingstation
 
 
-                
+                //Mapping Object
+                //ADD MAPPING
+                var ninjaid = new Dictionary<string, string>() { { "id", id } };
+                echargingpoi.Mapping.TryAddOrUpdate("mobility", ninjaid);
+
+                //Source, SyncSourceInterface
 
 
 

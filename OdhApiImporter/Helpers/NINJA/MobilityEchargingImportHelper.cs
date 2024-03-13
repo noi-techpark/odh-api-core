@@ -58,6 +58,9 @@ namespace OdhApiImporter.Helpers
             //Get all sources
             var sourcelist = GetAndParseProviderList(ninjadata);
 
+
+
+
             foreach (var data in ninjadata.data.GroupBy(x => x.pcode))
             {
                 string id = "echarging_" + data.FirstOrDefault().pcode;
@@ -261,6 +264,15 @@ namespace OdhApiImporter.Helpers
 
         private static List<Tuple<string, string>> GetDataProviderlist(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
         {
+            ////to test show all state, all capacity, all accessInfo, all accessType, all reserveable,
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.provider).Distinct().ToList()));
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.state).Distinct().ToList()));
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.capacity).Distinct().ToList()));
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.accessType).Distinct().ToList()));
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.accessInfo).Distinct().ToList()));
+
+            //Console.WriteLine(String.Join(",", ninjadata.data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList()));
+            
             //Get all sources
             return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider)).Distinct().ToList();
         }
