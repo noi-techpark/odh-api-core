@@ -62,7 +62,7 @@ namespace OdhApiImporter.Helpers
 
             foreach (var data in ninjadata.data.GroupBy(x => x.pcode))
             {
-                string id = "echarging_" + data.FirstOrDefault().pcode;
+                string id = "echarging_" + data.FirstOrDefault().pcode.ToLower();
 
                 //See if data exists
                 var query = QueryFactory.Query("smgpois")
@@ -95,7 +95,7 @@ namespace OdhApiImporter.Helpers
                     updateimportcounter = updateimportcounter + result.updated ?? 0;
                     errorimportcounter = errorimportcounter + result.error ?? 0;
 
-                    //idlistspreadsheet.Add(idtocheck.ToUpper());
+                    idlistspreadsheet.Add(id);
 
                     //if (!sourcelist.Contains(objecttosave.Source))
                     //    sourcelist.Add(objecttosave.Source);
@@ -285,7 +285,7 @@ namespace OdhApiImporter.Helpers
             
 
             //Get all sources
-            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider)).Distinct().ToList();
+            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider.ToLower())).Distinct().ToList();
         }
 
         private static List<Tuple<string, string>> GetAndParseProviderList(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
