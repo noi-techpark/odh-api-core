@@ -127,6 +127,8 @@ namespace OdhApiImporter.Helpers
             //Set LicenseInfo
             webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
 
+            //PublishedOn Info??
+
             var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "panocloud.webcam.import", importerURL);
 
             return pgcrudresult;

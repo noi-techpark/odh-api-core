@@ -8,6 +8,7 @@ using Microsoft.FSharp.Control;
 using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -59,13 +60,18 @@ namespace OdhApiImporter.Helpers
             var sourcelist = GetAndParseProviderList(ninjadata);
 
 
-
-
             foreach (var data in ninjadata.data.GroupBy(x => x.pcode))
             {
                 string id = "echarging_" + data.FirstOrDefault().pcode;
 
-                var objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data);
+                //See if data exists
+                var query = QueryFactory.Query("smgpois")
+                    .Select("data")
+                    .Where("id", id);
+
+                var objecttosave = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
+
+                objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data, objecttosave);
 
                 if (objecttosave != null)
                 {
@@ -130,10 +136,13 @@ namespace OdhApiImporter.Helpers
                 objecttosave.Id = objecttosave.Id?.ToLower();
 
                 //Set LicenseInfo
-                objecttosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(objecttosave, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+                objecttosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(objecttosave, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+
+                //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
+                objecttosave._Meta = MetadataHelper.GetMetadataobject(objecttosave);
 
                 //Set PublishedOn
-                objecttosave.CreatePublishedOnList();
+                objecttosave.CreatePublishedOnList();            
 
                 var rawdataid = await InsertInRawDataDB(ninjadata);
 
@@ -272,7 +281,9 @@ namespace OdhApiImporter.Helpers
             //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.accessInfo).Distinct().ToList()));
 
             //Console.WriteLine(String.Join(",", ninjadata.data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList()));
+
             
+
             //Get all sources
             return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider)).Distinct().ToList();
         }
@@ -287,7 +298,7 @@ namespace OdhApiImporter.Helpers
                 listtoreturn.Add(
                     Tuple.Create(data.Item1 switch
                     {
-                        "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy" => "spreadsheed",
+                        "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy" => "echargingspreadsheet",
                         _ => data.Item1
                     },
                     data.Item2));

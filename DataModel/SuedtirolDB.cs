@@ -623,7 +623,13 @@ namespace DataModel
             }
         }
 
-        public dynamic AdditionalProperties { get; set; }
+        public AdditionalProperties? AdditionalProperties { get; set; }
+    }
+
+    public class AdditionalProperties
+    {
+        public string Schema { get; set; }
+        public dynamic Data { get; set; }
     }
 
     //TODO Move all properties to this section
@@ -722,11 +728,15 @@ namespace DataModel
         [SwaggerEnum(new[] { "UNAVAILABLE", "ACTIVE", "TEMPORARYUNAVAILABLE", "AVAILABLE", "UNKNOWN","FAULT", "PLANNED" })]
         public string? State { get; set; }
 
+        public string? PaymentInfo { get; set; }
+
         [SwaggerEnum(new[] { "PUBLIC", "PRIVATE", "PRIVATE_WITHPUBLICACCESS" })]
         public string? AccessType { get; set; }
 
         //If accesstype public, or private_withpublicaccess set to true
         public bool? ChargingStationAccessible { get; set; }
+
+        public int? ChargingPlugCount { get; set;}
 
         public IDictionary<string, string> AccessTypeInfo { get; set; }
 
@@ -741,9 +751,10 @@ namespace DataModel
 
         [SwaggerSchema("Maximum operation height in cm")]
         public int? MaxOperationHeight { get; set; }
-        [SwaggerSchema("Maximum operation height in cm")]
+
+
         [SwaggerEnum(new[] { "Typ 1-Stecker", "Typ 2-Stecker", "Combo-Stecker", "CHAdeMO-Stecker", "Tesla Supercharger" })]
-        public string? ChargingCableType { get; set; }
+        public List<string>? ChargingCableType { get; set; }
         public int? ChargingCableLength { get; set; }
 
         [SwaggerSchema("Maximum operation height in cm (barrierfree = 90-120 cm)")]

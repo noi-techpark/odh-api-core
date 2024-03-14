@@ -141,7 +141,9 @@ namespace Helper
             if (data.Source == null)
                 data.Source = "Content";
 
-            if (data.Source.ToLower() == "content" || data.Source.ToLower() == "magnolia" || data.Source.ToLower() == "common")
+            if (data.Source.ToLower() == "noi")
+                licenseholder = "http://noi.bz.it";
+            if (data.Source.ToLower() == "idm" || data.Source.ToLower() == "content" || data.Source.ToLower() == "magnolia" || data.Source.ToLower() == "common")
                 licenseholder = @"https://www.idm-suedtirol.com";
             if (data.Source.ToLower() == "siag")
                 licenseholder = "http://www.provinz.bz.it/kunst-kultur/museen";
@@ -155,6 +157,16 @@ namespace Helper
                 licenseholder = @"https://www.lts.it";
             if (data.Source.ToLower() == "dss")
                 licenseholder = @"https://www.dolomitisuperski.com";
+            if (data.Source.ToLower() == "alperia")
+                licenseholder = @"";
+            if (data.Source.ToLower() == "iit")
+                licenseholder = @"";
+            if (data.Source.ToLower() == "driwe")
+                licenseholder = @"";
+            if (data.Source.ToLower() == "route220")
+                licenseholder = @"";
+            if (data.Source.ToLower() == "echargingspreadsheet")
+                licenseholder = @"";
 
             List<string?> allowedsources = new List<string?>() { 
                 "magnolia", 
@@ -171,7 +183,18 @@ namespace Helper
                 "common",
                 "sta", 
                 "dssliftbase", 
-                "dssslopebase" };
+                "dssslopebase",
+                "noi",
+                "neogy",
+                "driwe",
+                "ecogy gmbh",
+                "route220",
+                "leitner energy",
+                "ötzi genossenschaft",
+                "vek",
+                "pension erlacher",
+                "officina elettrica san vigilio di marebbe spa"
+            };
 
             if (data.Active)
             {

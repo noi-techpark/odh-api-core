@@ -361,14 +361,14 @@ namespace NINJA.Parser
         }
 
 
-        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>> data)
+        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>> data, ODHActivityPoiLinked echargingpoi)
         {
             try
             {
-                ODHActivityPoiLinked echargingpoi = new ODHActivityPoiLinked();
+                if(echargingpoi == null)
+                    echargingpoi = new ODHActivityPoiLinked();
 
                 //Adding Tags
-
                 echargingpoi.SmgTags = new List<string>()
                 {
                     "poi",
@@ -388,7 +388,15 @@ namespace NINJA.Parser
                 echargingpoi.Shortname = data.FirstOrDefault().pname;
 
                 //Detail
-                echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname, Language = "en" });
+                var detail = default(Detail);
+
+                if(echargingpoi.Detail != null && echargingpoi.Detail.ContainsKey("en"))
+                {
+                    echargingpoi.Detail["en"].Title = data.FirstOrDefault().pname;
+                    echargingpoi.Detail.TryAddOrUpdate("en", echargingpoi.Detail["en"]);
+                }
+                else
+                    echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname, Language = "en" });
 
                 //ContactInfo
                 echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.FirstOrDefault().pmetadata.address, City = data.FirstOrDefault().pmetadata.city, Language = "en" });
@@ -399,9 +407,8 @@ namespace NINJA.Parser
                 //    "y": 46.313481,
                 //    "srid": 4326
                 //    },
-                if(data.FirstOrDefault().pcoordinate != null && data.FirstOrDefault().pcoordinate.x > 0 && data.FirstOrDefault().pcoordinate.y > 0) {
-                    echargingpoi.GpsInfo = new List<GpsInfo>();
-                    echargingpoi.GpsInfo.Add(new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.FirstOrDefault().pcoordinate.y, Longitude = data.FirstOrDefault().pcoordinate.x });
+                if (data.FirstOrDefault().pcoordinate != null && data.FirstOrDefault().pcoordinate.x > 0 && data.FirstOrDefault().pcoordinate.y > 0) {
+                    echargingpoi.GpsInfo = new List<GpsInfo>() { new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.FirstOrDefault().pcoordinate.y, Longitude = data.FirstOrDefault().pcoordinate.x } };
                 }
 
                 //Properties Echargingstation
@@ -414,19 +421,30 @@ namespace NINJA.Parser
                 properties.State = data.FirstOrDefault().pmetadata.state;
                 properties.Capacity = data.FirstOrDefault().pmetadata?.capacity;
                 properties.ChargingStationAccessible = data.FirstOrDefault().pmetadata.accessType != null && (data.FirstOrDefault().pmetadata.accessType.ToLower() == "public" || data.FirstOrDefault().pmetadata.accessType.ToLower() == "private_withpublicaccess") ? true : false;
+                properties.PaymentInfo = data.FirstOrDefault().pmetadata?.paymentInfo;
 
-                echargingpoi.AdditionalProperties = properties;
+                properties.ChargingPlugCount = data.Count();
+                properties.ChargingCableType = data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList();
+
+
+                echargingpoi.AdditionalProperties = new AdditionalProperties() { Data = properties, Schema = typeof(EchargingDataProperties).Name };
 
                 //Mapping Object
                 //ADD MAPPING
-                var ninjaid = new Dictionary<string, string>() { { "id", id } };
+                var ninjaid = new Dictionary<string, string>() { { "id", data.FirstOrDefault().pname } };
                 echargingpoi.Mapping.TryAddOrUpdate("mobility", ninjaid);
 
                 //Source, SyncSourceInterface
+                echargingpoi.Source = data.FirstOrDefault().porigin.ToLower();
+                echargingpoi.SyncSourceInterface = data.FirstOrDefault().pmetadata.provider.ToLower();
+                echargingpoi.SyncUpdateMode = "partial";
+
+                //Hack spreadsheet
+                if (echargingpoi.Source == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
+                    echargingpoi.Source = "echargingspreadsheet";
 
 
-
-                return null;
+                return echargingpoi;
             }
             catch (Exception e)
             {
