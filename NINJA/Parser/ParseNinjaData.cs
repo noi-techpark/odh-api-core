@@ -429,9 +429,9 @@ namespace NINJA.Parser
                 //TODO do not overwrite the old values
                 var additionalpropertieskey = typeof(EchargingDataProperties).Name;
 
-                if(echargingpoi.AdditionalProperties != null && echargingpoi.AdditionalProperties.Data != null && echargingpoi.AdditionalProperties.Data.ContainsKey(additionalpropertieskey))
+                if(echargingpoi.AdditionalProperties != null && echargingpoi.AdditionalProperties.ContainsKey(additionalpropertieskey))
                 {
-                    var propstonotoverwrite = echargingpoi.AdditionalProperties.Data[additionalpropertieskey];
+                    var propstonotoverwrite = echargingpoi.AdditionalProperties[additionalpropertieskey];
 
                     properties.HorizontalIdentification = propstonotoverwrite.HorizontalIdentification;
                     properties.SurveyDate = propstonotoverwrite.SurveyDate;
@@ -450,10 +450,10 @@ namespace NINJA.Parser
                     properties.VerticalIdentification = propstonotoverwrite.VerticalIdentification;
                 }
 
-                if (echargingpoi.AdditionalProperties == null)
-                    echargingpoi.AdditionalProperties = new AdditionalProperties();
+                //if (echargingpoi.AdditionalProperties == null)
+                //    echargingpoi.AdditionalProperties = new Dictionary<string, dynamic>();
 
-                echargingpoi.AdditionalProperties.Data.TryAddOrUpdate(additionalpropertieskey, properties);
+                echargingpoi.AdditionalProperties.TryAddOrUpdate(additionalpropertieskey, properties);
 
                 //Mapping Object
                 //ADD MAPPING

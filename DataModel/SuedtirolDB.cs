@@ -580,6 +580,7 @@ namespace DataModel
         public ODHActivityPoi()
         {
             PoiProperty = new Dictionary<string, List<PoiProperty>>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         [SwaggerSchema("Id on the primary data Source")]
@@ -623,16 +624,16 @@ namespace DataModel
             }
         }
 
-        public AdditionalProperties? AdditionalProperties { get; set; }
+        public IDictionary<string, dynamic>? AdditionalProperties { get; set; }
     }
 
-    public class AdditionalProperties
-    {
-        public IDictionary<string, dynamic>? Data { get; set; }
+    //public class AdditionalProperties
+    //{
+    //    public IDictionary<string, dynamic>? Data { get; set; }
 
-        //public string Schema { get; set; }
-        //public dynamic Data { get; set; }
-    }
+    //    //public string Schema { get; set; }
+    //    //public dynamic Data { get; set; }
+    //}
 
     //TODO Move all properties to this section
     public class ODHActivityPoiProperties
