@@ -426,8 +426,34 @@ namespace NINJA.Parser
                 properties.ChargingPlugCount = data.Count();
                 properties.ChargingCableType = data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList();
 
+                //TODO do not overwrite the old values
+                var additionalpropertieskey = typeof(EchargingDataProperties).Name;
 
-                echargingpoi.AdditionalProperties = new AdditionalProperties() { Data = properties, Schema = typeof(EchargingDataProperties).Name };
+                if(echargingpoi.AdditionalProperties != null && echargingpoi.AdditionalProperties.Data != null && echargingpoi.AdditionalProperties.Data.ContainsKey(additionalpropertieskey))
+                {
+                    var propstonotoverwrite = echargingpoi.AdditionalProperties.Data[additionalpropertieskey];
+
+                    properties.HorizontalIdentification = propstonotoverwrite.HorizontalIdentification;
+                    properties.SurveyDate = propstonotoverwrite.SurveyDate;
+                    properties.Barrierfree = propstonotoverwrite.Barrierfree;
+                    properties.CarparkingAreaInColumns = propstonotoverwrite.CarparkingAreaInColumns;
+                    properties.CarparkingAreaInRows = propstonotoverwrite.CarparkingAreaInRows; 
+                    properties.ChargingCableLength = propstonotoverwrite.ChargingCableLength;
+                    properties.ChargingPistolOperationHeightMax = propstonotoverwrite.ChargingPistolOperationHeightMax;
+                    properties.ChargingStationAccessible = propstonotoverwrite.ChargingStationAccessible;
+                    properties.HasRoof = propstonotoverwrite.HasRoof;
+                    properties.MaxOperationHeight = propstonotoverwrite.MaxOperationHeight;
+                    properties.SteplessSidewalkConnection = propstonotoverwrite.SteplessSidewalkConnection;
+                    properties.SurveyAnnotations = propstonotoverwrite.SurveyAnnotations;
+                    properties.SurveyDate = propstonotoverwrite.SurveyDate;
+                    properties.SurveyType = propstonotoverwrite.SurveyType;
+                    properties.VerticalIdentification = propstonotoverwrite.VerticalIdentification;
+                }
+
+                if (echargingpoi.AdditionalProperties == null)
+                    echargingpoi.AdditionalProperties = new AdditionalProperties();
+
+                echargingpoi.AdditionalProperties.Data.TryAddOrUpdate(additionalpropertieskey, properties);
 
                 //Mapping Object
                 //ADD MAPPING

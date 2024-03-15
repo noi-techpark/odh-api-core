@@ -628,8 +628,10 @@ namespace DataModel
 
     public class AdditionalProperties
     {
-        public string Schema { get; set; }
-        public dynamic Data { get; set; }
+        public IDictionary<string, dynamic>? Data { get; set; }
+
+        //public string Schema { get; set; }
+        //public dynamic Data { get; set; }
     }
 
     //TODO Move all properties to this section
