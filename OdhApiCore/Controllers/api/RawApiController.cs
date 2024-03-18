@@ -55,6 +55,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(JsonResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Rawdata")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
@@ -94,7 +95,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(RawDataStoreWithId), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,PoiReader")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("Rawdata/{id}", Name = "SingleRawdata")]
         public async Task<IActionResult> GetRawdataSingle(
             string id,
