@@ -119,7 +119,7 @@ namespace OdhApiCore.Controllers.api
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, activetoday: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, 
                    active: active, optimizedates: optimizedates,
-                   sortorder: sortorder, seed: seed, lastchange: lastchange, publishedon: publishedon, 
+                   sortorder: sortorder, seed: seed, lastchange: lastchange, langfilter: langfilter, publishedon: publishedon, 
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
                    cancellationToken: cancellationToken);
         }
@@ -215,7 +215,7 @@ namespace OdhApiCore.Controllers.api
 
             return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, 
                 websiteactive.Value, communityactive.Value, active, eventids, webaddress, publishedon, updatefrom, language, null, 
-                searchfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, removenullvalues, cancellationToken);
+                searchfilter, langfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -296,7 +296,7 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
             string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? activetoday, bool? websiteactive, bool? communityactive, 
-            bool active, bool optimizedates, string? sortorder, string? seed,
+            bool active, bool optimizedates, string? sortorder, string? seed, string? langfilter,
             string? lastchange, string? publishedon, string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -305,14 +305,14 @@ namespace OdhApiCore.Controllers.api
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);                
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                    sourcefilter, eventlocationfilter, activetoday, websiteactive, communityactive, active, idfilter, webaddressfilter, lastchange, sortorder, publishedon);
+                    sourcefilter, eventlocationfilter, activetoday, websiteactive, communityactive, active, idfilter, webaddressfilter, lastchange, langfilter, sortorder, publishedon);
 
                 var query =
                    QueryFactory.Query()
                        .SelectRaw("data")
                        .From("eventeuracnoi")
                        .EventShortWhereExpression(
-                           idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
+                           idlist: myeventshorthelper.idlist, languagelist: myeventshorthelper.languagelist, sourcelist: myeventshorthelper.sourcelist,
                            eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
                            start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
                            websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter, 
@@ -382,7 +382,7 @@ namespace OdhApiCore.Controllers.api
 
         private async Task<IActionResult> GetEventShortListbyRoomBooked(
             string? startdate, string? enddate, string? datetimeformat, string? sourcefilter, string? eventlocationfilter, 
-            bool? todayactive, bool? websiteactive, bool? communityactive, bool active, string? idfilter, string? webaddressfilter, string? publishedon, string? lastchange, string? language, string? sortorder, 
+            bool? todayactive, bool? websiteactive, bool? communityactive, bool active, string? idfilter, string? webaddressfilter, string? publishedon, string? lastchange, string? language, string? sortorder, string? langfilter,
             string? searchfilter, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             //Additional Read Filters to Add Check
@@ -390,14 +390,14 @@ namespace OdhApiCore.Controllers.api
 
             EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
                   sourcefilter, eventlocationfilter, todayactive, websiteactive, communityactive, active,
-                  idfilter, webaddressfilter, lastchange, sortorder, publishedon);
+                  idfilter, webaddressfilter, lastchange, langfilter, sortorder, publishedon);
 
             var query =
                QueryFactory.Query()
                    .SelectRaw("data")
                    .From("eventeuracnoi")
                    .EventShortWhereExpression(
-                       idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
+                       idlist: myeventshorthelper.idlist, languagelist: myeventshorthelper.languagelist, sourcelist: myeventshorthelper.sourcelist,
                        eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
                        start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
                        websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,

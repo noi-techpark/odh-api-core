@@ -1106,14 +1106,14 @@ namespace OdhApiCore.Controllers.api
                     select += string.Join("", fields.Where(x => x != "Id").Select(field => $", data#>'\\{{{field.Replace(".", ",")}\\}}' as \"{field}\""));
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                    sourcefilter, eventlocationfilter, todayactive, websiteactive, communityactive, active, null, webaddressfilter, lastchange, sortorder, null);
+                    sourcefilter, eventlocationfilter, todayactive, websiteactive, communityactive, active, null, webaddressfilter, lastchange, language, sortorder, null);
 
                 var query =
                    (XQuery)QueryFactory.Query()
                        .SelectRaw(select)
                        .From("eventeuracnoi")
                        .EventShortWhereExpression(
-                           idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
+                           idlist: myeventshorthelper.idlist, languagelist: myeventshorthelper.languagelist, sourcelist: myeventshorthelper.sourcelist,
                            eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
                            start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
                            websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
