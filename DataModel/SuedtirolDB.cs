@@ -2927,7 +2927,9 @@ namespace DataModel
     //For Types Api
     public class AccoFeatures : AccoTypes
     {
+        public string? ClusterId { get; set; }
 
+        public string? ClusterCustomId { get; set; }
     }
 
     //For Types Api 

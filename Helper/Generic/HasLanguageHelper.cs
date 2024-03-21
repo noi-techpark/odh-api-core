@@ -640,8 +640,11 @@ namespace Helper
         }
 
         //For Webcams
-        public static void CheckMyInsertedLanguages(this WebcamInfo mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(this WebcamInfo mypoiactivity, List<string>? availablelanguages = null)
         {
+            if (availablelanguages == null)
+                availablelanguages = new List<string> { "de", "it", "en" };
+
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
 
