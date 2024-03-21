@@ -39,6 +39,8 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
         //Tags
         public List<Tags> Tags { get; set; }
 
@@ -76,17 +78,9 @@ namespace DataModel
 
 
         //TODO Add EventDates
+        public ICollection<DateRanges> Dates { get; set; }
 
         //TODO Add Booking Info
-
-        //to check if this is needed?
-
-        //TODO Properties LIST (simple Key Value List)
-        public IDictionary<string,string>? Properties { get; set; }
-
-        //TODO Properties Language Based LIST (Key Value List Language Dependant)
-        public IDictionary<string, IDictionary<string,string>>? PropertiesLocalized { get; set; }
-
     }
 
     public class VenueLink
@@ -101,6 +95,17 @@ namespace DataModel
         public DateTime End { get; set; }
     }
 
+    public class DocumentDetailed : Document
+    {
+        public string Description { get; set; }
+        public string DocumentExtension { get; set; }
+        public string DocumentMimeType { get; set; }
+    }
 
+    //SFSCon Specific
+
+    //LTS Specific
+
+    //EventShort Specific
 
 }
