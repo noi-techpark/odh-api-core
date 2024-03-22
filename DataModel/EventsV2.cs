@@ -37,6 +37,7 @@ namespace DataModel
         public ICollection<string>? HasLanguage { get; set; }
         public ICollection<string>? PublishedOn { get; set; }
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        //We use RelatedContent to store Parent/Child Event Information
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
@@ -64,7 +65,7 @@ namespace DataModel
         public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }
 
         //TODO Add EventDates
-        public ICollection<EventDetail> EventDetail { get; set; }
+        public ICollection<EventInfo> EventInfo { get; set; }
 
         //TODO Add Booking Info
 
@@ -77,12 +78,11 @@ namespace DataModel
         public string? Self { get; set; }
     }
 
-    public class EventDetail
+    public class EventInfo
     {
         public DateTime Begin { get; set; }
         public DateTime End { get; set; }
 
-        //Assigned Venues or should we use RelatedContent?
         public List<string> VenueIds { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
@@ -94,7 +94,10 @@ namespace DataModel
             }
         }
 
+        //to check if this is needed
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public IDictionary<string, Detail> Detail { get; set; }
 
         public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }
     }
