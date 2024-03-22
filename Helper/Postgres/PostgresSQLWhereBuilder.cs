@@ -500,7 +500,7 @@ namespace Helper
                  "<query>", // not interested in query
                 idlist, venueidlist,               
                 districtlist, municipalitylist, tourismvereinlist,
-                regionlist, orglist, sourcelist, languagelist, begindate, enddate,
+                regionlist, sourcelist, languagelist, begindate, enddate,
                 activefilter, searchfilter,
                 language, lastchange
             );
