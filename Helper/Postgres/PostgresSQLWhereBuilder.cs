@@ -480,6 +480,50 @@ namespace Helper
                 .FilterReducedDataByRoles(userroles);
         }
 
+        //Return Where and Parameters for EventV2
+        public static Query EventV2WhereExpression(
+          this Query query, IReadOnlyCollection<string> languagelist,
+          IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> venueidlist,
+          IDictionary<string, List<string>>? tagdict,
+          IReadOnlyCollection<string> districtlist,
+          IReadOnlyCollection<string> municipalitylist, IReadOnlyCollection<string> tourismvereinlist,
+          IReadOnlyCollection<string> regionlist,
+          IReadOnlyCollection<string> sourcelist,
+          DateTime? begindate, DateTime? enddate,
+          bool? activefilter,IReadOnlyCollection<string> publishedonlist,
+          string? searchfilter, string? language, string? lastchange,
+          string? additionalfilter,
+          IEnumerable<string> userroles)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                idlist, venueidlist,               
+                districtlist, municipalitylist, tourismvereinlist,
+                regionlist, orglist, sourcelist, languagelist, begindate, enddate,
+                activefilter, searchfilter,
+                language, lastchange
+            );
+
+            return query
+                .IdUpperFilter(idlist)
+                .DateFilter_GeneratedColumn(begindate, enddate, "")
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
+                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
+                .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
+                .LastChangedFilter_GeneratedColumn(lastchange)
+                .DistrictFilter(districtlist)
+                .LocFilterMunicipalityFilter(municipalitylist)
+                .LocFilterTvsFilter(tourismvereinlist)
+                .LocFilterRegionFilter(regionlist)
+                .When(tagdict != null && tagdict.Count > 0, q => q.TaggingFilter_GeneratedColumn(tagdict))
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
+        }
+
         //Return Where and Parameters for Accommodation
         public static Query AccommodationWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,

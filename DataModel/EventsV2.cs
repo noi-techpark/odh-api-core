@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DataModel
 {
-    public class EventsV2 : IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IGPSInfoAware, IPublishedOn, IVideoItemsAware
+    public class EventsV2 : IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IGPSInfoAware, IPublishedOn, IVideoItemsAware, IImportDateassigneable
     {
         //MetaData Information, Contains Source, LastUpdate
         public Metadata? _Meta { get; set; }
@@ -24,7 +24,7 @@ namespace DataModel
         {
             get
             {
-                return this.Id != null ? "Events/" + Uri.EscapeDataString(this.Id) : null;                
+                return "EventV2/" + Uri.EscapeDataString(this.Id);
             }
         }
 
@@ -32,6 +32,9 @@ namespace DataModel
         public string? Id { get; set; }
         public string? Shortname { get; set; }
         public bool Active { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
 
         //Language, Publishedon, Mapping and RelatedContent
         public ICollection<string>? HasLanguage { get; set; }
