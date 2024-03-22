@@ -49,6 +49,8 @@ namespace DataModel
         public IDictionary<string, Detail> Detail { get; set; }
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
 
+        //Event Organizer
+        public IDictionary<string, ContactInfos> Organizer { get; set; }
 
         //ImageGallery and Video Data
         public ICollection<ImageGallery>? ImageGallery { get; set; }
@@ -57,7 +59,28 @@ namespace DataModel
         //Gps Information and LocationInfo or should the venue GPS Info used?
         public ICollection<GpsInfo> GpsInfo { get; set; }
         public LocationInfoLinked? LocationInfo { get; set; }
-        
+                   
+
+        public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }
+
+        //TODO Add EventDates
+        public ICollection<EventDetail> EventDetail { get; set; }
+
+        //TODO Add Booking Info
+
+        //TODO Add Subevent Use RelatedContent?
+    }
+
+    public class VenueLink
+    {
+        public string Id { get; set; }
+        public string? Self { get; set; }
+    }
+
+    public class EventDetail
+    {
+        public DateTime Begin { get; set; }
+        public DateTime End { get; set; }
 
         //Assigned Venues or should we use RelatedContent?
         public List<string> VenueIds { get; set; }
@@ -71,28 +94,9 @@ namespace DataModel
             }
         }
 
-        //TODO Add Subevent Use RelatedContent?
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
-        //TODO Add Documents
-        public IDictionary<string, List<Document>?> Documents { get; set; }
-
-
-        //TODO Add EventDates
-        public ICollection<DateRanges> Dates { get; set; }
-
-        //TODO Add Booking Info
-    }
-
-    public class VenueLink
-    {
-        public string Id { get; set; }
-        public string? Self { get; set; }
-    }
-
-    public class DateRanges
-    {
-        public DateTime Begin { get; set; }
-        public DateTime End { get; set; }
+        public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }
     }
 
     public class DocumentDetailed : Document
@@ -104,7 +108,9 @@ namespace DataModel
 
     //SFSCon Specific
 
+
     //LTS Specific
+
 
     //EventShort Specific
 
