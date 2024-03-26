@@ -91,8 +91,9 @@ namespace Helper
                             if ((mydata as EventLinked).SmgActive && mydata._Meta.Source == "lts")
                                 publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
 
-                            //Add only for Events for the future
-                            if ((mydata as EventLinked).NextBeginDate >= new DateTime(2023, 1, 1) && mydata._Meta.Source == "lts")
+                            //Marketplace Events only ClassificationRID 
+                            var validclassificationrids = new List<string>() { "CE212B488FA14954BE91BBCFA47C0F06" };
+                            if (validclassificationrids.Contains((mydata as EventLinked).ClassificationRID) && mydata._Meta.Source == "lts")
                                 publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
 
                             //Events DRIN CENTROTREVI
@@ -120,11 +121,8 @@ namespace Helper
                         if ((mydata as ODHActivityPoiLinked).SmgActive && mydata._Meta.Source == "suedtirolwein")
                             publishedonlist.TryAddOrUpdateOnList("suedtirolwein.com");
 
-
                         if ((mydata as ODHActivityPoiLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
-                        {
-                          
-
+                        {                          
                             //IF category is white or blacklisted find an intersection
                             var tagintersection = allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags);
 
@@ -182,6 +180,7 @@ namespace Helper
                         {
                             publishedonlist.TryAddOrUpdateOnList("noi-communityapp");
                         }
+                        publishedonlist.TryAddOrUpdateOnList("today.eurac.edu");
 
                         break;
 
