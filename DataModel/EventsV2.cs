@@ -118,6 +118,46 @@ namespace DataModel
     //LTS Specific
 
 
-    //EventShort Specific
+    //EventShort Specific#
 
+
+    public class EventV2Converter
+    {
+        public static IEnumerable<EventsV2> ConvertEventListToEventV2<T>(IEnumerable<T> events) where T : IIdentifiable
+        {
+            var eventsV2 = new List<EventsV2>();
+
+            foreach(var eventv1 in events)
+            {
+                if (eventv1 is EventShortLinked)
+                    eventsV2.Add(ConvertEventShortToEventV2(eventv1 as EventShortLinked));
+                if (eventv1 is EventLinked)
+                    eventsV2.Add(ConvertEventToEventV2(eventv1 as EventLinked));
+            }
+
+            return eventsV2;
+        }
+
+        private static EventsV2 ConvertEventToEventV2(EventLinked eventv1)
+        {
+            //Try to map all to EventsV2
+            EventsV2 eventsv2 = new EventsV2();
+
+            eventsv2.PublishedOn = eventv1.PublishedOn;
+            eventsv2.Id = eventv1.Id;
+            eventsv2.ImageGallery = eventv1.ImageGallery;
+
+
+            return null;
+        }
+
+        private static EventsV2 ConvertEventShortToEventV2(EventShortLinked eventv1)
+        {
+            //Try to map all to EventsV2
+            EventsV2 eventsv2 = new EventsV2();
+
+
+            return null;
+        }
+    }
 }
