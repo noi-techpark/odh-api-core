@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DataModel
 {
-    public class EventsV2 : IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IGPSInfoAware, IPublishedOn, IVideoItemsAware, IImportDateassigneable
+    public class EventsV2 : IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IGPSInfoAware, IPublishedOn, IVideoItemsAware, IImportDateassigneable, ISource
     {
         //MetaData Information, Contains Source, LastUpdate
         public Metadata? _Meta { get; set; }
@@ -35,6 +35,7 @@ namespace DataModel
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
 
+        public string? Source { get; set; }
 
         //Language, Publishedon, Mapping and RelatedContent
         public ICollection<string>? HasLanguage { get; set; }
@@ -70,6 +71,8 @@ namespace DataModel
         //TODO Add EventDates
         public ICollection<EventInfo> EventInfo { get; set; }
 
+        //TODO Event URLS ? 
+
         //TODO Add Booking Info
 
         //TODO Add Subevent Use RelatedContent?
@@ -85,6 +88,10 @@ namespace DataModel
     {
         public DateTime Begin { get; set; }
         public DateTime End { get; set; }
+
+        public double BeginUTC { get; set; }
+
+        public double EndUTC { get; set; }
 
         public List<string> VenueIds { get; set; }
 
@@ -116,10 +123,16 @@ namespace DataModel
 
 
     //LTS Specific
+    public class EventLTSInfo
+    {
 
+    }
 
-    //EventShort Specific#
+    //EventShort Specific
+    public class EventEBMSInfo
+    {
 
+    }
 
     public class EventV2Converter
     {
@@ -141,23 +154,93 @@ namespace DataModel
         private static EventsV2 ConvertEventToEventV2(EventLinked eventv1)
         {
             //Try to map all to EventsV2
-            EventsV2 eventsv2 = new EventsV2();
+            EventsV2 eventv2 = new EventsV2();
 
-            eventsv2.PublishedOn = eventv1.PublishedOn;
-            eventsv2.Id = eventv1.Id;
-            eventsv2.ImageGallery = eventv1.ImageGallery;
+            eventv2.PublishedOn = eventv1.PublishedOn;
+            eventv2.Id = eventv1.Id;
+            eventv2.ImageGallery = eventv1.ImageGallery;
+            eventv2.Shortname = eventv1.Shortname;
+            eventv2.FirstImport = eventv1.FirstImport;
+            eventv2.LastChange = eventv1.LastChange;
+            eventv2.Active = eventv1.Active;
+            eventv2.Mapping = eventv1.Mapping;
+            eventv2.HasLanguage = eventv1.HasLanguage;
+            eventv2.LicenseInfo = eventv1.LicenseInfo;
+            eventv2.Source = eventv1.Source;
+
+            eventv2.Detail = eventv1.Detail;
+            eventv2.GpsInfo = eventv1.GpsInfo;
+            eventv2.ContactInfos = eventv1.ContactInfos;
+
+            //SMGTags as Tags
 
 
-            return null;
+            return eventv2;
         }
 
         private static EventsV2 ConvertEventShortToEventV2(EventShortLinked eventv1)
         {
             //Try to map all to EventsV2
-            EventsV2 eventsv2 = new EventsV2();
+            EventsV2 eventv2 = new EventsV2();
+
+            eventv2.PublishedOn = eventv1.PublishedOn;
+            eventv2.Id = eventv1.Id;
+            eventv2.ImageGallery = eventv1.ImageGallery;
+            eventv2.Shortname = eventv1.Shortname;
+            eventv2.FirstImport = eventv1.FirstImport;
+            eventv2.LastChange = eventv1.LastChange;
+            eventv2.Active = eventv1.Active.Value;
+            eventv2.Mapping = eventv1.Mapping;
+            eventv2.HasLanguage = eventv1.HasLanguage;
+            eventv2.GpsInfo = eventv1.GpsInfo;
+            eventv2.LicenseInfo = eventv1.LicenseInfo;
+            eventv2.Source = eventv1.Source;
+
+            //Putting all info into Detail
+            Detail detailde = new Detail() { Title = eventv1.EventTitle["de"], Language = "de", BaseText = eventv1.EventText["de"] };
+            Detail detailit = new Detail() { Title = eventv1.EventTitle["it"], Language = "it", BaseText = eventv1.EventText["it"] };
+            Detail detailen = new Detail() { Title = eventv1.EventTitle["en"], Language = "en", BaseText = eventv1.EventText["en"] };
+
+            eventv2.Detail.Add("de", detailde);
+            eventv2.Detail.Add("it", detailit);
+            eventv2.Detail.Add("en", detailen);
 
 
-            return null;
+            //Adding CustomTagging, TechnologyFields to Tags
+            eventv2.Tags = new List<Tags>();
+            foreach (var tag in eventv1.TechnologyFields)
+            {
+                eventv2.Tags.Add(new Tags() { Id = tag, Source = "noi" });
+            }
+            foreach (var tag in eventv1.CustomTagging)
+            {
+                eventv2.Tags.Add(new Tags() { Id = tag, Source = "noi" });
+            }
+
+            //Adding EventDocument, Documents as DocumentDetailed
+            eventv2.Documents = new Dictionary<string, List<DocumentDetailed>>();
+            foreach (var documentkvp in eventv1.Documents)
+            {
+                List<DocumentDetailed> documents = new List<DocumentDetailed>();
+                foreach(var doc in documentkvp.Value)
+                {
+                    documents.Add(new DocumentDetailed() { DocumentName = doc.DocumentName, DocumentURL = doc.DocumentURL, Language = doc.Language });
+                }
+
+                eventv2.Documents.Add(documentkvp.Key, documents);
+            }
+            
+            //Adding EventLocation, AnchorVenue, AnchorVenueRoomMapping, AnchorVenueShort, EndDate, StartDate, StartDateUTC, EndDateUTC, RoomBooked
+
+
+            //ExternalOrganizer, SoldOut, TypicalAgeRange
+
+            //WebAddress
+
+
+
+
+            return eventv2;
         }
     }
 }
