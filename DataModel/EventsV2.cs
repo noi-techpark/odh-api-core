@@ -66,7 +66,7 @@ namespace DataModel
         //public LocationInfoLinked? LocationInfo { get; set; } // should this be part of the venue?
 
 
-        public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }
+        public IDictionary<string, List<DocumentDetailed>>? Documents { get; set; }
 
         //TODO Add EventDates
         public ICollection<EventInfo> EventInfo { get; set; }
@@ -100,7 +100,7 @@ namespace DataModel
         {
             get
             {
-                return this.Venues != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "Venue/" + x }).ToList() : new List<VenueLink>();
+                return this.VenueIds != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = ODHConstant.ApplicationURL + "Venue/" + x }).ToList() : new List<VenueLink>();
             }
         }
 
@@ -187,6 +187,10 @@ namespace DataModel
 
             //SMGTags as Tags
 
+            foreach(var eventdate in eventv1.EventDate)
+            {
+
+            }
 
             return (eventv2, venues);
         }
@@ -209,26 +213,34 @@ namespace DataModel
             eventv2.LicenseInfo = eventv1.LicenseInfo;
             eventv2.Source = eventv1.Source;
 
-            eventv2.Mapping.Add("ebms", new Dictionary<string, string>() { { "id", eventv1.EventId.ToString() } });
+            if(eventv2.Mapping == null)
+                eventv2.Mapping.Add("ebms", new Dictionary<string, string>() { { "id", eventv1.EventId.ToString() } });
 
             //Putting all info into Detail
             eventv2.Detail = new Dictionary<string, Detail>();
             foreach (var lang in eventv2.HasLanguage)
             {
-                Detail detail = new Detail() { Title = eventv1.EventTitle[lang], Language = lang, BaseText = eventv1.EventText[lang] };
+                Detail detail = new Detail() { Title = eventv1.EventTitle[lang], Language = lang, BaseText = eventv1.EventText != null && eventv1.EventText.ContainsKey(lang) ? eventv1.EventText[lang] : "" };
 
                 eventv2.Detail.Add(lang, detail);
             }
             
             //Adding CustomTagging, TechnologyFields to Tags
             eventv2.Tags = new List<Tags>();
-            foreach (var tag in eventv1.TechnologyFields)
+
+            if (eventv1.TechnologyFields != null)
             {
-                eventv2.Tags.Add(new Tags() { Id = tag, Source = "noi" });
+                foreach (var tag in eventv1.TechnologyFields)
+                {
+                    eventv2.Tags.Add(new Tags() { Id = tag, Source = "noi" });
+                }
             }
-            foreach (var tag in eventv1.CustomTagging)
+            if (eventv1.CustomTagging != null)
             {
-                eventv2.Tags.Add(new Tags() { Id = tag, Source = "noi" });
+                foreach (var tag in eventv1.CustomTagging)
+                {
+                    eventv2.Tags.Add(new Tags() { Id = tag, Source = "noi" });
+                }
             }
 
             //Adding EventDocument, Documents as DocumentDetailed
@@ -282,12 +294,13 @@ namespace DataModel
                 contactinfo.Faxnumber = eventv1.CompanyFax;
                 contactinfo.ZipCode = eventv1.CompanyPostalCode;
                 contactinfo.Url = eventv1.CompanyUrl;
+                contactinfo.Tax = eventv1.CompanyId;
 
                 eventv2.Organizer.Add(lang, contactinfo);
             }
 
             //Adding EventLocation, AnchorVenue, AnchorVenueRoomMapping, AnchorVenueShort, EndDate, StartDate, StartDateUTC, EndDateUTC, RoomBooked
-            var venues = new List<VenueLinked>();
+            var venues = new HashSet<VenueLinked>();
 
             eventv2.EventInfo = new List<EventInfo>();
             foreach(var room in eventv1.RoomBooked)
@@ -298,6 +311,8 @@ namespace DataModel
                 eventinfo.BeginUTC = room.StartDateUTC;
                 eventinfo.End = room.EndDate;
                 eventinfo.EndUTC = room.EndDateUTC;
+
+                eventinfo.VenueIds = new List<string>();
 
                 eventinfo.Detail = new Dictionary<string, Detail>()
                 {
@@ -317,9 +332,26 @@ namespace DataModel
                 {
                     { "en", new Detail(){ Title = room.SpaceDesc } }
                 };
-                venues.Add(venue);
+
+                if (venues.Count == 0 || !venues.Select(x => x.Id).ToList().Contains(venue.Id))
+                    venues.Add(venue);
+
+                
+                eventinfo.VenueIds.Add(venue.Id);
+
+                eventv2.EventInfo.Add(eventinfo);
             }
 
+            //Video
+            if(!String.IsNullOrEmpty(eventv1.VideoUrl))
+            {
+                eventv2.VideoItems = new Dictionary<string, ICollection<VideoItems>>()
+                {
+                    {
+                        "en", new List<VideoItems>(){ new VideoItems(){ Url = eventv1.VideoUrl } }
+                    }
+                };
+            }
 
 
             //ExternalOrganizer, SoldOut, TypicalAgeRange

@@ -147,18 +147,38 @@ namespace OdhApiCore.Controllers
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
-        [HttpGet, Route("ConvertEventShortToEventV2/{id}")]
+        [ProducesResponseType(typeof(EventsV2), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet, Route("EventV2/ConvertEventShortToEventV2/{id}")]
         public async Task<IActionResult> ConvertEventShortToEventV2(string id)
         {
             var query =
                 QueryFactory.Query("eventeuracnoi")
                     .Select("data")
-                    .Where("id", id.ToUpper())                    
+                    .Where("id", id.ToLower())                    
                     .FilterDataByAccessRoles(UserRolesToFilter);
 
             var data = await query.GetObjectListAsync<EventShortLinked>();
+            var convertresult = EventV2Converter.ConvertEventListToEventV2(data);
 
-            return Ok(EventV2Converter.ConvertEventListToEventV2(data));
+            return Ok(convertresult.Item1);
+        }
+
+        [HttpGet, Route("EventV2/ConvertEventToEventV2/{id}")]
+        public async Task<IActionResult> ConvertEventToEventV2(string id)
+        {
+            var query =
+                QueryFactory.Query("eventeuracnoi")
+                    .Select("data")
+                    .Where("id", id.ToUpper())
+                    .FilterDataByAccessRoles(UserRolesToFilter);
+
+            var data = await query.GetObjectListAsync<EventLinked>();
+
+            var convertresult = EventV2Converter.ConvertEventListToEventV2(data);
+
+            return Ok(convertresult.Item1);
         }
 
 
