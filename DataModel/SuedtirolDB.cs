@@ -2427,6 +2427,7 @@ namespace DataModel
 
         public List<string>? CustomTagging { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use Documents")]
         public List<DocumentPDF>? EventDocument {
             get
             {
@@ -2515,6 +2516,7 @@ namespace DataModel
 
         public ICollection<GpsInfo>? GpsInfo { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
