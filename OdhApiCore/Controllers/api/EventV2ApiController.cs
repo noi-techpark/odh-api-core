@@ -147,6 +147,21 @@ namespace OdhApiCore.Controllers
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
+        [HttpGet, Route("ConvertEventShortToEventV2/{id}")]
+        public async Task<IActionResult> ConvertEventShortToEventV2(string id)
+        {
+            var query =
+                QueryFactory.Query("eventeuracnoi")
+                    .Select("data")
+                    .Where("id", id.ToUpper())                    
+                    .FilterDataByAccessRoles(UserRolesToFilter);
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+
+            return Ok(EventV2Converter.ConvertEventListToEventV2(data));
+        }
+
+
         #endregion
 
         #region GETTER
