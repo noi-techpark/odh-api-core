@@ -191,8 +191,7 @@ namespace DataModel
             eventv2.ContactInfos = eventv1.ContactInfos;
             eventv2.Organizer = eventv1.OrganizerInfos;
 
-            if (eventv2.Mapping == null)
-                eventv2.Mapping.Add("lts", new Dictionary<string, string>() { { "id", eventv1.Id } });
+            eventv2.Mapping.Add("lts", new Dictionary<string, string>() { { "rid", eventv1.Id }, { "classificationrid", eventv1.ClassificationRID } });
 
             //Topics to Tags
             eventv2.Tags = new List<Tags>();
@@ -207,10 +206,20 @@ namespace DataModel
 
             //Creating Venue
             VenueLinked venue = new VenueLinked();
-            venue.Id = "";
-            venue.Shortname = eventv1.EventAdditionalInfos["en"].Location;
+            venue.Id = ""; //What should we use as Id?
+            venue.Shortname = eventv1.EventAdditionalInfos.ContainsKey("en") ? eventv1.EventAdditionalInfos["en"].Location : eventv1.EventAdditionalInfos.FirstOrDefault().Key;  //What if Location is empty
             venue.GpsInfo = eventv1.GpsInfo;
             venue.LocationInfo = eventv1.LocationInfo;
+            venue.Detail = new Dictionary<string, Detail>();
+            foreach(var lang in eventv1.HasLanguage)
+            {
+                Detail venuedetail = new Detail();
+                venuedetail.Language = lang;
+
+                venue.Detail[lang] = venuedetail;
+            }
+
+            venues.Add(venue);
 
             eventv2.EventInfo = new List<EventInfo>();
             foreach (var eventdate in eventv1.EventDate)
