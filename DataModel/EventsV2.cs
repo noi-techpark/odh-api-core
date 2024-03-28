@@ -125,7 +125,12 @@ namespace DataModel
     //LTS Specific
     public class EventLTSInfo
     {
+        public EventPublisher EventPublisher { get; set; }
+        public bool SignOn { get; set; }
 
+        public EventBooking EventBooking { get; set; }
+
+        public EventPrice EventPrice { get; set; }
     }
 
     //EventShort Specific
@@ -184,12 +189,40 @@ namespace DataModel
             eventv2.Detail = eventv1.Detail;
             //eventv2.GpsInfo = eventv1.GpsInfo; add to venue
             eventv2.ContactInfos = eventv1.ContactInfos;
+            eventv2.Organizer = eventv1.OrganizerInfos;
 
-            //SMGTags as Tags
+            if (eventv2.Mapping == null)
+                eventv2.Mapping.Add("lts", new Dictionary<string, string>() { { "id", eventv1.Id } });
 
-            foreach(var eventdate in eventv1.EventDate)
+            //Topics to Tags
+            eventv2.Tags = new List<Tags>();
+
+            if (eventv1.TopicRIDs != null)
             {
+                foreach (var tag in eventv1.TopicRIDs)
+                {
+                    eventv2.Tags.Add(new Tags() { Id = tag, Source = "lts" });
+                }
+            }
 
+            //Creating Venue
+            VenueLinked venue = new VenueLinked();
+            venue.Id = "";
+            venue.Shortname = eventv1.EventAdditionalInfos["en"].Location;
+            venue.GpsInfo = eventv1.GpsInfo;
+            venue.LocationInfo = eventv1.LocationInfo;
+
+            eventv2.EventInfo = new List<EventInfo>();
+            foreach (var eventdate in eventv1.EventDate)
+            {
+                EventInfo eventinfo = new EventInfo();
+                eventinfo.Begin = eventdate.From.Date + eventdate.Begin.Value;
+                eventinfo.End = eventdate.To.Date + eventdate.End.Value;
+
+                //Add From, To and Begin End
+                eventinfo.VenueIds = new List<string>() { venue.Id };
+
+                eventv2.EventInfo.Add(eventinfo);
             }
 
             return (eventv2, venues);
