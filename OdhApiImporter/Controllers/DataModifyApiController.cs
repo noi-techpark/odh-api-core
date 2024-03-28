@@ -59,7 +59,9 @@ namespace OdhApiImporter.Controllers
 
             //objectscount = await customdataoperation.UpdateAllEventShortstEventDocumentField();
 
-            objectscount = await customdataoperation.UpdateAllEventShortstActiveFieldToTrue();
+            //objectscount = await customdataoperation.UpdateAllEventShortstActiveFieldToTrue();
+
+            objectscount = await customdataoperation.UpdateAllEventShortstHasLanguage();
 
             return Ok(new UpdateResult
             {
@@ -432,6 +434,44 @@ namespace OdhApiImporter.Controllers
                 success = true
             });
         }
+
+        #endregion
+
+        #region Haslanguage
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ModifyWines")]
+        public async Task<IActionResult> ModifyWines(CancellationToken cancellationToken)
+        {
+            var objectscount = 0;
+
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            //objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
+            //objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
+
+            //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
+
+            //objectscount = await customdataoperation.UpdateAllEventShortstEventDocumentField();
+
+            //objectscount = await customdataoperation.UpdateAllEventShortstActiveFieldToTrue();
+
+            objectscount = await customdataoperation.UpdateAllWineHasLanguage();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify wines",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
 
         #endregion
     }

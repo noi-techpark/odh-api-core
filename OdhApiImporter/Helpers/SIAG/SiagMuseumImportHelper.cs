@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using System.Xml.Linq;
 using Helper;
+using ServiceReferenceLCS;
 
 namespace OdhApiImporter.Helpers
 {
@@ -462,7 +463,10 @@ namespace OdhApiImporter.Helpers
             odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
 
             //Set LicenseInfo
-            odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+            odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+
+            //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
+            odhactivitypoi._Meta = MetadataHelper.GetMetadataobject(odhactivitypoi);
 
             //Set Publishedon
             odhactivitypoi.CreatePublishedOnList();

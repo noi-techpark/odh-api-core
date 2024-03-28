@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using DataModel;
 using Helper;
+using Microsoft.FSharp.Control;
 
 namespace NINJA.Parser
 {
@@ -360,23 +361,25 @@ namespace NINJA.Parser
         }
 
 
-        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>> data)
+        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>> data, ODHActivityPoiLinked echargingpoi)
         {
             try
             {
-                ODHActivityPoiLinked echargingpoi = new ODHActivityPoiLinked();
+                if(echargingpoi == null)
+                    echargingpoi = new ODHActivityPoiLinked();
 
                 //Adding Tags
-
                 echargingpoi.SmgTags = new List<string>()
                 {
                     "poi",
+                    "mobilität",
                     "e-tankstellen ladestationen"
                 };
 
                 echargingpoi.Tags = new List<Tags>()
                 {
                     new Tags(){ Id = "poi", Source = "lts" },
+                    new Tags(){ Id = "mobility", Source = "lts" },
                     new Tags(){ Id = "electric charging stations", Source = "idm" }
                 };
 
@@ -385,10 +388,18 @@ namespace NINJA.Parser
                 echargingpoi.Shortname = data.FirstOrDefault().pname;
 
                 //Detail
-                echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname });
+                var detail = default(Detail);
+
+                if(echargingpoi.Detail != null && echargingpoi.Detail.ContainsKey("en"))
+                {
+                    echargingpoi.Detail["en"].Title = data.FirstOrDefault().pname;
+                    echargingpoi.Detail.TryAddOrUpdate("en", echargingpoi.Detail["en"]);
+                }
+                else
+                    echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname, Language = "en" });
 
                 //ContactInfo
-                echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.FirstOrDefault().pmetadata.address, City = data.FirstOrDefault().pmetadata.city });
+                echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.FirstOrDefault().pmetadata.address, City = data.FirstOrDefault().pmetadata.city, Language = "en" });
 
                 //GpsInfo
                 //"pcoordinate": {
@@ -396,18 +407,70 @@ namespace NINJA.Parser
                 //    "y": 46.313481,
                 //    "srid": 4326
                 //    },
-                if(data.FirstOrDefault().pcoordinate != null && data.FirstOrDefault().pcoordinate.x > 0 && data.FirstOrDefault().pcoordinate.y > 0) {
-                    echargingpoi.GpsInfo.Add(new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.FirstOrDefault().pcoordinate.y, Longitude = data.FirstOrDefault().pcoordinate.x });
+                if (data.FirstOrDefault().pcoordinate != null && data.FirstOrDefault().pcoordinate.x > 0 && data.FirstOrDefault().pcoordinate.y > 0) {
+                    echargingpoi.GpsInfo = new List<GpsInfo>() { new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.FirstOrDefault().pcoordinate.y, Longitude = data.FirstOrDefault().pcoordinate.x } };
                 }
 
                 //Properties Echargingstation
+                EchargingDataProperties properties = new EchargingDataProperties();
+
+                properties.AccessType = data.FirstOrDefault().pmetadata.accessType;
+
+                properties.AccessTypeInfo = new Dictionary<string, string>();
+                properties.AccessTypeInfo.TryAddOrUpdate("en", data.FirstOrDefault().pmetadata.accessInfo);
+                properties.State = data.FirstOrDefault().pmetadata.state;
+                properties.Capacity = data.FirstOrDefault().pmetadata?.capacity;
+                properties.ChargingStationAccessible = data.FirstOrDefault().pmetadata.accessType != null && (data.FirstOrDefault().pmetadata.accessType.ToLower() == "public" || data.FirstOrDefault().pmetadata.accessType.ToLower() == "private_withpublicaccess") ? true : false;
+                properties.PaymentInfo = data.FirstOrDefault().pmetadata?.paymentInfo;
+
+                properties.ChargingPlugCount = data.Count();
+                properties.ChargingCableType = data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList();
+
+                //TODO do not overwrite the old values
+                var additionalpropertieskey = typeof(EchargingDataProperties).Name;
+
+                if(echargingpoi.AdditionalProperties != null && echargingpoi.AdditionalProperties.ContainsKey(additionalpropertieskey))
+                {
+                    var propstonotoverwrite = echargingpoi.AdditionalProperties[additionalpropertieskey];
+
+                    properties.HorizontalIdentification = propstonotoverwrite.HorizontalIdentification;
+                    properties.SurveyDate = propstonotoverwrite.SurveyDate;
+                    properties.Barrierfree = propstonotoverwrite.Barrierfree;
+                    properties.CarparkingAreaInColumns = propstonotoverwrite.CarparkingAreaInColumns;
+                    properties.CarparkingAreaInRows = propstonotoverwrite.CarparkingAreaInRows; 
+                    properties.ChargingCableLength = propstonotoverwrite.ChargingCableLength;
+                    properties.ChargingPistolOperationHeightMax = propstonotoverwrite.ChargingPistolOperationHeightMax;
+                    properties.ChargingStationAccessible = propstonotoverwrite.ChargingStationAccessible;
+                    properties.HasRoof = propstonotoverwrite.HasRoof;
+                    properties.MaxOperationHeight = propstonotoverwrite.MaxOperationHeight;
+                    properties.SteplessSidewalkConnection = propstonotoverwrite.SteplessSidewalkConnection;
+                    properties.SurveyAnnotations = propstonotoverwrite.SurveyAnnotations;
+                    properties.SurveyDate = propstonotoverwrite.SurveyDate;
+                    properties.SurveyType = propstonotoverwrite.SurveyType;
+                    properties.VerticalIdentification = propstonotoverwrite.VerticalIdentification;
+                }
+
+                //if (echargingpoi.AdditionalProperties == null)
+                //    echargingpoi.AdditionalProperties = new Dictionary<string, dynamic>();
+
+                echargingpoi.AdditionalProperties.TryAddOrUpdate(additionalpropertieskey, properties);
+
+                //Mapping Object
+                //ADD MAPPING
+                var ninjaid = new Dictionary<string, string>() { { "id", data.FirstOrDefault().pname } };
+                echargingpoi.Mapping.TryAddOrUpdate("mobility", ninjaid);
+
+                //Source, SyncSourceInterface
+                echargingpoi.Source = data.FirstOrDefault().porigin.ToLower();
+                echargingpoi.SyncSourceInterface = data.FirstOrDefault().pmetadata.provider.ToLower();
+                echargingpoi.SyncUpdateMode = "partial";
+
+                //Hack spreadsheet
+                if (echargingpoi.Source == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
+                    echargingpoi.Source = "echargingspreadsheet";
 
 
-                
-
-
-
-                return null;
+                return echargingpoi;
             }
             catch (Exception e)
             {

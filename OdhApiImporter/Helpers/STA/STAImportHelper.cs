@@ -103,6 +103,8 @@ namespace OdhApiImporter.Helpers
                             //Save to Rawdatatable
                             var rawdataid = await InsertInRawDataDB(vendingpoint);
 
+                            //PublishedOn Info??
+
                             //Save to PG
                             //Check if data exists                    
                             var result = await QueryFactory.UpsertData(odhactivitypoi, "smgpois", rawdataid, "sta.vendingpoint.import", importerURL);

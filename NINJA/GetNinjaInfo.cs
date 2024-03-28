@@ -79,7 +79,7 @@ namespace NINJA
             }
         }
 
-        public static async Task<NinjaObjectWithParent<NinjaEchargingStation,NinjaEchargingPlug>> GetNinjaEchargingPlugs(string serviceurl)
+        public static async Task<NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>> GetNinjaEchargingPlugs(string serviceurl)
         {            
             string placeselect = $"EChargingPlug?limit=0&where=sactive.eq.true,scoordinate.bbc.({NinjaHelper.GetBoundingBoxForSouthTyrol()})";
 
@@ -93,7 +93,7 @@ namespace NINJA
 
                 var myresponsejson = await myresponse.Content.ReadAsStringAsync();
 
-                return JsonConvert.DeserializeObject<NinjaObjectWithParent<NinjaEchargingStation,NinjaEchargingPlug>>(myresponsejson);
+                return JsonConvert.DeserializeObject<NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>>(myresponsejson);
             }
         }
 

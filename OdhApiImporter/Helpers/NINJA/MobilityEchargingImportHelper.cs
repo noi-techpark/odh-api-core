@@ -8,6 +8,7 @@ using Microsoft.FSharp.Control;
 using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
+using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace OdhApiImporter.Helpers
             return result;
         }
 
-        private async Task<NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug>> ImportList(CancellationToken cancellationToken)
+        private async Task<NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>> ImportList(CancellationToken cancellationToken)
         {
             var response = await GetNinjaData.GetNinjaEchargingPlugs(settings.NinjaConfig.ServiceUrl);            
 
@@ -46,7 +47,7 @@ namespace OdhApiImporter.Helpers
             return response;
         }
 
-        private async Task<UpdateDetail> SaveEchargingstationsToPG(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
+        private async Task<UpdateDetail> SaveEchargingstationsToPG(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
         {
             var newimportcounter = 0;
             var updateimportcounter = 0;
@@ -58,11 +59,19 @@ namespace OdhApiImporter.Helpers
             //Get all sources
             var sourcelist = GetAndParseProviderList(ninjadata);
 
+
             foreach (var data in ninjadata.data.GroupBy(x => x.pcode))
             {
-                string id = "echarging_" + data.FirstOrDefault().pcode;
+                string id = "echarging_" + data.FirstOrDefault().pcode.ToLower();
 
-                var objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data);
+                //See if data exists
+                var query = QueryFactory.Query("smgpois")
+                    .Select("data")
+                    .Where("id", id);
+
+                var objecttosave = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
+
+                objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data, objecttosave);
 
                 if (objecttosave != null)
                 {
@@ -80,13 +89,13 @@ namespace OdhApiImporter.Helpers
                     //if (idtocheck.Length > 50)
                     //    idtocheck = idtocheck.Substring(0, 50);
 
-                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>>(id, data));
+                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>>(id, data));
 
                     newimportcounter = newimportcounter + result.created ?? 0;
                     updateimportcounter = updateimportcounter + result.updated ?? 0;
                     errorimportcounter = errorimportcounter + result.error ?? 0;
 
-                    //idlistspreadsheet.Add(idtocheck.ToUpper());
+                    idlistspreadsheet.Add(id);
 
                     //if (!sourcelist.Contains(objecttosave.Source))
                     //    sourcelist.Add(objecttosave.Source);
@@ -120,17 +129,20 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }        
    
-        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>> ninjadata)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>> ninjadata)
         {
             try
             {
                 objecttosave.Id = objecttosave.Id?.ToLower();
 
                 //Set LicenseInfo
-                objecttosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(objecttosave, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+                objecttosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(objecttosave, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+
+                //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
+                objecttosave._Meta = MetadataHelper.GetMetadataobject(objecttosave);
 
                 //Set PublishedOn
-                objecttosave.CreatePublishedOnList();
+                objecttosave.CreatePublishedOnList();            
 
                 var rawdataid = await InsertInRawDataDB(ninjadata);
 
@@ -142,7 +154,7 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<int> InsertInRawDataDB(KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingStation, NinjaEchargingPlug>>> ninjadata)
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>> ninjadata)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
@@ -259,13 +271,24 @@ namespace OdhApiImporter.Helpers
 
         #region Speficif Helpers
 
-        private static List<Tuple<string, string>> GetDataProviderlist(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
+        private static List<Tuple<string, string>> GetDataProviderlist(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
         {
+            ////to test show all state, all capacity, all accessInfo, all accessType, all reserveable,
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.provider).Distinct().ToList()));
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.state).Distinct().ToList()));
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.capacity).Distinct().ToList()));
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.accessType).Distinct().ToList()));
+            //Console.WriteLine(String.Join(",", ninjadata.data.Select(x => x.pmetadata.accessInfo).Distinct().ToList()));
+
+            //Console.WriteLine(String.Join(",", ninjadata.data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList()));
+
+            
+
             //Get all sources
-            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider)).Distinct().ToList();
+            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider.ToLower())).Distinct().ToList();
         }
 
-        private static List<Tuple<string, string>> GetAndParseProviderList(NinjaObjectWithParent<NinjaEchargingStation, NinjaEchargingPlug> ninjadata)
+        private static List<Tuple<string, string>> GetAndParseProviderList(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
         {
             var list = GetDataProviderlist(ninjadata);
             var listtoreturn = new List<Tuple<string, string>>();
@@ -275,7 +298,7 @@ namespace OdhApiImporter.Helpers
                 listtoreturn.Add(
                     Tuple.Create(data.Item1 switch
                     {
-                        "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy" => "spreadsheed",
+                        "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy" => "echargingspreadsheet",
                         _ => data.Item1
                     },
                     data.Item2));

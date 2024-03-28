@@ -61,7 +61,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
-        [HttpGet, Route("Deprecated")]        
+        [HttpGet, Route("Deprecated")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetDeprecatedAsync(
             uint? pagenumber = null,
@@ -82,22 +82,22 @@ namespace OdhApiCore.Controllers
             return await GetDeprecated(pagenumber, pagesize, odhtype ?? type, fieldstodisplay, seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
         }
 
-        //TODO Get openapi file and parse trough an render to output
-        [HttpGet, Route("v1/DeprecatedTest")]
-        public async Task<IActionResult> Deprecated()
-        {
-            var requesturl = string.Format("{0}://{1}{2}{3}", HttpContext.Request.Scheme, HttpContext.Request.Host, HttpContext.Request.Path, "swagger/v1/swagger.json");
+        ////TODO Get openapi file and parse trough an render to output
+        //[HttpGet, Route("v1/DeprecatedTest")]
+        //public async Task<IActionResult> Deprecated()
+        //{
+        //    var requesturl = string.Format("{0}://{1}{2}{3}", HttpContext.Request.Scheme, HttpContext.Request.Host, HttpContext.Request.Path, "swagger/v1/swagger.json");
 
-            using (var client = new HttpClient())
-            {
-                var response = await client.GetAsync(requesturl);
-                var responsecontent = await response.Content.ReadAsStringAsync();
+        //    using (var client = new HttpClient())
+        //    {
+        //        var response = await client.GetAsync(requesturl);
+        //        var responsecontent = await response.Content.ReadAsStringAsync();
 
-                JObject? obj = JsonConvert.DeserializeObject<JObject>(responsecontent);
+        //        JObject? obj = JsonConvert.DeserializeObject<JObject>(responsecontent);
                 
-                return Ok(obj);
-            }
-        }
+        //        return Ok(obj);
+        //    }
+        //}
 
         #endregion
 

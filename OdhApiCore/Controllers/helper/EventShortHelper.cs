@@ -20,6 +20,7 @@ namespace OdhApiCore.Controllers.api
         public List<string> eventlocationlist;
         public List<string> webaddresslist;
         public List<string> idlist;
+        public List<string> languagelist;
         public string? todayactivefilter;
         public bool? websiteactivefilter;
         public bool? communityactivefilter;
@@ -32,16 +33,16 @@ namespace OdhApiCore.Controllers.api
         public static EventShortHelper Create(
             string? startdate, string? enddate, string? datetimeformat, string? source,
             string? eventlocation, bool? todayactive, bool? websiteactive, bool? communityactive, bool active,
-            string? eventids, string? webaddress, string? lastchange, string? sortorder, string? publishedonfilter)
+            string? eventids, string? webaddress, string? lastchange, string? langfilter, string? sortorder, string? publishedonfilter)
         {
             return new EventShortHelper(startdate, enddate, datetimeformat, source, eventlocation, todayactive, websiteactive, 
-                communityactive, active, eventids, webaddress, lastchange, sortorder, publishedonfilter);
+                communityactive, active, eventids, webaddress, lastchange, languagefilter: langfilter, sortorder, publishedonfilter);
         }
 
         private EventShortHelper(
             string? startdate, string? enddate, string? datetimeformat, string? source,
             string? eventlocation, bool? todayactive, bool? websiteactive, bool? communityactive, bool active, string? eventids, string? webaddress,
-            string? lastchange, string? sortorder, string? publishedonfilter)
+            string? lastchange, string? languagefilter, string? sortorder, string? publishedonfilter)
         {            
             idlist = Helper.CommonListCreator.CreateIdList(eventids);
             var sourcelisttemp = Helper.CommonListCreator.CreateIdList(source);                     
@@ -108,7 +109,9 @@ namespace OdhApiCore.Controllers.api
                 if (sortorder != "ASC" && sortorder != "DESC")
                     sortorder = "";
             }
-            
+
+            languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
+
             this.lastchange = lastchange;
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 

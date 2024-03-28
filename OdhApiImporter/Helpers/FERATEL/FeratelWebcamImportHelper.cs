@@ -134,6 +134,8 @@ namespace OdhApiImporter.Helpers
             //Set LicenseInfo
             webcam.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<WebcamInfoLinked>(webcam, Helper.LicenseHelper.GetLicenseforWebcam);
 
+            //PublishedOnInfo?
+
             var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(webcam, table, rawdataid, "feratel.webcam.import", importerURL);
 
             return pgcrudresult;

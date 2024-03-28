@@ -201,6 +201,7 @@ namespace OdhApiImporter.Helpers
                 eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
                 //Check Languages
                 eventshort.CheckMyInsertedLanguages();
+                
                 //Remove Set PublishedOn not set automatically
                 //eventshort.CreatePublishedOnList();
 

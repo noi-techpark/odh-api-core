@@ -320,7 +320,7 @@ namespace OdhApiCore.Controllers
             switch (result.errorreason)
             {
                 case "": return Ok(result);
-                case "Not Allowed": return Forbid();
+                case "Not Allowed": return StatusCode(403, "Not enough permissions");
                 case "Not Found": return NotFound();
                 case "Bad Request": return BadRequest();
                 case "No Data": return BadRequest();
