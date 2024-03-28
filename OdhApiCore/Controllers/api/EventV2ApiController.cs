@@ -157,7 +157,7 @@ namespace OdhApiCore.Controllers
                 QueryFactory.Query("eventeuracnoi")
                     .Select("data")
                     .Where("id", id.ToLower())                    
-                    .FilterDataByAccessRoles(UserRolesToFilter);
+                    .FilterDataByAccessRoles(UserRolesToFilterEndpoint("EventShort"));
 
             var data = await query.GetObjectListAsync<EventShortLinked>();
             var convertresult = EventV2Converter.ConvertEventListToEventV2(data);
@@ -169,10 +169,10 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> ConvertEventToEventV2(string id)
         {
             var query =
-                QueryFactory.Query("eventeuracnoi")
+                QueryFactory.Query("events")
                     .Select("data")
                     .Where("id", id.ToUpper())
-                    .FilterDataByAccessRoles(UserRolesToFilter);
+                    .FilterDataByAccessRoles(UserRolesToFilterEndpoint("Event"));
 
             var data = await query.GetObjectListAsync<EventLinked>();
 
