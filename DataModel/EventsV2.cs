@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DataModel
@@ -206,15 +207,33 @@ namespace DataModel
 
             //Creating Venue
             VenueLinked venue = new VenueLinked();
-            venue.Id = ""; //What should we use as Id?
-            venue.Shortname = eventv1.EventAdditionalInfos.ContainsKey("en") ? eventv1.EventAdditionalInfos["en"].Location : eventv1.EventAdditionalInfos.FirstOrDefault().Key;  //What if Location is empty
+
+            string venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Location;            
+            
+            if (String.IsNullOrEmpty(venuename))
+                venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Mplace;
+            
+            venue.Id = Regex.Replace(eventv1.ContactInfos.GetEnglishOrFirstKeyFromDictionary().CompanyName, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+
+            venue.Shortname = venuename;
             venue.GpsInfo = eventv1.GpsInfo;
             venue.LocationInfo = eventv1.LocationInfo;
+            venue.ContactInfos = eventv1.ContactInfos;
+
             venue.Detail = new Dictionary<string, Detail>();
+            
             foreach(var lang in eventv1.HasLanguage)
             {
                 Detail venuedetail = new Detail();
                 venuedetail.Language = lang;
+
+                string venuetitle = eventv1.EventAdditionalInfos[lang].Location;
+
+                if (String.IsNullOrEmpty(venuename))
+                    venuetitle = eventv1.EventAdditionalInfos[lang].Mplace;
+
+                venuedetail.Title = venuetitle;
+                venuedetail.BaseText = eventv1.EventAdditionalInfos[lang].Reg;
 
                 venue.Detail[lang] = venuedetail;
             }
@@ -407,6 +426,20 @@ namespace DataModel
 
 
             return (eventv2, venues);
+        }
+
+        
+    }
+
+    public static class DictionaryExtensionsTemp
+    {
+        //TODO Migrate
+        public static T GetEnglishOrFirstKeyFromDictionary<T>(this IDictionary<string, T> dict)
+        {
+            if (dict.ContainsKey("en"))
+                return dict["en"];
+            else
+                return dict.FirstOrDefault().Value;
         }
     }
 }
