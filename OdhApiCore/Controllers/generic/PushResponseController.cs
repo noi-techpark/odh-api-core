@@ -177,7 +177,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await QueryFactory.Query("pushresults")
                     .Select("data")
-                    .Where("id", id.ToLower())
+                    .Where("id", id)
                     .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))                    
                     .FirstOrDefaultAsync<JsonRaw>();
                 
