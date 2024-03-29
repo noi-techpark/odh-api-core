@@ -892,8 +892,7 @@ namespace Helper
             this Query query, 
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> publisherlist,
             DateTime? begin, DateTime? end,
-            string? additionalfilter,
-            IEnumerable<string> userroles)
+            string? additionalfilter)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -905,8 +904,8 @@ namespace Helper
                 .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
                 .When(publisherlist != null && publisherlist.Count > 0, q => query.WhereIn("gen_publisher", publisherlist))
                 .LastChangedFilter_GeneratedColumn(begin, end)
-                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                .FilterDataByAccessRoles(userroles);
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
+                
         }
 
 

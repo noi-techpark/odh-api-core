@@ -138,8 +138,7 @@ namespace OdhApiCore.Controllers
                         publisherlist: publisherlist,
                         begin: begin,
                         end: end,
-                        additionalfilter: additionalfilter,
-                        userroles: UserRolesToFilter
+                        additionalfilter: additionalfilter
                         )
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(new PGGeoSearchResult() { geosearch = false }, rawsort, "gen_lastchange DESC");
@@ -179,8 +178,7 @@ namespace OdhApiCore.Controllers
                 var data = await QueryFactory.Query("pushresults")
                     .Select("data")
                     .Where("id", id.ToLower())
-                    .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                    .FilterDataByAccessRoles(UserRolesToFilter)
+                    .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))                    
                     .FirstOrDefaultAsync<JsonRaw>();
                 
                 return data?.TransformRawData(null, fields,  filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
