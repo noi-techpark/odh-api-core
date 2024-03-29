@@ -49,7 +49,7 @@ namespace OdhApiCore.Controllers
 
         protected QueryFactory QueryFactory { get; }
 
-        private IOdhPushNotifier OdhPushnotifier;
+        protected IOdhPushNotifier OdhPushnotifier;
 
         //Ensure this is only called 1 time per Controller operation
         protected IEnumerable<string> UserRolesToFilter

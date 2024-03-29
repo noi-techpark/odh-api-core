@@ -3092,7 +3092,7 @@ namespace DataModel
         public string? Url { get; set; }
 
         //New fields to store Information on Push
-        public ICollection<PushConfig> PushConfig { get; set; }
+        public ICollection<PushConfig>? PushConfig { get; set; }
     }
 
     public class PushConfig
@@ -4000,4 +4000,31 @@ namespace DataModel
     }
     
     #endregion
+
+    public class PushResponse
+    {
+        public string publisher { get; set; }
+        public DateTime date { get; set; }
+        public dynamic result { get; set; }
+    }
+
+    public class PushResult
+    {
+        public int? Messages { get; set; }
+        public bool Success { get; set; }
+        public string? Response { get; set; }
+        public string? Error { get; set; }
+
+        public static PushResult MergeMultipleFCMPushNotificationResponses(IEnumerable<PushResult> responses)
+        {
+            return new PushResult()
+            {
+                Messages = responses.Sum(x => x.Messages),
+                Error = String.Join("|", responses.Select(x => x.Error)),
+                Success = responses.Any(x => x.Success == true),
+                Response = String.Join("|", responses.Select(x => x.Response))
+            };
+        }
+    }
+
 }

@@ -28,6 +28,45 @@ namespace OdhApiCore.Controllers.api
             this.settings = settings;
         }
 
+        #region Exposed Generic Endpoint
+
+        /// <summary>
+        /// POST Generic Push Endpoint
+        /// </summary>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
+        [HttpPost, Route("PushData/{id}/{type}/{publisher}")]
+        public async Task<IActionResult> PushData(string id, string type, string publisher, string language = null)
+        {
+            var data = new PushResponse();
+            data.publisher = publisher;
+            data.date = DateTime.Now;
+
+            switch (publisher)
+            {
+                //FCM Push
+                case "noi-communityapp":
+                    data.result = await GetDataAndSendFCMMessage(type, id, publisher, language);
+                    break;
+
+                //NOTIFIER
+                case "idm-marketplace":
+                    var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publisher });
+                    data.result = notifierresult.FirstOrDefault().Value;
+                    break;
+            }
+
+            //TODO Save the result in a push table
+            var insertresult = await QueryFactory.Query("pushresults")
+                .InsertAsync(new JsonBData() { id = Guid.NewGuid().ToString(), data = new JsonRaw(data) });
+
+            return Ok(data);
+        }
+
+        #endregion
+
+
         #region Using NOI PushServer
 
         /// <summary>
@@ -90,7 +129,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpGet, Route("FCMMessage/{type}/{id}/{identifier}/{language}")]
-        public async Task<IActionResult> GetFCM(string type, string id, string identifier, string language)
+        public async Task<IActionResult> GetFCM(string type, string id, string identifier, string? language = null)
+        {            
+            return Ok(GetDataAndSendFCMMessage(type, id, identifier, language));            
+        }
+
+        private async Task<PushResult> GetDataAndSendFCMMessage(string type, string id, string identifier, string? language = null)
         {
             try
             {
@@ -102,22 +146,26 @@ namespace OdhApiCore.Controllers.api
                   QueryFactory.Query(mytable)
                       .Select("data")
                       .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
-                      //.When(FilterClosedData, q => q.FilterClosedData());
+                //.When(FilterClosedData, q => q.FilterClosedData());
 
-               
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 if (data is not { })
-                    return NotFound();
+                    throw new Exception("no data");
 
                 var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
 
-                //Multilanguage support
-                var langarr = language.Split(',');
+                List<string> languages = new List<string>();
+
+                if (language != null)
+                    languages = language.Split(',').ToList();
+                if (myobject != null && myobject is IHasLanguage && (myobject as IHasLanguage).HasLanguage != null)
+                    languages = (myobject as IHasLanguage).HasLanguage.ToList();
 
                 List<FCMModels> messages = new();
 
-                foreach (var lang in langarr)
+                foreach (var lang in languages)
                 {
                     //Construct the message
                     var message = FCMMessageConstructor.ConstructMyMessage(identifier, lang.ToLower(), myobject);
@@ -133,22 +181,21 @@ namespace OdhApiCore.Controllers.api
                 if (pushserverconfig == null)
                     throw new Exception("PushserverConfig could not be found");
 
-                Dictionary<string, FCMPushNotificationResponse> resultlist = new();
+                List<PushResult> resultlist = new();
 
                 foreach (var message in messages)
                 {
                     var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
 
-                    resultlist.Add(message.to, result);
+                    resultlist.Add(result);
                 }
 
-                return Ok(resultlist);
+                return PushResult.MergeMultipleFCMPushNotificationResponses(resultlist);
             }
             catch (Exception ex)
             {
-                return BadRequest("Error: " + ex.Message);
+                return new PushResult() { Error = ex.Message, Response = "Error", Success = false };
             }
-
         }
 
         /// <summary>

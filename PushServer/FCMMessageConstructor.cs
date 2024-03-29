@@ -17,7 +17,7 @@ namespace PushServer
         {
             var message = default(FCMModels);
 
-            if (identifier == "noicommunityapp" && myobject is ArticlesLinked)
+            if ((identifier == "noicommunityapp" || identifier == "noi-communityapp") && myobject is ArticlesLinked)
             {
                 message = new FCMModels();
 
@@ -39,6 +39,5 @@ namespace PushServer
 
             return message;
         }
-
     }
 }
