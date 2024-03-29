@@ -3090,6 +3090,24 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public string? Url { get; set; }
+
+        //New fields to store Information on Push
+        public ICollection<PushConfig> PushConfig { get; set; }
+    }
+
+    public class PushConfig
+    {
+        public ICollection<string> PathParam { get; set; }
+
+        public string BaseUrl { get; set; }
+
+        public string PushApiUrl
+        {
+            get
+            {
+                return String.Format("{0}/{1}", this.BaseUrl != null ? this.BaseUrl : "", String.Join("/", this.PathParam));
+            }
+        }
     }
 
     public class Source : IIdentifiable, IImportDateassigneable, ILicenseInfo
@@ -3119,7 +3137,6 @@ namespace DataModel
 
         public ICollection<string> Types { get; set; }
     }
-
 
     public class LTSTaggingType
     {
