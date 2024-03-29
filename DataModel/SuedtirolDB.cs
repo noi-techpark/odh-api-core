@@ -4003,9 +4003,10 @@ namespace DataModel
 
     public class PushResponse
     {
-        public string publisher { get; set; }
-        public DateTime date { get; set; }
-        public dynamic result { get; set; }
+        public string Id { get; set; }
+        public string Publisher { get; set; }
+        public DateTime Date { get; set; }
+        public dynamic Result { get; set; }
     }
 
     public class PushResult

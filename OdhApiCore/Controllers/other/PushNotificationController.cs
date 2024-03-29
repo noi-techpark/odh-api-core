@@ -40,26 +40,27 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> PushData(string id, string type, string publisher, string language = null)
         {
             var data = new PushResponse();
-            data.publisher = publisher;
-            data.date = DateTime.Now;
+            data.Publisher = publisher;
+            data.Date = DateTime.Now;
+            data.Id = Guid.NewGuid().ToString();
 
             switch (publisher)
             {
                 //FCM Push
                 case "noi-communityapp":
-                    data.result = await GetDataAndSendFCMMessage(type, id, publisher, language);
+                    data.Result = await GetDataAndSendFCMMessage(type, id, publisher, language);
                     break;
 
                 //NOTIFIER
                 case "idm-marketplace":
                     var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publisher });
-                    data.result = notifierresult.FirstOrDefault().Value;
+                    data.Result = notifierresult.FirstOrDefault().Value;
                     break;
             }
 
             //TODO Save the result in a push table
             var insertresult = await QueryFactory.Query("pushresults")
-                .InsertAsync(new JsonBData() { id = Guid.NewGuid().ToString(), data = new JsonRaw(data) });
+                .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
 
             return Ok(data);
         }

@@ -888,6 +888,27 @@ namespace Helper
                 .FilterDataByAccessRoles(userroles);
         }
 
+        public static Query PushResultWhereExpression(
+            this Query query, 
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> publisherlist,
+            DateTime? begin, DateTime? end,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                publisherlist, begin, end, idlist
+            );
+
+            return query
+                .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
+                .When(publisherlist != null && publisherlist.Count > 0, q => query.WhereIn("gen_publisher", publisherlist))
+                .LastChangedFilter_GeneratedColumn(begin, end)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
+        }
+
 
         //Return Where and Parameters for Rawdata
         public static Query RawdataWhereExpression(
