@@ -3090,6 +3090,24 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public string? Url { get; set; }
+
+        //New fields to store Information on Push
+        public ICollection<PushConfig>? PushConfig { get; set; }
+    }
+
+    public class PushConfig
+    {
+        public ICollection<string> PathParam { get; set; }
+
+        public string BaseUrl { get; set; }
+
+        public string PushApiUrl
+        {
+            get
+            {
+                return String.Format("{0}/{1}", this.BaseUrl != null ? this.BaseUrl : "", String.Join("/", this.PathParam));
+            }
+        }
     }
 
     public class Source : IIdentifiable, IImportDateassigneable, ILicenseInfo
@@ -3119,7 +3137,6 @@ namespace DataModel
 
         public ICollection<string> Types { get; set; }
     }
-
 
     public class LTSTaggingType
     {
@@ -3983,4 +4000,32 @@ namespace DataModel
     }
     
     #endregion
+
+    public class PushResponse
+    {
+        public string Id { get; set; }
+        public string Publisher { get; set; }
+        public DateTime Date { get; set; }
+        public dynamic Result { get; set; }
+    }
+
+    public class PushResult
+    {
+        public int? Messages { get; set; }
+        public bool Success { get; set; }
+        public string? Response { get; set; }
+        public string? Error { get; set; }
+
+        public static PushResult MergeMultipleFCMPushNotificationResponses(IEnumerable<PushResult> responses)
+        {
+            return new PushResult()
+            {
+                Messages = responses.Sum(x => x.Messages),
+                Error = String.Join("|", responses.Select(x => x.Error)),
+                Success = responses.Any(x => x.Success == true),
+                Response = String.Join("|", responses.Select(x => x.Response))
+            };
+        }
+    }
+
 }
