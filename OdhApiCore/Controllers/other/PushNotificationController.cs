@@ -44,7 +44,7 @@ namespace OdhApiCore.Controllers.api
             foreach (var publish in publisher.Split(","))
             {
                 var data = new PushResponse();
-                data.Publisher = publisher;
+                data.Publisher = publish;
                 data.Date = DateTime.Now;
                 data.Id = Guid.NewGuid().ToString();
 
