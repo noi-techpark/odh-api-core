@@ -47,7 +47,7 @@ namespace Helper
             }
         }
 
-        private static CheapestRoomCombination CalculateCheapestRoomCombinationsOld(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        private static CheapestRoomCombination CalculateCheapestRoomCombinationsWithCombinations(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
         {
             List<CheapestRoomCombination> mycombinationresult = new List<CheapestRoomCombination>();
 
@@ -100,84 +100,60 @@ namespace Helper
             return cheapestcombination ?? new();
         }
 
+
+        //TO TEST
         private static CheapestRoomCombination CalculateCheapestRoomCombinations(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
-        {
-            List<CheapestRoomCombination> mycombinationresult = new List<CheapestRoomCombination>();
+        {            
+            //Create an Array with a Collection
+            List<CheapestOffer>[] offerbyroomseq = new List<CheapestOffer>[rooms];
 
-            //Create combinations TO verify use variations??
-            var combinations = CombinationsRooms.GetDifferentCombinations<CheapestOffer>(cheapestofferlist, rooms);
+            CheapestRoomCombination cheapestroomcombination = new CheapestRoomCombination();
+            cheapestroomcombination.Service = service;
+            cheapestroomcombination.CheapestRoomCombinationDetail = new List<CheapestOffer>();
 
-            foreach (IList<CheapestOffer> c in combinations)
+            for (int i = 1; i <= rooms; i++)
             {
-                bool addcombination = true;
-
-                //TODO use LINQ
-                //Check with roomseqdict if the combination is valid
-                for (int i = 0; i < rooms; i++)
-                {
-                    if (c.Where(x => x.RoomSeq == c[i].RoomSeq).Count() > 1)
-                    {
-                        //Removing combination - room in the same roomseq
-                        addcombination = false;
-                    }
-
-                    if (!addcombination)
-                        break;
-                }
-
-                //TODO use LINQ
-                //Remove all combinations where more rooms are used than roomfree                 
-                if (addcombination)
-                {
-                    for (int i = 0; i < rooms; i++)
-                    {
-                        //Check how often room with this id is used
-                        if (c.Where(x => x.RoomId == c[i].RoomId).Count() > c[i].RoomFree)
-                        {
-                            //Removing combination - room used more than available
-                            addcombination = false;
-                        }
-
-                        if (!addcombination)
-                            break;
-                    }
-                }
-
-                if (addcombination)
-                {
-                    mycombinationresult.Add(new CheapestRoomCombination() { CheapestRoomCombinationDetail = c, Service = service });
-                }
+                //To check could it be that a roomseq does not exist?
+                offerbyroomseq[i - 1] = cheapestofferlist.Where(x => x.RoomSeq == i).OrderBy(x => x.Price).ToList();
             }
 
-            //Return Cheapestroomcombination
-            var cheapestcombination = mycombinationresult.OrderBy(x => x.Price).Take(1).FirstOrDefault();
+            //TO check, are there offerbyroomseq with not enough rooms?
+            if (offerbyroomseq.Count() < rooms)
+                throw new Exception("there is something not working");
 
-            return cheapestcombination ?? new();
+            foreach (var roomseq in offerbyroomseq.OrderBy(x => x.Count))
+            {
+                foreach (var room in roomseq)
+                {
+                    //roomfre
+                    int? roomfree = room.RoomFree;
+                    //Count total rooms
+
+                    //Count used rooms in cheapestroomcombination
+                    var usedroomscount = 0;
+                    if (cheapestroomcombination.CheapestRoomCombinationDetail.Count > 0)
+                    {
+                        usedroomscount = cheapestroomcombination.CheapestRoomCombinationDetail.Count(x => x.RoomId == room.RoomId);
+                    }
+
+                    //if roomfree > cheapestroomcombination
+                    if (roomfree > usedroomscount)
+                    {
+                        cheapestroomcombination.CheapestRoomCombinationDetail.Add(room);
+                        break;
+                    }
+                }            
+            }
+
+            //If there are cheapestroomcombinations with not enough rooms return null
+            if (cheapestroomcombination.CheapestRoomCombinationDetail.Count < rooms)
+                return new(); //throw new Exception("there is something not working");
+
+            return cheapestroomcombination;
         }
-
-
-
-        ////Hack because of CPU always over 90%
-        //private static CheapestRoomCombination CalculateCheapestRoomCombinationsTemp(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
-        //{
-        //    CheapestRoomCombination cheapestroomcombinationresult = new CheapestRoomCombination();
-        //    cheapestroomcombinationresult.Service = service;
-        //    cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { };
-
-        //    //Get always the cheapest
-        //    for (int i = 1; i <= rooms; i++)
-        //    {
-        //        var cheapestorffersingle = cheapestofferlist.Where(x => x.RoomSeq == i).OrderBy(x => x.Price).Take(1).FirstOrDefault();
-
-        //        if (cheapestorffersingle != null)
-        //            cheapestroomcombinationresult.CheapestRoomCombinationDetail.Add(cheapestorffersingle);
-        //    }
-
-        //    return cheapestroomcombinationresult;
-        //}
     }
 
-    public static class CombinationsRooms
+    public static class CombinationsGeneric
     {
         private static void InitIndexes(int[] indexes)
         {
@@ -234,5 +210,5 @@ namespace Helper
             while (!AllPlacesChecked(indexes, listCount));
 
         }
-    }
+    }    
 }
