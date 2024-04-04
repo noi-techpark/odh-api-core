@@ -99,7 +99,7 @@ jobs:
           X_CDB_SERVICEURL: "https://lcs.lts.it/data/cdbdata.asmx"
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
-          X_SIAG_SERVICEURL: ${{ secrets.SIAG_URL_TEST }}
+          X_SIAG_SERVICEURL: "http://daten.buergernetz.bz.it/services/weather/"
           X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
           X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
           X_EBMS_SERVICEURL: ${{ secrets.EBMS_URL_TEST }}
@@ -109,26 +109,26 @@ jobs:
           X_A22_USER: ${{ secrets.A22_USER_TEST }}
           X_A22_PSWD: ${{ secrets.A22_PSWD_TEST }}
           X_A22_SERVICEURL: ${{ secrets.A22_URL_TEST }}
-          X_FERATEL_USER: ${{ secrets.FERATEL_USER_TEST }}
-          X_FERATEL_PSWD: ${{ secrets.FERATEL_PASS_TEST }}
+          X_FERATEL_USER: ""
+          X_FERATEL_PSWD: ""
           X_FERATEL_SERVICEURL: ${{ secrets.FERATEL_URL_TEST }}
-          X_PANOMAX_USER: ${{ secrets.PANOMAX_USER_TEST }}
-          X_PANOMAX_PSWD: ${{ secrets.PANOMAX_PASS_TEST }}
+          X_PANOMAX_USER: ""
+          X_PANOMAX_PSWD: ""
           X_PANOMAX_SERVICEURL: ${{ secrets.PANOMAX_URL_TEST }}
-          X_PANOCLOUD_USER: ${{ secrets.PANOCLOUD_USER_TEST }}
-          X_PANOCLOUD_PSWD: ${{ secrets.PANOCLOUD_PASS_TEST }}
+          X_PANOCLOUD_USER: ""
+          X_PANOCLOUD_PSWD: ""
           X_PANOCLOUD_SERVICEURL: ${{ secrets.PANOCLOUD_URL_TEST }}
-          X_LOOPTEC_USER: ${{ secrets.LOOPTEC_USER_TEST }}
-          X_LOOPTEC_PSWD: ${{ secrets.LOOPTEC_PASS_TEST }}
+          X_LOOPTEC_USER: ""
+          X_LOOPTEC_PSWD: ""
           X_LOOPTEC_SERVICEURL: ${{ secrets.LOOPTEC_URL_TEST }}
-          X_SUEDTIROLWEIN_USER: ${{ secrets.SUEDTIROLWEIN_USER_TEST }}
-          X_SUEDTIROLWEIN_PSWD: ${{ secrets.SUEDTIROLWEIN_PASS_TEST }}
+          X_SUEDTIROLWEIN_USER: ""
+          X_SUEDTIROLWEIN_PSWD: ""
           X_SUEDTIROLWEIN_SERVICEURL: "https://suedtirolwein.secure.consisto.net/"
-          X_MUSPORT_USER: ${{ secrets.MUSPORT_USER_TEST }}
-          X_MUSPORT_PDWD: ${{ secrets.MUSPORT_PASS_TEST }}
+          X_MUSPORT_USER: ""
+          X_MUSPORT_PSWD: ""
           X_MUSPORT_SERVICEURL: "https://musport.prov.bz.it/musport/services/MuseumsService/"
-          X_NINJA_USER: ${{ secrets.NINJA_USER_TEST }}
-          X_NINJA_PSWD: ${{ secrets.NINJA_PASS_TEST }}
+          X_NINJA_USER: ""
+          X_NINJA_PSWD: ""
           X_NINJA_SERVICEURL: "https://mobility.api.opendatahub.com/v2/flat/"
           X_DATABROWSER_URL: "https://frontend.tourism.testingmachine.eu/"
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
@@ -138,6 +138,9 @@ jobs:
           X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
           X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
           X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
+          X_MARKETPLACE_PUSH_URL: ""
+          X_MARKETPLACE_PUSH_USER: ""
+          X_MARKETPLACE_PUSH_PSWD: ""
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -213,7 +216,7 @@ jobs:
           X_CDB_SERVICEURL: "https://lcs.lts.it/data/cdbdata.asmx"
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
-          X_SIAG_SERVICEURL: ${{ secrets.SIAG_URL_TEST }}
+          X_SIAG_SERVICEURL: "http://daten.buergernetz.bz.it/services/weather/"
           X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
           X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
           X_EBMS_SERVICEURL: ${{ secrets.EBMS_URL_TEST }}
@@ -223,26 +226,26 @@ jobs:
           X_A22_USER: ${{ secrets.A22_USER_TEST }}
           X_A22_PSWD: ${{ secrets.A22_PSWD_TEST }}
           X_A22_SERVICEURL: ${{ secrets.A22_URL_TEST }}
-          X_FERATEL_USER: ${{ secrets.FERATEL_USER_TEST }}
-          X_FERATEL_PSWD: ${{ secrets.FERATEL_PASS_TEST }}
+          X_FERATEL_USER: ""
+          X_FERATEL_PSWD: ""
           X_FERATEL_SERVICEURL: ${{ secrets.FERATEL_URL_TEST }}
-          X_PANOMAX_USER: ${{ secrets.PANOMAX_USER_TEST }}
-          X_PANOMAX_PSWD: ${{ secrets.PANOMAX_PASS_TEST }}
+          X_PANOMAX_USER: ""
+          X_PANOMAX_PSWD: ""
           X_PANOMAX_SERVICEURL: ${{ secrets.PANOMAX_URL_TEST }}
-          X_PANOCLOUD_USER: ${{ secrets.PANOCLOUD_USER_TEST }}
-          X_PANOCLOUD_PSWD: ${{ secrets.PANOCLOUD_PASS_TEST }}
+          X_PANOCLOUD_USER: ""
+          X_PANOCLOUD_PSWD: ""
           X_PANOCLOUD_SERVICEURL: ${{ secrets.PANOCLOUD_URL_TEST }}
-          X_LOOPTEC_USER: ${{ secrets.LOOPTEC_USER_TEST }}
-          X_LOOPTEC_PSWD: ${{ secrets.LOOPTEC_PASS_TEST }}
+          X_LOOPTEC_USER: ""
+          X_LOOPTEC_PSWD: ""
           X_LOOPTEC_SERVICEURL: ${{ secrets.LOOPTEC_URL_TEST }}
-          X_SUEDTIROLWEIN_USER: ${{ secrets.SUEDTIROLWEIN_USER_TEST }}
-          X_SUEDTIROLWEIN_PSWD: ${{ secrets.SUEDTIROLWEIN_PASS_TEST }}
+          X_SUEDTIROLWEIN_USER: ""
+          X_SUEDTIROLWEIN_PSWD: ""
           X_SUEDTIROLWEIN_SERVICEURL: "https://suedtirolwein.secure.consisto.net/"
-          X_MUSPORT_USER: ${{ secrets.MUSPORT_USER_TEST }}
-          X_MUSPORT_PSWD: ${{ secrets.MUSPORT_PASS_TEST }}
+          X_MUSPORT_USER: ""
+          X_MUSPORT_PSWD: ""
           X_MUSPORT_SERVICEURL: "https://musport.prov.bz.it/musport/services/MuseumsService/"
-          X_NINJA_USER: ${{ secrets.NINJA_USER_TEST }}
-          X_NINJA_PSWD: ${{ secrets.NINJA_PASS_TEST }}
+          X_NINJA_USER: ""
+          X_NINJA_PSWD: ""
           X_NINJA_SERVICEURL: "https://mobility.api.opendatahub.com/v2/flat/"
           
           X_API_URL: ${{ env.API_URL }}
