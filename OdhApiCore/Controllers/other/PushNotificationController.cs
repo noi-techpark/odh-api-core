@@ -75,6 +75,9 @@ namespace OdhApiCore.Controllers.api
                                           new { Success = false  };
                         }
                         break;
+                    default:
+                        data.Result = new { Response = "Publisher is not registered on this api", Success = false };
+                        break;
                 }
 
                 //Save the result in a push table

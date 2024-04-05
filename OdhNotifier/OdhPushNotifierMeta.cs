@@ -96,6 +96,13 @@ namespace OdhNotifier
         {
             IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
 
+            //IF 
+            foreach(var pushchannel in publishedonlist)
+            {
+                if(notifierconfiglist.Where(x => x.ServiceName.ToLower() == pushchannel.ToLower()).Count() == 0)
+                    notifierresponselist.TryAddOrUpdate(pushchannel, new NotifierResponse() { Success = false, HttpStatusCode = HttpStatusCode.NotFound, Service = pushchannel, Response = "No configuration found for this publisher"});
+            }
+
             foreach (var notifyconfig in notifierconfiglist)
             {                
                 if(publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
