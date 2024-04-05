@@ -65,6 +65,8 @@ namespace OdhApiCore.Controllers
             string? publisher = null,
             string? begindate = null,
             string? enddate = null,
+            string? objectidlist = null,
+            string? objecttypelist = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? rawfilter = null,
@@ -73,6 +75,7 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {         
             return await Get(pagenumber, pagesize, idlist, publisher, begindate, enddate,
+                objectidlist, objecttypelist,
                 fields: fields ?? Array.Empty<string>(), 
                   rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
@@ -106,7 +109,7 @@ namespace OdhApiCore.Controllers
         #region GETTER
 
         private Task<IActionResult> Get(
-            uint? pagenumber, int? pagesize, string? idfilter, string? publisherfilter, string? begindate, string? enddate,
+            uint? pagenumber, int? pagesize, string? idfilter, string? publisherfilter, string? begindate, string? enddate, string? objectidfilter, string? objecttypefilter,
             string[] fields, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
@@ -116,6 +119,9 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
                 var idlist = Helper.CommonListCreator.CreateIdList(idfilter);
+                var objectidlist = Helper.CommonListCreator.CreateIdList(objectidfilter);
+                var objecttypelist = Helper.CommonListCreator.CreateIdList(objecttypefilter);
+
                 var publisherlist = Helper.CommonListCreator.CreateIdList(publisherfilter);
 
                 DateTime begin = DateTime.MinValue;
@@ -138,6 +144,8 @@ namespace OdhApiCore.Controllers
                         publisherlist: publisherlist,
                         begin: begin,
                         end: end,
+                        objectidlist: objectidlist,
+                        objecttypelist: objecttypelist,
                         additionalfilter: additionalfilter
                         )
                     .ApplyRawFilter(rawfilter)

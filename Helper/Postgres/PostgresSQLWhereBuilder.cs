@@ -892,6 +892,7 @@ namespace Helper
             this Query query, 
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> publisherlist,
             DateTime? begin, DateTime? end,
+            IReadOnlyCollection<string> objectidlist, IReadOnlyCollection<string> objecttypelist,
             string? additionalfilter)
         {
             LogMethodInfo(
@@ -903,6 +904,8 @@ namespace Helper
             return query
                 .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
                 .When(publisherlist != null && publisherlist.Count > 0, q => query.WhereIn("gen_publisher", publisherlist))
+                .When(objectidlist != null && objectidlist.Count > 0, q => query.WhereIn("gen_objectid", objectidlist))
+                .When(objecttypelist != null && objecttypelist.Count > 0, q => query.WhereIn("gen_objecttype", objecttypelist))
                 .LastChangedFilter_GeneratedColumn(begin, end)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
                 
