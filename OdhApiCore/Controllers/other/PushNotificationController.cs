@@ -59,13 +59,13 @@ namespace OdhApiCore.Controllers.api
                 {
                     //FCM Push
                     case "noi-communityapp":
-                        data.Result = usemocks ? new PushResult() { Error = "", Success = true, Messages = 1, Response = "some response" } : await GetDataAndSendFCMMessage(type, id, publish, language);
+                        data.Result = usemocks ? new PushResult() { Error = "", Success = true, Messages = 1, Response = "This is a mockup response" } : await GetDataAndSendFCMMessage(type, id, publish, language);
                         break;
 
                     //NOTIFIER
                     case "idm-marketplace":
                         if (usemocks)
-                            data.Result = new NotifierResponse() { HttpStatusCode = System.Net.HttpStatusCode.OK, Response = "koantau", Service = "idm-marketplace", Success = true };
+                            data.Result = new NotifierResponse() { HttpStatusCode = System.Net.HttpStatusCode.OK, Response = "This is a mockup response", Service = "idm-marketplace", Success = true };
                         else
                         {
                             var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publish });
