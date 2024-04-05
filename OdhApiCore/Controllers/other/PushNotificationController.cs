@@ -7,6 +7,7 @@ using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Extensions.Logging;
 using OdhNotifier;
 using PushServer;
@@ -37,7 +38,7 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpPost, Route("PushData/{id}/{type}/{publisher}")]
-        public async Task<IActionResult> PushData(string id, string type, string publisher, string? language = null)
+        public async Task<IActionResult> PushData(string id, string type, string publisher, bool usemocks = true, string ? language = null)
         {
             IDictionary<string, PushResponse> resultdict = new Dictionary<string, PushResponse>();
 
@@ -52,17 +53,26 @@ namespace OdhApiCore.Controllers.api
                 {
                     //FCM Push
                     case "noi-communityapp":
-                        data.Result = await GetDataAndSendFCMMessage(type, id, publish, language);
+                        data.Result = usemocks ? new PushResult() { Error = "", Success = true, Messages = 1, Response = "some response" } : await GetDataAndSendFCMMessage(type, id, publish, language);
                         break;
 
                     //NOTIFIER
                     case "idm-marketplace":
-                        var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publish });
-                        data.Result = notifierresult.FirstOrDefault().Value;
+                        if (usemocks)
+                            data.Result = new NotifierResponse() { HttpStatusCode = System.Net.HttpStatusCode.OK, Response = "koantau", Service = "idm-marketplace", Success = true };
+                        else
+                        {
+                            var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publish });
+                            data.Result = notifierresult != null && 
+                                          notifierresult.ContainsKey(publish) && 
+                                          notifierresult[publish].Response != null ? 
+                                          notifierresult[publish].Response : 
+                                          new { Success = false  };
+                        }
                         break;
                 }
 
-                //TODO Save the result in a push table
+                //Save the result in a push table
                 var insertresult = await QueryFactory.Query("pushresults")
                     .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
 

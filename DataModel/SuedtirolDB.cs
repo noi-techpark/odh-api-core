@@ -13,6 +13,7 @@ using DataModel.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Net;
 
 namespace DataModel
 {
