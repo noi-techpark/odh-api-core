@@ -3098,11 +3098,11 @@ namespace DataModel
 
     public class PushConfig
     {
-        public ICollection<string> PathParam { get; set; }
+        public ICollection<string>? PathParam { get; set; }
 
-        public string BaseUrl { get; set; }
+        public string? BaseUrl { get; set; }
 
-        public string PushApiUrl
+        public string? PushApiUrl
         {
             get
             {
