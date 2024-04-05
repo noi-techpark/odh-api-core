@@ -70,9 +70,8 @@ namespace OdhApiCore.Controllers.api
                         {
                             var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publish });
                             data.Result = notifierresult != null && 
-                                          notifierresult.ContainsKey(publish) && 
-                                          notifierresult[publish].Response != null ? 
-                                          notifierresult[publish].Response : 
+                                          notifierresult.ContainsKey(publish) ? 
+                                          notifierresult[publish] : 
                                           new { Success = false  };
                         }
                         break;
