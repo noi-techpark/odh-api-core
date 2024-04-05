@@ -4008,6 +4008,16 @@ namespace DataModel
         public string Publisher { get; set; }
         public DateTime Date { get; set; }
         public dynamic Result { get; set; }
+
+        public PushObject? PushObject { get; set; }
+    }
+
+    public class PushObject
+    {
+        public string Id { get; set; }
+
+        //Add the info for the pushed object
+        public string Type { get; set; }
     }
 
     public class PushResult

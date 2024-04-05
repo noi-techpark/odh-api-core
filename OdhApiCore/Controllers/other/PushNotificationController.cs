@@ -49,6 +49,12 @@ namespace OdhApiCore.Controllers.api
                 data.Date = DateTime.Now;
                 data.Id = Guid.NewGuid().ToString();
 
+                PushObject pushobject = new PushObject();
+                pushobject.Type = type;
+                pushobject.Id = id;
+
+                data.PushObject = pushobject;
+
                 switch (publish)
                 {
                     //FCM Push
