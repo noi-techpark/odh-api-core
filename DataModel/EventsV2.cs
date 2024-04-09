@@ -24,7 +24,7 @@ namespace DataModel
         {
             get
             {
-                return "Events/" + Uri.EscapeDataString(this.Id);
+                return this.Id != null ? "Events/" + Uri.EscapeDataString(this.Id) : null;                
             }
         }
 
@@ -90,7 +90,7 @@ namespace DataModel
         {
             get
             {
-                return this.Venues != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = ODHConstant.ApplicationURL + "Venue/" + x }).ToList() : new List<VenueLink>();
+                return this.Venues != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "Venue/" + x }).ToList() : new List<VenueLink>();
             }
         }
 
