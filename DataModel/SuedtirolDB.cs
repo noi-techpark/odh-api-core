@@ -1299,6 +1299,8 @@ namespace DataModel
         {
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            Detail = new Dictionary<string, Detail>();
+            ContactInfos = new Dictionary<string, ContactInfos>();
         }
              
         public LicenseInfo? LicenseInfo { get; set; }
