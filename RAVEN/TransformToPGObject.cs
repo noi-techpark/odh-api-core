@@ -231,6 +231,8 @@ namespace RAVEN
                 datasource = datasource.ToLower();
             }
 
+            data.Source = datasource.ToLower();
+
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationRoomLinked>(data, MetadataHelper.GetMetadataforAccommodationRoom); //GetMetadata(data.Id, "accommodationroom", datasource, data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodationroom", true);
 
