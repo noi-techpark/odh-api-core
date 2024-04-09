@@ -78,7 +78,7 @@ namespace DataModel
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = "ODHTag/" + x }).ToList() : new List<ODHTags>();
             }
         }
 
