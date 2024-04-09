@@ -155,6 +155,11 @@ namespace DataModel
 
     public class VenueRoomDetails
     {
+        public VenueRoomDetails()
+        {
+            Detail = new Dictionary<string, Detail>();
+        }
+
         public string? Id { get; set; }
         public string? Shortname { get; set; }
 
