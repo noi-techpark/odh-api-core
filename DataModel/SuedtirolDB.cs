@@ -1354,24 +1354,25 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
+        
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         
         public ICollection<string>? SmgTags { get; set; }
 
-        public LocationInfo LocationInfo { get; set; }
-        public ICollection<string> HasLanguage { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
 
-        public ICollection<VenueType> VenueCategory { get; set; }
+        public ICollection<VenueType>? VenueCategory { get; set; }
 
-        public ICollection<GpsInfo> GpsInfo { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
 
         public string Source { get; set; }
-        public string SyncSourceInterface { get; set; }
+        public string? SyncSourceInterface { get; set; }
 
         //New Details
         public int? RoomCount { get; set; }
-        public ICollection<VenueRoomDetails> RoomDetails { get; set; }
+        public ICollection<VenueRoomDetails>? RoomDetails { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
@@ -1387,14 +1388,14 @@ namespace DataModel
 
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
 
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
 
         public int? Beds { get; set; }
 
