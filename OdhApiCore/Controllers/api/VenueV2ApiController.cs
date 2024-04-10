@@ -154,10 +154,10 @@ namespace OdhApiCore.Controllers
         }
 
         [HttpGet, Route("VenueV2/ConvertVenueToVenueV2/{id}")]
-        public async Task<IActionResult> ConvertVenueToVenueV2(string id)
+        public async Task<IActionResult> ConvertVenueToVenueV2(string id, bool savetotable = false)
         {
             var query =
-                QueryFactory.Query("venue_v2")
+                QueryFactory.Query("venues_v2")
                     .Select("data")
                     .Where("id", id.ToUpper())
                     .FilterDataByAccessRoles(UserRolesToFilterEndpoint("Venue"));
@@ -166,7 +166,25 @@ namespace OdhApiCore.Controllers
 
             var convertresult = VenueV2Converter.ConvertVenueListToVenueV2(data);
 
-            return Ok(convertresult);
+            if(savetotable)
+            {
+                List<PGCRUDResult> result = new List<PGCRUDResult>();
+                foreach(var venue in convertresult)
+                {
+                    result.Add(await QueryFactory.UpsertData<VenueV2>(
+                        venue, 
+                        new DataInfo("venuesv2", CRUDOperation.Create), 
+                        new EditInfo("venueconverter", "api"), 
+                        new CRUDConstraints(null, new List<string>()),
+                        new CompareConfig(false, false)));
+                }
+
+                return Ok(result);
+            }
+            else
+            {
+                return Ok(convertresult);
+            }            
         }
 
         #endregion

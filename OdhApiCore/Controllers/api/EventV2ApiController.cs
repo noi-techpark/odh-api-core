@@ -151,7 +151,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventV2/ConvertEventShortToEventV2/{id}")]
-        public async Task<IActionResult> ConvertEventShortToEventV2(string id)
+        public async Task<IActionResult> ConvertEventShortToEventV2(string id, bool savetotable = false)
         {
             var query =
                 QueryFactory.Query("eventeuracnoi")
@@ -161,6 +161,35 @@ namespace OdhApiCore.Controllers
 
             var data = await query.GetObjectListAsync<EventShortLinked>();
             var convertresult = EventV2Converter.ConvertEventListToEventV2(data);
+
+            if (savetotable)
+            {
+                List<PGCRUDResult> result = new List<PGCRUDResult>();
+                foreach (var venue in convertresult.Item2)
+                {
+                    result.Add(await QueryFactory.UpsertData<VenueV2>(
+                        venue,
+                        new DataInfo("venuesv2", CRUDOperation.Create),
+                        new EditInfo("venueconverter", "api"),
+                        new CRUDConstraints(null, new List<string>()),
+                        new CompareConfig(false, false)));
+                }
+                foreach (var theevent in convertresult.Item1)
+                {
+                    result.Add(await QueryFactory.UpsertData<EventV2>(
+                        theevent,
+                        new DataInfo("eventsv2", CRUDOperation.Create),
+                        new EditInfo("venueconverter", "api"),
+                        new CRUDConstraints(null, new List<string>()),
+                        new CompareConfig(false, false)));
+                }
+
+                return Ok(result);
+            }
+            else
+            {
+                return Ok(convertresult);
+            }
 
             return Ok(convertresult.Item1);
         }
