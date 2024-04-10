@@ -189,13 +189,11 @@ namespace OdhApiCore.Controllers
             else
             {
                 return Ok(convertresult);
-            }
-
-            return Ok(convertresult.Item1);
+            }            
         }
 
         [HttpGet, Route("EventV2/ConvertEventToEventV2/{id}")]
-        public async Task<IActionResult> ConvertEventToEventV2(string id)
+        public async Task<IActionResult> ConvertEventToEventV2(string id, bool savetotable = false)
         {
             var query =
                 QueryFactory.Query("events")
@@ -206,8 +204,35 @@ namespace OdhApiCore.Controllers
             var data = await query.GetObjectListAsync<EventLinked>();
 
             var convertresult = EventV2Converter.ConvertEventListToEventV2(data);
+            
+            if (savetotable)
+            {
+                List<PGCRUDResult> result = new List<PGCRUDResult>();
+                foreach (var venue in convertresult.Item2)
+                {
+                    result.Add(await QueryFactory.UpsertData<VenueV2>(
+                        venue,
+                        new DataInfo("venuesv2", CRUDOperation.Create),
+                        new EditInfo("venueconverter", "api"),
+                        new CRUDConstraints(null, new List<string>()),
+                        new CompareConfig(false, false)));
+                }
+                foreach (var theevent in convertresult.Item1)
+                {
+                    result.Add(await QueryFactory.UpsertData<EventV2>(
+                        theevent,
+                        new DataInfo("eventsv2", CRUDOperation.Create),
+                        new EditInfo("venueconverter", "api"),
+                        new CRUDConstraints(null, new List<string>()),
+                        new CompareConfig(false, false)));
+                }
 
-            return Ok(convertresult.Item1);
+                return Ok(result);
+            }
+            else
+            {
+                return Ok(convertresult);
+            }
         }
 
         #endregion
