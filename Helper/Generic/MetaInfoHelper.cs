@@ -76,6 +76,8 @@ namespace Helper
                 WeatherForecastLinked wf => GetMetaDataForWeatherForecast(wf),
                 SnowReportBaseData sb => GetMetaDataForSnowReport(sb),
                 TourismMetaData tm => GetMetaDataForMetaData(tm),
+                EventV2 ev => GetMetadataforEvent(ev),
+                VenueV2 ev => GetMetadataforVenue(ev),
                 _ => throw new Exception("not known odh type")
             };            
         }
@@ -141,6 +143,16 @@ namespace Helper
         }
 
         public static Metadata GetMetadataforEvent(EventLinked data)
+        {
+            string sourcemeta = data.Source.ToLower();
+            bool reduced = false;
+            if (data._Meta != null)
+                reduced = (bool)data._Meta.Reduced;
+
+            return GetMetadata(data, sourcemeta, data.LastChange, reduced);
+        }
+
+        public static Metadata GetMetadataforEvent(EventV2 data)
         {
             string sourcemeta = data.Source.ToLower();
             bool reduced = false;
@@ -254,6 +266,19 @@ namespace Helper
                 reduced = (bool)data._Meta.Reduced;
 
             return data._Meta = GetMetadata(data, "lts", data.LastChange, reduced);
+        }
+
+        public static Metadata GetMetadataforVenue(VenueV2 data)
+        {
+            bool reduced = false;
+            if (data._Meta != null)
+                reduced = (bool)data._Meta.Reduced;
+
+            var sourcemeta = "lts";
+            if (data.Source != null)
+                sourcemeta = data.Source.ToLower();
+
+            return data._Meta = GetMetadata(data, sourcemeta, data.LastChange, reduced);
         }
 
         public static Metadata GetMetadataforEventShort(EventShortLinked data)
