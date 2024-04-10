@@ -74,7 +74,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<EventsV2>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<EventV2>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
@@ -132,7 +132,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>        
-        [ProducesResponseType(typeof(EventsV2), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EventV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventV2/{id}", Name = "SingleEventV2")]
@@ -147,7 +147,7 @@ namespace OdhApiCore.Controllers
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
-        [ProducesResponseType(typeof(EventsV2), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(EventV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventV2/ConvertEventShortToEventV2/{id}")]
@@ -291,7 +291,7 @@ namespace OdhApiCore.Controllers
         [AuthorizeODH(PermissionAction.Create)]
         //[Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
         [HttpPost, Route("EventV2")]
-        public Task<IActionResult> Post([FromBody] EventsV2 odhevent)
+        public Task<IActionResult> Post([FromBody] EventV2 odhevent)
         {
             return DoAsyncReturn(async () =>
             {
@@ -301,7 +301,7 @@ namespace OdhApiCore.Controllers
                 odhevent.Id = Helper.IdGenerator.GenerateIDFromType(odhevent);
                 //odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<EventsV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await UpsertData<EventV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -316,17 +316,17 @@ namespace OdhApiCore.Controllers
         [AuthorizeODH(PermissionAction.Update)]
         //[Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify,EventUpdate")]
         [HttpPut, Route("EventV2/{id}")]
-        public Task<IActionResult> Put(string id, [FromBody] EventsV2 odhevent)
+        public Task<IActionResult> Put(string id, [FromBody] EventV2 odhevent)
         {
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
-                odhevent.Id = Helper.IdGenerator.CheckIdFromType<EventsV2>(id);
+                odhevent.Id = Helper.IdGenerator.CheckIdFromType<EventV2>(id);
                 //odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<EventsV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await UpsertData<EventV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -347,9 +347,9 @@ namespace OdhApiCore.Controllers
                 //Additional Filters on the Action Delete
                 AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
 
-                id = Helper.IdGenerator.CheckIdFromType<EventsV2>(id);
+                id = Helper.IdGenerator.CheckIdFromType<EventV2>(id);
 
-                return await DeleteData<EventsV2>(id, new DataInfo("eventsv2", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await DeleteData<EventV2>(id, new DataInfo("eventsv2", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
