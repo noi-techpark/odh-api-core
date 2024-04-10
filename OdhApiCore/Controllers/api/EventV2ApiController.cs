@@ -270,7 +270,7 @@ namespace OdhApiCore.Controllers
                             activefilter: myeventhelper.active, publishedonlist: myeventhelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myeventhelper.lastchange,
                             additionalfilter: additionalfilter,
-                            userroles: UserRolesToFilter)
+                            userroles: UserRolesToFilterEndpoint("Event"))
                          .ApplyRawFilter(rawfilter)
                          //.OrderByRawIfNotNull(sortifseednull)
                          .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
@@ -322,7 +322,7 @@ namespace OdhApiCore.Controllers
                         .Select("data")
                         .Where("id", id.ToUpper())
                         .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                        .FilterDataByAccessRoles(UserRolesToFilter);
+                        .FilterDataByAccessRoles(UserRolesToFilterEndpoint("Event"));
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
