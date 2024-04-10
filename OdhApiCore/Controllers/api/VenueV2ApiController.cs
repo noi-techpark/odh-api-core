@@ -152,7 +152,23 @@ namespace OdhApiCore.Controllers
         {
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
- 
+
+        [HttpGet, Route("VenueV2/ConvertVenueToVenueV2/{id}")]
+        public async Task<IActionResult> ConvertVenueToVenueV2(string id)
+        {
+            var query =
+                QueryFactory.Query("venue_v2")
+                    .Select("data")
+                    .Where("id", id.ToUpper())
+                    .FilterDataByAccessRoles(UserRolesToFilterEndpoint("Venue"));
+
+            var data = await query.GetObjectListAsync<VenueLinked>();
+
+            var convertresult = VenueV2Converter.ConvertVenueListToVenueV2(data);
+
+            return Ok(convertresult);
+        }
+
         #endregion
 
         #region GETTER
