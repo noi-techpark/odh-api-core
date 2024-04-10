@@ -159,7 +159,7 @@ namespace OdhApiCore.Controllers
             var query =
                 QueryFactory.Query("venues_v2")
                     .Select("data")
-                    .Where("id", id.ToUpper())
+                    .When(id != "all", x => x.Where("id", id.ToUpper()))
                     .FilterDataByAccessRoles(UserRolesToFilterEndpoint("Venue"));
 
             var data = await query.GetObjectListAsync<VenueLinked>();
@@ -223,7 +223,7 @@ namespace OdhApiCore.Controllers
                             activefilter: myvenuehelper.active, smgactivefilter: myvenuehelper.smgactive, publishedonlist: myvenuehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myvenuehelper.lastchange,
                             additionalfilter: additionalfilter,
-                            userroles: UserRolesToFilter)
+                            userroles: UserRolesToFilterEndpoint("Venue"))
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
@@ -264,7 +264,7 @@ namespace OdhApiCore.Controllers
                        .Select("data")
                        .Where("id", id.ToUpper())
                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                       .FilterDataByAccessRoles(UserRolesToFilter);
+                       .FilterDataByAccessRoles(UserRolesToFilterEndpoint("Venue"));
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
