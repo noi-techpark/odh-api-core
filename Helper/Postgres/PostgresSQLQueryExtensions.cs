@@ -1325,7 +1325,7 @@ namespace Helper
                     "gen_lastchange > date($$)",
                     updatefrom
                 )
-            );
+            );       
 
 
         //Weatherhistory lastchangedBetween

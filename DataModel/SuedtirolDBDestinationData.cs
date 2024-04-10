@@ -78,7 +78,7 @@ namespace DataModel
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = ODHConstant.ApplicationURL + "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = "ODHTag/" + x }).ToList() : new List<ODHTags>();
             }
         }
 
@@ -155,8 +155,13 @@ namespace DataModel
 
     public class VenueRoomDetails
     {
+        public VenueRoomDetails()
+        {
+            Detail = new Dictionary<string, Detail>();
+        }
+
         public string? Id { get; set; }
-        public string Shortname { get; set; }
+        public string? Shortname { get; set; }
 
         public int? SquareMeters { get; set; }
         //public int maxCapacity { get; set; }
@@ -164,12 +169,12 @@ namespace DataModel
         public bool? Indoor { get; set; }
 
         public ICollection<VenueType>? VenueFeatures { get; set; }
-        public ICollection<VenueSetup> VenueSetup { get; set; }
+        public ICollection<VenueSetup>? VenueSetup { get; set; }
 
         //NEW
         public IDictionary<string, Detail> Detail { get; set; }
 
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
     }
 
     public class DDMeta

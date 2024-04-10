@@ -14,17 +14,11 @@ using System.Threading.Tasks;
 namespace PushServer
 {
 	#region Direct Send FCM to Firebase
-
-	public class FCMPushNotificationResponse
-    {
-		public bool Success { get; set; }
-		public string? Response { get; set; }
-		public Exception? Error { get; set; }
-	}
+	
 
 	public class FCMPushNotification
 	{			
-		public static async Task<FCMPushNotificationResponse> SendNotification(FCMModels fcmmessage, string fcmurl, string fcmsenderid, string fcmauthkey)
+		public static async Task<PushResult> SendNotification(FCMModels fcmmessage, string fcmurl, string fcmsenderid, string fcmauthkey)
 		{
 			FCMPushNotification result = new FCMPushNotification();
 			try
@@ -38,13 +32,15 @@ namespace PushServer
 
 				var myresponseparsed = await myresponse.Content.ReadAsStringAsync();
 
-				return new FCMPushNotificationResponse() { Error = null, Response = myresponseparsed, Success = true };
+				return new PushResult() { Error = null, Response = myresponseparsed, Success = true, Messages = 1 };
 			}
 			catch (Exception ex)
 			{
-				return new FCMPushNotificationResponse() { Error = ex, Response = "Error", Success = false };
+				return new PushResult() { Error = ex.Message, Response = "Error", Success = false, Messages = 1 };
 			}			
 		}
+
+		
 	}
 
 	#endregion

@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-version: '3.4'
-
 services:
   api:
     image: ${DOCKER_IMAGE:-odh-tourism-api}:${DOCKER_TAG:-latest}

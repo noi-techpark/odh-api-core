@@ -231,6 +231,8 @@ namespace RAVEN
                 datasource = datasource.ToLower();
             }
 
+            data.Source = datasource.ToLower();
+
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationRoomLinked>(data, MetadataHelper.GetMetadataforAccommodationRoom); //GetMetadata(data.Id, "accommodationroom", datasource, data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodationroom", true);
 
@@ -721,7 +723,7 @@ namespace RAVEN
             }
 
             data.odhdata.ODHActive = !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH") ? true : false;
-            data.links.self = ODHConstant.ApplicationURL + "Venue/" + data.Id;
+            data.links.self = "Venue/" + data.Id;
 
             data._Meta = MetadataHelper.GetMetadataobject<DDVenue>(data, MetadataHelper.GetMetadataforDDVenue);
             //data.odhdata.PublishedOn = PublishedOnHelper.GetPublishenOnList("venue", data.odhdata.ODHActive);

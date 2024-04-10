@@ -33,8 +33,16 @@ RUN dotnet test --filter Category!=Integration OdhApiCore.sln
 
 FROM build AS publish
 RUN dotnet publish OdhApiCore.csproj -c Release -o /app/publish
+# Install dotnet debug tools
+RUN dotnet tool install --tool-path /tools dotnet-counters
+RUN dotnet tool install --tool-path /tools dotnet-trace
+RUN dotnet tool install --tool-path /tools dotnet-dump
+RUN dotnet tool install --tool-path /tools dotnet-gcdump
 
 FROM base AS final
+# Copy dotnet-tools
+WORKDIR /tools
+COPY --from=publish /tools .
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY OdhApiCore/xml/Weather.xml xml/

@@ -74,6 +74,7 @@ namespace OdhNotifier
                 notifierresponse.HttpStatusCode = response.Item1;
                 notifierresponse.Response = response.Item2;
                 notifierresponse.Service = notifyconfig.ServiceName;
+                notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
 
                 notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
             }
@@ -95,6 +96,13 @@ namespace OdhNotifier
         {
             IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
 
+            //IF 
+            foreach(var pushchannel in publishedonlist)
+            {
+                if(notifierconfiglist.Where(x => x.ServiceName.ToLower() == pushchannel.ToLower()).Count() == 0)
+                    notifierresponselist.TryAddOrUpdate(pushchannel, new NotifierResponse() { Success = false, HttpStatusCode = HttpStatusCode.NotFound, Service = pushchannel, Response = "No configuration found for this publisher"});
+            }
+
             foreach (var notifyconfig in notifierconfiglist)
             {                
                 if(publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
@@ -109,6 +117,7 @@ namespace OdhNotifier
                     notifierresponse.HttpStatusCode = response.Item1;
                     notifierresponse.Response = response.Item2 ;
                     notifierresponse.Service = notifyconfig.ServiceName;
+                    notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
 
                     notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
                 }                
@@ -117,6 +126,15 @@ namespace OdhNotifier
             return notifierresponselist;
         }
 
+        private static bool MapStatusCodeToSuccessProperty(HttpStatusCode statusCode)
+        {
+            switch (statusCode)
+            {
+                case HttpStatusCode.OK: return true;
+                case HttpStatusCode.Created: return true;
+                default: return false;
+            }
+        }
         private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify, NotifierFailureQueue? failurequeuedata = null)
         {
             var requesturl = notify.Url;
@@ -398,6 +416,7 @@ namespace OdhNotifier
                         notifierresponse.HttpStatusCode = response.Item1;
                         notifierresponse.Service = notifyconfig.ServiceName;
                         notifierresponse.Response = response.Item2;
+                        notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
 
                         //TO CHECK if more Elements are pushed it is overwritten
                         notifierresponselist.Add(notifierresponse);
@@ -431,6 +450,7 @@ namespace OdhNotifier
                         notifierresponse.HttpStatusCode = response.Item1;
                         notifierresponse.Service = notifyconfig.ServiceName;
                         notifierresponse.Response = response.Item2;
+                        notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
 
                         //TO CHECK if more Elements are pushed it is overwritten
                         notifierresponselist.Add(notifierresponse);
