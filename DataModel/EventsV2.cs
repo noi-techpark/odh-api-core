@@ -257,10 +257,10 @@ namespace DataModel
 
     public class EventV2Converter
     {
-        public static (IEnumerable<EventV2>, IEnumerable<VenueLinked>) ConvertEventListToEventV2<T>(IEnumerable<T> events) where T : IIdentifiable
+        public static (IEnumerable<EventV2>, IEnumerable<VenueV2>) ConvertEventListToEventV2<T>(IEnumerable<T> events) where T : IIdentifiable
         {
             var eventsV2 = new List<EventV2>();
-            var venues = new List<VenueLinked>();
+            var venues = new List<VenueV2>();
 
             foreach (var eventv1 in events)
             {
@@ -281,11 +281,11 @@ namespace DataModel
             return (eventsV2, venues);
         }
 
-        private static (EventV2, IEnumerable<VenueLinked>) ConvertEventToEventV2(EventLinked eventv1)
+        private static (EventV2, IEnumerable<VenueV2>) ConvertEventToEventV2(EventLinked eventv1)
         {
             //Try to map all to EventsV2
             EventV2 eventv2 = new EventV2();
-            var venues = new List<VenueLinked>();
+            var venues = new List<VenueV2>();
 
             eventv2.PublishedOn = eventv1.PublishedOn;
             eventv2.Id = eventv1.Id;
@@ -320,7 +320,7 @@ namespace DataModel
             }
 
             //Creating Venue
-            VenueLinked venue = new VenueLinked();
+            VenueV2 venue = new VenueV2();
 
             string venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Location;
 
@@ -370,7 +370,7 @@ namespace DataModel
             return (eventv2, venues);
         }
 
-        private static (EventV2, IEnumerable<VenueLinked>) ConvertEventShortToEventV2(EventShortLinked eventv1)
+        private static (EventV2, IEnumerable<VenueV2>) ConvertEventShortToEventV2(EventShortLinked eventv1)
         {
             //Try to map all to EventsV2
             EventV2 eventv2 = new EventV2();
@@ -476,7 +476,7 @@ namespace DataModel
             //}
 
             //Adding EventLocation, AnchorVenue, AnchorVenueRoomMapping, AnchorVenueShort, EndDate, StartDate, StartDateUTC, EndDateUTC, RoomBooked
-            var venues = new HashSet<VenueLinked>();
+            var venues = new HashSet<VenueV2>();
 
             eventv2.EventInfo = new List<EventInfo>();
             foreach (var room in eventv1.RoomBooked)
@@ -498,7 +498,7 @@ namespace DataModel
                 //Space, SpaceDesc, SpaceType, Comment, SpaceAbbrev, SpaceDescRoomMapping
 
                 //Create Venue
-                VenueLinked venue = new VenueLinked();
+                VenueV2 venue = new VenueV2();
                 venue.Id = "eventeuracnoi_" + room.Space.ToLower() + "_" + room.SpaceType;
                 venue.Shortname = room.SpaceAbbrev;
                 //venue.LocationInfo = Todo create locationinfo
@@ -542,8 +542,6 @@ namespace DataModel
 
             return (eventv2, venues);
         }
-
-
     }
 
     public static class DictionaryExtensionsTemp
