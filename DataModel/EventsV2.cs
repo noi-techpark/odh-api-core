@@ -599,6 +599,7 @@ namespace DataModel
             venuev2.Detail = venuev1.Detail;
             venuev2.ImageGallery = venuev1.ImageGallery;
             venuev2.ContactInfos = venuev1.ContactInfos;
+            venuev2.GpsInfo = venuev1.GpsInfo;
 
             venuev2.VenueInfo = new VenueInfo();
             venuev2.VenueInfo.Indoor = null;
@@ -610,7 +611,11 @@ namespace DataModel
 
             venuev2.OperationSchedule = venuev1.OperationSchedule;
             venuev2.LocationInfo = venuev1.LocationInfo;
-            
+
+            venuev2.Mapping = venuev1.Mapping;
+
+            venuev2.RelatedContent = new List<RelatedContent>();
+
 
             //Subvenue
             foreach (var subvenuev1 in venuev1.RoomDetails)
@@ -626,6 +631,8 @@ namespace DataModel
                 subvenuev2.LicenseInfo = venuev1.LicenseInfo;                
                 subvenuev2.PublishedOn = venuev1.PublishedOn;
                 subvenuev2.Source = venuev1.Source;
+                subvenuev2.GpsInfo = venuev1.GpsInfo;
+                subvenuev2.LocationInfo = venuev1.LocationInfo;
 
                 subvenuev2.IsRoot = false;
                 subvenuev2.Detail = subvenuev1.Detail;
@@ -638,10 +645,15 @@ namespace DataModel
                 subvenuev2.VenueInfo.RoomCount = null;
 
                 subvenuev2.Tags = ConvertVenueFeatureToTag(subvenuev1.VenueFeatures).ToList();
-
                 subvenuev2.Capacity = ConvertVenueSetupToTag(subvenuev1.VenueSetup).ToList();
 
+                //Add relation
+                subvenuev2.RelatedContent = new List<RelatedContent>();
+                subvenuev2.RelatedContent.Add(new RelatedContent() { Id = venuev2.Id, Type = "venue" });
+
                 venues.Add(subvenuev2);
+
+                venuev2.RelatedContent.Add(new RelatedContent() { Id = subvenuev2.Id, Type = "venue" });
             }
 
             venues.Add(venuev2);
