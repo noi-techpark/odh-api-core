@@ -612,7 +612,9 @@ namespace DataModel
             venuev2.OperationSchedule = venuev1.OperationSchedule;
             venuev2.LocationInfo = venuev1.LocationInfo;
 
-            venuev2.Mapping = venuev1.Mapping;
+            //Add mapping
+            venuev2.Mapping.Add("lts", new Dictionary<string, string>() { { "rid", venuev2.Id } });
+
 
             venuev2.RelatedContent = new List<RelatedContent>();
 
@@ -650,6 +652,10 @@ namespace DataModel
                 //Add relation
                 subvenuev2.RelatedContent = new List<RelatedContent>();
                 subvenuev2.RelatedContent.Add(new RelatedContent() { Id = venuev2.Id, Type = "venue" });
+
+                //Add mapping
+                subvenuev2.Mapping.Add("lts", new Dictionary<string, string>() { { "rid", subvenuev2.Id } });
+                subvenuev2.Mapping.Add("noi", new Dictionary<string, string>() { { "parent_Id", venuev2.Id } });
 
                 venues.Add(subvenuev2);
 
