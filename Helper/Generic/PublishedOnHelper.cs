@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.Runtime.Internal.Transform;
 using DataModel;
 using Helper.Extensions;
 using System;
@@ -43,6 +44,19 @@ namespace Helper
                 { "article", new List<string>(){ "rezeptartikel" } }
             };
 
+            //Blacklist TVs
+            Dictionary<string, List<string>> notallowedtvs = new Dictionary<string, List<string>>()
+            {
+                //TV Obertilliach, Cortina, Sappada, Auronzo, Arabba, 
+                { "odhactivitypoi", new List<string>(){ 
+                    "F68D877B11916F39E6413DFB744259EB", 
+                    "3063A07EFE5EC4D357FCB6C5128E81F0", 
+                    "E9D7583EECBA480EA073C4F8C030E83C", 
+                    "9FA380DE9937C1BB64844076674968E2", 
+                    "F7D7AAEC0313487B9CE8EC9067E43B73", 
+                    "E1407CED66C14AABBF49532AA49C76A6",
+                    "7D208AA1374F1484A2483829207C9421"} }
+            };
 
             List<string> publishedonlist = new List<string>();
 
@@ -122,11 +136,14 @@ namespace Helper
                             publishedonlist.TryAddOrUpdateOnList("suedtirolwein.com");
 
                         if ((mydata as ODHActivityPoiLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
-                        {                          
+                        {  
+                            //Check if LocationInfo is in one of the blacklistedtv
+                            bool tvallowed = notallowedtvs[mydata._Meta.Type].Where(x => x.Contains((mydata as ODHActivityPoiLinked).TourismorganizationId)).Count() > 0 ? false : true;
+
                             //IF category is white or blacklisted find an intersection
                             var tagintersection = allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags);
 
-                            if (tagintersection.Count() > 0)
+                            if (tagintersection.Count() > 0 && tvallowed)
                             {
                                 var blacklistedpublisher = new List<string>();
 
@@ -162,6 +179,7 @@ namespace Helper
                                 }
                             }
                         }
+                        
 
                         break;
 
