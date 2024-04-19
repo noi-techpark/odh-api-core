@@ -295,7 +295,11 @@ namespace RAVEN
             data2.WayNumber = data.WayNumber;
             data2.Number = data.Number;
             data2.LicenseInfo = data.LicenseInfo;
-            data2.Source = data.Source.ToLower();
+
+            if (String.IsNullOrEmpty(data.Source))
+                data2.Source = "lts";
+            else
+                data2.Source = data.Source.ToLower();
 
             data2.Id = data2.Id.ToUpper();
 
