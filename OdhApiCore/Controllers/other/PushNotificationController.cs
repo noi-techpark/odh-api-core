@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OdhNotifier;
 using PushServer;
@@ -22,11 +23,13 @@ namespace OdhApiCore.Controllers.api
     public class PushNotificationController : OdhController
     {
         private readonly ISettings settings;
+        private readonly IWebHostEnvironment env;
 
         public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
             : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
+            this.env = env;
         }
 
         #region Exposed Generic Endpoint
@@ -41,6 +44,10 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> PushData(string id, string type, string publisher, bool usemocks = true, string ? language = null)
         {
             IDictionary<string, PushResponse> resultdict = new Dictionary<string, PushResponse>();
+
+            //If environment is set on production deactivate usemocks
+            if (!env.IsDevelopment())
+                usemocks = false;
 
             foreach (var publish in publisher.Split(","))
             {
