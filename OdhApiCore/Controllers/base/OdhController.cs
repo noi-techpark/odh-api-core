@@ -49,7 +49,7 @@ namespace OdhApiCore.Controllers
 
         protected QueryFactory QueryFactory { get; }
 
-        private IOdhPushNotifier OdhPushnotifier;
+        protected IOdhPushNotifier OdhPushnotifier;
 
         //Ensure this is only called 1 time per Controller operation
         protected IEnumerable<string> UserRolesToFilter
@@ -320,7 +320,7 @@ namespace OdhApiCore.Controllers
             switch (result.errorreason)
             {
                 case "": return Ok(result);
-                case "Not Allowed": return Forbid();
+                case "Not Allowed": return StatusCode(403, "Not enough permissions");
                 case "Not Found": return NotFound();
                 case "Bad Request": return BadRequest();
                 case "No Data": return BadRequest();

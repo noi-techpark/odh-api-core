@@ -7,6 +7,8 @@ using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OdhNotifier;
 using PushServer;
@@ -21,12 +23,82 @@ namespace OdhApiCore.Controllers.api
     public class PushNotificationController : OdhController
     {
         private readonly ISettings settings;
+        private readonly IWebHostEnvironment env;
 
         public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
             : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
+            this.env = env;
         }
+
+        #region Exposed Generic Endpoint
+
+        /// <summary>
+        /// POST Generic Push Endpoint
+        /// </summary>
+        /// <returns>Http Response</returns>
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
+        [HttpPost, Route("PushData/{id}/{type}/{publisher}")]
+        public async Task<IActionResult> PushData(string id, string type, string publisher, bool usemocks = true, string ? language = null)
+        {
+            IDictionary<string, PushResponse> resultdict = new Dictionary<string, PushResponse>();
+
+            //If environment is set on production deactivate usemocks
+            if (!env.IsDevelopment())
+                usemocks = false;
+
+            foreach (var publish in publisher.Split(","))
+            {
+                var data = new PushResponse();
+                data.Publisher = publish;
+                data.Date = DateTime.Now;
+                data.Id = Guid.NewGuid().ToString();
+
+                PushObject pushobject = new PushObject();
+                pushobject.Type = type;
+                pushobject.Id = id;
+
+                data.PushObject = pushobject;
+
+                switch (publish)
+                {
+                    //FCM Push
+                    case "noi-communityapp":
+                        data.Result = usemocks ? new PushResult() { Error = "", Success = true, Messages = 1, Response = "This is a mockup response" } : await GetDataAndSendFCMMessage(type, id, publish, language);
+                        break;
+
+                    //NOTIFIER
+                    case "idm-marketplace":
+                        if (usemocks)
+                            data.Result = new NotifierResponse() { HttpStatusCode = System.Net.HttpStatusCode.OK, Response = "This is a mockup response", Service = "idm-marketplace", Success = true };
+                        else
+                        {
+                            var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publish });
+                            data.Result = notifierresult != null && 
+                                          notifierresult.ContainsKey(publish) ? 
+                                          notifierresult[publish] : 
+                                          new { Success = false  };
+                        }
+                        break;
+                    default:
+                        data.Result = new { Response = "Publisher is not registered on this api", Success = false };
+                        break;
+                }
+
+                //Save the result in a push table
+                var insertresult = await QueryFactory.Query("pushresults")
+                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+
+                resultdict.Add(publish, data);
+            }
+
+            return Ok(resultdict);
+        }
+
+        #endregion
+
 
         #region Using NOI PushServer
 
@@ -90,7 +162,12 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpGet, Route("FCMMessage/{type}/{id}/{identifier}/{language}")]
-        public async Task<IActionResult> GetFCM(string type, string id, string identifier, string language)
+        public async Task<IActionResult> GetFCM(string type, string id, string identifier, string? language = null)
+        {            
+            return Ok(GetDataAndSendFCMMessage(type, id, identifier, language));            
+        }
+
+        private async Task<PushResult> GetDataAndSendFCMMessage(string type, string id, string identifier, string? language = null)
         {
             try
             {
@@ -102,22 +179,26 @@ namespace OdhApiCore.Controllers.api
                   QueryFactory.Query(mytable)
                       .Select("data")
                       .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
-                      //.When(FilterClosedData, q => q.FilterClosedData());
+                //.When(FilterClosedData, q => q.FilterClosedData());
 
-               
+
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 if (data is not { })
-                    return NotFound();
+                    throw new Exception("no data");
 
                 var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
 
-                //Multilanguage support
-                var langarr = language.Split(',');
+                List<string> languages = new List<string>();
+
+                if (language != null)
+                    languages = language.Split(',').ToList();
+                if (myobject != null && myobject is IHasLanguage && (myobject as IHasLanguage).HasLanguage != null)
+                    languages = (myobject as IHasLanguage).HasLanguage.ToList();
 
                 List<FCMModels> messages = new();
 
-                foreach (var lang in langarr)
+                foreach (var lang in languages)
                 {
                     //Construct the message
                     var message = FCMMessageConstructor.ConstructMyMessage(identifier, lang.ToLower(), myobject);
@@ -133,22 +214,21 @@ namespace OdhApiCore.Controllers.api
                 if (pushserverconfig == null)
                     throw new Exception("PushserverConfig could not be found");
 
-                Dictionary<string, FCMPushNotificationResponse> resultlist = new();
+                List<PushResult> resultlist = new();
 
                 foreach (var message in messages)
                 {
                     var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
 
-                    resultlist.Add(message.to, result);
+                    resultlist.Add(result);
                 }
 
-                return Ok(resultlist);
+                return PushResult.MergeMultipleFCMPushNotificationResponses(resultlist);
             }
             catch (Exception ex)
             {
-                return BadRequest("Error: " + ex.Message);
+                return new PushResult() { Error = ex.Message, Response = "Error", Success = false };
             }
-
         }
 
         /// <summary>

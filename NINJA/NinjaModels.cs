@@ -20,10 +20,10 @@ namespace NINJA
         public int limit { get; set; }
     }
 
-    public class NinjaObjectWithParent<T,V>
+    public class NinjaObjectWithParent<T, V>
     {
         public int offset { get; set; }
-        public ICollection<NinjaDataWithParent<T,V>> data { get; set; }
+        public ICollection<NinjaDataWithParent<T, V>> data { get; set; }
         public int limit { get; set; }
     }
 
@@ -40,13 +40,13 @@ namespace NINJA
         public bool savailable { get; set; }
     }
 
-    public class NinjaDataWithParent<T,V> : NinjaData<V>
+    public class NinjaDataWithParent<T, V> : NinjaData<T>
     {
         public bool pactive { get; set; }
         public bool pavailable { get; set; }
         public NinjaCoordinates pcoordinate { get; set; }
         public string pcode { get; set; }
-        public T pmetadata { get; set; }        
+        public V pmetadata { get; set; }
         public string pname { get; set; }
         public string porigin { get; set; }
         public string ptype { get; set; }
@@ -120,25 +120,29 @@ namespace NINJA
         public string provider { get; set; }
         public string accessInfo { get; set; }
         public string accessType { get; set; }
-        public bool reservable { get; set; }
+        public bool? reservable { get; set; }
         public string paymentInfo { get; set; }
         public string municipality { get; set; }
+
+        public int? capacity { get; set; }
     }
 
     public class NinjaEchargingPlug
     {
-        ICollection<NinjaEchargingOutlet> outlets { get; set; }
+        public ICollection<NinjaEchargingOutlet> outlets { get; set; }
     }
 
     public class NinjaEchargingOutlet
     {
-        public string? id { get; set; }
-        public int? maxPower { get; set; }
-        public int? maxCurrent { get; set; }
-        public int? minCurrent { get; set; }
+        public string id { get; set; }
+        public double? maxPower { get; set; }
+        public double? maxCurrent { get; set; }
+        public double? minCurrent { get; set; }
         public bool? hasFixedCable { get; set; }
         public string? outletTypeCode { get; set; }
     }
 
     #endregion
+
 }
+

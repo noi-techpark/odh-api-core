@@ -13,6 +13,7 @@ using DataModel.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Net;
 
 namespace DataModel
 {
@@ -580,6 +581,7 @@ namespace DataModel
         public ODHActivityPoi()
         {
             PoiProperty = new Dictionary<string, List<PoiProperty>>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         [SwaggerSchema("Id on the primary data Source")]
@@ -622,10 +624,19 @@ namespace DataModel
                 return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
+
+        public IDictionary<string, dynamic>? AdditionalProperties { get; set; }
     }
 
+    //public class AdditionalProperties
+    //{
+    //    public IDictionary<string, dynamic>? Data { get; set; }
 
-    //new to check
+    //    //public string Schema { get; set; }
+    //    //public dynamic Data { get; set; }
+    //}
+
+    //TODO Move all properties to this section
     public class ODHActivityPoiProperties
     {
         public int? AgeFrom { get; set; }
@@ -705,35 +716,68 @@ namespace DataModel
         public string? Objectid { get; set; }
     }
 
-    public class IndependentMobilityData
+    public class EchargingDataProperties
     {
-        public string? Type { get; set; }
-        public DateTime? SurveyDate { get; set; }
+        //Mobility Provides
+        //state (ACTIVE)
+        //capacity (integer)
+        //provider
+        //accessInfo (FREE_PUBLICLY_ACCESSIBLE)
+        //accessType (PUBLIC)
+        //reservable (true/false)
+        //paymentInfo 
+        //outlets [ id, maxPower, maxCurrent, minCurrent, outletTypeCode (Type2Mennekes, CHAdeMO, CCS, 700 bar small vehicles, )  ]
+        
+        public int? Capacity { get; set; }
+        [SwaggerEnum(new[] { "UNAVAILABLE", "ACTIVE", "TEMPORARYUNAVAILABLE", "AVAILABLE", "UNKNOWN","FAULT", "PLANNED" })]
+        public string? State { get; set; }
 
+        public string? PaymentInfo { get; set; }
+
+        [SwaggerEnum(new[] { "PUBLIC", "PRIVATE", "PRIVATE_WITHPUBLICACCESS" })]
+        public string? AccessType { get; set; }
+
+        //If accesstype public, or private_withpublicaccess set to true
+        public bool? ChargingStationAccessible { get; set; }
+
+        public int? ChargingPlugCount { get; set;}
+
+        public IDictionary<string, string> AccessTypeInfo { get; set; }
+
+        public DateTime? SurveyDate { get; set; }
         public string? SurveyType { get; set; }
+
+        public IDictionary<string,string> SurveyAnnotations { get; set; }
+
         public bool? HasRoof { get; set; }
         public bool? VerticalIdentification { get; set; }
-        public bool? HorizontalIdentification { get; set; }
-        public bool? ChargingAccessible { get; set; }
+        public bool? HorizontalIdentification { get; set; }        
+
         [SwaggerSchema("Maximum operation height in cm")]
         public int? MaxOperationHeight { get; set; }
-        [SwaggerSchema("Maximum operation height in cm")]
+
+
         [SwaggerEnum(new[] { "Typ 1-Stecker", "Typ 2-Stecker", "Combo-Stecker", "CHAdeMO-Stecker", "Tesla Supercharger" })]
-        public string? ChargingCableType { get; set; }
+        public List<string>? ChargingCableType { get; set; }
         public int? ChargingCableLength { get; set; }
 
-        public string? ChargingPistol { get; set; }
+        [SwaggerSchema("Maximum operation height in cm (barrierfree = 90-120 cm)")]
+        public string? ChargingPistolOperationHeightMax { get; set; }
+
+        [SwaggerSchema("Stufenlose Gehsteiganbindung: zulässige maximale Steigung <5-8%) bodengleich an den Gehsteig angebunden")]
+        public bool? SteplessSidewalkConnection { get; set; }
+
 
         [SwaggerEnum(new[] { "Barrierefrei", "Bedingt zugänglich", "Nicht zugänglich" })]
         public string? Barrierfree { get; set; }
 
         //public ICollection<CarparkingArea> CarparkingArea { get; set; }
 
-        public CarparkingArea CarparkingAreaInColumns { get; set; }
-        public CarparkingArea CarparkingAreaInRows { get; set; }
+        public EchargingCarparkingArea CarparkingAreaInColumns { get; set; }
+        public EchargingCarparkingArea CarparkingAreaInRows { get; set; }
     }
 
-    public class CarparkingArea
+    public class EchargingCarparkingArea
     {
         //[SwaggerEnum(new[] { "column", "row" })]
         //public string? Type { get; set; }
@@ -2887,7 +2931,9 @@ namespace DataModel
     //For Types Api
     public class AccoFeatures : AccoTypes
     {
+        public string? ClusterId { get; set; }
 
+        public string? ClusterCustomId { get; set; }
     }
 
     //For Types Api 
@@ -3048,6 +3094,24 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public string? Url { get; set; }
+
+        //New fields to store Information on Push
+        public ICollection<PushConfig>? PushConfig { get; set; }
+    }
+
+    public class PushConfig
+    {
+        public ICollection<string>? PathParam { get; set; }
+
+        public string? BaseUrl { get; set; }
+
+        public string? PushApiUrl
+        {
+            get
+            {
+                return String.Format("{0}/{1}", this.BaseUrl != null ? this.BaseUrl : "", String.Join("/", this.PathParam));
+            }
+        }
     }
 
     public class Source : IIdentifiable, IImportDateassigneable, ILicenseInfo
@@ -3077,7 +3141,6 @@ namespace DataModel
 
         public ICollection<string> Types { get; set; }
     }
-
 
     public class LTSTaggingType
     {
@@ -3941,4 +4004,42 @@ namespace DataModel
     }
     
     #endregion
+
+    public class PushResponse
+    {
+        public string Id { get; set; }
+        public string Publisher { get; set; }
+        public DateTime Date { get; set; }
+        public dynamic Result { get; set; }
+
+        public PushObject? PushObject { get; set; }
+    }
+
+    public class PushObject
+    {
+        public string Id { get; set; }
+
+        //Add the info for the pushed object
+        public string Type { get; set; }
+    }
+
+    public class PushResult
+    {
+        public int? Messages { get; set; }
+        public bool Success { get; set; }
+        public string? Response { get; set; }
+        public string? Error { get; set; }
+
+        public static PushResult MergeMultipleFCMPushNotificationResponses(IEnumerable<PushResult> responses)
+        {
+            return new PushResult()
+            {
+                Messages = responses.Sum(x => x.Messages),
+                Error = String.Join("|", responses.Select(x => x.Error)),
+                Success = responses.Any(x => x.Success == true),
+                Response = String.Join("|", responses.Select(x => x.Response))
+            };
+        }
+    }
+
 }

@@ -427,6 +427,9 @@ namespace OdhApiImporter.Helpers.DSS
 
                 var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid, "dss." + entitytype + ".import" , importerURL);
 
+                //Publishedon Helper?
+
+
                 //Hack insert also in Activity table
                 await InsertInLegacyActivityTable(odhactivitypoi);
 

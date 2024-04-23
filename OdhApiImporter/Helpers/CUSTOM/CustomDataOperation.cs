@@ -242,6 +242,58 @@ namespace OdhApiImporter.Helpers
         }
 
 
+        public async Task<int> UpdateAllEventShortstHasLanguage()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                eventshort.CheckMyInsertedLanguages();
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> UpdateAllWineHasLanguage()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("wines");
+
+            var data = await query.GetObjectListAsync<WineLinked>();
+            int i = 0;
+
+            foreach (var wine in data)
+            {
+                wine.CheckMyInsertedLanguages(new List<string>() { "de","it","en" });
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("wines").Where("id", wine.Id)                    
+                    .UpdateAsync(new JsonBData() { id = wine.Id?.ToLower() ?? "", data = new JsonRaw(wine) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+
         public async Task<int> UpdateAllEventShortstonewDataModel()
         {
             //Load all data from PG and resave

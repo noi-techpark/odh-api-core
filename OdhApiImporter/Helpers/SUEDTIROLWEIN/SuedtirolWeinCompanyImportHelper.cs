@@ -385,6 +385,9 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             //Set LicenseInfo
             odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
+            //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
+            odhactivitypoi._Meta = MetadataHelper.GetMetadataobject(odhactivitypoi);
+
             //Set PublishedOn to marketplace and suedtirolwein
             odhactivitypoi.CreatePublishedOnList(new List<AllowedTags>() { new AllowedTags() { Id = "weinkellereien", PublishDataWithTagOn = new Dictionary<string, bool>() { { "idm-marketplace", true }, { "suedtirolwein.com", true } } } });    
 

@@ -635,6 +635,8 @@ namespace RAVEN
             else
                 webcam.Source = data.Source.ToLower();
 
+            webcam.CheckMyInsertedLanguages();
+
             webcam._Meta = MetadataHelper.GetMetadataobject<WebcamInfoLinked>(webcam, MetadataHelper.GetMetadataforWebcam); //GetMetadata(data.Id, "webcam", sourcemeta, data.LastChange);
             var webcampublished = data.WebcamAssignedOn != null && data.WebcamAssignedOn.Count > 0 ? true : false;
 
