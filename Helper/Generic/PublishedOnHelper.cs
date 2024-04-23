@@ -136,9 +136,11 @@ namespace Helper
                             publishedonlist.TryAddOrUpdateOnList("suedtirolwein.com");
 
                         if ((mydata as ODHActivityPoiLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
-                        {  
+                        {
                             //Check if LocationInfo is in one of the blacklistedtv
-                            bool tvallowed = notallowedtvs[mydata._Meta.Type].Where(x => x.Contains((mydata as ODHActivityPoiLinked).TourismorganizationId)).Count() > 0 ? false : true;
+                            bool tvallowed = true;
+                            if((mydata as ODHActivityPoiLinked).TourismorganizationId != null)
+                                    tvallowed = notallowedtvs[mydata._Meta.Type].Where(x => x.Contains((mydata as ODHActivityPoiLinked).TourismorganizationId)).Count() > 0 ? false : true;
 
                             //IF category is white or blacklisted find an intersection
                             var tagintersection = allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags);
