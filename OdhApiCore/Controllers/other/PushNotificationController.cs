@@ -62,30 +62,41 @@ namespace OdhApiCore.Controllers.api
 
                 data.PushObject = pushobject;
 
-                switch (publish)
-                {
-                    //FCM Push
-                    case "noi-communityapp":
-                        data.Result = usemocks ? new PushResult() { Error = "", Success = true, Messages = 1, Response = "This is a mockup response" } : await GetDataAndSendFCMMessage(type, id, publish, language);
-                        break;
 
-                    //NOTIFIER
-                    case "idm-marketplace":
-                        if (usemocks)
-                            data.Result = new NotifierResponse() { HttpStatusCode = System.Net.HttpStatusCode.OK, Response = "This is a mockup response", Service = "idm-marketplace", Success = true };
-                        else
-                        {
-                            var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publish });
-                            data.Result = notifierresult != null && 
-                                          notifierresult.ContainsKey(publish) ? 
-                                          notifierresult[publish] : 
-                                          new { Success = false  };
-                        }
-                        break;
-                    default:
-                        data.Result = new { Response = "Publisher is not registered on this api", Success = false };
-                        break;
+                //Check if data can be pushed
+                var checkobjectresult = await CheckPublishedOnAttribute(id, type, publish);
+                if (checkobjectresult.Item1)
+                {
+                    switch (publish)
+                    {
+                        //FCM Push
+                        case "noi-communityapp":
+                            data.Result = usemocks ? new PushResult() { Error = "", Success = true, Messages = 1, Response = "This is a mockup response" } : await GetDataAndSendFCMMessage(type, id, publish, language);
+                            break;
+
+                        //NOTIFIER
+                        case "idm-marketplace":
+                            if (usemocks)
+                                data.Result = new NotifierResponse() { HttpStatusCode = System.Net.HttpStatusCode.OK, Response = "This is a mockup response", Service = "idm-marketplace", Success = true };
+                            else
+                            {
+                                var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publish });
+                                data.Result = notifierresult != null &&
+                                              notifierresult.ContainsKey(publish) ?
+                                              notifierresult[publish] :
+                                              new { Success = false };
+                            }
+                            break;
+                        default:
+                            data.Result = new { Response = "Publisher is not registered on this api", Success = false };
+                            break;
+                    }
                 }
+                else
+                {
+                    data.Result = new { Response = checkobjectresult.Item2, Success = false };
+                }
+
 
                 //Save the result in a push table
                 var insertresult = await QueryFactory.Query("pushresults")
@@ -95,6 +106,33 @@ namespace OdhApiCore.Controllers.api
             }
 
             return Ok(resultdict);
+        }
+
+        private async Task<(bool, string)> CheckPublishedOnAttribute(string id, string type, string publish)
+        {
+            //Get the object
+            var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
+            var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
+
+            var data = await
+              QueryFactory.Query(mytable)
+                  .Select("data")
+                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
+                  .GetObjectSingleAsync<IIdentifiable>();
+
+            if (data == null)
+                return (false, "data not found");
+            else if(data != null && data is IPublishedOn)
+            {
+                //check if publisher is set
+                if ((data as IPublishedOn).PublishedOn != null && (data as IPublishedOn).PublishedOn.Contains(publish))
+                    return (true,"");
+                else
+                    return (false,"publisher not activated for this record");
+
+            }
+
+            return (false, "something went wrong");
         }
 
         #endregion
