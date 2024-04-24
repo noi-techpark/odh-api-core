@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OdhNotifier;
 using PushServer;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -65,6 +66,7 @@ namespace OdhApiCore.Controllers.api
 
                 //Check if data can be pushed
                 var checkobjectresult = await CheckPublishedOnAttribute(id, type, publish);
+                
                 if (checkobjectresult.Item1)
                 {
                     switch (publish)
@@ -112,20 +114,26 @@ namespace OdhApiCore.Controllers.api
         {
             //Get the object
             var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
-            var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
-
-            var data = await
+           
+            var query =
               QueryFactory.Query(mytable)
                   .Select("data")
-                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id))
-                  .GetObjectSingleAsync<IIdentifiable>();
+                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
 
-            if (data == null)
+            var data = await query.FirstOrDefaultAsync<JsonRaw?>();
+
+            if (data is not { })
                 return (false, "data not found");
-            else if(data != null && data is IPublishedOn)
+
+            var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
+
+
+            if (myobject == null)
+                return (false, "data not found");
+            else if(myobject != null && myobject is IPublishedOn)
             {
                 //check if publisher is set
-                if ((data as IPublishedOn).PublishedOn != null && (data as IPublishedOn).PublishedOn.Contains(publish))
+                if ((myobject as IPublishedOn).PublishedOn != null && (myobject as IPublishedOn).PublishedOn.Contains(publish))
                     return (true,"");
                 else
                     return (false,"publisher not activated for this record");
