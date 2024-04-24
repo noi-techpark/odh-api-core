@@ -19,7 +19,7 @@ namespace DSS.Parser
         #region Lift / Slope
 
         public static ODHActivityPoiLinked ParseDSSLiftDataToODHActivityPoi(ODHActivityPoiLinked? myodhactivitypoilinked, dynamic dssitem)
-        {            
+        {
             if (myodhactivitypoilinked == null)
                 myodhactivitypoilinked = new ODHActivityPoiLinked();
 
@@ -53,10 +53,11 @@ namespace DSS.Parser
             myodhactivitypoilinked.Type = "Anderes";
             myodhactivitypoilinked.SubType = "Aufstiegsanlagen";
 
-            myodhactivitypoilinked.SmgTags = new List<string>();
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
-            myodhactivitypoilinked.SmgTags.Add("weitere aufstiegsanlagen"); //?                        
+            myodhactivitypoilinked.SmgTags = new List<string>() {
+                myodhactivitypoilinked.Type.ToLower(),
+                myodhactivitypoilinked.SubType.ToLower(),
+                "weitere aufstiegsanlagen"
+                };
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 
@@ -106,8 +107,6 @@ namespace DSS.Parser
                 }
             }
                         
-
-
             //Operationschedule (opening-times, opening-times-summer, season-summer, season-winter)
             myodhactivitypoilinked.OperationSchedule = new List<OperationSchedule>();
 
@@ -222,13 +221,14 @@ namespace DSS.Parser
             myodhactivitypoilinked.Type = "Winter";
             myodhactivitypoilinked.SubType = "Skirundtouren Pisten";
 
-            myodhactivitypoilinked.SmgTags = new List<string>();
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
-            myodhactivitypoilinked.SmgTags.Add("pisten");
-            myodhactivitypoilinked.SmgTags.Add("ski alpin");
-            myodhactivitypoilinked.SmgTags.Add("piste");
-            myodhactivitypoilinked.SmgTags.Add("weitere pisten"); //?            
+            myodhactivitypoilinked.SmgTags = new List<string>(){
+                myodhactivitypoilinked.Type.ToLower(),
+                myodhactivitypoilinked.SubType.ToLower(),
+                "pisten",
+                "ski alpin",
+                "piste",
+                "weitere pisten"
+            };
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 
