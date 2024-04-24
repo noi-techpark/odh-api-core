@@ -63,7 +63,6 @@ namespace OdhApiCore.Controllers.api
 
                 data.PushObject = pushobject;
 
-
                 //Check if data can be pushed
                 var checkobjectresult = await CheckPublishedOnAttribute(id, type, publish);
                 
@@ -112,7 +111,7 @@ namespace OdhApiCore.Controllers.api
 
         private async Task<(bool, string)> CheckPublishedOnAttribute(string id, string type, string publish)
         {
-            //Get the object
+            //Check if the object has the publisher in the PublishedOn Array
             var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
            
             var query =
@@ -137,7 +136,6 @@ namespace OdhApiCore.Controllers.api
                     return (true,"");
                 else
                     return (false,"publisher not activated for this record");
-
             }
 
             return (false, "something went wrong");
