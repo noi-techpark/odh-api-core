@@ -233,11 +233,14 @@ namespace OdhApiCore.Controllers.api
 
                 var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
 
+                if (myobject == null)
+                    throw new Exception("object conversion failed");
+
                 List<string> languages = new List<string>();
 
                 if (language != null)
                     languages = language.Split(',').ToList();
-                if (myobject != null && myobject is IHasLanguage && (myobject as IHasLanguage).HasLanguage != null)
+                else if(myobject is IHasLanguage && (myobject as IHasLanguage).HasLanguage != null)
                     languages = (myobject as IHasLanguage).HasLanguage.ToList();
 
                 List<FCMModels> messages = new();
