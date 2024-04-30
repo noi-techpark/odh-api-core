@@ -145,7 +145,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            var polygonsearchresult = Helper.GeoSearchHelper.GetPolygon(polygon);
+            var polygonsearchresult = Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFiltered(
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
@@ -295,7 +295,8 @@ namespace OdhApiCore.Controllers.api
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
-                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.polygon, polygonsearchresult.operation)))
+                        .When(polygonsearchresult != null && String.IsNullOrEmpty(polygonsearchresult.wktstring), x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.polygon, polygonsearchresult.operation)))
+                        .When(polygonsearchresult != null && !String.IsNullOrEmpty(polygonsearchresult.wktstring), x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.operation)))
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
