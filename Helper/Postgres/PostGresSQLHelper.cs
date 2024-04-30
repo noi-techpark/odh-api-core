@@ -170,7 +170,7 @@ namespace Helper
             return $"{GetPolygonOperator(operation)}(ST_Polygon('LINESTRING({ String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))})'::geometry, 4326), gen_position)";
         }
 
-        public static string GetPolygonOperator(string operation) => operation switch
+        public static string GetPolygonOperator(string? operation) => operation switch
         {
             "contains" => "ST_Contains",
             "intersects" => "ST_Intersects",
