@@ -165,30 +165,20 @@ namespace Helper
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
 
-        //public static string GetGeoWhereSimple(string latitude, string longitude, string radius)
-        //{
-        //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision)) < " + radius;
-        //}
-
+        public static string GetGeoWhereInPolygon_GeneratedColumns(List<Tuple<double,double>> polygon)
+        {
+            return $"ST_Contains(ST_Polygon('LINESTRING({ String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))})'::geometry, 4326), gen_position)";
+        }
+        
         public static string GetGeoOrderBySimple_GeneratedColumns(double latitude, double longitude)
         {
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision))";
-        }
-
-        //public static string GetGeoOrderBySimple(string latitude, string longitude)
-        //{
-        //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision))";
-        //}
+        }      
         
         public static string GetGeoWhereExtended_GeneratedColumns(double latitude, double longitude, int radius)
         {
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
-
-        //public static string GetGeoWhereExtended(string latitude, string longitude, string radius)
-        //{
-        //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < " + radius;
-        //}
 
         public static string GetGeoOrderByExtended_GeneratedColumns(double latitude, double longitude)
         {
