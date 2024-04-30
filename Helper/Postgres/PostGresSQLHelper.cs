@@ -165,10 +165,18 @@ namespace Helper
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
 
-        public static string GetGeoWhereInPolygon_GeneratedColumns(List<Tuple<double,double>> polygon)
+        public static string GetGeoWhereInPolygon_GeneratedColumns(List<Tuple<double,double>> polygon, string? operation = null)
         {
-            return $"ST_Contains(ST_Polygon('LINESTRING({ String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))})'::geometry, 4326), gen_position)";
+            return $"{GetPolygonOperator(operation)}(ST_Polygon('LINESTRING({ String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))})'::geometry, 4326), gen_position)";
         }
+
+        public static string GetPolygonOperator(string operation) => operation switch
+        {
+            "contains" => "ST_Contains",
+            "intersects" => "ST_Intersects",
+            _ => "ST_Contains"
+        };          
+
         
         public static string GetGeoOrderBySimple_GeneratedColumns(double latitude, double longitude)
         {
