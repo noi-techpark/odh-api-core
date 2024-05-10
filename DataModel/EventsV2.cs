@@ -306,7 +306,15 @@ namespace DataModel
             //Where can we store the Organizerinfo???
             //eventv2.Organizer = eventv1.OrganizerInfos;
 
-            eventv2.Mapping.Add("lts", new Dictionary<string, string>() { { "rid", eventv1.Id }, { "classificationrid", eventv1.ClassificationRID } });
+            if(eventv2.Mapping.ContainsKey("lts"))
+            {
+                if(!eventv2.Mapping["lts"].ContainsKey("rid"))
+                    eventv2.Mapping["lts"].Add("rid", eventv1.Id);
+                if (!eventv2.Mapping["lts"].ContainsKey("classificationrid"))
+                    eventv2.Mapping["lts"].Add("classificationrid", eventv1.ClassificationRID);                
+            }
+            else
+                eventv2.Mapping.Add("lts", new Dictionary<string, string>() { { "rid", eventv1.Id }, { "classificationrid", eventv1.ClassificationRID } });
 
             //Topics to Tags
             eventv2.Tags = new List<TagV2>();
