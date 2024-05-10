@@ -55,7 +55,7 @@ namespace DataModel
         //We use RelatedContent to store Parent/Child Event Information
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
-        public bool? isRoot { get; set; }
+        public bool? IsRoot { get; set; }
 
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
@@ -116,7 +116,7 @@ namespace DataModel
         {
             get
             {
-                return this.Venues != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "VenueV2/" + x }).ToList() : new List<VenueLink>();
+                return this.VenueIds != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "VenueV2/" + x }).ToList() : new List<VenueLink>();
             }
         }
 
