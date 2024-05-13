@@ -43,23 +43,33 @@ namespace DataModel
         public string? Id { get; set; }
         public string? Shortname { get; set; }
         public bool Active { get; set; }
+        
+        //Firstimport and LastChange Section (Here for compatibility reasons could also be removed)
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
 
+        //Source 
         public string? Source { get; set; }
 
-        //Language, Publishedon, Mapping and RelatedContent
+        //HasLanguage, for which Languages the dataset has information
         public ICollection<string>? HasLanguage { get; set; }
+        
+        //Publishedon Array, Event is published for channel xy
         public ICollection<string>? PublishedOn { get; set; }
+        
+        //Mapping Section, to store Ids and other information of the data provider
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
-        //We use RelatedContent to store Parent/Child Event Information
+        
+        //RelatedContent, could be used to store Parent/Child Event Information
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
+        //Indicates if this is a Parent Event
         public bool? IsRoot { get; set; }
 
+        //Dynamic AdditionalProperties field to store Provider Specific data that does not fit into the fields
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
-        //Converting EventTopis to Tags 
+        //Converting EventTopis to Tags so we have the same structure 
         public ICollection<TagV2> Tags { get; set; }
 
         //Description and Contactinfo
@@ -70,12 +80,13 @@ namespace DataModel
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }        
 
+        //Documents for this Event
         public IDictionary<string, List<DocumentDetailed>>? Documents { get; set; }
 
-        //TODO Add EventDates
+        //EventInfo Section contains all Infos about Event Dates, Venues etc....
         public ICollection<EventInfo> EventInfo { get; set; }
 
-        //Each Event has a Venue
+        //Each Event has a "main" Venue, to discuss if this 
         public List<string> VenueIds { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
@@ -87,11 +98,9 @@ namespace DataModel
             }
         }
 
-        //TODO Event URLS ? 
+        //TO Check, section for Event URLS?
 
-        //TODO Add Booking Info
-
-        //TODO Add Subevent Use RelatedContent?
+        //TO Check, section for Booking Info        
     }
 
     public class VenueLink
@@ -102,13 +111,15 @@ namespace DataModel
 
     public class EventInfo
     {
+        //Begin and Enddate
         public DateTime Begin { get; set; }
         public DateTime End { get; set; }
 
+        //Begin and Enddate in UTC (could be created automatically)
         public double BeginUTC { get; set; }
-
         public double EndUTC { get; set; }
 
+        //Assigned Venue
         public List<string> VenueIds { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
@@ -120,13 +131,16 @@ namespace DataModel
             }
         }
 
-        //to check if this is needed
+        //Dynamic Additional Properties field
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
+        //Detail Information
         public IDictionary<string, Detail> Detail { get; set; }
 
+        //Documents
         public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }        
 
+        //Capacity of the Event Venue Combination (not always the same as the Venue Capacity)
         public int? Capacity { get; set; }
     }
 
