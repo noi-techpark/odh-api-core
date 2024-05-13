@@ -84,19 +84,44 @@ namespace DataModel
         public IDictionary<string, List<DocumentDetailed>>? Documents { get; set; }
 
         //EventInfo Section contains all Infos about Event Dates, Venues etc....
-        public ICollection<EventInfo> EventInfo { get; set; }
+        //public ICollection<EventInfo> EventInfo { get; set; }
+
+        ////Each Event has a "main" Venue, to discuss if this 
+        //public List<string> VenueIds { get; set; }
+
+        //[SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        //public ICollection<VenueLink> Venues
+        //{
+        //    get
+        //    {
+        //        return this.VenueIds != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "VenueV2/" + x }).ToList() : new List<VenueLink>();
+        //    }
+        //}
+
+
+        //Begin and Enddate
+        public DateTime Begin { get; set; }
+        public DateTime End { get; set; }
+
+        //Begin and Enddate in UTC (could be created automatically)
+        public double BeginUTC { get; set; }
+        public double EndUTC { get; set; }
+
 
         //Each Event has a "main" Venue, to discuss if this 
-        public List<string> VenueIds { get; set; }
+        public string VenueId { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public ICollection<VenueLink> Venues
+        public VenueLink Venue
         {
             get
             {
-                return this.VenueIds != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "VenueV2/" + x }).ToList() : new List<VenueLink>();
+                return this.VenueId != null ? new VenueLink() { Id = this.VenueId, Self = "VenueV2/" + this.VenueId } : new VenueLink() { };
             }
         }
+
+        //Capacity of the Event Venue Combination (not always the same as the Venue Capacity)
+        public int? Capacity { get; set; }
 
         //TO Check, section for Event URLS?
 
@@ -109,12 +134,10 @@ namespace DataModel
         public string? Self { get; set; }
     }
 
-    public class EventInfo
-    {
-        //Begin and Enddate
-        public DateTime Begin { get; set; }
-        public DateTime End { get; set; }
 
+    //NOT USED anymore
+    public class EventInfo
+    {       
         //Begin and Enddate in UTC (could be created automatically)
         public double BeginUTC { get; set; }
         public double EndUTC { get; set; }
@@ -281,13 +304,13 @@ namespace DataModel
                 if (eventv1 is EventShortLinked)
                 {
                     var result = ConvertEventShortToEventV2(eventv1 as EventShortLinked);
-                    eventsV2.Add(result.Item1);
+                    eventsV2.AddRange(result.Item1);
                     venues.AddRange(result.Item2);
                 }
                 if (eventv1 is EventLinked)
                 {
                     var result = ConvertEventToEventV2(eventv1 as EventLinked);
-                    eventsV2.Add(result.Item1);
+                    eventsV2.AddRange(result.Item1);
                     venues.AddRange(result.Item2);
                 }
             }
@@ -295,229 +318,233 @@ namespace DataModel
             return (eventsV2, venues);
         }
 
-        private static (EventV2, IEnumerable<VenueV2>) ConvertEventToEventV2(EventLinked eventv1)
+        private static (IEnumerable<EventV2>, IEnumerable<VenueV2>) ConvertEventToEventV2(EventLinked eventv1)
         {
-            //Try to map all to EventsV2
-            EventV2 eventv2 = new EventV2();
-            var venues = new List<VenueV2>();
+            List<EventV2> eventv2list = new List<EventV2>();
+            List<VenueV2> venuev2list = new List<VenueV2>();
 
-            eventv2.PublishedOn = eventv1.PublishedOn;
-            eventv2.Id = eventv1.Id;
-            eventv2.ImageGallery = eventv1.ImageGallery;
-            eventv2.Shortname = eventv1.Shortname;
-            eventv2.FirstImport = eventv1.FirstImport;
-            eventv2.LastChange = eventv1.LastChange;
-            eventv2.Active = eventv1.Active;
-            eventv2.Mapping = eventv1.Mapping;
-            eventv2.HasLanguage = eventv1.HasLanguage;
-            eventv2.LicenseInfo = eventv1.LicenseInfo;
-            eventv2.Source = eventv1.Source;
-
-            eventv2.Detail = eventv1.Detail;
-            //eventv2.GpsInfo = eventv1.GpsInfo; add to venue
-            eventv2.ContactInfos = eventv1.ContactInfos;
-
-            //Where can we store the Organizerinfo???
-            //eventv2.Organizer = eventv1.OrganizerInfos;
-
-            if(eventv2.Mapping.ContainsKey("lts"))
-            {
-                if(!eventv2.Mapping["lts"].ContainsKey("rid"))
-                    eventv2.Mapping["lts"].Add("rid", eventv1.Id);
-                if (!eventv2.Mapping["lts"].ContainsKey("classificationrid"))
-                    eventv2.Mapping["lts"].Add("classificationrid", eventv1.ClassificationRID);                
-            }
-            else
-                eventv2.Mapping.Add("lts", new Dictionary<string, string>() { { "rid", eventv1.Id }, { "classificationrid", eventv1.ClassificationRID } });
-
-            //Topics to Tags
-            eventv2.Tags = new List<TagV2>();
-
-            if (eventv1.TopicRIDs != null)
-            {
-                foreach (var tag in eventv1.TopicRIDs)
-                {
-                    eventv2.Tags.Add(new TagV2() { Id = tag, Code = "", Source = "lts" });
-                }
-            }
-
-            //Creating Venue
-            VenueV2 venue = new VenueV2();
-
-            string venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Location;
-
-            if (String.IsNullOrEmpty(venuename))
-                venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Mplace;
-
-            venue.Id = Regex.Replace(eventv1.ContactInfos.GetEnglishOrFirstKeyFromDictionary().CompanyName, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
-
-            venue.Shortname = venuename;
-            venue.GpsInfo = eventv1.GpsInfo;
-            venue.LocationInfo = eventv1.LocationInfo;
-            venue.ContactInfos = eventv1.ContactInfos;
-
-            venue.Detail = new Dictionary<string, Detail>();
-
-            foreach (var lang in eventv1.HasLanguage)
-            {
-                Detail venuedetail = new Detail();
-                venuedetail.Language = lang;
-
-                string venuetitle = eventv1.EventAdditionalInfos[lang].Location;
-
-                if (String.IsNullOrEmpty(venuename))
-                    venuetitle = eventv1.EventAdditionalInfos[lang].Mplace;
-
-                venuedetail.Title = venuetitle;
-                venuedetail.BaseText = eventv1.EventAdditionalInfos[lang].Reg;
-
-                venue.Detail[lang] = venuedetail;
-            }
-
-            venues.Add(venue);
-
-            eventv2.EventInfo = new List<EventInfo>();
             foreach (var eventdate in eventv1.EventDate)
             {
-                EventInfo eventinfo = new EventInfo();
-                eventinfo.Begin = eventdate.From.Date + eventdate.Begin.Value;
-                eventinfo.End = eventdate.To.Date + eventdate.End.Value;
+                //Try to map all to EventsV2
+                EventV2 eventv2 = new EventV2();
+                var venues = new List<VenueV2>();
+
+                eventv2.PublishedOn = eventv1.PublishedOn;
+                eventv2.Id = eventv1.Id + "_" + eventdate.From;
+                eventv2.ImageGallery = eventv1.ImageGallery;
+                eventv2.Shortname = eventv1.Shortname;
+                eventv2.FirstImport = eventv1.FirstImport;
+                eventv2.LastChange = eventv1.LastChange;
+                eventv2.Active = eventv1.Active;
+                eventv2.Mapping = eventv1.Mapping;
+                eventv2.HasLanguage = eventv1.HasLanguage;
+                eventv2.LicenseInfo = eventv1.LicenseInfo;
+                eventv2.Source = eventv1.Source;
+
+                eventv2.Detail = eventv1.Detail;
+                //eventv2.GpsInfo = eventv1.GpsInfo; add to venue
+                eventv2.ContactInfos = eventv1.ContactInfos;
+
+                //Where can we store the Organizerinfo???
+                //eventv2.Organizer = eventv1.OrganizerInfos;
+
+                if (eventv2.Mapping.ContainsKey("lts"))
+                {
+                    if (!eventv2.Mapping["lts"].ContainsKey("rid"))
+                        eventv2.Mapping["lts"].Add("rid", eventv1.Id);
+                    if (!eventv2.Mapping["lts"].ContainsKey("classificationrid"))
+                        eventv2.Mapping["lts"].Add("classificationrid", eventv1.ClassificationRID);
+                }
+                else
+                    eventv2.Mapping.Add("lts", new Dictionary<string, string>() { { "rid", eventv1.Id }, { "classificationrid", eventv1.ClassificationRID } });
+
+                //Topics to Tags
+                eventv2.Tags = new List<TagV2>();
+
+                if (eventv1.TopicRIDs != null)
+                {
+                    foreach (var tag in eventv1.TopicRIDs)
+                    {
+                        eventv2.Tags.Add(new TagV2() { Id = tag, Code = "", Source = "lts" });
+                    }
+                }
+
+                //Creating Venue
+                VenueV2 venue = new VenueV2();
+
+                string venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Location;
+
+                if (String.IsNullOrEmpty(venuename))
+                    venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Mplace;
+
+                venue.Id = Regex.Replace(eventv1.ContactInfos.GetEnglishOrFirstKeyFromDictionary().CompanyName, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+
+                venue.Shortname = venuename;
+                venue.GpsInfo = eventv1.GpsInfo;
+                venue.LocationInfo = eventv1.LocationInfo;
+                venue.ContactInfos = eventv1.ContactInfos;
+
+                venue.Detail = new Dictionary<string, Detail>();
+
+                foreach (var lang in eventv1.HasLanguage)
+                {
+                    Detail venuedetail = new Detail();
+                    venuedetail.Language = lang;
+
+                    string venuetitle = eventv1.EventAdditionalInfos[lang].Location;
+
+                    if (String.IsNullOrEmpty(venuename))
+                        venuetitle = eventv1.EventAdditionalInfos[lang].Mplace;
+
+                    venuedetail.Title = venuetitle;
+                    venuedetail.BaseText = eventv1.EventAdditionalInfos[lang].Reg;
+
+                    venue.Detail[lang] = venuedetail;
+                }
+
+                venues.Add(venue);
+                venuev2list.Add(venue);
+
+                eventv2.Begin = eventdate.From.Date + eventdate.Begin.Value;
+                eventv2.End = eventdate.To.Date + eventdate.End.Value;
 
                 //Add From, To and Begin End
-                eventinfo.VenueIds = new List<string>() { venue.Id };
+                eventv2.VenueId = venue.Id;
 
-                eventv2.EventInfo.Add(eventinfo);
+                eventv2list.Add(eventv2);
             }
-
-            return (eventv2, venues);
+           
+            return (eventv2list, venuev2list);
         }
 
-        private static (EventV2, IEnumerable<VenueV2>) ConvertEventShortToEventV2(EventShortLinked eventv1)
+        private static (IEnumerable<EventV2>, IEnumerable<VenueV2>) ConvertEventShortToEventV2(EventShortLinked eventv1)
         {
-            //Try to map all to EventsV2
-            EventV2 eventv2 = new EventV2();
+            List<EventV2> eventv2list = new List<EventV2>();
+            List<VenueV2> venuev2list = new List<VenueV2>();
 
-            eventv2.PublishedOn = eventv1.PublishedOn;
-            eventv2.Id = eventv1.Id;
-            eventv2.ImageGallery = eventv1.ImageGallery;
-            eventv2.Shortname = eventv1.Shortname;
-            eventv2.FirstImport = eventv1.FirstImport;
-            eventv2.LastChange = eventv1.LastChange;
-            eventv2.Active = eventv1.Active.Value;
-            eventv2.Mapping = eventv1.Mapping;
-            eventv2.HasLanguage = eventv1.HasLanguage;
-            //eventv2.GpsInfo = eventv1.GpsInfo; //todo add to Venue
-            eventv2.LicenseInfo = eventv1.LicenseInfo;
-            eventv2.Source = eventv1.Source;
-
-            if (eventv2.Mapping == null)
-                eventv2.Mapping.Add("ebms", new Dictionary<string, string>() { { "id", eventv1.EventId.ToString() } });
-
-            //Putting all info into Detail
-            eventv2.Detail = new Dictionary<string, Detail>();
-            foreach (var lang in eventv2.HasLanguage)
-            {
-                Detail detail = new Detail() { Title = eventv1.EventTitle[lang], Language = lang, BaseText = eventv1.EventText != null && eventv1.EventText.ContainsKey(lang) ? eventv1.EventText[lang] : "" };
-
-                eventv2.Detail.Add(lang, detail);
-            }
-
-            //Adding CustomTagging, TechnologyFields to Tags
-            eventv2.Tags = new List<TagV2>();
-
-            if (eventv1.TechnologyFields != null)
-            {
-                foreach (var tag in eventv1.TechnologyFields)
-                {
-                    eventv2.Tags.Add(new TagV2() { Id = tag, Source = "noi", Code = "" });
-                }
-            }
-            if (eventv1.CustomTagging != null)
-            {
-                foreach (var tag in eventv1.CustomTagging)
-                {
-                    eventv2.Tags.Add(new TagV2() { Id = tag, Source = "noi", Code = "" });
-                }
-            }
-
-            //Adding EventDocument, Documents as DocumentDetailed
-            eventv2.Documents = new Dictionary<string, List<DocumentDetailed>>();
-            foreach (var documentkvp in eventv1.Documents)
-            {
-                List<DocumentDetailed> documents = new List<DocumentDetailed>();
-                foreach (var doc in documentkvp.Value)
-                {
-                    documents.Add(new DocumentDetailed() { DocumentName = doc.DocumentName, DocumentURL = doc.DocumentURL, Language = doc.Language });
-                }
-
-                eventv2.Documents.Add(documentkvp.Key, documents);
-            }
-
-            //WebAddress adding to contactinfo
-            eventv2.ContactInfos = new Dictionary<string, ContactInfos>();
-            foreach (var lang in eventv1.HasLanguage)
-            {
-                ContactInfos contactinfo = new ContactInfos();
-                contactinfo.Url = eventv1.WebAddress;
-                contactinfo.Language = lang;
-
-                contactinfo.Email = eventv1.ContactEmail;
-                contactinfo.City = eventv1.ContactCity;
-                contactinfo.Address = eventv1.ContactAddressLine1;
-                contactinfo.Phonenumber = eventv1.ContactPhone;
-                contactinfo.CountryName = eventv1.ContactCountry;
-                contactinfo.Surname = eventv1.ContactLastName;
-                contactinfo.Givenname = eventv1.ContactFirstName;
-                contactinfo.Faxnumber = eventv1.ContactFax;
-                contactinfo.ZipCode = eventv1.ContactPostalCode;
-                contactinfo.Tax = eventv1.ContactCode;
-
-                eventv2.ContactInfos.Add(lang, contactinfo);
-            }
-
-            //Where to store the OrganizerInfo??
-            //eventv2.Organizer = new Dictionary<string, ContactInfos>();
-            //foreach (var lang in eventv1.HasLanguage)
-            //{
-            //    ContactInfos contactinfo = new ContactInfos();
-            //    contactinfo.Url = eventv1.WebAddress;
-            //    contactinfo.Language = lang;
-
-            //    contactinfo.CompanyName = eventv1.CompanyName;
-            //    contactinfo.Email = eventv1.CompanyMail;
-            //    contactinfo.City = eventv1.CompanyCity;
-            //    contactinfo.Address = eventv1.CompanyAddressLine1;
-            //    contactinfo.Phonenumber = eventv1.CompanyPhone;
-            //    contactinfo.CountryName = eventv1.CompanyCountry;
-            //    contactinfo.Faxnumber = eventv1.CompanyFax;
-            //    contactinfo.ZipCode = eventv1.CompanyPostalCode;
-            //    contactinfo.Url = eventv1.CompanyUrl;
-            //    contactinfo.Tax = eventv1.CompanyId;
-
-            //    eventv2.Organizer.Add(lang, contactinfo);
-            //}
-
-            //Adding EventLocation, AnchorVenue, AnchorVenueRoomMapping, AnchorVenueShort, EndDate, StartDate, StartDateUTC, EndDateUTC, RoomBooked
-            var venues = new HashSet<VenueV2>();
-
-            eventv2.EventInfo = new List<EventInfo>();
             foreach (var room in eventv1.RoomBooked)
             {
-                EventInfo eventinfo = new EventInfo();
+                //Try to map all to EventsV2
+                EventV2 eventv2 = new EventV2();
 
-                eventinfo.Begin = room.StartDate;
-                eventinfo.BeginUTC = room.StartDateUTC;
-                eventinfo.End = room.EndDate;
-                eventinfo.EndUTC = room.EndDateUTC;
+                eventv2.PublishedOn = eventv1.PublishedOn;
+                eventv2.Id = eventv1.Id + "_" + room.StartDate;
+                eventv2.ImageGallery = eventv1.ImageGallery;
+                eventv2.Shortname = eventv1.Shortname;
+                eventv2.FirstImport = eventv1.FirstImport;
+                eventv2.LastChange = eventv1.LastChange;
+                eventv2.Active = eventv1.Active.Value;
+                eventv2.Mapping = eventv1.Mapping;
+                eventv2.HasLanguage = eventv1.HasLanguage;
+                //eventv2.GpsInfo = eventv1.GpsInfo; //todo add to Venue
+                eventv2.LicenseInfo = eventv1.LicenseInfo;
+                eventv2.Source = eventv1.Source;
 
-                eventinfo.VenueIds = new List<string>();
+                if (eventv2.Mapping == null)
+                    eventv2.Mapping.Add("ebms", new Dictionary<string, string>() { { "id", eventv1.EventId.ToString() } });
 
-                eventinfo.Detail = new Dictionary<string, Detail>()
+                //Putting all info into Detail
+                eventv2.Detail = new Dictionary<string, Detail>();
+                foreach (var lang in eventv2.HasLanguage)
                 {
-                    { "en", new Detail(){ Title = room.Subtitle } }
-                };
+                    Detail detail = new Detail() { Title = eventv1.EventTitle[lang], Language = lang, BaseText = eventv1.EventText != null && eventv1.EventText.ContainsKey(lang) ? eventv1.EventText[lang] : "" };
 
-                //Space, SpaceDesc, SpaceType, Comment, SpaceAbbrev, SpaceDescRoomMapping
+                    eventv2.Detail.Add(lang, detail);
+                }
+
+                //Adding CustomTagging, TechnologyFields to Tags
+                eventv2.Tags = new List<TagV2>();
+
+                if (eventv1.TechnologyFields != null)
+                {
+                    foreach (var tag in eventv1.TechnologyFields)
+                    {
+                        eventv2.Tags.Add(new TagV2() { Id = tag, Source = "noi", Code = "" });
+                    }
+                }
+                if (eventv1.CustomTagging != null)
+                {
+                    foreach (var tag in eventv1.CustomTagging)
+                    {
+                        eventv2.Tags.Add(new TagV2() { Id = tag, Source = "noi", Code = "" });
+                    }
+                }
+
+                //Adding EventDocument, Documents as DocumentDetailed
+                eventv2.Documents = new Dictionary<string, List<DocumentDetailed>>();
+                foreach (var documentkvp in eventv1.Documents)
+                {
+                    List<DocumentDetailed> documents = new List<DocumentDetailed>();
+                    foreach (var doc in documentkvp.Value)
+                    {
+                        documents.Add(new DocumentDetailed() { DocumentName = doc.DocumentName, DocumentURL = doc.DocumentURL, Language = doc.Language });
+                    }
+
+                    eventv2.Documents.Add(documentkvp.Key, documents);
+                }
+
+                //WebAddress adding to contactinfo
+                eventv2.ContactInfos = new Dictionary<string, ContactInfos>();
+                foreach (var lang in eventv1.HasLanguage)
+                {
+                    ContactInfos contactinfo = new ContactInfos();
+                    contactinfo.Url = eventv1.WebAddress;
+                    contactinfo.Language = lang;
+
+                    contactinfo.Email = eventv1.ContactEmail;
+                    contactinfo.City = eventv1.ContactCity;
+                    contactinfo.Address = eventv1.ContactAddressLine1;
+                    contactinfo.Phonenumber = eventv1.ContactPhone;
+                    contactinfo.CountryName = eventv1.ContactCountry;
+                    contactinfo.Surname = eventv1.ContactLastName;
+                    contactinfo.Givenname = eventv1.ContactFirstName;
+                    contactinfo.Faxnumber = eventv1.ContactFax;
+                    contactinfo.ZipCode = eventv1.ContactPostalCode;
+                    contactinfo.Tax = eventv1.ContactCode;
+
+                    eventv2.ContactInfos.Add(lang, contactinfo);
+                }
+
+                //Where to store the OrganizerInfo??
+                //eventv2.Organizer = new Dictionary<string, ContactInfos>();
+                //foreach (var lang in eventv1.HasLanguage)
+                //{
+                //    ContactInfos contactinfo = new ContactInfos();
+                //    contactinfo.Url = eventv1.WebAddress;
+                //    contactinfo.Language = lang;
+
+                //    contactinfo.CompanyName = eventv1.CompanyName;
+                //    contactinfo.Email = eventv1.CompanyMail;
+                //    contactinfo.City = eventv1.CompanyCity;
+                //    contactinfo.Address = eventv1.CompanyAddressLine1;
+                //    contactinfo.Phonenumber = eventv1.CompanyPhone;
+                //    contactinfo.CountryName = eventv1.CompanyCountry;
+                //    contactinfo.Faxnumber = eventv1.CompanyFax;
+                //    contactinfo.ZipCode = eventv1.CompanyPostalCode;
+                //    contactinfo.Url = eventv1.CompanyUrl;
+                //    contactinfo.Tax = eventv1.CompanyId;
+
+                //    eventv2.Organizer.Add(lang, contactinfo);
+                //}
+
+                //Adding EventLocation, AnchorVenue, AnchorVenueRoomMapping, AnchorVenueShort, EndDate, StartDate, StartDateUTC, EndDateUTC, RoomBooked
+                var venues = new HashSet<VenueV2>();
+
+
+
+                eventv2.Begin = room.StartDate;
+                eventv2.BeginUTC = room.StartDateUTC;
+                eventv2.End = room.EndDate;
+                eventv2.EndUTC = room.EndDateUTC;
+
+                
+                //TODO SUBTITLE
+                //eventinfo.Detail = new Dictionary<string, Detail>()
+                //{
+                //    { "en", new Detail(){ Title = room.Subtitle } }
+                //};
+
+                    //Space, SpaceDesc, SpaceType, Comment, SpaceAbbrev, SpaceDescRoomMapping
 
                 //Create Venue
                 VenueV2 venue = new VenueV2();
@@ -535,34 +562,33 @@ namespace DataModel
                     venues.Add(venue);
 
 
-                eventinfo.VenueIds.Add(venue.Id);
+                eventv2.VenueId = venue.Id;
 
-                eventv2.EventInfo.Add(eventinfo);
-            }
+                venuev2list.Add(venue);
 
-            //Video
-            if (!String.IsNullOrEmpty(eventv1.VideoUrl))
-            {
-                eventv2.VideoItems = new Dictionary<string, ICollection<VideoItems>>()
+                //Video
+                if (!String.IsNullOrEmpty(eventv1.VideoUrl))
+                {
+                    eventv2.VideoItems = new Dictionary<string, ICollection<VideoItems>>()
                 {
                     {
                         "en", new List<VideoItems>(){ new VideoItems(){ Url = eventv1.VideoUrl } }
                     }
                 };
+                }
+
+
+                //ExternalOrganizer, SoldOut, TypicalAgeRange
+                EventEuracNoiInfo additionalinfo = new EventEuracNoiInfo();
+                additionalinfo.ExternalOrganizer = eventv1.ExternalOrganizer;
+                additionalinfo.SoldOut = eventv1.SoldOut;
+                additionalinfo.TypicalAgeRange = eventv1.TypicalAgeRange;
+                additionalinfo.EventLocation = eventv1.EventLocation;
+                
+                eventv2.AdditionalProperties = new Dictionary<string, dynamic>() { { "additionalinfo", additionalinfo } };
             }
 
-
-            //ExternalOrganizer, SoldOut, TypicalAgeRange
-            EventEuracNoiInfo additionalinfo = new EventEuracNoiInfo();
-            additionalinfo.ExternalOrganizer = eventv1.ExternalOrganizer;
-            additionalinfo.SoldOut = eventv1.SoldOut;
-            additionalinfo.TypicalAgeRange = eventv1.TypicalAgeRange;
-            additionalinfo.EventLocation = eventv1.EventLocation;
-
-            eventv2.AdditionalProperties = new Dictionary<string, dynamic>() { { "additionalinfo", additionalinfo } };
-
-
-            return (eventv2, venues);
+            return (eventv2list, venuev2list);
         }
     }
 
