@@ -48,6 +48,9 @@ namespace Helper.Converters
 
                 eventv2.PublishedOn = eventv1.PublishedOn;
                 eventv2.Id = eventv1.Id + "_" + eventdate.From;
+
+                eventv2.EventGroupId = eventv1.Id;
+
                 eventv2.ImageGallery = eventv1.ImageGallery;
                 eventv2.Shortname = eventv1.Shortname;
                 eventv2.FirstImport = eventv1.FirstImport;
@@ -148,6 +151,9 @@ namespace Helper.Converters
 
                 eventv2.PublishedOn = eventv1.PublishedOn;
                 eventv2.Id = eventv1.Id + "_" + room.StartDate;
+
+                eventv2.EventGroupId = eventv1.Id;
+
                 eventv2.ImageGallery = eventv1.ImageGallery;
                 eventv2.Shortname = eventv1.Shortname;
                 eventv2.FirstImport = eventv1.FirstImport;
@@ -264,6 +270,9 @@ namespace Helper.Converters
                 //Create Venue
                 VenueV2 venue = new VenueV2();
                 venue.Id = "eventeuracnoi_" + room.Space.ToLower() + "_" + room.SpaceType;
+
+
+
                 venue.Shortname = room.SpaceAbbrev;
                 //venue.LocationInfo = Todo create locationinfo
                 venue.GpsInfo = eventv1.GpsInfo;

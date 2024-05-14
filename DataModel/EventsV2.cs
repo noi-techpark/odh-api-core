@@ -43,7 +43,9 @@ namespace DataModel
         public string? Id { get; set; }
         public string? Shortname { get; set; }
         public bool Active { get; set; }
-        
+
+     
+
         //Firstimport and LastChange Section (Here for compatibility reasons could also be removed)
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
@@ -65,6 +67,9 @@ namespace DataModel
 
         //Indicates if this is a Parent Event
         public bool? IsRoot { get; set; }
+        //Event Grouping Id, by flattening the Event here the same Id
+        public string? EventGroupId { get; set; }
+
 
         //Dynamic AdditionalProperties field to store Provider Specific data that does not fit into the fields
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
