@@ -294,31 +294,26 @@ namespace DataModel
 
     public class EventV2Converter
     {
-        public static (IEnumerable<EventV2>, IEnumerable<VenueV2>) ConvertEventListToEventV2<T>(IEnumerable<T> events) where T : IIdentifiable
+        public static IEnumerable<EventConversionResult> ConvertEventListToEventV2<T>(IEnumerable<T> events) where T : IIdentifiable
         {
-            var eventsV2 = new List<EventV2>();
-            var venues = new List<VenueV2>();
+            var result = new List<EventConversionResult>();
 
             foreach (var eventv1 in events)
             {
                 if (eventv1 is EventShortLinked)
                 {
-                    var result = ConvertEventShortToEventV2(eventv1 as EventShortLinked);
-                    eventsV2.AddRange(result.Item1);
-                    venues.AddRange(result.Item2);
+                    result.Add(ConvertEventShortToEventV2(eventv1 as EventShortLinked));
                 }
                 if (eventv1 is EventLinked)
                 {
-                    var result = ConvertEventToEventV2(eventv1 as EventLinked);
-                    eventsV2.AddRange(result.Item1);
-                    venues.AddRange(result.Item2);
+                    result.Add(ConvertEventToEventV2(eventv1 as EventLinked));
                 }
             }
 
-            return (eventsV2, venues);
+            return result;
         }
 
-        private static (IEnumerable<EventV2>, IEnumerable<VenueV2>) ConvertEventToEventV2(EventLinked eventv1)
+        private static EventConversionResult ConvertEventToEventV2(EventLinked eventv1)
         {
             List<EventV2> eventv2list = new List<EventV2>();
             List<VenueV2> venuev2list = new List<VenueV2>();
@@ -414,10 +409,10 @@ namespace DataModel
                 eventv2list.Add(eventv2);
             }
            
-            return (eventv2list, venuev2list);
+            return new EventConversionResult(eventv2list, venuev2list);
         }
 
-        private static (IEnumerable<EventV2>, IEnumerable<VenueV2>) ConvertEventShortToEventV2(EventShortLinked eventv1)
+        private static EventConversionResult ConvertEventShortToEventV2(EventShortLinked eventv1)
         {
             List<EventV2> eventv2list = new List<EventV2>();
             List<VenueV2> venuev2list = new List<VenueV2>();
@@ -588,7 +583,7 @@ namespace DataModel
                 eventv2.AdditionalProperties = new Dictionary<string, dynamic>() { { "additionalinfo", additionalinfo } };
             }
 
-            return (eventv2list, venuev2list);
+            return new EventConversionResult(eventv2list, venuev2list);
         }
     }
 
@@ -753,5 +748,22 @@ namespace DataModel
 
     #endregion
 
+
+    public class EventConversionResult
+    {
+        public EventConversionResult()
+        {
+
+        }
+
+        public EventConversionResult(IEnumerable<EventV2> events, IEnumerable<VenueV2> venues)
+        {
+            this.Events = events;
+            this.Venues = venues;
+        }
+
+        public IEnumerable<EventV2> Events { get; set; }
+        public IEnumerable<VenueV2> Venues { get; set; }
+    }
 
 }

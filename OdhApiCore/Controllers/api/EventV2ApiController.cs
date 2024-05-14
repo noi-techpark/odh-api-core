@@ -208,25 +208,28 @@ namespace OdhApiCore.Controllers
             if (savetotable)
             {
                 List<PGCRUDResult> result = new List<PGCRUDResult>();
-                foreach (var venue in convertresult.Item2)
-                {
-                    result.Add(await QueryFactory.UpsertData<VenueV2>(
-                        venue,
-                        new DataInfo("venuesv2", CRUDOperation.Create),
-                        new EditInfo("venueconverter", "api"),
-                        new CRUDConstraints(null, new List<string>()),
-                        new CompareConfig(false, false)));
-                }
-                foreach (var theevent in convertresult.Item1)
-                {
-                    result.Add(await QueryFactory.UpsertData<EventV2>(
-                        theevent,
-                        new DataInfo("eventsv2", CRUDOperation.Create),
-                        new EditInfo("venueconverter", "api"),
-                        new CRUDConstraints(null, new List<string>()),
-                        new CompareConfig(false, false)));
-                }
 
+                foreach (var datasingle in convertresult)
+                {
+                    foreach (var venue in datasingle.Venues)
+                    {
+                        result.Add(await QueryFactory.UpsertData<VenueV2>(
+                            venue,
+                            new DataInfo("venuesv2", CRUDOperation.Create),
+                            new EditInfo("venueconverter", "api"),
+                            new CRUDConstraints(null, new List<string>()),
+                            new CompareConfig(false, false)));
+                    }
+                    foreach (var theevent in datasingle.Events)
+                    {
+                        result.Add(await QueryFactory.UpsertData<EventV2>(
+                            theevent,
+                            new DataInfo("eventsv2", CRUDOperation.Create),
+                            new EditInfo("venueconverter", "api"),
+                            new CRUDConstraints(null, new List<string>()),
+                            new CompareConfig(false, false)));
+                    }
+                }
                 return Ok(result);
             }
             else
