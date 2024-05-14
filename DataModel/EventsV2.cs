@@ -181,15 +181,23 @@ namespace DataModel
 
     //SFSCon Specific
 
+    public class EventDestinationDataInfo
+    {
+        public int InPersonCapacity { get; set; }
+        public int OnlineCapacity { get; set; }
+        public string ParticipationUrl { get; set; }
+        public bool Recorded { get; set; }
+        public string RegistrationUrl { get; set; }
+
+        //series, sponsors, subEvents
+    }
 
     //LTS Specific
     public class EventLTSInfo
     {
         public EventPublisher EventPublisher { get; set; }
         public bool SignOn { get; set; }
-
         public EventBooking EventBooking { get; set; }
-
         public EventPrice EventPrice { get; set; }
     }
 
