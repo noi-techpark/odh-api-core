@@ -68,15 +68,11 @@ namespace Helper.Converters
                 //Where can we store the Organizerinfo???
                 //eventv2.Organizer = eventv1.OrganizerInfos;
 
-                if (eventv2.Mapping.ContainsKey("lts"))
+                if (eventv2.Source == "lts")
                 {
-                    if (!eventv2.Mapping["lts"].ContainsKey("rid"))
-                        eventv2.Mapping["lts"].Add("rid", eventv1.Id);
-                    if (!eventv2.Mapping["lts"].ContainsKey("classificationrid"))
-                        eventv2.Mapping["lts"].Add("classificationrid", eventv1.ClassificationRID);
+                    eventv2.Mapping.TryAddOrUpdate("lts", new Dictionary<string, string>() { { "rid", eventv1.Id }, { "classificationrid", eventv1.ClassificationRID } });
                 }
-                else
-                    eventv2.Mapping.Add("lts", new Dictionary<string, string>() { { "rid", eventv1.Id }, { "classificationrid", eventv1.ClassificationRID } });
+                   
 
                 //Topics to Tags
                 eventv2.Tags = new List<TagV2>();
