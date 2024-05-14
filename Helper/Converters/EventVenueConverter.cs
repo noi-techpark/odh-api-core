@@ -41,13 +41,15 @@ namespace Helper.Converters
             List<EventV2> eventv2list = new List<EventV2>();
             List<VenueV2> venuev2list = new List<VenueV2>();
 
+            int eventcounter = 0;            
+
             foreach (var eventdate in eventv1.EventDate)
             {
                 //Try to map all to EventsV2
                 EventV2 eventv2 = new EventV2();
 
                 eventv2.PublishedOn = eventv1.PublishedOn;
-                eventv2.Id = eventv1.Id + "_" + eventdate.From;
+                eventv2.Id = eventv1.Id + "_" + eventcounter.ToString();
 
                 eventv2.EventGroupId = eventv1.Id;
 
@@ -130,6 +132,8 @@ namespace Helper.Converters
                 eventv2.VenueId = venue.Id;
 
                 eventv2list.Add(eventv2);
+
+                eventcounter++;
             }
 
             return new EventConversionResult(eventv2list, venuev2list);
@@ -140,13 +144,15 @@ namespace Helper.Converters
             List<EventV2> eventv2list = new List<EventV2>();
             List<VenueV2> venuev2list = new List<VenueV2>();
 
+            int eventcounter = 0;
+
             foreach (var room in eventv1.RoomBooked)
             {
                 //Try to map all to EventsV2
                 EventV2 eventv2 = new EventV2();
 
                 eventv2.PublishedOn = eventv1.PublishedOn;
-                eventv2.Id = eventv1.Id + "_" + room.StartDate;
+                eventv2.Id = eventv1.Id + "_" + eventcounter;
 
                 eventv2.EventGroupId = eventv1.Id;
 
@@ -268,7 +274,6 @@ namespace Helper.Converters
                 venue.Id = "eventeuracnoi_" + room.Space.ToLower() + "_" + room.SpaceType;
 
 
-
                 venue.Shortname = room.SpaceAbbrev;
                 //venue.LocationInfo = Todo create locationinfo
                 venue.GpsInfo = eventv1.GpsInfo;
@@ -304,6 +309,8 @@ namespace Helper.Converters
                 eventv2.AdditionalProperties = new Dictionary<string, dynamic>() { { "additionalinfo", additionalinfo } };
 
                 eventv2list.Add(eventv2);
+
+                eventcounter++;
             }
 
             return new EventConversionResult(eventv2list, venuev2list);
