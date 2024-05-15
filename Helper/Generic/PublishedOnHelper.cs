@@ -50,9 +50,11 @@ namespace Helper
                 //TV Obertilliach, Cortina, Sappada, Auronzo, Arabba, 
                 { "odhactivitypoi", new List<string>(){ 
                     "F68D877B11916F39E6413DFB744259EB", 
-                    "3063A07EFE5EC4D357FCB6C5128E81F0", 
+                    "3063A07EFE5EC4D357FCB6C5128E81F0",
+                    "3629935C546A49328842D3E0E9150CE8",
                     "E9D7583EECBA480EA073C4F8C030E83C", 
-                    "9FA380DE9937C1BB64844076674968E2", 
+                    "9FA380DE9937C1BB64844076674968E2",
+                    "6B39D0B4DD4CCAE6477F7013B090784C",
                     "F7D7AAEC0313487B9CE8EC9067E43B73", 
                     "E1407CED66C14AABBF49532AA49C76A6",
                     "7D208AA1374F1484A2483829207C9421"} }
