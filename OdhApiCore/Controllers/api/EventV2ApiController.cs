@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using OdhNotifier;
+using Schema.NET;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -206,7 +207,14 @@ namespace OdhApiCore.Controllers
 
             var data = await query.GetObjectListAsync<EventLinked>();
 
-            var convertresult = EventV2Converter.ConvertEventListToEventV2(data);
+            var evtypequery =
+                QueryFactory.Query("eventtypes")
+                    .Select("data");
+                    
+            var evtypedata = await evtypequery.GetObjectListAsync<EventTypes>();
+
+
+            var convertresult = EventV2Converter.ConvertEventListToEventV2(data, evtypedata);
             
             if (savetotable)
             {
@@ -240,6 +248,44 @@ namespace OdhApiCore.Controllers
                 return Ok(convertresult);
             }
         }
+
+        [HttpGet, Route("EventV2/ConvertEventTopicsToTags")]
+        public async Task<IActionResult> ConvertEventTopicsToTags(bool savetotable = false)
+        {
+            var query =
+                QueryFactory.Query("eventtopic")
+                    .Select("data");
+
+            var datalist = await query.GetObjectListAsync<EventTypes>();
+
+            var listtaglinked = new List<TagLinked>();
+
+            List<PGCRUDResult> result = new List<PGCRUDResult>();
+
+            foreach (var data in datalist)
+            {
+                if (savetotable)
+                {
+                    var converted = EventV2Converter.ConvertEventTopicToTag(data);
+                    listtaglinked.Add(converted);
+
+                    result.Add(await QueryFactory.UpsertData<TagLinked>(
+                        converted,
+                        new DataInfo("tag", CRUDOperation.Create),
+                        new EditInfo("converter", "api"),
+                        new CRUDConstraints(null, new List<string>()),
+                        new CompareConfig(false, false)));
+                }                
+            }
+
+            if (savetotable)
+            {
+                return Ok(result);
+            }
+
+            return Ok(listtaglinked);
+        }
+
 
         #endregion
 

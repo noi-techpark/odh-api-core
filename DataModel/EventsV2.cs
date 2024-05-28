@@ -75,7 +75,10 @@ namespace DataModel
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
         //Converting EventTopis to Tags so we have the same structure 
-        public ICollection<TagV2> Tags { get; set; }
+        //TODO On Save populate Tag Information
+        public ICollection<Tags> Tags { get; set; }
+
+        public ICollection<string> TagIds { get; set; }
 
         //Description and Contactinfo
         public IDictionary<string, Detail> Detail { get; set; }
@@ -141,36 +144,36 @@ namespace DataModel
 
 
     //NOT USED anymore
-    public class EventInfo
-    {       
-        //Begin and Enddate in UTC (could be created automatically)
-        public double BeginUTC { get; set; }
-        public double EndUTC { get; set; }
+    //public class EventInfo
+    //{       
+    //    //Begin and Enddate in UTC (could be created automatically)
+    //    public double BeginUTC { get; set; }
+    //    public double EndUTC { get; set; }
 
-        //Assigned Venue
-        public List<string> VenueIds { get; set; }
+    //    //Assigned Venue
+    //    public List<string> VenueIds { get; set; }
 
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public ICollection<VenueLink> Venues
-        {
-            get
-            {
-                return this.VenueIds != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "VenueV2/" + x }).ToList() : new List<VenueLink>();
-            }
-        }
+    //    [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+    //    public ICollection<VenueLink> Venues
+    //    {
+    //        get
+    //        {
+    //            return this.VenueIds != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "VenueV2/" + x }).ToList() : new List<VenueLink>();
+    //        }
+    //    }
 
-        //Dynamic Additional Properties field
-        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+    //    //Dynamic Additional Properties field
+    //    public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
-        //Detail Information
-        public IDictionary<string, Detail> Detail { get; set; }
+    //    //Detail Information
+    //    public IDictionary<string, Detail> Detail { get; set; }
 
-        //Documents
-        public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }        
+    //    //Documents
+    //    public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }        
 
-        //Capacity of the Event Venue Combination (not always the same as the Venue Capacity)
-        public int? Capacity { get; set; }
-    }
+    //    //Capacity of the Event Venue Combination (not always the same as the Venue Capacity)
+    //    public int? Capacity { get; set; }
+    //}
 
     public class DocumentDetailed : Document
     {
@@ -279,18 +282,24 @@ namespace DataModel
         
         public ICollection<VenueSetupV2>? Capacity { get; set; }
 
-        //TO CHECK Tags Categorization is done via Tags ?????
-        public ICollection<TagV2> Tags { get; set; }
+        //Tags Categorization is done via Tags ?????
+        //TODO Populate on Save the Tags
+        public ICollection<Tags> Tags { get; set; }
     }
 
-    public class TagV2 : Tags
-    {
-        public string Code { get; set; }
-    }
+    //public class TagV2 : Tags
+    //{
+    //    public string Code { get; set; }
+    //}
 
-    public class VenueSetupV2 : TagV2
+    public class VenueSetupV2
     {
-        public int Capacity { get; set; }      
+        public int Capacity { get; set; }
+
+        //TODO Fill on Save
+        public Tags Tag { get; set; }
+
+        public string TagId { get;set; }
     }
 
     public class VenueInfo
@@ -300,6 +309,17 @@ namespace DataModel
         public int? SquareMeters { get; set; }
         public bool? Indoor { get; set; }               
     }
+
+    #endregion
+
+    #region Tag
+
+    //TODO Tag V2 model which has all it needs 
+    public class TagV2
+    {
+
+    }
+
 
     #endregion
 

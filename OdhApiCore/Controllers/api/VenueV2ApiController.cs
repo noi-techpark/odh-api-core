@@ -165,7 +165,14 @@ namespace OdhApiCore.Controllers
 
             var data = await query.GetObjectListAsync<VenueLinked>();
 
-            var convertresult = VenueV2Converter.ConvertVenueListToVenueV2(data);
+            var venuecodequery =
+                QueryFactory.Query("venuetypes")
+                    .Select("data");                    
+
+            var venuecodedata = await venuecodequery.GetObjectListAsync<DDVenueCodes>();
+
+
+            var convertresult = VenueV2Converter.ConvertVenueListToVenueV2(data, venuecodedata);
 
             if(savetotable)
             {

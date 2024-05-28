@@ -188,6 +188,8 @@ namespace DataModel
                 return "Tag/" + this.Id;
             }
         }
+
+        public string? Type { get; set; }
     }
 
 
