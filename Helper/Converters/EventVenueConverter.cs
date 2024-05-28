@@ -101,6 +101,8 @@ namespace Helper.Converters
                 venue.GpsInfo = eventv1.GpsInfo;
                 venue.LocationInfo = eventv1.LocationInfo;
                 venue.ContactInfos = eventv1.ContactInfos;
+                venue.Source = eventv1.Source;
+
 
                 venue.Detail = new Dictionary<string, Detail>();
 
@@ -277,6 +279,7 @@ namespace Helper.Converters
                 venue.Shortname = room.SpaceAbbrev;
                 //venue.LocationInfo = Todo create locationinfo
                 venue.GpsInfo = eventv1.GpsInfo;
+                venue.Source = eventv1.Source;
 
                 venue.Detail = new Dictionary<string, Detail>()
                 {
