@@ -2,10 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.S3;
 using DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -17,15 +19,15 @@ namespace Helper.Converters
 
     public class EventV2Converter
     {
-        public static IEnumerable<EventConversionResult> ConvertEventListToEventV2<T>(IEnumerable<T> events) where T : IIdentifiable
+        public static IEnumerable<EventConversionResult> ConvertEventListToEventV2<T>(IEnumerable<T> events, IEnumerable<EventTypes> eventtypes = null, IEnumerable<VenueType> venuetypes = null) where T : IIdentifiable
         {
             var result = new List<EventConversionResult>();
 
             foreach (var eventv1 in events)
             {
                 if (eventv1 is EventShortLinked)
-                {                    
-                    result.Add(ConvertEventShortToEventV2(eventv1 as EventShortLinked));
+                {
+                    result.Add(ConvertEventShortToEventV2(eventv1 as EventShortLinked, eventtypes, venuetypes));
                 }
                 if (eventv1 is EventLinked)
                 {
@@ -36,12 +38,12 @@ namespace Helper.Converters
             return result;
         }
 
-        private static EventConversionResult ConvertEventToEventV2(EventLinked eventv1)
+        private static EventConversionResult ConvertEventToEventV2(EventLinked eventv1, IEnumerable<EventTypes> eventtypes = null, IEnumerable<VenueType> venuetypes = null)
         {
             List<EventV2> eventv2list = new List<EventV2>();
             List<VenueV2> venuev2list = new List<VenueV2>();
 
-            int eventcounter = 0;            
+            int eventcounter = 0;
 
             foreach (var eventdate in eventv1.EventDate)
             {
@@ -76,16 +78,26 @@ namespace Helper.Converters
                 {
                     eventv2.Mapping.TryAddOrUpdate("lts", new Dictionary<string, string>() { { "rid", eventv1.Id }, { "classificationrid", eventv1.ClassificationRID } });
                 }
-                   
+
 
                 //Topics to Tags
-                eventv2.Tags = new List<TagV2>();
+                eventv2.Tags = new List<Tags>();
+                eventv2.TagIds = new List<string>();
 
                 if (eventv1.TopicRIDs != null)
                 {
                     foreach (var tag in eventv1.TopicRIDs)
                     {
-                        eventv2.Tags.Add(new TagV2() { Id = tag, Code = "", Source = "lts" });
+                        //Load the Tag
+                        var eventtype = eventtypes.Where(x => x.Id == tag).FirstOrDefault();
+
+                        if (eventtype != null)
+                        {
+                            var eventtypeid = eventtype.TypeDesc["en"].ToLower();
+                            
+                            eventv2.Tags.Add(new Tags() { Id = eventtypeid, Source = eventv1.Source.ToLower() });
+                            eventv2.TagIds.Add(eventtypeid);
+                        }
                     }
                 }
 
@@ -145,7 +157,7 @@ namespace Helper.Converters
             return new EventConversionResult(eventv2list, venuev2list);
         }
 
-        private static EventConversionResult ConvertEventShortToEventV2(EventShortLinked eventv1)
+        private static EventConversionResult ConvertEventShortToEventV2(EventShortLinked eventv1, IEnumerable<EventTypes> eventtypes = null, IEnumerable<VenueType> venuetypes = null)
         {
             List<EventV2> eventv2list = new List<EventV2>();
             List<VenueV2> venuev2list = new List<VenueV2>();
@@ -187,20 +199,20 @@ namespace Helper.Converters
                 }
 
                 //Adding CustomTagging, TechnologyFields to Tags
-                eventv2.Tags = new List<TagV2>();
+                eventv2.Tags = new List<Tags>();
 
                 if (eventv1.TechnologyFields != null)
                 {
                     foreach (var tag in eventv1.TechnologyFields)
                     {
-                        eventv2.Tags.Add(new TagV2() { Id = tag, Source = "noi", Code = "" });
+                        eventv2.Tags.Add(new Tags() { Id = tag, Source = "noi", Type = "TechnologyFields" });
                     }
                 }
                 if (eventv1.CustomTagging != null)
                 {
                     foreach (var tag in eventv1.CustomTagging)
                     {
-                        eventv2.Tags.Add(new TagV2() { Id = tag, Source = "noi", Code = "" });
+                        eventv2.Tags.Add(new Tags() { Id = tag, Source = "noi", Type = "CustomTagging" });
                     }
                 }
 
@@ -323,6 +335,44 @@ namespace Helper.Converters
 
             return new EventConversionResult(eventv2list, venuev2list);
         }
+
+        public static TagLinked ConvertEventTopicToTag(EventTypes eventType)
+        {
+            TagLinked tag = new TagLinked();
+            tag.Id = eventType.TypeDesc["en"].ToLower();
+            tag.FirstImport = DateTime.Now;
+            tag.LastChange = DateTime.Now;
+            tag.MainEntity = "event";
+            tag.ValidForEntity = new List<string>() { "event" };
+            tag.TagName = eventType.TypeDesc;
+            tag.Source = new List<string>() { "lts" };
+            tag.DisplayAsCategory = true;
+            tag.LicenseInfo = null;
+            tag.LTSTaggingInfo = new LTSTaggingInfo() { LTSRID = eventType.Id, ParentLTSRID = "" };
+            Dictionary<string, string> mapping = new Dictionary<string, string>() { { "rid", eventType.Id } };
+            tag.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", mapping } };
+
+            return tag;
+        }
+
+        public static TagLinked ConvertEventShortTopicToTag(SmgPoiTypes eventType)
+        {
+            TagLinked tag = new TagLinked();
+            tag.Id = eventType.Id.ToLower();
+            tag.FirstImport = DateTime.Now;
+            tag.LastChange = DateTime.Now;
+            tag.MainEntity = "event";
+            tag.ValidForEntity = new List<string>() { "event" };
+            tag.TagName = eventType.TypeDesc;
+            tag.Source = new List<string>() { "noi" };
+            tag.DisplayAsCategory = true;
+            tag.LicenseInfo = null;         
+            
+            Dictionary<string, string> mapping = new Dictionary<string, string>() { { "type", eventType.Type } };
+            tag.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "odh", mapping } };
+
+            return tag;
+        }
     }
 
     #endregion
@@ -331,21 +381,21 @@ namespace Helper.Converters
 
     public class VenueV2Converter
     {
-        public static IEnumerable<VenueV2> ConvertVenueListToVenueV2(IEnumerable<VenueLinked> venues)
+        public static IEnumerable<VenueV2> ConvertVenueListToVenueV2(IEnumerable<VenueLinked> venues, IEnumerable<DDVenueCodes> venuecodes)
         {
             var venuestoreturn = new List<VenueV2>();
 
             foreach (var venue in venues)
             {
 
-                var result = ConvertVenueLinkedToVenueV2(venue);
+                var result = ConvertVenueLinkedToVenueV2(venue, venuecodes);
                 venuestoreturn.AddRange(result);
             }
 
             return venuestoreturn;
         }
 
-        private static IEnumerable<VenueV2> ConvertVenueLinkedToVenueV2(VenueLinked venuev1)
+        private static IEnumerable<VenueV2> ConvertVenueLinkedToVenueV2(VenueLinked venuev1, IEnumerable<DDVenueCodes> venuecodes)
         {
             List<VenueV2> venues = new List<VenueV2>();
 
@@ -376,7 +426,7 @@ namespace Helper.Converters
             venuev2.VenueInfo.Beds = venuev1.Beds;
             venuev2.VenueInfo.RoomCount = venuev1.RoomCount;
 
-            venuev2.Tags = ConvertVenueFeatureToTag(venuev1.VenueCategory).ToList();
+            venuev2.Tags = ConvertVenueFeatureToTag(venuev1.VenueCategory, venuecodes).ToList();
 
             venuev2.OperationSchedule = venuev1.OperationSchedule;
             venuev2.LocationInfo = venuev1.LocationInfo;
@@ -415,7 +465,7 @@ namespace Helper.Converters
                 subvenuev2.VenueInfo.Beds = null;
                 subvenuev2.VenueInfo.RoomCount = null;
 
-                subvenuev2.Tags = ConvertVenueFeatureToTag(subvenuev1.VenueFeatures).ToList();
+                subvenuev2.Tags = ConvertVenueFeatureToTag(subvenuev1.VenueFeatures, venuecodes).ToList();
                 subvenuev2.Capacity = ConvertVenueSetupToTag(subvenuev1.VenueSetup).ToList();
 
                 //Add relation
@@ -442,26 +492,35 @@ namespace Helper.Converters
             foreach (var venuesetup in venuesetups)
             {
                 VenueSetupV2 tagv2 = new VenueSetupV2();
-                tagv2.Id = venuesetup.Id;
-                tagv2.Code = venuesetup.VenueCode;
+                
                 tagv2.Capacity = venuesetup.Capacity;
-                tagv2.Source = "lts";
-
+                tagv2.TagId = venuesetup.VenueCode;
+                tagv2.Tag = new Tags() { Source = "lts", Id = venuesetup.VenueCode, Type = "seatType" };
+                
                 tagstoreturn.Add(tagv2);
             }
 
             return tagstoreturn;
         }
 
-        private static IEnumerable<TagV2> ConvertVenueFeatureToTag(IEnumerable<VenueType> venuetypes)
+        private static IEnumerable<Tags> ConvertVenueFeatureToTag(IEnumerable<VenueType> venuetypes, IEnumerable<DDVenueCodes> venuecodes)
         {
-            List<TagV2> tagstoreturn = new List<TagV2>();
+            List<Tags> tagstoreturn = new List<Tags>();
             foreach (var venuetype in venuetypes)
             {
-                TagV2 tagv2 = new TagV2();
-                tagv2.Id = venuetype.Id;
-                tagv2.Code = venuetype.VenueCode;
+                Tags tagv2 = new Tags();    
+                                
+                tagv2.Id = venuetype.VenueCode;
+                if (venuetype.VenueCode == "lts/faci_" || venuetype.VenueCode == "lts/type_")
+                {
+                    tagv2.Id = venuetype.VenueCode + venuecodes.Where(x => x.Id == venuetype.Id).FirstOrDefault().Name["en"].Replace(" ", "_").ToLower();
+                }
+
                 tagv2.Source = "lts";
+                if (venuetype.VenueCode.StartsWith("lts/type_"))
+                    tagv2.Type = "category";
+                if (venuetype.VenueCode.StartsWith("lts/faci"))
+                    tagv2.Type = "features";
 
                 tagstoreturn.Add(tagv2);
             }
@@ -469,7 +528,30 @@ namespace Helper.Converters
             return tagstoreturn;
         }
 
+        public static TagLinked ConvertVenueTagToTag(DDVenueCodes venueType)
+        {
+            TagLinked tag = new TagLinked();
+            tag.Id = venueType.Code.ToLower();
+            tag.FirstImport = DateTime.Now;
+            tag.LastChange = DateTime.Now;
+            tag.MainEntity = "venue";
+            tag.ValidForEntity = new List<string>() { "venue" };
+            tag.TagName = venueType.TypeDesc;
+            tag.Source = new List<string>() { "lts" };
+            tag.DisplayAsCategory = true;
+            tag.LicenseInfo = null;
+            
+            tag.LTSTaggingInfo = new LTSTaggingInfo() { LTSRID = venueType.Id, ParentLTSRID = "" };
+            Dictionary<string, string> mapping = new Dictionary<string, string>() { { "rid", venueType.Id }, { "type", venueType.Type } };
+            tag.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", mapping } };
+
+
+            return tag;
+        }
+
+
     }
+
 
     #endregion
 
