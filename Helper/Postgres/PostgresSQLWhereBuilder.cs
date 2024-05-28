@@ -507,7 +507,8 @@ namespace Helper
 
             return query
                 .IdUpperFilter(idlist)
-                .DateFilter_GeneratedColumn(begindate, enddate, "")
+                //.DateFilter_GeneratedColumn(begindate, enddate, "")
+                .EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
