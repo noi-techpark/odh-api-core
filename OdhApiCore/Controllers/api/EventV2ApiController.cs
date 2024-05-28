@@ -326,7 +326,7 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("eventsv2")
                         .Select("data")
-                        .Where("id", id.ToUpper())
+                        .Where("id", id)
                         .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                         .FilterDataByAccessRoles(UserRolesToFilterEndpoint("Event"));
 
