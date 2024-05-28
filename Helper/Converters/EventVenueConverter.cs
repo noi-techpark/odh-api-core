@@ -24,7 +24,7 @@ namespace Helper.Converters
             foreach (var eventv1 in events)
             {
                 if (eventv1 is EventShortLinked)
-                {
+                {                    
                     result.Add(ConvertEventShortToEventV2(eventv1 as EventShortLinked));
                 }
                 if (eventv1 is EventLinked)
@@ -50,6 +50,8 @@ namespace Helper.Converters
 
                 eventv2.PublishedOn = eventv1.PublishedOn;
                 eventv2.Id = eventv1.Id + "_" + eventcounter.ToString();
+
+                eventv2.Id = eventv2.Id.ToUpper();
 
                 eventv2.EventGroupId = eventv1.Id;
 
@@ -96,6 +98,8 @@ namespace Helper.Converters
                     venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Mplace;
 
                 venue.Id = Regex.Replace(eventv1.ContactInfos.GetEnglishOrFirstKeyFromDictionary().CompanyName, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+
+                venue.Id = venue.Id.ToUpper();
 
                 venue.Shortname = venuename;
                 venue.GpsInfo = eventv1.GpsInfo;
@@ -155,6 +159,7 @@ namespace Helper.Converters
 
                 eventv2.PublishedOn = eventv1.PublishedOn;
                 eventv2.Id = eventv1.Id + "_" + eventcounter;
+                eventv2.Id = eventv2.Id.ToUpper();
 
                 eventv2.EventGroupId = eventv1.Id;
 
@@ -274,7 +279,7 @@ namespace Helper.Converters
                 //Create Venue
                 VenueV2 venue = new VenueV2();
                 venue.Id = "eventeuracnoi_" + room.Space.ToLower() + "_" + room.SpaceType;
-
+                venue.Id = venue.Id.ToUpper();
 
                 venue.Shortname = room.SpaceAbbrev;
                 //venue.LocationInfo = Todo create locationinfo
