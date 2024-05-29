@@ -253,7 +253,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> ConvertEventTopicsToTags(bool savetotable = false)
         {
             var query =
-                QueryFactory.Query("eventtopic")
+                QueryFactory.Query("eventtypes")
                     .Select("data");
 
             var datalist = await query.GetObjectListAsync<EventTypes>();
@@ -264,11 +264,11 @@ namespace OdhApiCore.Controllers
 
             foreach (var data in datalist)
             {
-                if (savetotable)
-                {
-                    var converted = EventV2Converter.ConvertEventTopicToTag(data);
-                    listtaglinked.Add(converted);
+                var converted = EventV2Converter.ConvertEventTopicToTag(data);
+                listtaglinked.Add(converted);
 
+                if (savetotable)
+                {                   
                     result.Add(await QueryFactory.UpsertData<TagLinked>(
                         converted,
                         new DataInfo("tag", CRUDOperation.Create),
