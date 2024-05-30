@@ -31,7 +31,7 @@ namespace Helper.Converters
                 }
                 if (eventv1 is EventLinked)
                 {
-                    result.Add(ConvertEventToEventV2(eventv1 as EventLinked));
+                    result.Add(ConvertEventToEventV2(eventv1 as EventLinked, eventtypes, venuetypes));
                 }
             }
 
@@ -93,7 +93,8 @@ namespace Helper.Converters
 
                         if (eventtype != null)
                         {
-                            var eventtypeid = eventtype.TypeDesc["en"].ToLower();
+                            //Caution using tag names from lts, they have "/" inside
+                            var eventtypeid = eventtype.TypeDesc["en"].ToLower().Replace("/","-");
                             
                             eventv2.Tags.Add(new Tags() { Id = eventtypeid, Source = eventv1.Source.ToLower() });
                             eventv2.TagIds.Add(eventtypeid);
@@ -109,7 +110,14 @@ namespace Helper.Converters
                 if (String.IsNullOrEmpty(venuename))
                     venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Mplace;
 
+                //Try to create an Id with this 3 fields
                 venue.Id = Regex.Replace(eventv1.ContactInfos.GetEnglishOrFirstKeyFromDictionary().CompanyName, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+
+                if(String.IsNullOrEmpty(venue.Id))
+                    venue.Id = Regex.Replace(eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Location, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+                if (String.IsNullOrEmpty(venue.Id))
+                    venue.Id = Regex.Replace(eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Mplace, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+
 
                 venue.Id = venue.Id.ToUpper();
 
@@ -339,7 +347,7 @@ namespace Helper.Converters
         public static TagLinked ConvertEventTopicToTag(EventTypes eventType)
         {
             TagLinked tag = new TagLinked();
-            tag.Id = eventType.TypeDesc["en"].ToLower();
+            tag.Id = eventType.TypeDesc["en"].ToLower().Replace("/", "-");
             tag.FirstImport = DateTime.Now;
             tag.LastChange = DateTime.Now;
             tag.MainEntity = "event";
@@ -358,7 +366,7 @@ namespace Helper.Converters
         public static TagLinked ConvertEventShortTopicToTag(SmgPoiTypes eventType)
         {
             TagLinked tag = new TagLinked();
-            tag.Id = eventType.Id.ToLower();
+            tag.Id = eventType.Id.ToLower().Replace("/", "-");
             tag.FirstImport = DateTime.Now;
             tag.LastChange = DateTime.Now;
             tag.MainEntity = "event";
@@ -494,7 +502,7 @@ namespace Helper.Converters
                 VenueSetupV2 tagv2 = new VenueSetupV2();
                 
                 tagv2.Capacity = venuesetup.Capacity;
-                tagv2.TagId = venuesetup.VenueCode;
+                tagv2.TagId = venuesetup.VenueCode.Replace("lts/", "").Replace("/", "-");
                 tagv2.Tag = new Tags() { Source = "lts", Id = venuesetup.VenueCode, Type = "seatType" };
                 
                 tagstoreturn.Add(tagv2);
@@ -510,10 +518,10 @@ namespace Helper.Converters
             {
                 Tags tagv2 = new Tags();    
                                 
-                tagv2.Id = venuetype.VenueCode;
+                tagv2.Id = venuetype.VenueCode.Replace("lts/", "").Replace("/", "-");
                 if (venuetype.VenueCode == "lts/faci_" || venuetype.VenueCode == "lts/type_")
                 {
-                    tagv2.Id = venuetype.VenueCode + venuecodes.Where(x => x.Id == venuetype.Id).FirstOrDefault().Name["en"].Replace(" ", "_").ToLower();
+                    tagv2.Id = venuetype.VenueCode.Replace("lts/", "").Replace("/", "-") + venuecodes.Where(x => x.Id == venuetype.Id).FirstOrDefault().Name["en"].Replace(" ", "_").ToLower();
                 }
 
                 tagv2.Source = "lts";
@@ -531,7 +539,7 @@ namespace Helper.Converters
         public static TagLinked ConvertVenueTagToTag(DDVenueCodes venueType)
         {
             TagLinked tag = new TagLinked();
-            tag.Id = venueType.Code.ToLower().Replace("lts/", "");
+            tag.Id = venueType.Code.ToLower().Replace("lts/", "").Replace("/", "-");
             tag.FirstImport = DateTime.Now;
             tag.LastChange = DateTime.Now;
             tag.MainEntity = "venue";
