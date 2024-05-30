@@ -154,6 +154,10 @@ namespace OdhApiCore.Controllers
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
+        #endregion
+
+        #region Converters
+
         [HttpGet, Route("VenueV2/ConvertVenueToVenueV2/{id}")]
         public async Task<IActionResult> ConvertVenueToVenueV2(string id, bool savetotable = false)
         {
@@ -194,6 +198,44 @@ namespace OdhApiCore.Controllers
                 return Ok(convertresult);
             }            
         }
+
+        [HttpGet, Route("VenueV2/ConvertVenueTypesToTags")]
+        public async Task<IActionResult> ConvertEventTopicsToTags(bool savetotable = false)
+        {
+            var query =
+                QueryFactory.Query("venuetypes")
+                    .Select("data");
+
+            var datalist = await query.GetObjectListAsync<DDVenueCodes>();
+
+            var listtaglinked = new List<TagLinked>();
+
+            List<PGCRUDResult> result = new List<PGCRUDResult>();
+
+            foreach (var data in datalist)
+            {
+                var converted = VenueV2Converter.ConvertVenueTagToTag(data);
+                listtaglinked.Add(converted);
+
+                if (savetotable)
+                {
+                    result.Add(await QueryFactory.UpsertData<TagLinked>(
+                        converted,
+                        new DataInfo("tag", CRUDOperation.Create),
+                        new EditInfo("converter", "api"),
+                        new CRUDConstraints(null, new List<string>()),
+                        new CompareConfig(false, false)));
+                }
+            }
+
+            if (savetotable)
+            {
+                return Ok(result);
+            }
+
+            return Ok(listtaglinked);
+        }
+
 
         #endregion
 

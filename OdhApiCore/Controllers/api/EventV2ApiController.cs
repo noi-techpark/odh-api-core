@@ -149,6 +149,10 @@ namespace OdhApiCore.Controllers
             return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
         }
 
+        #endregion
+
+        #region Converters
+
         [ProducesResponseType(typeof(EventV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -249,7 +253,7 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        [HttpGet, Route("EventV2/ConvertEventTopicsToTags")]
+        [HttpGet, Route("EventV2/ConvertEventTypesToTags")]
         public async Task<IActionResult> ConvertEventTopicsToTags(bool savetotable = false)
         {
             var query =
