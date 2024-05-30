@@ -531,7 +531,7 @@ namespace Helper.Converters
         public static TagLinked ConvertVenueTagToTag(DDVenueCodes venueType)
         {
             TagLinked tag = new TagLinked();
-            tag.Id = venueType.Code.ToLower();
+            tag.Id = venueType.Code.ToLower().Replace("lts/", "");
             tag.FirstImport = DateTime.Now;
             tag.LastChange = DateTime.Now;
             tag.MainEntity = "venue";
