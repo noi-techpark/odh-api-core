@@ -200,7 +200,7 @@ namespace OdhApiCore.Controllers
         }
 
         [HttpGet, Route("VenueV2/ConvertVenueTypesToTags")]
-        public async Task<IActionResult> ConvertEventTopicsToTags(bool savetotable = false)
+        public async Task<IActionResult> ConvertVenueTypesToTags(bool savetotable = false)
         {
             var query =
                 QueryFactory.Query("venuetypes")
