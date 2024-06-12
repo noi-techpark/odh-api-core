@@ -37,6 +37,19 @@ namespace Helper
                 mydetail.Language = language;
         }
 
+        private static void TrimStringFields<T>(T contactInfos)
+        {
+            var stringProperties = contactInfos.GetType().GetProperties()
+                          .Where(p => p.PropertyType == typeof(string));
+
+            foreach (var stringProperty in stringProperties)
+            {
+                string currentValue = (string)stringProperty.GetValue(contactInfos, null);
+                if(!string.IsNullOrEmpty(currentValue))
+                    stringProperty.SetValue(contactInfos, currentValue.Trim(), null);
+            }
+        }
+
         //For Articles
         public static void CheckMyInsertedLanguages(this Article myarticle, List<string> availablelanguages)
         {
