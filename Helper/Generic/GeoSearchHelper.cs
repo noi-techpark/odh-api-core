@@ -2,8 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using SqlKata.Execution;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Helper
 {
@@ -109,7 +113,6 @@ namespace Helper
             return pggeosearchresult;
         }
 
-
         public static RavenGeoSearchResult GetRavenGeoSearchResult(string latitude, string longitude, string radius)
         {
             if (latitude == null && longitude == null)
@@ -153,6 +156,94 @@ namespace Helper
             return pggeosearchresult;
         }
 
+        public static GeoPolygonSearchResult? GetPolygon(string? polygon, QueryFactory queryfactory)
+        {
+            if(String.IsNullOrEmpty(polygon)) return null;            
+            else
+            {
+                GeoPolygonSearchResult result = new GeoPolygonSearchResult();
+                result.operation = "contains";
+
+                //Check for WKT String
+                if (CheckValidWKTString(polygon))
+                {
+                    if (CheckWKTSyntax(polygon, queryfactory))
+                    {
+                        result.wktstring = polygon;
+                        return result;
+                    }
+                    else
+                        return null;
+                }
+                else
+                {                    
+                    result.polygon = new List<Tuple<double, double>>();
+
+                    string coordstoprocess = "";
+
+                    if (polygon.ToLower().StartsWith("bbc"))
+                    {
+                        result.operation = "contains";
+                        coordstoprocess = polygon.ToLower().Replace("bbc", "");
+                    }
+                    else if (polygon.ToLower().StartsWith("bbi"))
+                    {
+                        result.operation = "intersects";
+                        coordstoprocess = polygon.ToLower().Replace("bbi", "");
+                    }
+                    else
+                        coordstoprocess = polygon.ToLower();
+
+                    coordstoprocess = Regex.Replace(coordstoprocess, @"\(+|\)+", "");
+                    CultureInfo culture = CultureInfo.InvariantCulture;
+
+                    foreach (var item in coordstoprocess.Split(','))
+                    {
+                        var coords = item.Trim().Split(" ");
+
+                        if (coords.Count() == 2 && Double.TryParse(coords[0], NumberStyles.Any, culture, out double longitude) && Double.TryParse(coords[1], NumberStyles.Any, culture, out double latitude))
+                        {
+                            result.polygon.Add(Tuple.Create(longitude, latitude));
+                        }
+                    }
+
+                    if (result.polygon.Count == 0) return null;
+                    else return result;
+                }               
+            }
+
+        }
+
+        public static bool CheckValidWKTString(string? polygon)
+        {
+            if (polygon.ToUpper().StartsWith("LINESTRING") ||
+                polygon.ToUpper().StartsWith("POLYGON") ||
+                polygon.ToUpper().StartsWith("MULTIPOINT") ||
+                polygon.ToUpper().StartsWith("MULTILINESTRING") ||
+                    polygon.ToUpper().StartsWith("MULTIPOLYGON") ||
+                    polygon.ToUpper().StartsWith("GEOMETRYCOLLECTION") ||
+                    polygon.ToUpper().StartsWith("POINT ZM") ||
+                    polygon.ToUpper().StartsWith("POINT M"))
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public static bool CheckWKTSyntax(string? polygon, QueryFactory queryFactory)
+        {
+            try
+            {
+                var query = queryFactory.Query().SelectRaw($"Count(ST_GeometryFromText('{polygon}',4326))").Get<int>();
+
+                if (query != null && query.FirstOrDefault() == 1)
+                    return true;
+                else
+                    return false;
+            }
+            catch { return false; }                        
+        }
     }
 
     public class DistanceCalculator
@@ -231,6 +322,14 @@ namespace Helper
         public double latitude { get; set; }
         public double longitude { get; set; }
         public int radius { get; set; }
+    }
+
+    public class GeoPolygonSearchResult
+    {
+        public string? operation { get; set; }
+        public List<Tuple<double,double>>? polygon { get; set; }
+
+        public string? wktstring { get; set; } = null;
     }
 
     public class RavenGeoSearchResult
