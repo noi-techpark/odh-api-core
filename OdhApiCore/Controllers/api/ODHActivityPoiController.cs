@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using OdhNotifier;
+using Schema.NET;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -423,6 +424,9 @@ namespace OdhApiCore.Controllers.api
 
                 //TODO check for Reduced Data                
 
+                //Trim all strings
+                odhactivitypoi.TrimStringProperties();
+
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, new DataInfo("smgpois", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
@@ -466,6 +470,9 @@ namespace OdhApiCore.Controllers.api
                 //TODO DISTANCE Calculation
 
                 //TODO check for Reduced Data
+
+                //Trim all strings
+                odhactivitypoi.TrimStringProperties();
 
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, new DataInfo("smgpois", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });

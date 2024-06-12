@@ -896,6 +896,8 @@ namespace OdhApiCore.Controllers.api
                     //Create PublishedonList
                     //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
 
+                    eventshort.TrimStringProperties();
+
                     return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
                 }
                 else
