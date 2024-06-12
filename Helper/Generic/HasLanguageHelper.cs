@@ -4,8 +4,10 @@
 
 using DataModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,28 +38,7 @@ namespace Helper
             if (String.IsNullOrEmpty(mydetail.Language))
                 mydetail.Language = language;
         }
-
-        private static void TrimStringFields<T>(T data)
-        {
-            var dictProperties = data.GetType().GetProperties()
-                          .Where(p => p.PropertyType == typeof(IDictionary<string,string>));
-
-            foreach(var dictproperty in dictProperties)
-            {
-                TrimStringFields<IDictionary<string, string>>((IDictionary<string, string>)dictproperty);
-            }
-
-            var stringProperties = data.GetType().GetProperties()
-                          .Where(p => p.PropertyType == typeof(string));
-
-            foreach (var stringProperty in stringProperties)
-            {
-                string currentValue = (string)stringProperty.GetValue(data, null);
-                if(!string.IsNullOrEmpty(currentValue))
-                    stringProperty.SetValue(data, currentValue.Trim(), null);
-            }
-        }
-
+         
         //For Articles
         public static void CheckMyInsertedLanguages(this Article myarticle, List<string> availablelanguages)
         {
@@ -819,12 +800,6 @@ namespace Helper
                 }
             }
         }
-
-        public static void TrimFields(this EventShort mydata)
-        {                        
-            TrimStringFields<EventShort>(mydata);            
-        }
-
 
     }
 }

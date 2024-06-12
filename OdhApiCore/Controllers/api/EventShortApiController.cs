@@ -802,7 +802,7 @@ namespace OdhApiCore.Controllers.api
                     //checkboxes from 
 
                     //To Test Trim all Data
-                    eventshort.TrimFields();
+                    eventshort.TrimStringProperties();
 
                     return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter)); ;
                 }
