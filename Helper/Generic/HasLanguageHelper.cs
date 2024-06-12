@@ -37,16 +37,24 @@ namespace Helper
                 mydetail.Language = language;
         }
 
-        private static void TrimStringFields<T>(T contactInfos)
+        private static void TrimStringFields<T>(T data)
         {
-            var stringProperties = contactInfos.GetType().GetProperties()
+            var dictProperties = data.GetType().GetProperties()
+                          .Where(p => p.PropertyType == typeof(IDictionary<string,string>));
+
+            foreach(var dictproperty in dictProperties)
+            {
+                TrimStringFields<IDictionary<string, string>>((IDictionary<string, string>)dictproperty);
+            }
+
+            var stringProperties = data.GetType().GetProperties()
                           .Where(p => p.PropertyType == typeof(string));
 
             foreach (var stringProperty in stringProperties)
             {
-                string currentValue = (string)stringProperty.GetValue(contactInfos, null);
+                string currentValue = (string)stringProperty.GetValue(data, null);
                 if(!string.IsNullOrEmpty(currentValue))
-                    stringProperty.SetValue(contactInfos, currentValue.Trim(), null);
+                    stringProperty.SetValue(data, currentValue.Trim(), null);
             }
         }
 
@@ -811,6 +819,12 @@ namespace Helper
                 }
             }
         }
+
+        public static void TrimFields(this EventShort mydata)
+        {                        
+            TrimStringFields<EventShort>(mydata);            
+        }
+
 
     }
 }
