@@ -36,6 +36,25 @@ namespace PushServer
 
                 message.notification = notification;
             }
+            else if ((identifier == "noicommunityapp" || identifier == "noi-communityapp") && myobject is EventShortLinked)
+            {
+                message = new FCMModels();
+
+                message.to = "/topics/events_" + language.ToLower();
+
+                string deeplink = "noi-community://it.bz.noi.community/eventDetails/" + myobject.Id;
+
+                message.data = new { deep_link = deeplink };
+                FCMNotification notification = new FCMNotification();
+
+                notification.icon = "ic_notification";
+                notification.link = deeplink;
+                notification.title = ((EventShortLinked)myobject).EventTitle.ContainsKey(language) && !String.IsNullOrEmpty(((EventShortLinked)myobject).EventTitle[language]) ? ((EventShortLinked)myobject).EventTitle[language] : "Noi Community App Event";
+                notification.body = ((EventShortLinked)myobject).EventText.ContainsKey(language) && !String.IsNullOrEmpty(((EventShortLinked)myobject).EventText[language]) ? ((EventShortLinked)myobject).EventText[language] : "Check out the latest Events on the NOI Community App";
+                notification.sound = "default";
+
+                message.notification = notification;
+            }
 
             return message;
         }
