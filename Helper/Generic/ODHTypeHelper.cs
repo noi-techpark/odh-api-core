@@ -103,6 +103,8 @@ namespace Helper
                 TourismMetaData => "odhmetadata",
                 TagLinked => "tag",                
                 SnowReportBaseData => "snowreport",
+                VenueV2 => "venue",
+                EventV2 => "event",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -147,6 +149,8 @@ namespace Helper
                 WeatherHistory or WeatherHistoryLinked => "weatherdatahistory",
                 TourismMetaData => "metadata",
                 TagLinked => "tags",
+                EventV2 => "eventsv2",
+                VenueV2 => "venuesv2",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -286,6 +290,8 @@ namespace Helper
                 "weatherdatahistory" => "weatherhistory",
                 "metadata" => "odhmetadata",
                 "tags" => "tag",
+                "venuesv2" => "venue",
+                "eventsv2" => "event",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -329,6 +335,8 @@ namespace Helper
                 "weatherdatahistory" => typeof(WeatherHistoryLinked),
                 "metadata" => typeof(TourismMetaData),
                 "tags" => typeof(TagLinked),
+                "eventsv2" => typeof(EventV2),
+                "venuesv2" => typeof(VenueV2),
                 _ => throw new Exception("not known table name")
             };
         }
