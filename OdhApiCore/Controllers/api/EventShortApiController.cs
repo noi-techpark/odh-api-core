@@ -801,6 +801,9 @@ namespace OdhApiCore.Controllers.api
                     //TODO, Sync publishedon with current values, remove SETTER from ActiveToday, ActiveWeb, ActiveCommunity and generate it from publishedon, remove 
                     //checkboxes from 
 
+                    //To Test Trim all Data
+                    eventshort.TrimStringProperties();
+
                     return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter)); ;
                 }
                 else
@@ -892,6 +895,8 @@ namespace OdhApiCore.Controllers.api
 
                     //Create PublishedonList
                     //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
+
+                    eventshort.TrimStringProperties();
 
                     return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
                 }
