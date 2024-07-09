@@ -696,6 +696,9 @@ namespace OdhApiCore.Controllers.api
                     if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
                         throw new Exception("Start + End Time not set correctly");
 
+                    if(!DateTimeHelper.CompareValidStartEnddate(eventshort.StartDate, eventshort.EndDate))
+                        throw new Exception("Event Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
+
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
 
@@ -757,6 +760,9 @@ namespace OdhApiCore.Controllers.api
 
                                 room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
                                 room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+
+                                if (!DateTimeHelper.CompareValidStartEnddate(room.StartDate, room.EndDate))
+                                    throw new Exception("Room Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
                             }
                         }
                     }
@@ -845,6 +851,9 @@ namespace OdhApiCore.Controllers.api
 
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
+                    if (!DateTimeHelper.CompareValidStartEnddate(eventshort.StartDate, eventshort.EndDate))
+                        throw new Exception("Event Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
+
                     //if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }) && eventshort.EventLocation != "VV")
                     //    throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
 
@@ -866,6 +875,9 @@ namespace OdhApiCore.Controllers.api
                     {
                         foreach (var room in eventshort.RoomBooked)
                         {
+                            if (!DateTimeHelper.CompareValidStartEnddate(room.StartDate, room.EndDate))
+                                throw new Exception("Room Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
+
                             room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
                             room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
                         }
