@@ -1007,23 +1007,7 @@ namespace OdhApiCore.Controllers.api
             //    return BadRequest(ex.Message);
             //}
         }
-    
-        private bool CheckIfUserIsOnlyInRole(string role, List<string> rolestocheck)
-        {
-            bool returnbool = false;
-
-            if (User.IsInRole(role))
-                returnbool = true;
-
-            foreach(string roletocheck in rolestocheck)
-            {
-                if(User.IsInRole(roletocheck))
-                    returnbool = false;
-            }
-
-            return returnbool;
-        }
-
+   
         #endregion
 
         #region BDPRooms
