@@ -165,6 +165,14 @@ namespace Helper
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
 
+        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, List<Tuple<double, double>> polygon, string? operation = null)
+        {
+            if (String.IsNullOrEmpty(wkt))
+                return GetGeoWhereInPolygon_GeneratedColumns(polygon, operation);
+            else
+                return GetGeoWhereInPolygon_GeneratedColumns(wkt, operation);
+        }
+
         public static string GetGeoWhereInPolygon_GeneratedColumns(List<Tuple<double,double>> polygon, string? operation = null)
         {
             return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({ String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', 4326), gen_position)";
