@@ -162,7 +162,8 @@ namespace Helper
             else
             {
                 GeoPolygonSearchResult result = new GeoPolygonSearchResult();
-                result.operation = "contains";
+                //setting standard operation to intersects
+                result.operation = "intersects";
 
                 //Check for WKT String
                 if (CheckValidWKTString(polygon))
@@ -242,7 +243,7 @@ namespace Helper
                 else
                     return false;
             }
-            catch { return false; }                        
+            catch { return false; }            
         }
     }
 
