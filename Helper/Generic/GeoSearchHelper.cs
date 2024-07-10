@@ -176,7 +176,7 @@ namespace Helper
                     else
                         return null;
                 }
-                else
+                else if(polygon.ToLower().StartsWith("bbc") || polygon.ToLower().StartsWith("bbi"))
                 {                    
                     result.polygon = new List<Tuple<double, double>>();
 
@@ -210,7 +210,28 @@ namespace Helper
 
                     if (result.polygon.Count == 0) return null;
                     else return result;
-                }               
+                }      
+                else
+                {
+                    //Retrieve data from shape table
+
+                    var geometry = queryfactory.Query()
+                        .Select("geom")
+                        .From("shapes")
+                        .WhereLike("gen_name", polygon) //create a generated column which constructs a name by id,type and name
+                        .FirstOrDefault()
+                        .Get<string>();
+
+                    if (!String.IsNullOrEmpty(geometry))
+                    {
+                        result.isgeometry = true;
+                        result.wktstring = geometry.ToString();
+
+                        return result;
+                    }
+                    else
+                        return null;
+                }
             }
 
         }
@@ -331,6 +352,8 @@ namespace Helper
         public List<Tuple<double,double>>? polygon { get; set; }
 
         public string? wktstring { get; set; } = null;
+
+        public bool isgeometry { get; set; } = false;
     }
 
     public class RavenGeoSearchResult

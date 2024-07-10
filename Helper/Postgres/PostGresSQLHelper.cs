@@ -165,10 +165,12 @@ namespace Helper
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
 
-        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, List<Tuple<double, double>> polygon, string? operation = null)
+        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, List<Tuple<double, double>> polygon, string? operation = null, bool isgeometry = false)
         {
             if (String.IsNullOrEmpty(wkt))
                 return GetGeoWhereInPolygon_GeneratedColumns(polygon, operation);
+            else if(!isgeometry)
+                return GetGeoWhereInPolygon_GeneratedColumns(wkt, operation);
             else
                 return GetGeoWhereInPolygon_GeneratedColumns(wkt, operation);
         }
