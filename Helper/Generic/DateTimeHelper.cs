@@ -58,6 +58,10 @@ namespace Helper
         }
 
 
+        public static bool CompareValidStartEnddate(DateTime start, DateTime end)
+        {
+            return end >= start;
+        }
 
     }
 }
