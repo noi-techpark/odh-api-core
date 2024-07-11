@@ -36,11 +36,14 @@ code_uts float,
 istatnumber text, 
 abbrev text, 
 type_uts text,
-type text,
+"type" text,
 name text, 
 name_alternative text, 
 shape_leng float, 
 shape_area float, 
+source text,
+meta jsonb,
+licenseinfo jsonb,
 geom geometry)
  RETURNS jsonb
  LANGUAGE plpgsql
@@ -62,12 +65,14 @@ AS $function$ begin
 		'Name_Alternative',name_alternative,
 		'Shape_length',shape_leng,
 		'Shape_area',shape_area,
-		'Source','Istat',
-		'Type', type,
+		'Source',"source",
+		'Type', "type",
+		'_Meta', meta,		
+		'LicenseInfo', licenseinfo,		
 		'Geometry',geom);
 end; $function$
 
-ALTER TABLE shapes ADD IF NOT EXISTS data jsonb GENERATED ALWAYS AS ((
+ALTER TABLE shapes ADD IF NOT EXISTS "data" jsonb GENERATED ALWAYS AS ((
 createshapejson(id, country, code_rip, code_reg, code_prov, code_cm, code_uts, 
-istatnumber, abbrev, type_uts, type, name, name_alternative, shape_leng, shape_area, geom)
+istatnumber, abbrev, type_uts, "type", name, name_alternative, shape_leng, shape_area, source, meta, licenseinfo, geometry)
 ))stored;

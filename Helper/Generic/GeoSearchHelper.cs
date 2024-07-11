@@ -224,7 +224,7 @@ namespace Helper
                     //Retrieve data from shape table
 
                     var geometry = await queryfactory.Query()
-                        .SelectRaw("ST_AsText(geom)")
+                        .SelectRaw("ST_AsText(geometry)")
                         .From("shapes")
                         .Where("country", inputquery[0].ToUpper())
                         .Where("type", inputquery[1].ToLower())

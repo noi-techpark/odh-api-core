@@ -172,7 +172,7 @@ namespace Helper
             else if(!isgeometry)
                 return GetGeoWhereInPolygon_GeneratedColumns(wkt, operation);
             else
-                return GetGeoWhereInPolygon_GeneratedColumns(wkt, operation, "32632");
+                return GetGeoWhereInPolygon_GeneratedColumns(wkt, operation);
         }
 
         public static string GetGeoWhereInPolygon_GeneratedColumns(List<Tuple<double,double>> polygon, string? operation = "intersects", string srid = "4326")
@@ -183,6 +183,11 @@ namespace Helper
         public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, string? operation = "intersects", string srid = "4326")
         {
             return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', {srid}), ST_Transform(gen_position,{srid}))";
+        }
+
+        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, string? operation = "intersects")
+        {
+            return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', 4326), gen_position)";
         }
 
         public static string GetPolygonOperator(string? operation) => operation switch
