@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Helper
 {
@@ -156,7 +157,7 @@ namespace Helper
             return pggeosearchresult;
         }
 
-        public static GeoPolygonSearchResult? GetPolygon(string? polygon, QueryFactory queryfactory)
+        public static async Task<GeoPolygonSearchResult?> GetPolygon(string? polygon, QueryFactory queryfactory)
         {
             if(String.IsNullOrEmpty(polygon)) return null;            
             else
@@ -213,14 +214,24 @@ namespace Helper
                 }      
                 else
                 {
+                    //Format = country.type.id or country.type.name
+                    var inputquery = polygon.Split(".");
+                    if(inputquery.Length != 3)
+                        return null;
+
+                    bool idtofilter = int.TryParse(inputquery[2], out int parsedid);
+
                     //Retrieve data from shape table
 
-                    var geometry = queryfactory.Query()
-                        .Select("geom")
+                    var geometry = await queryfactory.Query()
+                        .SelectRaw("ST_AsText(geom)")
                         .From("shapes")
-                        .WhereLike("gen_name", polygon) //create a generated column which constructs a name by id,type and name
-                        .FirstOrDefault()
-                        .Get<string>();
+                        .Where("country", inputquery[0].ToUpper())
+                        .Where("type", inputquery[1].ToLower())
+                        .When(idtofilter, x => x.Where("id", parsedid))
+                        .When(!idtofilter, x => x.WhereLike("name", inputquery[2]))
+                        //create a generated column which constructs a name by id,type and name
+                        .FirstOrDefaultAsync<string>();
 
                     if (!String.IsNullOrEmpty(geometry))
                     {

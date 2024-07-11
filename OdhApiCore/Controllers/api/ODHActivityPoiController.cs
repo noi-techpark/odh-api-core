@@ -146,7 +146,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            var polygonsearchresult = Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFiltered(
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
@@ -254,7 +254,7 @@ namespace OdhApiCore.Controllers.api
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? difficultyfilter, string? distancefilter, string? altitudefilter, string? durationfilter,
             bool? hasimage, string? tagfilter, string? publishedon,
-            string? seed, string? lastchange, GeoPolygonSearchResult polygonsearchresult, PGGeoSearchResult geosearchresult,
+            string? seed, string? lastchange, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
