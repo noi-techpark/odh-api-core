@@ -103,7 +103,7 @@ namespace OdhApiCore
             {
                 foreach (var fcmkey in fcmdict)
                 {
-                    var fcmconfigobj = new FCMConfig(fcmkey.Key, fcmkey.GetValue<string>("ServerKey", ""), fcmkey.GetValue<string>("SenderId", ""), fcmkey.GetValue<string>("ProjectName", ""));
+                    var fcmconfigobj = new FCMConfig(fcmkey.Key, fcmkey.GetValue<string>("ServerKey", ""), fcmkey.GetValue<string>("SenderId", ""), fcmkey.GetValue<string>("ProjectName", ""), fcmkey.GetValue<string>("ServiceAccount", ""));
                     this.fcmConfig.Add(fcmconfigobj);
                 }
             }

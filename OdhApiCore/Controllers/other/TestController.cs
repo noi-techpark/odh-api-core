@@ -25,6 +25,7 @@ using System.Net.Http;
 using Swashbuckle.AspNetCore.Annotations;
 using DataModel.Annotations;
 using OdhNotifier;
+using PushServer;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -207,6 +208,22 @@ namespace OdhApiCore.Controllers.api
 
             return Ok(municipalityreducedinfo);
         }
+
+
+        [HttpGet, Route("TestFCMSendV2")]
+        public async Task<IActionResult> TestFCMSendV2()
+        {
+            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noicommunityapp").FirstOrDefault();
+
+            string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";            
+            var result = await FCMPushNotification.SendNotificationV2(new FCMModels() { }, sendurl, pushserverconfig.ServiceAccount);
+
+            return Ok();
+        }
+
+
+        
+
 
         //Not working
         //[HttpGet, Route("TestSomething")]

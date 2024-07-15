@@ -270,7 +270,7 @@ namespace OdhApiCore.Controllers.api
                 {
                     //var result = await FCMPushNotification.SendNotification(message, sendurl, pushserverconfig.SenderId, pushserverconfig.ServerKey);
 
-                    var result = await FCMPushNotification.SendNotificationV2(message, sendurl);
+                    var result = await FCMPushNotification.SendNotificationV2(message, sendurl, "");
 
                     resultlist.Add(result);
                 }

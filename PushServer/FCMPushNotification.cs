@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using DataModel;
+using Google.Apis.Auth.OAuth2;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -40,17 +41,20 @@ namespace PushServer
 			}			
 		}
 
-        public static async Task<PushResult> SendNotificationV2(FCMModels fcmmessage, string fcmurl)
+        public static async Task<PushResult> SendNotificationV2(FCMModels fcmmessage, string fcmurl, string fcmserviceaccountjsonname)
         {
             FCMPushNotification result = new FCMPushNotification();
             try
             {
-                HttpClient myclient = new HttpClient();
+                
+				HttpClient myclient = new HttpClient();
 
 				//TODO GET THE Bearertoken
 				string bearertoken = "";
 
-                myclient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearerer" + bearertoken);                
+				var token = await GetGoogleBearerToken(fcmserviceaccountjsonname);
+
+                myclient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + token.Token);                
 
                 var myresponse = await myclient.PostAsync(fcmurl, new StringContent(JsonConvert.SerializeObject(fcmmessage), Encoding.UTF8, "application/json"));
 
@@ -64,7 +68,19 @@ namespace PushServer
             }
         }
 
+		public static async Task<UserCredential> GetGoogleBearerToken(string fcmserviceaccountjsonname)
+		{
+			UserCredential credential;
+			using (var stream = new FileStream(fcmserviceaccountjsonname, FileMode.Open, FileAccess.Read))
+			{
+				credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+					GoogleClientSecrets.Load(stream).Secrets,
+                    new[] { "noi-community" },
+                    "user", CancellationToken.None);
+			}
 
+			return credential;
+        }
     }
 
 	#endregion
