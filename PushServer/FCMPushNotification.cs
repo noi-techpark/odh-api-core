@@ -40,8 +40,32 @@ namespace PushServer
 			}			
 		}
 
-		
-	}
+        public static async Task<PushResult> SendNotificationV2(FCMModels fcmmessage, string fcmurl)
+        {
+            FCMPushNotification result = new FCMPushNotification();
+            try
+            {
+                HttpClient myclient = new HttpClient();
+
+				//TODO GET THE Bearertoken
+				string bearertoken = "";
+
+                myclient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearerer" + bearertoken);                
+
+                var myresponse = await myclient.PostAsync(fcmurl, new StringContent(JsonConvert.SerializeObject(fcmmessage), Encoding.UTF8, "application/json"));
+
+                var myresponseparsed = await myresponse.Content.ReadAsStringAsync();
+
+                return new PushResult() { Error = null, Response = myresponseparsed, Success = true, Messages = 1 };
+            }
+            catch (Exception ex)
+            {
+                return new PushResult() { Error = ex.Message, Response = "Error", Success = false, Messages = 1 };
+            }
+        }
+
+
+    }
 
 	#endregion
 }

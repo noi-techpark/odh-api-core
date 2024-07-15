@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -260,12 +261,16 @@ namespace OdhApiCore.Controllers.api
 
                 if (pushserverconfig == null)
                     throw new Exception("PushserverConfig could not be found");
-
                 List<PushResult> resultlist = new();
+
+                string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";
+
 
                 foreach (var message in messages)
                 {
-                    var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
+                    //var result = await FCMPushNotification.SendNotification(message, sendurl, pushserverconfig.SenderId, pushserverconfig.ServerKey);
+
+                    var result = await FCMPushNotification.SendNotificationV2(message, sendurl);
 
                     resultlist.Add(result);
                 }
