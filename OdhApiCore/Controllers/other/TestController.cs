@@ -218,8 +218,31 @@ namespace OdhApiCore.Controllers.api
             string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";
             //var result = await FCMPushNotification.SendNotificationV2(new FCMessageV2() { }, sendurl, pushserverconfig.ServiceAccount);
             var cred = await FCMPushNotification.GetGoogleTokenServiceAccount(pushserverconfig.ServiceAccount);
+            var token = await cred.UnderlyingCredential.GetAccessTokenForRequestAsync();
 
-            return Ok(await cred.UnderlyingCredential.GetAccessTokenForRequestAsync());
+            return Ok(token);
+        }
+
+        [HttpGet, Route("TestFCMEnvs")]
+        public async Task<IActionResult> TestFCMEnvs()
+        {
+            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noi-communityapp").FirstOrDefault();
+
+            string contents = System.IO.File.ReadAllText(pushserverconfig.ServiceAccount);
+
+            return Ok(new { test = contents });
+        }
+
+        [HttpGet, Route("TestFCMEnvs2")]
+        public async Task<IActionResult> TestFCMEnvs2()
+        {
+            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noi-communityapp").FirstOrDefault();
+
+            string contents = System.IO.File.ReadAllText(pushserverconfig.ServiceAccount);
+
+            var myobject = JsonConvert.DeserializeObject(contents);
+
+            return Ok(myobject);
         }
 
         //Not working
