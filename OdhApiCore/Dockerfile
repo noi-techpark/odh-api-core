@@ -22,6 +22,7 @@ COPY OdhNotifier/OdhNotifier.csproj OdhNotifier/
 COPY PushServer/PushServer.csproj EBMS/
 COPY JsonLDTransformer/JsonLDTransformer.csproj JsonLDTransformer/
 COPY OdhApiCore/OdhApiCore.csproj OdhApiCore/
+COPY google-service-account.json OdhApiCore/google-service-account.json
 RUN dotnet restore OdhApiCore/OdhApiCore.csproj
 COPY . .
 WORKDIR /src/OdhApiCore
@@ -50,7 +51,6 @@ COPY OdhApiCore/xml/STACategories.xml xml/
 COPY OdhApiCore/xml/BezirkWeather.xml xml/
 COPY OdhApiCore/xml/RequestInterceptor.xml xml/
 COPY OdhApiCore/appsettings.Production.json appsettings.json
-COPY google-service-account.json google-service-account.json
 
 # Expose the API port
 EXPOSE 80
