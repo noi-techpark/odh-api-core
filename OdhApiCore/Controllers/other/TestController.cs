@@ -219,21 +219,8 @@ namespace OdhApiCore.Controllers.api
             //var result = await FCMPushNotification.SendNotificationV2(new FCMessageV2() { }, sendurl, pushserverconfig.ServiceAccount);
             var cred = await FCMPushNotification.GetGoogleTokenServiceAccount(pushserverconfig.ServiceAccount);
 
-            return Ok(cred.UnderlyingCredential.GetAccessTokenForRequestAsync());
+            return Ok(await cred.UnderlyingCredential.GetAccessTokenForRequestAsync());
         }
-
-        [HttpGet, Route("TestFCMEnvs")]
-        public async Task<IActionResult> TestFCMEnvs()
-        {
-            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noi-communityapp").FirstOrDefault();
-
-            string contents = System.IO.File.ReadAllText(pushserverconfig.ServiceAccount);
-
-            return Ok(new { test = contents } );
-        }
-
-
-
 
         //Not working
         //[HttpGet, Route("TestSomething")]
