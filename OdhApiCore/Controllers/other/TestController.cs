@@ -227,7 +227,7 @@ namespace OdhApiCore.Controllers.api
         {
             var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noi-communityapp").FirstOrDefault();
 
-            string contents = File.ReadAllText(pushserverconfig.ServiceAccount);
+            string contents = System.IO.File.ReadAllText(pushserverconfig.ServiceAccount);
 
             return Ok(new { test = contents } );
         }
