@@ -244,12 +244,12 @@ namespace OdhApiCore.Controllers.api
                 else if(myobject is IHasLanguage && (myobject as IHasLanguage).HasLanguage != null)
                     languages = (myobject as IHasLanguage).HasLanguage.ToList();
 
-                List<FCMModels> messages = new();
+                List<FCMessageV2> messages = new();
 
                 foreach (var lang in languages)
                 {
                     //Construct the message
-                    var message = FCMMessageConstructor.ConstructMyMessage(identifier, lang.ToLower(), myobject);
+                    var message = FCMMessageConstructor.ConstructMyMessageV2(identifier, lang.ToLower(), myobject);
 
                     if (message != null)
                         messages.Add(message);

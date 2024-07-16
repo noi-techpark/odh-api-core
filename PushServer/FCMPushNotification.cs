@@ -43,7 +43,7 @@ namespace PushServer
 			}			
 		}
 
-        public static async Task<PushResult> SendNotificationV2(FCMModels fcmmessage, string fcmurl, string fcmserviceaccountjsonname)
+        public static async Task<PushResult> SendNotificationV2(FCMessageV2 fcmmessage, string fcmurl, string fcmserviceaccountjsonname)
         {
             FCMPushNotification result = new FCMPushNotification();
             try
@@ -51,8 +51,10 @@ namespace PushServer
                 
 				HttpClient myclient = new HttpClient();
 
-				//TODO GET THE Bearertoken				
-				var googlecred = await GetGoogleBearerToken(fcmserviceaccountjsonname);
+				
+                //Getting GoogleCredentials from File
+				var googlecred = await GetGoogleTokenServiceAccount(fcmserviceaccountjsonname, true);
+                //GET THE Bearertoken out of the Google Credential				
                 var token = await googlecred.UnderlyingCredential.GetAccessTokenForRequestAsync();
 
                 myclient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + token);                
@@ -69,22 +71,31 @@ namespace PushServer
             }
         }
 
-		public static async Task<GoogleCredential> GetGoogleBearerToken(string fcmserviceaccountjsonname)
+		public static async Task<GoogleCredential> GetGoogleTokenServiceAccount(string fcmserviceaccountjsonname, bool fromfile = false)
 		{
-            //UserCredential credential;
-            //using (var stream = new FileStream(fcmserviceaccountjsonname, FileMode.Open, FileAccess.Read))
-            //{
-            //	credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-            //		GoogleClientSecrets.Load(stream).Secrets,
-            //                 new[] { "noi-community" },
-            //                 "user", CancellationToken.None);
-            //}
-
             //FromJson
+            GoogleCredential? cred;
 
-            var cred = GoogleCredential.FromFile(fcmserviceaccountjsonname).CreateScoped(new[] { "noi-community" });
+            if (fromfile)
+                cred = GoogleCredential.FromFile(fcmserviceaccountjsonname).CreateScoped(new[] { "noi-community" });
+            else
+                cred = GoogleCredential.FromJson(fcmserviceaccountjsonname).CreateScoped(new[] { "noi-community" });
 
             return cred;
+        }
+
+        public static async Task<UserCredential> GetGoogleTokenWebAuthorization(string fcmserviceaccountjsonname)
+        {
+            UserCredential credential;
+            using (var stream = new FileStream(fcmserviceaccountjsonname, FileMode.Open, FileAccess.Read))
+            {
+                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    GoogleClientSecrets.Load(stream).Secrets,
+                             new[] { "noi-community" },
+                             "user", CancellationToken.None);
+            }
+
+            return credential;
         }
     }
 
