@@ -216,7 +216,7 @@ namespace OdhApiCore.Controllers.api
             var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noicommunityapp").FirstOrDefault();
 
             string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";            
-            var result = await FCMPushNotification.SendNotificationV2(new FCMModels() { }, sendurl, pushserverconfig.ServiceAccount);
+            var result = await FCMPushNotification.SendNotificationV2(new FCMessageV2() { }, sendurl, pushserverconfig.ServiceAccount);
 
             return Ok();
         }
