@@ -4,9 +4,11 @@
 
 using DataModel;
 using Google.Apis.Auth.OAuth2;
+using Humanizer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -49,12 +51,11 @@ namespace PushServer
                 
 				HttpClient myclient = new HttpClient();
 
-				//TODO GET THE Bearertoken
-				string bearertoken = "";
+				//TODO GET THE Bearertoken				
+				var googlecred = await GetGoogleBearerToken(fcmserviceaccountjsonname);
+                var token = await googlecred.UnderlyingCredential.GetAccessTokenForRequestAsync();
 
-				var token = await GetGoogleBearerToken(fcmserviceaccountjsonname);
-
-                myclient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + token.Token);                
+                myclient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + token);                
 
                 var myresponse = await myclient.PostAsync(fcmurl, new StringContent(JsonConvert.SerializeObject(fcmmessage), Encoding.UTF8, "application/json"));
 
@@ -68,20 +69,24 @@ namespace PushServer
             }
         }
 
-		public static async Task<UserCredential> GetGoogleBearerToken(string fcmserviceaccountjsonname)
+		public static async Task<GoogleCredential> GetGoogleBearerToken(string fcmserviceaccountjsonname)
 		{
-			UserCredential credential;
-			using (var stream = new FileStream(fcmserviceaccountjsonname, FileMode.Open, FileAccess.Read))
-			{
-				credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-					GoogleClientSecrets.Load(stream).Secrets,
-                    new[] { "noi-community" },
-                    "user", CancellationToken.None);
-			}
+            //UserCredential credential;
+            //using (var stream = new FileStream(fcmserviceaccountjsonname, FileMode.Open, FileAccess.Read))
+            //{
+            //	credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+            //		GoogleClientSecrets.Load(stream).Secrets,
+            //                 new[] { "noi-community" },
+            //                 "user", CancellationToken.None);
+            //}
 
-			return credential;
+            //FromJson
+
+            var cred = GoogleCredential.FromFile(fcmserviceaccountjsonname).CreateScoped(new[] { "noi-community" });
+
+            return cred;
         }
     }
 
-	#endregion
+    #endregion
 }
