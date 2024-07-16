@@ -77,9 +77,9 @@ namespace PushServer
             GoogleCredential? cred;
 
             if (fromfile)
-                cred = GoogleCredential.FromFile(fcmserviceaccountjsonname).CreateScoped(new[] { "noi-community" });
+                cred = GoogleCredential.FromFile(fcmserviceaccountjsonname).CreateScoped(new[] { "https://www.googleapis.com/auth/firebase.messaging","noi-community" });
             else
-                cred = GoogleCredential.FromJson(fcmserviceaccountjsonname).CreateScoped(new[] { "noi-community" });
+                cred = GoogleCredential.FromJson(fcmserviceaccountjsonname).CreateScoped(new[] { "https://www.googleapis.com/auth/firebase.messaging", "noi-community" });
 
             return cred;
         }
@@ -91,7 +91,7 @@ namespace PushServer
             {
                 credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
-                             new[] { "noi-community" },
+                             new[] { "https://www.googleapis.com/auth/firebase.messaging", "noi-community" },
                              "user", CancellationToken.None);
             }
 
