@@ -138,13 +138,14 @@ namespace Helper
 
     public class FCMConfig
     {
-        public FCMConfig(string identifier, string serverkey, string senderid, string projectname, string serviceaccount)
+        public FCMConfig(string identifier, string serverkey, string senderid, string projectname, string serviceaccount, string serviceaccountjson)
         {
             this.Identifier = identifier;
             this.ServerKey = serverkey;
             this.SenderId = senderid;
             this.ProjecTName = projectname; 
             this.ServiceAccount = serviceaccount;
+            this.ServiceAccountJson = serviceaccountjson;
         }
 
         public string Identifier { get; private set; }
@@ -152,6 +153,7 @@ namespace Helper
         public string SenderId { get; private set; }
         public string ProjecTName { get; private set; }
         public string ServiceAccount { get; private set; }
+        public string ServiceAccountJson { get; private set; }
     }
 
     public class RateLimitConfig

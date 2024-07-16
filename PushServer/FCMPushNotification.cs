@@ -53,7 +53,7 @@ namespace PushServer
 
 				
                 //Getting GoogleCredentials from File
-				var googlecred = await GetGoogleTokenServiceAccount(fcmserviceaccountjsonname, false);
+				var googlecred = await GetGoogleTokenServiceAccount(fcmserviceaccountjsonname, true);
                 //GET THE Bearertoken out of the Google Credential				
                 var token = await googlecred.UnderlyingCredential.GetAccessTokenForRequestAsync();
 
@@ -75,6 +75,8 @@ namespace PushServer
 		{           
             //FromJson
             GoogleCredential? cred;
+
+            string contents = File.ReadAllText(fcmserviceaccountjsonname);
 
             if (fromfile)
                 cred = GoogleCredential.FromFile(fcmserviceaccountjsonname).CreateScoped(new[] { "https://www.googleapis.com/auth/firebase.messaging","noi-community" });
