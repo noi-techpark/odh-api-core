@@ -222,8 +222,15 @@ namespace OdhApiCore.Controllers.api
             return Ok(cred.UnderlyingCredential.GetAccessTokenForRequestAsync());
         }
 
+        [HttpGet, Route("TestFCMEnvs")]
+        public async Task<IActionResult> TestFCMEnvs()
+        {
+            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noicommunityapp").FirstOrDefault();
+           
+            return Ok(new { account = pushserverconfig.ServiceAccount, project = pushserverconfig.ProjecTName } );
+        }
 
-        
+
 
 
         //Not working
