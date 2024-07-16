@@ -17,7 +17,7 @@ namespace PushServer
         {
             var message = default(FCMModels);
 
-            if ((identifier == "noicommunityapp" || identifier == "noi-communityapp") && myobject is ArticlesLinked)
+            if ((identifier == "noicommunity" || identifier == "noi-communityapp") && myobject is ArticlesLinked)
             {
                 message = new FCMModels();
 
@@ -63,7 +63,7 @@ namespace PushServer
         {
             var message = default(FCMessageV2);
 
-            if ((identifier == "noicommunityapp" || identifier == "noi-communityapp") && myobject is ArticlesLinked)
+            if ((identifier == "noicommunity" || identifier == "noi-communityapp") && myobject is ArticlesLinked)
             {
                 message = new FCMessageV2();
                 var messagebody = new FCMessageBodyV2();
@@ -85,7 +85,7 @@ namespace PushServer
 
                 message.message = messagebody;
             }
-            else if ((identifier == "noicommunityapp" || identifier == "noi-communityapp") && myobject is EventShortLinked)
+            else if ((identifier == "noicommunity" || identifier == "noi-communityapp") && myobject is EventShortLinked)
             {
                 message = new FCMessageV2();
                 var messagebody = new FCMessageBodyV2();

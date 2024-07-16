@@ -213,7 +213,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestFCMSendV2")]
         public async Task<IActionResult> TestFCMSendV2()
         {
-            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noicommunityapp").FirstOrDefault();
+            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noi-communityapp").FirstOrDefault();
 
             string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";
             //var result = await FCMPushNotification.SendNotificationV2(new FCMessageV2() { }, sendurl, pushserverconfig.ServiceAccount);
@@ -225,7 +225,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestFCMEnvs")]
         public async Task<IActionResult> TestFCMEnvs()
         {
-            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noicommunityapp").FirstOrDefault();
+            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noi-communityapp").FirstOrDefault();
            
             return Ok(new { account = pushserverconfig.ServiceAccount, project = pushserverconfig.ProjecTName } );
         }
