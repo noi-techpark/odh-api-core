@@ -260,7 +260,7 @@ jobs:
           X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
 
           X_NOICOMMUNITY_SERVERKEY: ""
-          X_NOICOMMUNITY_SENDERID: ""
+          X_NOICOMMUNITY_SENDERID: ""          
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
