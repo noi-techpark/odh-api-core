@@ -217,10 +217,9 @@ namespace OdhApiCore.Controllers.api
 
             string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";
             //var result = await FCMPushNotification.SendNotificationV2(new FCMessageV2() { }, sendurl, pushserverconfig.ServiceAccount);
-            var result = await FCMPushNotification.GetGoogleTokenServiceAccount(pushserverconfig.ServiceAccount, false);
+            var cred = await FCMPushNotification.GetGoogleTokenServiceAccount(pushserverconfig.ServiceAccount, false);
 
-
-            return Ok(result);
+            return Ok(cred.UnderlyingCredential.GetAccessTokenForRequestAsync());
         }
 
 
