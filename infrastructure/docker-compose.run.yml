@@ -62,6 +62,8 @@ services:
       ASPNETCORE_RavenConfig__Password: ${RAVEN_PSWD}
       ASPNETCORE_FCMConfig__noi-communityapp__ServerKey: ${NOICOMMUNITY_SERVERKEY}
       ASPNETCORE_FCMConfig__noi-communityapp__SenderId: ${NOICOMMUNITY_SENDERID}
+      ASPNETCORE_FCMConfig__noi-communityapp__ProjectName: ${NOICOMMUNITY_PROJECTNAME}
+      ASPNETCORE_FCMConfig__noi-communityapp__FCMServiceAccount: ${NOICOMMUNITY_FCMSERVICEACCOUNT}
       ASPNETCORE_NotifierConfig__idm-marketplace__Url: ${MARKETPLACE_PUSH_URL}
       ASPNETCORE_NotifierConfig__idm-marketplace__User: ${MARKETPLACE_PUSH_USER}
       ASPNETCORE_NotifierConfig__idm-marketplace__Password: ${MARKETPLACE_PUSH_PSWD}

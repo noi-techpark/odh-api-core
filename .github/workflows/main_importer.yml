@@ -143,6 +143,8 @@ jobs:
           X_MARKETPLACE_PUSH_PSWD: ""
           X_NOICOMMUNITY_SERVERKEY: ""
           X_NOICOMMUNITY_SENDERID: ""
+          X_NOICOMMUNITY_PROJECTNAME: ""
+          X_NOICOMMUNITY_FCMSERVICEACCOUNT: ""
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
