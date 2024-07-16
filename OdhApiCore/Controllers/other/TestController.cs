@@ -217,7 +217,7 @@ namespace OdhApiCore.Controllers.api
 
             string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";
             //var result = await FCMPushNotification.SendNotificationV2(new FCMessageV2() { }, sendurl, pushserverconfig.ServiceAccount);
-            var cred = await FCMPushNotification.GetGoogleTokenServiceAccount(pushserverconfig.ServiceAccount, false);
+            var cred = await FCMPushNotification.GetGoogleTokenServiceAccount(pushserverconfig.ServiceAccount);
 
             return Ok(cred.UnderlyingCredential.GetAccessTokenForRequestAsync());
         }
@@ -226,8 +226,10 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> TestFCMEnvs()
         {
             var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == "noi-communityapp").FirstOrDefault();
-           
-            return Ok(new { account = pushserverconfig.ServiceAccount, project = pushserverconfig.ProjecTName } );
+
+            string contents = File.ReadAllText(pushserverconfig.ServiceAccount);
+
+            return Ok(new { test = contents } );
         }
 
 

@@ -53,7 +53,7 @@ namespace PushServer
 
 				
                 //Getting GoogleCredentials from File
-				var googlecred = await GetGoogleTokenServiceAccount(fcmserviceaccountjsonname, true);
+				var googlecred = await GetGoogleTokenServiceAccount(fcmserviceaccountjsonname);
                 //GET THE Bearertoken out of the Google Credential				
                 var token = await googlecred.UnderlyingCredential.GetAccessTokenForRequestAsync();
 
@@ -71,7 +71,7 @@ namespace PushServer
             }
         }
 
-		public static async Task<GoogleCredential> GetGoogleTokenServiceAccount(string fcmserviceaccountjsonname, bool fromfile = false)
+		public static async Task<GoogleCredential> GetGoogleTokenServiceAccount(string fcmserviceaccountjsonname, bool fromfile = true)
 		{           
             //FromJson
             GoogleCredential? cred;
