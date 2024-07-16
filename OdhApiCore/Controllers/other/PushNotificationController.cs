@@ -7,7 +7,6 @@ using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OdhNotifier;
@@ -243,12 +242,12 @@ namespace OdhApiCore.Controllers.api
                 else if(myobject is IHasLanguage && (myobject as IHasLanguage).HasLanguage != null)
                     languages = (myobject as IHasLanguage).HasLanguage.ToList();
 
-                List<FCMModels> messages = new();
+                List<FCMessageV2> messages = new();
 
                 foreach (var lang in languages)
                 {
                     //Construct the message
-                    var message = FCMMessageConstructor.ConstructMyMessage(identifier, lang.ToLower(), myobject);
+                    var message = FCMMessageConstructor.ConstructMyMessageV2(identifier, lang.ToLower(), myobject);
 
                     if (message != null)
                         messages.Add(message);
@@ -260,12 +259,16 @@ namespace OdhApiCore.Controllers.api
 
                 if (pushserverconfig == null)
                     throw new Exception("PushserverConfig could not be found");
-
                 List<PushResult> resultlist = new();
+
+                string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";
+
 
                 foreach (var message in messages)
                 {
-                    var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
+                    //var result = await FCMPushNotification.SendNotification(message, sendurl, pushserverconfig.SenderId, pushserverconfig.ServerKey);
+
+                    var result = await FCMPushNotification.SendNotificationV2(message, sendurl, "");
 
                     resultlist.Add(result);
                 }
