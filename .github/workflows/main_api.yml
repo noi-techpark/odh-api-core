@@ -119,11 +119,7 @@ jobs:
           X_MARKETPLACE_PUSH_URL: ""
           X_MARKETPLACE_PUSH_USER: ""
           X_MARKETPLACE_PUSH_PSWD: ""
-
-      - name: Setup config
-        run: |          
-          echo "${{ env.GOOGLE_SERVICE_ACCOUNT_NOICOMMUNITY }}" > google-service-account.noicommunity.json          
-          chmod +r google-service-account.noicommunity.json
+          X_GOOGLE_SERVICE_ACCOUNT_NOICOMMUNITY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_NOICOMMUNITY }}
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
