@@ -145,6 +145,7 @@ jobs:
           X_NOICOMMUNITY_SENDERID: ""
           X_NOICOMMUNITY_PROJECTNAME: ""
           X_NOICOMMUNITY_FCMSERVICEACCOUNT: ""
+          X_NOICOMMUNITY_FCMSERVICEACCOUNTJSON: ""
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
