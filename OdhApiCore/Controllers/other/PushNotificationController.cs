@@ -7,7 +7,6 @@ using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OdhNotifier;
@@ -18,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Net.WebRequestMethods;
 
 namespace OdhApiCore.Controllers.api
 {
