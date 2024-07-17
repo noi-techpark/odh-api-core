@@ -90,16 +90,22 @@ namespace PushServer
                 message = new FCMessageV2();
                 var messagebody = new FCMessageBodyV2();
 
-                messagebody.topic = "/topics/events_" + language.ToLower();
+                messagebody.topic = "events_" + language.ToLower();
 
                 string deeplink = "noi-community://it.bz.noi.community/eventDetails/" + myobject.Id;
 
                 messagebody.data = new { deep_link = deeplink };
                 FCMNotification notification = new FCMNotification();
 
+                string titleprefix = "New Event: ";
+                if (language.ToLower() == "de")
+                    titleprefix = "Neue Veranstaltung: ";
+                if (language.ToLower() == "it")
+                    titleprefix = "nuovo evento: ";
+
                 notification.icon = "ic_notification";
                 notification.link = deeplink;
-                notification.title = ((EventShortLinked)myobject).EventTitle.ContainsKey(language) && !String.IsNullOrEmpty(((EventShortLinked)myobject).EventTitle[language]) ? ((EventShortLinked)myobject).EventTitle[language] : "Noi Community App Event";
+                notification.title = ((EventShortLinked)myobject).EventTitle.ContainsKey(language) && !String.IsNullOrEmpty(((EventShortLinked)myobject).EventTitle[language]) ? titleprefix + ((EventShortLinked)myobject).EventTitle[language] : "Noi Community App Event";
                 notification.body = ((EventShortLinked)myobject).EventText.ContainsKey(language) && !String.IsNullOrEmpty(((EventShortLinked)myobject).EventText[language]) ? ((EventShortLinked)myobject).EventText[language] : "Check out the latest Events on the NOI Community App";
                 notification.sound = "default";
 
