@@ -276,7 +276,7 @@ namespace Helper
 
                 if (wktwiths7rid != null)
                 {
-                    var query = queryFactory.Query().SelectRaw($"Count(ST_GeometryFromText('{wktwiths7rid.Item1}',{wktwiths7rid.Item2}))").Get<int>();
+                    var query = queryFactory.Query().SelectRaw($"Count(ST_GeometryFromText('{wktwiths7rid.Value.Item1}',{wktwiths7rid.Value.Item2}))").Get<int>();
 
                     if (query != null && query.FirstOrDefault() == 1)
                         return true;
