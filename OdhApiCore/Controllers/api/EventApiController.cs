@@ -250,7 +250,7 @@ namespace OdhApiCore.Controllers
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
                          .ApplyRawFilter(rawfilter)
-                         //.OrderByRawIfNotNull(sortifseednull)
+                         .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                          .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
                          //.ApplyOrdering(ref seed, geosearchresult, rawsort, sortifseednull);
 

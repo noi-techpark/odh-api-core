@@ -145,6 +145,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -160,7 +161,7 @@ namespace OdhApiCore.Controllers
                     pagenumber: pagenumber, pagesize: pagesize, language: language, 
                     idfilter: idlist, locfilter: locfilter, datefrom: datefrom, dateto: dateto,
                     lastchange: lastchange, searchfilter: searchfilter, seed: seed,
-                    fields: fields ?? Array.Empty<string>(), new PGGeoSearchResult(), rawfilter, rawsort, removenullvalues, cancellationToken);
+                    fields: fields ?? Array.Empty<string>(), new GeoPolygonSearchResult(), new PGGeoSearchResult(), rawfilter, rawsort, removenullvalues, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -875,6 +876,7 @@ namespace OdhApiCore.Controllers
                    .When(municipalitycodes.Count > 0, x => x.WhereInJsonb(municipalitycodes, "IstatNumber"))
                    .When(tvids.Count > 0, x => x.WhereInJsonb(tvids, "TourismvereinId"))
                    .When(regids.Count > 0, x => x.WhereInJsonb(regids, "RegionId"))
+                   .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                    .GeoSearchFilterAndOrderby_GeneratedColumns(geosearchresult);
 
             municipalities = await query.GetAsync<MunicipalityIdIstatNumber>();
@@ -974,6 +976,7 @@ namespace OdhApiCore.Controllers
            string? searchfilter,
            string? seed,
            string[] fields,
+           GeoPolygonSearchResult? polygonsearchresult,
            PGGeoSearchResult geosearchresult,
            string? rawfilter,
            string? rawsort,
@@ -997,6 +1000,7 @@ namespace OdhApiCore.Controllers
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
                 //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//
 
@@ -1109,6 +1113,7 @@ namespace OdhApiCore.Controllers
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilterEndpoint("Weather/Measuringpoint"))
                         .ApplyRawFilter(rawfilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
 

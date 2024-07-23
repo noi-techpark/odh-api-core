@@ -280,6 +280,7 @@ namespace OdhApiCore.Controllers
                             languagelist: myactivityhelper.languagelist, 
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
