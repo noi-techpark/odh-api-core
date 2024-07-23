@@ -4,6 +4,7 @@
 
 using DataModel;
 using DataModel.Annotations;
+using Geo.Geometries;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
@@ -18,6 +19,7 @@ using Newtonsoft.Json.Converters;
 using Npgsql;
 using OdhApiCore.Responses;
 using OdhNotifier;
+using ServiceReferenceLCS;
 using SqlKata;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.Annotations;
@@ -106,6 +108,10 @@ namespace OdhApiCore.Controllers.api
             string? language = null,
             string? langfilter = null,
             bool optimizedates = false,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? lastchange = null,
@@ -117,13 +123,17 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default
             )
         {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
+
             return await GetEventShortList(
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
                    webaddressfilter: webaddress, activetoday: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, 
                    active: active, optimizedates: optimizedates,
-                   sortorder: sortorder, seed: seed, lastchange: lastchange, langfilter: langfilter, publishedon: publishedon, 
+                   sortorder: sortorder, seed: seed, lastchange: lastchange, langfilter: langfilter, publishedon: publishedon,
+                   polygonsearchresult: polygonsearchresult, geosearchresult: geosearchresult,
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
                    cancellationToken: cancellationToken);
         }
@@ -301,7 +311,8 @@ namespace OdhApiCore.Controllers.api
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
             string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? activetoday, bool? websiteactive, bool? communityactive, 
             bool active, bool optimizedates, string? sortorder, string? seed, string? langfilter,
-            string? lastchange, string? publishedon, string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
+            string? lastchange, string? publishedon, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult,
+            string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {

@@ -40,6 +40,7 @@ using Humanizer.Localisation;
 using System.Drawing;
 using Geo.Measure;
 using SIAG.WeatherModel;
+using Geo.Geometries;
 
 namespace OdhApiCore.Controllers
 {
@@ -328,13 +329,15 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
                 var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+                var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
-                return await GetWeatherForecastFromFile(pagenumber, pagesize, fields: fields ?? Array.Empty<string>(), language ?? "en", null, locfilter, geosearchresult, cancellationToken);
+                return await GetWeatherForecastFromFile(pagenumber, pagesize, fields: fields ?? Array.Empty<string>(), language ?? "en", null, locfilter, polygonsearchresult, geosearchresult, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -412,6 +415,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             string? seed = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -422,12 +426,13 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetMeasuringPointList(pagenumber, pagesize,
                 fields: fields ?? Array.Empty<string>(), language: language, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
                     skiareafilter: skiareafilter, source: source, active: active, publishedon: publishedon,
-                    smgactive: odhactive, seed: seed, lastchange: updatefrom,
+                    smgactive: odhactive, seed: seed, lastchange: updatefrom, polygonsearchresult: polygonsearchresult,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                     removenullvalues: removenullvalues, cancellationToken: cancellationToken);
         }
@@ -832,6 +837,7 @@ namespace OdhApiCore.Controllers
             string language,
             string? id,
             string? locfilter,
+            GeoPolygonSearchResult? polygonsearchresult,
             PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
@@ -1070,6 +1076,7 @@ namespace OdhApiCore.Controllers
             string? searchfilter,
             string? seed,
             string[] fields,
+            GeoPolygonSearchResult? polygonsearchresult,
             PGGeoSearchResult geosearchresult,
             string? rawfilter,
             string? rawsort,

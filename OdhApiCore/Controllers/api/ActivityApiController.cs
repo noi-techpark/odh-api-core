@@ -26,6 +26,7 @@ using OdhApiCore.Controllers.api;
 using Helper.Identity;
 using OdhNotifier;
 using Helper.Generic;
+using Geo.Geometries;
 
 namespace OdhApiCore.Controllers
 {
@@ -108,6 +109,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -116,7 +118,8 @@ namespace OdhApiCore.Controllers
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);           
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
@@ -125,7 +128,7 @@ namespace OdhApiCore.Controllers
                     distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
                     highlightfilter: highlight, difficultyfilter: difficultyfilter, active: active,
                     smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
-                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
+                    polygonsearchresult: polygonsearchresult, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
 
@@ -244,7 +247,7 @@ namespace OdhApiCore.Controllers
             string[] fields, string? language, uint pagenumber, int? pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, string? distancefilter, string? altitudefilter,
             string? durationfilter, bool? highlightfilter, string? difficultyfilter, bool? active, bool? smgactive,
-            string? smgtags, string? seed, string? lastchange, string? langfilter, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort,
+            string? smgtags, string? seed, string? lastchange, string? langfilter, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort,
             bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>

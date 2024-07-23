@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using CDB;
 using DataModel;
+using Geo.Geometries;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
@@ -144,6 +145,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             string? publishedon = null,
             string? language = null,
             string? langfilter = null,
@@ -163,6 +165,7 @@ namespace OdhApiCore.Controllers
             }
 
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
 
@@ -173,7 +176,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, idlist: new List<string>(), locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter, sourcefilter: source, publishedon: publishedon,
-                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, polygonsearchresult, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
             else if (availabilitycheck?.Value == true)
             {
@@ -194,7 +197,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, idlist: availableonlineaccos, locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter, sourcefilter: source, publishedon: publishedon,
-                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, polygonsearchresult: polygonsearchresult, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }            
             else
             {
@@ -618,7 +621,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, List<string> idlist, string? locfilter,
             string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? featureidfilter, string? themefilter, string? badgefilter, string? altitudefilter, 
             bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? sourcefilter, string? publishedon,
-            string? seed, string? updatefrom, string? langfilter, string? searchfilter, 
+            string? seed, string? updatefrom, string? langfilter, string? searchfilter, GeoPolygonSearchResult? polygonsearchresult,
             PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>

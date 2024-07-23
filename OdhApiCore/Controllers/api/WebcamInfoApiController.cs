@@ -4,6 +4,7 @@
 
 using AspNetCore.CacheOutput;
 using DataModel;
+using Geo.Geometries;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
@@ -82,6 +83,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             string? updatefrom = null,
             string? publishedon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
@@ -93,11 +95,12 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFilteredAsync(
                 fields: fields ?? Array.Empty<string>(), language, pagenumber, pagesize,
                 source, idlist, searchfilter, active?.Value, odhactive?.Value, publishedon,
-                seed, updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
+                seed, updatefrom, geosearchresult, polygonsearchresult: polygonsearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                 removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -131,7 +134,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFilteredAsync(
             string[] fields, string? language, uint pagenumber, int? pagesize, string? source,
             string? idfilter, string? searchfilter, bool? active, bool? smgactive, string? publishedon,
-            string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            string? seed, string? lastchange, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>

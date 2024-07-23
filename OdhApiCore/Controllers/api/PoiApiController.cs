@@ -4,6 +4,7 @@
 
 using AspNetCore.CacheOutput;
 using DataModel;
+using Geo.Geometries;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
@@ -97,6 +98,7 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -109,12 +111,13 @@ namespace OdhApiCore.Controllers.api
             //CheckOpenData(User);
 
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFiltered(
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                 activitytype: poitype, subtypefilter: subtype, idfilter: idlist, searchfilter: searchfilter,
                 locfilter: locfilter, areafilter: areafilter, highlightfilter: highlight, active: active, smgactive: odhactive,
-                smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter, geosearchresult: geosearchresult,
+                smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter, polygonsearchresult: polygonsearchresult, geosearchresult: geosearchresult,
                 rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken: cancellationToken);
         }
 
@@ -227,7 +230,8 @@ namespace OdhApiCore.Controllers.api
         private Task<IActionResult> GetFiltered(
             string[] fields, string? language, uint pagenumber, int? pagesize, string? activitytype, string? subtypefilter,
             string? idfilter, string? searchfilter, string? locfilter, string? areafilter, bool? highlightfilter, bool? active,
-            bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues,
+            bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult, 
+            string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
         {
 
