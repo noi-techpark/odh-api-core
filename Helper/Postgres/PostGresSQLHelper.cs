@@ -165,30 +165,29 @@ namespace Helper
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
 
-        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, List<Tuple<double, double>> polygon, string? operation = null, bool isgeometry = false)
+        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, List<Tuple<double, double>> polygon, string srid, string? operation = null)
         {
             if (String.IsNullOrEmpty(wkt))
-                return GetGeoWhereInPolygon_GeneratedColumns(polygon, operation);
-            else if(!isgeometry)
-                return GetGeoWhereInPolygon_GeneratedColumns(wkt, operation);
+                return GetGeoWhereInPolygon_GeneratedColumns(polygon, srid, operation);
             else
-                return GetGeoWhereInPolygon_GeneratedColumns(wkt, operation);
+                return GetGeoWhereInPolygon_GeneratedColumns(wkt, srid, operation);
         }
 
-        public static string GetGeoWhereInPolygon_GeneratedColumns(List<Tuple<double,double>> polygon, string? operation = "intersects", string srid = "4326")
+        public static string GetGeoWhereInPolygon_GeneratedColumns(List<Tuple<double,double>> polygon, string srid = "4326", string? operation = "intersects")
         {
-            return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({ String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', {srid}), gen_position)";
+            if(srid != "4326")
+                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', {srid}), ST_Transform(gen_position,{srid}))"; 
+            else
+                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', 4326), gen_position)";
         }
-
-        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, string? operation = "intersects", string srid = "4326")
+        
+        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, string srid = "4326", string? operation = "intersects")
         {
-            return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', {srid}), ST_Transform(gen_position,{srid}))";
-        }
-
-        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, string? operation = "intersects")
-        {
-            return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', 4326), gen_position)";
-        }
+            if(srid != "4326")
+                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', {srid}), ST_Transform(gen_position,{srid}))";
+            else
+                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', 4326), gen_position)";
+        }        
 
         public static string GetPolygonOperator(string? operation) => operation switch
         {

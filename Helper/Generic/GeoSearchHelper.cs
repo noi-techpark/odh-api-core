@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.S3.Model;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -164,28 +165,37 @@ namespace Helper
             {
                 GeoPolygonSearchResult result = new GeoPolygonSearchResult();
                 //setting standard operation to intersects
-                result.operation = "intersects";
+                result.operation = "intersects";                
 
                 //Check for WKT String
                 if (CheckWKTSyntax(polygon, queryfactory))
                 {
-                    var wktands7rid = GetWktAndS7RIDFromQuerystring(polygon);
+                    var wktandsrid = GetWKTAndSRIDFromQuerystring(polygon);
 
-                    if (wktands7rid != null)
+                    if (wktandsrid != null)
                     {
-                        result.wktstring = wktands7rid.Value.Item1;
-                        result.s7rid = wktands7rid.Value.Item2;
+                        result.wktstring = wktandsrid.Value.Item1;
+                        result.srid = wktandsrid.Value.Item2;
                         return result;
                     }
                     else
                         return null;
                 }
 
-                else if (polygon.ToLower().StartsWith("bbc") || polygon.ToLower().StartsWith("bbi"))
+                else if (polygon.ToLower().StartsWith("bbc(") || polygon.ToLower().StartsWith("bbi("))
                 {
                     result.polygon = new List<Tuple<double, double>>();
 
                     string coordstoprocess = "";
+                    string polygonwithoutsrid = polygon;
+                    
+                    if (polygon.Split(";").Length > 1)
+                    {
+                        var splitted = polygon.Split(";");
+                        var sridstr = splitted[1].ToUpper();
+                        if (sridstr.StartsWith("SRID="))
+                            result.srid = sridstr.Replace("SRID=", "");                        
+                    }
 
                     if (polygon.ToLower().StartsWith("bbc"))
                     {
@@ -238,8 +248,7 @@ namespace Helper
                         .FirstOrDefaultAsync<string>();
 
                     if (!String.IsNullOrEmpty(geometry))
-                    {
-                        result.isgeometry = true;
+                    {                        
                         result.wktstring = geometry.ToString();
 
                         return result;
@@ -272,11 +281,11 @@ namespace Helper
         {
             try
             {
-                var wktwiths7rid = GetWktAndS7RIDFromQuerystring(polygon);
+                var wktwithsrid = GetWKTAndSRIDFromQuerystring(polygon);
 
-                if (wktwiths7rid != null)
+                if (wktwithsrid != null)
                 {
-                    var query = queryFactory.Query().SelectRaw($"Count(ST_GeometryFromText('{wktwiths7rid.Value.Item1}',{wktwiths7rid.Value.Item2}))").Get<int>();
+                    var query = queryFactory.Query().SelectRaw($"Count(ST_GeometryFromText('{wktwithsrid.Value.Item1}',{wktwithsrid.Value.Item2}))").Get<int>();
 
                     if (query != null && query.FirstOrDefault() == 1)
                         return true;
@@ -287,36 +296,35 @@ namespace Helper
             catch { return false; }            
         }
 
-        public static (string,int)? GetWktAndS7RIDFromQuerystring(string? polygon)
+        public static (string,string)? GetWKTAndSRIDFromQuerystring(string? polygon)
         {
-            int s7rid = 4326;
+            string srid = "4326";
             string wkt = "";
 
             //IF S7Rid is added
-            if (polygon != null && polygon.Split(";").Length > 0)
+            if (polygon != null && polygon.Split(";").Length > 1)
             {
                 var splitted = polygon.Split(";");
-                var s7ridstr = splitted[1].ToUpper();
-                if (s7ridstr.StartsWith("SRID="))
+                var sridstr = splitted[1].ToUpper();
+                if (sridstr.StartsWith("SRID="))
                 {
-                    s7ridstr = s7ridstr.Replace("SRID=", "");
-                    int.TryParse(s7ridstr, out s7rid);
-
+                    sridstr = sridstr.Replace("SRID=", "");
+                    
                     if (CheckValidWKTString(splitted[0]))
                     {
                         wkt = splitted[0];
-                        return (wkt, s7rid);
+                        return (wkt, sridstr);
                     }
                 }
             }
             //IF only wkt is added
-            else if (polygon != null && polygon.Split(';').Length == 0)
+            else if (polygon != null && polygon.Split(';').Length == 1)
             {
                 if (CheckValidWKTString(polygon))
                 {
                     wkt = polygon;
 
-                    return (wkt, s7rid);
+                    return (wkt, srid);
                 }
             }
             
@@ -409,10 +417,8 @@ namespace Helper
     {
         public string? operation { get; set; }
         public List<Tuple<double,double>>? polygon { get; set; }
-        public string? wktstring { get; set; } = null;
-        public bool isgeometry { get; set; } = false;
-
-        public int s7rid { get; set; } = 4326;
+        public string? wktstring { get; set; } = null;        
+        public string srid { get; set; } = "4326";
     }
 
     public class RavenGeoSearchResult
