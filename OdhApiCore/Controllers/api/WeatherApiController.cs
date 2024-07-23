@@ -364,7 +364,7 @@ namespace OdhApiCore.Controllers
         {
             try
             {
-                return await GetWeatherForecastFromFile(null, null, fields: fields ?? Array.Empty<string>(), language ?? "en", id, null, null, cancellationToken);
+                return await GetWeatherForecastFromFile(null, null, fields: fields ?? Array.Empty<string>(), language ?? "en", id, null, null, null, cancellationToken);
             }
             catch (Exception ex)
             {

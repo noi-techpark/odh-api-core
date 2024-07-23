@@ -100,7 +100,7 @@ namespace OdhApiCore.Controllers
             return await GetFilteredAsync(
                 fields: fields ?? Array.Empty<string>(), language, pagenumber, pagesize,
                 source, idlist, searchfilter, active?.Value, odhactive?.Value, publishedon,
-                seed, updatefrom, geosearchresult, polygonsearchresult: polygonsearchresult, rawfilter: rawfilter, rawsort: rawsort, 
+                seed, updatefrom, polygonsearchresult: polygonsearchresult, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                 removenullvalues: removenullvalues, cancellationToken);
         }
 

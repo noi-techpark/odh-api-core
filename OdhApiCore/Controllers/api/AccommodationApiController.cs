@@ -573,7 +573,8 @@ namespace OdhApiCore.Controllers
                 pagesize: int.MaxValue, idfilter: idfilter, idlist: availableonlineaccos, locfilter: null, categoryfilter: null,
                 typefilter: null, boardfilter: boardfilter, featurefilter: null, featureidfilter: null, themefilter: null, badgefilter: null,
                 altitudefilter: null, active: null, smgactive: null, bookablefilter: null, smgtagfilter: null, sourcefilter: null,
-                publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
+                publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, new GeoPolygonSearchResult(), 
+                new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
                 rawfilter: null, rawsort: null, removenullvalues: false, cancellationToken);
             }                      
         }
