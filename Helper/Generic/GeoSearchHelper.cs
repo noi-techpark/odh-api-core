@@ -167,18 +167,22 @@ namespace Helper
                 result.operation = "intersects";
 
                 //Check for WKT String
-                if (CheckValidWKTString(polygon))
+                if (CheckWKTSyntax(polygon, queryfactory))
                 {
-                    if (CheckWKTSyntax(polygon, queryfactory))
+                    var wktands7rid = GetWktAndS7RIDFromQuerystring(polygon);
+
+                    if (wktands7rid != null)
                     {
-                        result.wktstring = polygon;
+                        result.wktstring = wktands7rid.Value.Item1;
+                        result.s7rid = wktands7rid.Value.Item2;
                         return result;
                     }
                     else
                         return null;
                 }
-                else if(polygon.ToLower().StartsWith("bbc") || polygon.ToLower().StartsWith("bbi"))
-                {                    
+
+                else if (polygon.ToLower().StartsWith("bbc") || polygon.ToLower().StartsWith("bbi"))
+                {
                     result.polygon = new List<Tuple<double, double>>();
 
                     string coordstoprocess = "";
@@ -211,12 +215,12 @@ namespace Helper
 
                     if (result.polygon.Count == 0) return null;
                     else return result;
-                }      
+                }
                 else
                 {
                     //Format = country.type.id or country.type.name
                     var inputquery = polygon.Split(".");
-                    if(inputquery.Length != 3)
+                    if (inputquery.Length != 3)
                         return null;
 
                     bool idtofilter = int.TryParse(inputquery[2], out int parsedid);
@@ -268,16 +272,60 @@ namespace Helper
         {
             try
             {
-                var query = queryFactory.Query().SelectRaw($"Count(ST_GeometryFromText('{polygon}',4326))").Get<int>();
+                var wktwiths7rid = GetWktAndS7RIDFromQuerystring(polygon);
 
-                if (query != null && query.FirstOrDefault() == 1)
-                    return true;
-                else
-                    return false;
+                if (wktwiths7rid != null)
+                {
+                    var query = queryFactory.Query().SelectRaw($"Count(ST_GeometryFromText('{wktwiths7rid.Item1}',{wktwiths7rid.Item2}))").Get<int>();
+
+                    if (query != null && query.FirstOrDefault() == 1)
+                        return true;
+                }
+
+                return false;
             }
             catch { return false; }            
         }
+
+        public static (string,int)? GetWktAndS7RIDFromQuerystring(string? polygon)
+        {
+            int s7rid = 4326;
+            string wkt = "";
+
+            //IF S7Rid is added
+            if (polygon != null && polygon.Split(";").Length > 0)
+            {
+                var splitted = polygon.Split(";");
+                var s7ridstr = splitted[1].ToUpper();
+                if (s7ridstr.StartsWith("SRID="))
+                {
+                    s7ridstr = s7ridstr.Replace("SRID=", "");
+                    int.TryParse(s7ridstr, out s7rid);
+
+                    if (CheckValidWKTString(splitted[0]))
+                    {
+                        wkt = splitted[0];
+                        return (wkt, s7rid);
+                    }
+                }
+            }
+            //IF only wkt is added
+            else if (polygon != null && polygon.Split(';').Length == 0)
+            {
+                if (CheckValidWKTString(polygon))
+                {
+                    wkt = polygon;
+
+                    return (wkt, s7rid);
+                }
+            }
+            
+            return null;            
+        }
+
+
     }
+    
 
     public class DistanceCalculator
     {
@@ -361,10 +409,10 @@ namespace Helper
     {
         public string? operation { get; set; }
         public List<Tuple<double,double>>? polygon { get; set; }
-
         public string? wktstring { get; set; } = null;
-
         public bool isgeometry { get; set; } = false;
+
+        public int s7rid { get; set; } = 4326;
     }
 
     public class RavenGeoSearchResult
