@@ -18,7 +18,7 @@ namespace LCS.Parser
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Get the POI Detail Information //string activitytype
-        public static LTSPoi GetPoiDetailLTSNEW(string rid, LTSPoi hike, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static PoiBaseInfos GetPoiDetailLTSNEW(string rid, PoiBaseInfos hike, string ltsuser, string ltspswd, string ltsmsgpswd)
         {
 
             List<string> myactivitylist = new List<string>();
@@ -864,7 +864,7 @@ namespace LCS.Parser
             hike.GpsTrack = mygpstracklist.ToList();
 
 
-            List<string> arearidlist = new List<string>();
+            HashSet<string> arearidlist = new HashSet<string>();
 
             if (thepoide.Memberships != null)
             {
@@ -893,7 +893,7 @@ namespace LCS.Parser
                     }
                 }
 
-                hike.AreaId = arearidlist.ToList();
+                hike.AreaId = arearidlist;
 
             }
 

@@ -39,13 +39,13 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
         public async Task<IDictionary<string, XDocument>> ImportList(CancellationToken cancellationToken = default)
         {
-            var winedatalistde = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("de");
-            var winedatalistit = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("it");
-            var winedatalisten = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("en");
+            var winedatalistde = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "de");
+            var winedatalistit = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "it");
+            var winedatalisten = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "en");
             //New getting in jp and ru and us
-            var winedatalistjp = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("jp");
-            var winedatalistru = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("ru");
-            var winedatalistus = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync("us");
+            var winedatalistjp = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "jp");
+            var winedatalistru = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "ru");
+            var winedatalistus = await GetSuedtirolWeinData.GetSueditrolWineCompaniesAsync(settings.SuedtirolWeinConfig.ServiceUrl, "us");
 
             IDictionary<string, XDocument> mywinedata = new Dictionary<string, XDocument>();
             mywinedata.Add("de", winedatalistde);
@@ -68,7 +68,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             List<string> languagelistcategories = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
 
             //Getting valid Tags for Weinkellereien
-            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>() { "Essen Trinken" }); //Essen Trinken ??
+            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforCategories(QueryFactory, new List<string>() { "Essen Trinken" }); //Essen Trinken ??
 
             //Load Type + Subtype fore each language
             var suedtiroltypemain = await ODHTagHelper.GeODHTagByID(QueryFactory, "Essen Trinken");
@@ -256,15 +256,15 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                     List<RelatedContent> myrelatedcontentlist = new List<RelatedContent>();
 
                     var mywines = wineawardreducelist
-                        .Where(x => x.CompanyId == dataid)
+                        .Where(x => x.CompanyId == dataid)                        
                        .ToList();
 
                     foreach (var mywine in mywines)
                     {
                         RelatedContent relatedcontent = new RelatedContent();
                         relatedcontent.Id = mywine.Id;
-                        relatedcontent.Name = mywine.Name;
-                        relatedcontent.Type = "WineAward";
+                        //relatedcontent.Name = mywine.Name;
+                        relatedcontent.Type = "wineaward";
 
                         myrelatedcontentlist.Add(relatedcontent);
                     }
@@ -320,7 +320,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 suedtirolweinpoi.Mapping.TryAddOrUpdate("suedtirolwein", suedtirolweinid);
                 
                 //Set Tags based on OdhTags
-                await GenericTaggingHelper.AddMappingToODHActivityPoi(suedtirolweinpoi, settings.JsonConfig.Jsondir);
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(suedtirolweinpoi, settings.JsonConfig.Jsondir);
 
               
                 var result = await InsertDataToDB(suedtirolweinpoi, new KeyValuePair<string, XElement>(dataid, winedata));
@@ -362,7 +362,7 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var result = await DeleteOrDisableData(idtodelete, false);
+                    var result = await DeleteOrDisableData<ODHActivityPoiLinked>(idtodelete, false);
 
                     updateresult = updateresult + result.Item1;
                     deleteresult = deleteresult + result.Item2;
@@ -384,6 +384,9 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
             //Set LicenseInfo
             odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+
+            //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
+            odhactivitypoi._Meta = MetadataHelper.GetMetadataobject(odhactivitypoi);
 
             //Set PublishedOn to marketplace and suedtirolwein
             odhactivitypoi.CreatePublishedOnList(new List<AllowedTags>() { new AllowedTags() { Id = "weinkellereien", PublishDataWithTagOn = new Dictionary<string, bool>() { { "idm-marketplace", true }, { "suedtirolwein.com", true } } } });    

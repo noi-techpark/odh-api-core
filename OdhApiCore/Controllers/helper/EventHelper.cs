@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Geo.Measure;
 using Helper;
 using SqlKata;
 using SqlKata.Execution;
@@ -113,6 +114,73 @@ namespace OdhApiCore.Controllers
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
 
+        public static string? GetEventSortExpression(string? sort, string? begindate, string? enddate, ref string? seed)
+        {
+            string? sortifseednull = null;
 
+            if (sort != null)
+            {
+                //simple sort bz datebegin
+                if (sort.ToLower() == "asc")
+                    sortifseednull = "gen_nextbegindate ASC";
+                else if (sort.ToLower() == "desc")
+                    sortifseednull = "gen_nextbegindate DESC";
+                else if (sort.ToLower().StartsWith("upcoming"))
+                {
+                    var sortfromdate = "2000-01-01";
+
+                    if (begindate != null)
+                        sortfromdate = begindate;
+                    else if (enddate != null)
+                        sortfromdate = enddate;
+
+                    //TO CHECK Events with Eventdate interval vs singledays, how do we sort here?
+                    if (sort.ToLower() == "upcoming")
+                    {
+                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', false),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp))";
+
+                        //if (sort.ToLower() == "asc")
+                        //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
+                        //else
+                        //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc') DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
+                    }
+                    if (sort.ToLower() == "upcomingspecial")
+                    {
+                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp))";
+
+                        //if (sort.ToLower() == "asc")
+                        //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
+                        //else
+                        //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc', true) DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
+                    }
+                    if (sort.ToLower() == "upcomingspecial")
+                    {
+                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp))";
+
+                        //if (sort.ToLower() == "asc")
+                        //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
+                        //else
+                        //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc', true) DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
+                    }
+                    if (sort.ToLower() == "upcomingspecialdesc")
+                    {
+                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)) DESC";
+
+                        //if (sort.ToLower() == "asc")
+                        //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
+                        //else
+                        //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'desc', true) DESC,get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) ASC";
+                    }
+                }
+
+                if (sortifseednull != null)
+                    seed = null;
+
+                //Set Rawfilter to this RTHOENI rawfilter can overwrite this ;)
+                //rawfilter = sortifseednull;
+            }
+
+            return sortifseednull;
+        }
     }
 }

@@ -29,48 +29,29 @@ namespace STA
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     Delimiter = ";",
+                    //Problems with ANSI Encoding.... Windows generates csv Encoded in ANSI(ISO 8859-1) which does not work with UTF-8
+                    Encoding = Encoding.UTF8,
                     //NewLine = "\r\n" Environment.NewLine,
                     //MissingFieldFound = null  //Hack for server?
                 };
                 var records = default(IEnumerable<STAVendingPoint>);
 
-                //Import from File
-                if (csvcontent == null)
+                //Import from File or from posted data
+                using (var reader = csvcontent == null ? new StreamReader(csvurl, Encoding.UTF8) : new StreamReader(GenerateStreamFromString(csvcontent), Encoding.UTF8))
+                using (var csv = new CsvReader(reader, config))
                 {
-                    using (var reader = new StreamReader(csvurl))
-                    using (var csv = new CsvReader(reader, config))
-                    {
-                        //csv.Configuration.Delimiter = ";";
-                        csv.Read();
-                        csv.ReadHeader();
-                        records = csv.GetRecords<STAVendingPoint>();
+                    //csv.Configuration.Delimiter = ";";
+                    csv.Read();
+                    csv.ReadHeader();
+                    records = csv.GetRecords<STAVendingPoint>();
 
-                        ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
-                        myresult.Success = true;
-                        myresult.Error = false;
-                        myresult.records = records.ToList();
+                    ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
+                    myresult.Success = true;
+                    myresult.Error = false;
+                    myresult.records = records.ToList();
 
-                        return Task.FromResult(myresult);
-                    }
-                }
-                else
-                {
-                    using (var reader = new StreamReader(GenerateStreamFromString(csvcontent)))
-                    using (var csv = new CsvReader(reader, config))
-                    {
-                        //csv.Configuration.Delimiter = ";";
-                        csv.Read();
-                        csv.ReadHeader();
-                        records = csv.GetRecords<STAVendingPoint>();
-
-                        ParseResult<STAVendingPoint> myresult = new STA.ParseResult<STAVendingPoint>();
-                        myresult.Success = true;
-                        myresult.Error = false;
-                        myresult.records = records.ToList();
-
-                        return Task.FromResult(myresult);
-                    }
-                }
+                    return Task.FromResult(myresult);
+                }                
             }
             catch(Exception ex)
             {

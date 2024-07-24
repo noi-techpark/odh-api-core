@@ -17,13 +17,14 @@ using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using OdhNotifier;
 
 namespace OdhApiCore.Controllers.api
 {
     public class JsonLDController : OdhController
     {        
-        public JsonLDController(IWebHostEnvironment env, ISettings settings, ILogger<JsonLDController> logger, QueryFactory queryFactory, IHttpClientFactory httpClientFactory)
-            : base(env, settings, logger, queryFactory)
+        public JsonLDController(IWebHostEnvironment env, ISettings settings, ILogger<JsonLDController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             
         }
@@ -120,8 +121,9 @@ namespace OdhApiCore.Controllers.api
                   QueryFactory.Query(table)
                       .Select("data")
                       .Where("id", Id.ToUpper())
-                      .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-            //.When(FilterClosedData, q => q.FilterClosedData());
+                      //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                      //.When(FilterClosedData, q => q.FilterClosedData());
+                      .FilterDataByAccessRoles(UserRolesToFilter);
 
             var myobject = await query.FirstOrDefaultAsync<JsonRaw?>();
 

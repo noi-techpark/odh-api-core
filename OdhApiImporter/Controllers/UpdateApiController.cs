@@ -166,7 +166,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                var resulttuple = await OdhPushnotifier.PushCustomObjectsToPublishedonService(new List<string>() { publishedon }, idlist, odhtype);
+                var resulttuple = await OdhPushnotifier.PushCustomObjectsToPublishedonService(new List<string>() { publishedon }, idlist, odhtype, null);
 
                 updatedetail = new UpdateDetailFailureQueue()
                 {
@@ -174,13 +174,13 @@ namespace OdhApiImporter.Controllers
                     pushed = resulttuple,
                 };
 
-                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue succeeded", otherinfo, updatedetail, true);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult("", source, operation, updatetype, "Custom Update succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
             }
             catch (Exception ex)
             {
-                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Elaborate Failurequeue failed", otherinfo, updatedetail, ex, true);
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult("", source, operation, updatetype, "Custom Update failed", otherinfo, updatedetail, ex, true);
 
                 return BadRequest(errorResult);
             }
@@ -217,8 +217,9 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
-        #region NINJA DATA SYNC (Events Centro Trevi and DRIN)
+        #region NINJA DATA SYNC 
 
+        //Events Centro Trevi and DRIN
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("NINJA/Events/Update")]
         public async Task<IActionResult> UpdateAllNinjaEvents(CancellationToken cancellationToken = default)
@@ -239,6 +240,31 @@ namespace OdhApiImporter.Controllers
             catch (Exception ex)
             {
                 var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja Events update failed", "", updatedetail, ex, true);
+                return BadRequest(errorResult);
+            }
+        }
+
+        //EchargingStations
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("NINJA/Echarging/Update")]
+        public async Task<IActionResult> UpdateAllNinjaEchargingData(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update Ninja Echarging";
+            string updatetype = GetUpdateType(null);
+            string source = "mobilityapi";
+
+            try
+            {
+                MobilityEchargingImportHelper ninjaimporthelper = new MobilityEchargingImportHelper(settings, QueryFactory, "odhactivitypoi", UrlGeneratorStatic("NINJA/Echarging"));
+                updatedetail = await ninjaimporthelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja Echarging update succeeded", "", updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja Echarging update failed", "", updatedetail, ex, true);
                 return BadRequest(errorResult);
             }
         }
@@ -532,7 +558,7 @@ namespace OdhApiImporter.Controllers
 
         #region DSS DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("DSS/{dssentity}/Update")]
         public async Task<IActionResult> UpdateAllDSSData(string dssentity, CancellationToken cancellationToken = default)
         {
@@ -578,7 +604,7 @@ namespace OdhApiImporter.Controllers
 
         #region EJOBS DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("LOOPTEC/Ejobs/Update")]
         public async Task<IActionResult> UpdateAllLooptecEjobs(CancellationToken cancellationToken = default)
         {
@@ -608,7 +634,7 @@ namespace OdhApiImporter.Controllers
 
         #region PANOMAX DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("PANOMAX/Webcam/Update")]
         public async Task<IActionResult> UpdateAllPanomaxWebcams(CancellationToken cancellationToken = default)
         {
@@ -616,11 +642,11 @@ namespace OdhApiImporter.Controllers
             string operation = "Import PANOMAX Webcam";
             string updatetype = GetUpdateType(null);
             string source = "panomax";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
-                PanomaxImportHelper panomaximporthelper = new PanomaxImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("PANOMAX/Webcam"));
+                PanomaxImportHelper panomaximporthelper = new PanomaxImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("PANOMAX/Webcam"));
 
                 updatedetail = await panomaximporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import PANOMAX Webcam succeeded", otherinfo, updatedetail, true);
@@ -638,7 +664,7 @@ namespace OdhApiImporter.Controllers
 
         #region PANOCLOUD DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("PANOCLOUD/Webcam/Update")]
         public async Task<IActionResult> UpdateAllPanocloudWebcams(CancellationToken cancellationToken = default)
         {
@@ -646,11 +672,11 @@ namespace OdhApiImporter.Controllers
             string operation = "Import PANOCLOUD Webcam";
             string updatetype = GetUpdateType(null);
             string source = "panocloud";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
-                PanocloudImportHelper panocloudimporthelper = new PanocloudImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("PANOCLOUD/Webcam"));
+                PanocloudImportHelper panocloudimporthelper = new PanocloudImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("PANOCLOUD/Webcam"));
 
                 updatedetail = await panocloudimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import PANOCLOUD Webcam succeeded", otherinfo, updatedetail, true);
@@ -668,7 +694,7 @@ namespace OdhApiImporter.Controllers
 
         #region FERATEL DATA SYNC
 
-        //[Authorize(Roles = "DataPush")]
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("FERATEL/Webcam/Update")]
         public async Task<IActionResult> UpdateAllFeratelWebcams(CancellationToken cancellationToken = default)
         {
@@ -676,11 +702,11 @@ namespace OdhApiImporter.Controllers
             string operation = "Import FERATEL Wecam";
             string updatetype = GetUpdateType(null);
             string source = "feratel";
-            string otherinfo = "rawonly";
+            string otherinfo = "";
 
             try
             {
-                FeratelWebcamImportHelper feratelwebcamimporthelper = new FeratelWebcamImportHelper(settings, QueryFactory, "", UrlGeneratorStatic("FERATEL/Wecam"));
+                FeratelWebcamImportHelper feratelwebcamimporthelper = new FeratelWebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("FERATEL/Wecam"));
 
                 updatedetail = await feratelwebcamimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam succeeded", otherinfo, updatedetail, true);
@@ -690,6 +716,56 @@ namespace OdhApiImporter.Controllers
             catch (Exception ex)
             {
                 var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import FERATEL Wecam failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        #endregion
+
+        #region A22 DATA SYNC
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("A22/{a22entity}/Update")]
+        public async Task<IActionResult> UpdateAllA22Data(string a22entity, CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import A22 " + a22entity;
+            string updatetype = GetUpdateType(null);
+            string source = "a22";
+            string otherinfo = a22entity;
+
+            try
+            {
+                IImportHelper a22importhelper;
+
+                switch (a22entity.ToLower())
+                {                    
+                    case "webcam":
+                        
+                        a22importhelper = new A22WebcamImportHelper(settings, QueryFactory, "webcams", UrlGeneratorStatic("A22/Webcam"));
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                    case "servicearea":
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/ServiceArea"), a22entity.ToLower());                        
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                    case "tollstation":
+                        a22importhelper = new A22PoiImportHelper(settings, QueryFactory, "smgpois", UrlGeneratorStatic("A22/Tollstation"), a22entity.ToLower());                        
+                        updatedetail = await a22importhelper.SaveDataToODH(null, null, cancellationToken);
+
+                        break;
+                }
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }

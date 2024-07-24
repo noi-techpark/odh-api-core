@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OdhNotifier;
 using SqlKata.Execution;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly IHttpClientFactory _clientFactory;
 
-        public GeoConverterController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory, IHttpClientFactory clientFactory) : base(env, settings, logger, queryFactory)
+        public GeoConverterController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory clientFactory) : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             _clientFactory = clientFactory;
         }

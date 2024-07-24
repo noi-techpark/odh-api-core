@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Threading;
 using System.Xml.Linq;
 using Helper;
+using ServiceReferenceLCS;
 
 namespace OdhApiImporter.Helpers
 {
@@ -38,7 +39,7 @@ namespace OdhApiImporter.Helpers
 
         private async Task<XDocument> ImportList(CancellationToken cancellationToken)
         {
-            var myxml = await SIAG.GetMuseumFromSIAG.GetMuseumList();
+            var myxml = await SIAG.GetMuseumFromSIAG.GetMuseumList(settings.MusportConfig.ServiceUrl);
 
             XDocument mymuseumlist = new XDocument();
             XElement mymuseums = new XElement("Museums");
@@ -76,7 +77,7 @@ namespace OdhApiImporter.Helpers
             List<string> languagelistcategories = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
 
             //Getting valid Tags for Museums
-            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>() { "Kultur Sehenswürdigkeiten" });
+            var validtagsforcategories = await ODHTagHelper.GetODHTagsValidforCategories(QueryFactory, new List<string>() { "Kultur Sehenswürdigkeiten" });
 
             //Loading District & Municipality data
             var districtreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(QueryFactory, "districts");
@@ -124,7 +125,7 @@ namespace OdhApiImporter.Helpers
                 string plz = mymuseumelement.Attribute("PLZ")?.Value ?? "";
 
                 //Import Museum data from Siag
-                var mymuseumdata = await SIAG.GetMuseumFromSIAG.GetMuseumDetail(museumid);
+                var mymuseumdata = await SIAG.GetMuseumFromSIAG.GetMuseumDetail(settings.MusportConfig.ServiceUrl, museumid);
                 var mymuseumxml = mymuseumdata?.Root?.Element(ns + "return");
 
                 //Improve Performance this query is very slow!!!!
@@ -399,7 +400,7 @@ namespace OdhApiImporter.Helpers
                 ODHActivityPoiHelper.SetMainCategorizationForODHActivityPoi(mymuseum);
 
                 //Set Tags based on OdhTags
-                await GenericTaggingHelper.AddMappingToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
              
                 if (mymuseumdata?.Root is { })
                 {
@@ -441,7 +442,7 @@ namespace OdhApiImporter.Helpers
              
                 foreach (var idtodelete in idstodelete)
                 {
-                    var result = await DeleteOrDisableData(idtodelete, false);
+                    var result = await DeleteOrDisableData<ODHActivityPoiLinked>(idtodelete, false);
 
                     updateresult = updateresult + result.Item1;
                     deleteresult = deleteresult + result.Item2;
@@ -462,7 +463,10 @@ namespace OdhApiImporter.Helpers
             odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
 
             //Set LicenseInfo
-            odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+            odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+
+            //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
+            odhactivitypoi._Meta = MetadataHelper.GetMetadataobject(odhactivitypoi);
 
             //Set Publishedon
             odhactivitypoi.CreatePublishedOnList();
@@ -483,7 +487,7 @@ namespace OdhApiImporter.Helpers
                             raw = siagmuseumdata.Value.ToString(),
                             sourceinterface = "museumdata",
                             sourceid = siagmuseumdata.Key,
-                            sourceurl = "https://musport.prov.bz.it/musport/services/MuseumsService/",
+                            sourceurl = settings.MusportConfig.ServiceUrl,
                             type = "odhactivitypoi.museum",
                             license = "open",
                             rawformat = "xml"

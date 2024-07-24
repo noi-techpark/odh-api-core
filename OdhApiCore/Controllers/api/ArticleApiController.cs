@@ -5,6 +5,8 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -29,8 +32,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class ArticleController : OdhController
     {      
-        public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ArticleController> logger, QueryFactory queryFactory)
-           : base(env, settings, logger, queryFactory)
+        public ArticleController(IWebHostEnvironment env, ISettings settings, ILogger<ArticleController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -203,6 +206,9 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 ArticleHelper myarticlehelper = ArticleHelper.Create(
                     type, subtypefilter, idfilter, languagefilter, highlightfilter,
                     active, smgactive, smgtags, articledate, articledateto, source, lastchange, publishedon);
@@ -221,7 +227,8 @@ namespace OdhApiCore.Controllers.api
                             articledate: myarticlehelper.articledate, articledateto: myarticlehelper.articledateto, sourcelist: myarticlehelper.sourcelist,
                             publishedonlist: myarticlehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myarticlehelper.lastchange,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData)
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
                       
@@ -232,12 +239,10 @@ namespace OdhApiCore.Controllers.api
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-                
-                var fieldsTohide = FieldsToHide;
-
+                                
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -257,18 +262,19 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("articles")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        //.When(FilterClosedData, q => q.FilterClosedData())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, ReducedData);
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -283,21 +289,16 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("articletypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
-                
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                                
+                return
                       data.Select(
-                          raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                          raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                       );
-
-                return dataTransformed;
             });
         }
 
@@ -307,16 +308,12 @@ namespace OdhApiCore.Controllers.api
             {
                 var query =
                     QueryFactory.Query("articletypes")
-                        .Select("data")
-                        //.WhereJsonb("Key", "ilike", id)
-                        .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                
-                var fieldsTohide = FieldsToHide;
-
+                        .Select("data")                        
+                        .Where("id", id.ToLower());
+                               
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -331,7 +328,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="article">Article Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [InvalidateCacheOutput(nameof(GetArticleList))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -341,8 +339,14 @@ namespace OdhApiCore.Controllers.api
         {            
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 //GENERATE ID
                 article.Id = Helper.IdGenerator.GenerateIDFromType(article);
+
+                if (String.IsNullOrEmpty(article.Source))
+                    article.Source = "noi";
 
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
@@ -352,7 +356,9 @@ namespace OdhApiCore.Controllers.api
                 if (article.LicenseInfo == null)
                     article.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
-                return await UpsertData<ArticlesLinked>(article, "articles", true);
+                article.TrimStringProperties();
+
+                return await UpsertData<ArticlesLinked>(article, new DataInfo("articles", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -363,7 +369,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="article">Article Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify")]
+        //[Authorize(Roles = "DataWriter,DataModify,ArticleManager,ArticleModify,ArticleUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [InvalidateCacheOutput(nameof(GetArticleList))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -373,15 +380,23 @@ namespace OdhApiCore.Controllers.api
         {            
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 article.Id = Helper.IdGenerator.CheckIdFromType<ArticlesLinked>(id);
+
+                if (String.IsNullOrEmpty(article.Source))
+                    article.Source = "noi";
 
                 article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 if (article.ArticleDateTo == null)
                     article.ArticleDateTo = DateTime.MaxValue;
 
-                return await UpsertData<ArticlesLinked>(article, "articles", false, true);
+                article.TrimStringProperties();
+
+                return await UpsertData<ArticlesLinked>(article, new DataInfo("articles", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -391,7 +406,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">Article Id</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataDelete,ArticleManager,ArticleDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,ArticleManager,ArticleDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [InvalidateCacheOutput(nameof(GetArticleList))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -401,10 +417,13 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Filters on the Action Create
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<ArticlesLinked>(id);
 
-                return await DeleteData(id, "articles");
+                return await DeleteData<ArticlesLinked>(id, new DataInfo("articles", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

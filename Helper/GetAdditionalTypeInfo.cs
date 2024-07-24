@@ -40,7 +40,7 @@ namespace Helper
                     await maintypequery
                         .GetObjectSingleAsync<SmgPoiTypes>();
 
-                var validtags = await ODHTagHelper.GetODHTagsValidforTranslations(QueryFactory, new List<string>(), new List<string>() { maintypedata?.Key ?? "", subtypedata.Key });
+                var validtags = await ODHTagHelper.GetODHTagsValidforCategories(QueryFactory, new List<string>(), new List<string>() { maintypedata?.Key ?? "", subtypedata.Key });
 
                 foreach (var lang in languages)
                 {

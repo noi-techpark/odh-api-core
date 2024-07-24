@@ -25,11 +25,9 @@ namespace Helper
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
             //If source is already set use the old source
-            if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
-                source = data._Meta.Source;            
-
+            //if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
+            //    source = data._Meta.Source;            
             
-
             return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
         }
                
@@ -68,10 +66,15 @@ namespace Helper
                 AreaLinked al => GetMetadataforArea(al),
                 WineLinked wl => GetMetadataforWineAward(wl),
                 ODHTagLinked odhtl => GetMetadataforOdhTag(odhtl),
+                TagLinked tgl => GetMetadataforTag(tgl),
                 PublisherLinked pbl => GetMetadataforPublisher(pbl),
+                SourceLinked pbl => GetMetadataforSource(pbl),
                 WeatherHistoryLinked wh => GetMetaDataForWeatherHistory(wh),
                 WeatherLinked we => GetMetaDataForWeather(we),
                 WeatherDistrictLinked wd => GetMetaDataForWeatherDistrict(wd),
+                WeatherRealTimeLinked wr => GetMetaDataForWeatherRealTime(wr),
+                WeatherForecastLinked wf => GetMetaDataForWeatherForecast(wf),
+                SnowReportBaseData sb => GetMetaDataForSnowReport(sb),
                 TourismMetaData tm => GetMetaDataForMetaData(tm),
                 _ => throw new Exception("not known odh type")
             };            
@@ -171,10 +174,27 @@ namespace Helper
             return GetMetadata(data, sourcemeta, data.LastChange);
         }
 
+        public static Metadata GetMetadataforTag(TagLinked data)
+        {
+            string sourcemeta = "idm";
+
+            if (data.Source != null && data.Source.Contains("LTSCategory"))
+                sourcemeta = "lts";
+
+            return GetMetadata(data, sourcemeta, data.LastChange);
+        }
+
         public static Metadata GetMetadataforPublisher(PublisherLinked data)
         {
             string sourcemeta = "noi";
             
+            return GetMetadata(data, sourcemeta, data.LastChange);
+        }
+
+        public static Metadata GetMetadataforSource(SourceLinked data)
+        {
+            string sourcemeta = "noi";
+
             return GetMetadata(data, sourcemeta, data.LastChange);
         }
 
@@ -244,6 +264,7 @@ namespace Helper
             {
                 "content" => "noi",
                 "ebms" => "eurac",
+                "nobis" => "nobis",
                 _ => sourcemeta,
             };
             return GetMetadata(data, sourcestr, data.LastChange, false);
@@ -309,7 +330,7 @@ namespace Helper
         {
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherLinked>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.date, Source = "siag", Reduced = false };            
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };            
         }
 
         //Hack because WeatherLinked is not IIdentifiable so return directly
@@ -317,7 +338,28 @@ namespace Helper
         {
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherDistrictLinked>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.date, Source = "siag", Reduced = false };
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };
+        }
+
+        public static Metadata GetMetaDataForWeatherRealTime(WeatherRealTimeLinked data)
+        {
+            string type = ODHTypeHelper.TranslateType2TypeString<WeatherRealTimeLinked>(data);
+
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.lastUpdated, Source = "siag", Reduced = false };
+        }
+
+        public static Metadata GetMetaDataForWeatherForecast(WeatherForecastLinked data)
+        {
+            string type = ODHTypeHelper.TranslateType2TypeString<WeatherForecastLinked>(data);
+
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };
+        }
+
+        public static Metadata GetMetaDataForSnowReport(SnowReportBaseData data)
+        {
+            string type = ODHTypeHelper.TranslateType2TypeString<SnowReportBaseData>(data);
+
+            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.LastUpdate, Source = "lts", Reduced = false };
         }
 
         public static Metadata GetMetaDataForMetaData(TourismMetaData data)

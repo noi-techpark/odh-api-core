@@ -118,6 +118,8 @@ namespace DataModel
     public struct PGCRUDResult
     {
         public string id { get; init; }
+
+        public string? odhtype { get; init; }
         public string operation { get; init; }
         public int? updated { get; init; }
         public int? created { get; init; }
@@ -125,13 +127,17 @@ namespace DataModel
 
         public int? error { get; init; }
 
+        public string? errorreason { get; init; }
+
         public bool? compareobject { get; init; }
         public int? objectchanged { get; init; }
-        public int? objectimageschanged { get; init; }
+        public int? objectimagechanged { get; init; }
 
         public ICollection<string>? pushchannels { get; init; }
 
-        public JToken? changes { get; init; } 
+        public JToken? changes { get; init; }
+
+        public IDictionary<string, NotifierResponse>? pushed { get; set; }
     }
 
     public struct JsonGenerationResult
@@ -168,8 +174,10 @@ namespace DataModel
                 updated = updatedetail.updated + updated;
                 deleted = updatedetail.deleted + deleted;
                 error = updatedetail.error + error;
-                objectchanged = updatedetail.objectchanged + objectchanged;
-                objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
+                if(updatedetail.objectchanged != null)
+                    objectchanged =  updatedetail.objectchanged + objectchanged;
+                if (updatedetail.objectimagechanged != null)
+                    objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
 
                 if (updatedetail.changes != null)
                 {
@@ -363,6 +371,7 @@ namespace DataModel
         public string origin { get; set; }
         public string destination { get; set; }
         public bool? imageupdate { get; set; }
+        public bool? roomsupdate { get; set; }
         public string updatemode { get; set; }
 
         public string? response { get; set; }
@@ -376,6 +385,7 @@ namespace DataModel
     {
         public string Id { get; set; }
         public bool? HasImageChanged { get; set; }
+        public bool? Roomschanged { get; set; }
         public bool? IsDeleteOperation { get; set; }
         public string ItemId { get; set; }
         public string Type { get; set; }
@@ -393,6 +403,7 @@ namespace DataModel
         public object? Response { get; set; }
         public HttpStatusCode HttpStatusCode { get; set; }
         public string Service { get; set; }
+        public bool Success { get; set; }
     }
 
     public class IdmMarketPlacePushResponse

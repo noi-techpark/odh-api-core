@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,8 @@ namespace OdhApiCore.Controllers.api
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class RawdataApiController : OdhController
     {
-        public RawdataApiController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory)
-           : base(env, settings, logger, queryFactory)
+        public RawdataApiController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -54,6 +55,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(JsonResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator))]
         [HttpGet, Route("Rawdata")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
@@ -93,7 +95,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(typeof(RawDataStoreWithId), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[Authorize(Roles = "DataReader,PoiReader")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("Rawdata/{id}", Name = "SingleRawdata")]
         public async Task<IActionResult> GetRawdataSingle(
             string id,
@@ -118,19 +120,22 @@ namespace OdhApiCore.Controllers.api
                 var sourcelist = !String.IsNullOrEmpty(source) ? source.Split(",").ToList() : null;
                 var idlist = !String.IsNullOrEmpty(ids) ? ids.Split(",").ToList() : null;
                 var sourceidlist = !String.IsNullOrEmpty(sourceids) ? sourceids.Split(",").ToList() : null;
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 //Example latest records
                 //select*
                 //from rawdata
                 //where id in (SELECT max(id)  FROM rawdata where type = 'ejob' group by sourceid)
 
+                //TO CHECK additionalfilter???
+
                 var query =
                     QueryFactory.Query()
                     .When(latest, q => q.SelectRaw("max(id)"))
                     .From("rawdata")
-                    .RawdataWhereExpression(sourceidlist, idlist, typelist, sourcelist, true)
+                    .RawdataWhereExpression(idlist, 
+                    sourceidlist, typelist, sourcelist, 
+                    additionalfilter: null,
+                    userroles: UserRolesToFilter)
                     .ApplyRawFilter(rawfilter)
                     .OrderOnlyByRawSortIfNotNull(rawsort)
                     .When(latest, q => q.GroupBy("sourceid"));
@@ -156,7 +161,7 @@ namespace OdhApiCore.Controllers.api
 
                     var dataTransformed =
                             jsonrawdata.Select(
-                                raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                                raw => raw.TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                             );
 
                     uint totalpages = (uint)data.TotalPages;
@@ -184,7 +189,7 @@ namespace OdhApiCore.Controllers.api
 
                     var dataTransformed =
                             jsonrawdata.Select(
-                                raw => raw.TransformRawData(null, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                                raw => raw.TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                             );
 
                     uint totalpages = (uint)data.TotalPages;
@@ -214,14 +219,12 @@ namespace OdhApiCore.Controllers.api
                 {
                     var query =
                     QueryFactory.Query("rawdata")
-                        .Where("id", numericid)
-                        .When(FilterClosedData, q => q.FilterClosedData_Raw());
+                        .Where("id", numericid);
+                        //.When(FilterClosedData, q => q.FilterClosedData_Raw());
 
                     var data = await query.FirstOrDefaultAsync<RawDataStoreWithId?>();
-
-                    var fieldsTohide = FieldsToHide;
-
-                    //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                    
+                    //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
                     return data != null ? data.UseJsonRaw() : new RawDataStoreWithId();
                 }
                 else

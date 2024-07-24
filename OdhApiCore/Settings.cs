@@ -15,14 +15,9 @@ namespace OdhApiCore
         private readonly IConfiguration configuration;
         private readonly Lazy<string> connectionString;
         private readonly Lazy<string> mongoDBConnectionString;
-        private readonly MssConfig mssConfig;
-        private readonly LcsConfig lcsConfig;
-        private readonly CDBConfig cdbConfig;        
-        private readonly SiagConfig siagConfig;
         private readonly XmlConfig xmlConfig;
         private readonly JsonConfig jsonConfig;
-        private readonly S3ImageresizerConfig s3imageresizerConfig;
-        private readonly EBMSConfig ebmsConfig;
+        private readonly S3ImageresizerConfig s3imageresizerConfig;        
         private readonly RavenConfig ravenConfig;
         private readonly PushServerConfig pushserverConfig;
         //private readonly FCMConfig fcmConfig;
@@ -32,6 +27,15 @@ namespace OdhApiCore
         private readonly NoRateLimitConfig noRateLimitConfig;
         private readonly List<FCMConfig> fcmConfig;
 
+        private readonly MssConfig mssConfig;
+        private readonly LcsConfig lcsConfig;
+        private readonly CDBConfig cdbConfig;
+        private readonly SiagConfig siagConfig;
+
+        private readonly List<NotifierConfig> notifierConfig;
+        private readonly IDictionary<string, S3Config> s3Config;
+
+
         public Settings(IConfiguration configuration)
         {
             this.configuration = configuration;
@@ -40,21 +44,19 @@ namespace OdhApiCore
             this.mongoDBConnectionString = new Lazy<string>(() =>
             this.configuration.GetConnectionString("MongoDBConnection"));
             var mss = this.configuration.GetSection("MssConfig");
-            this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""));
+            this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""), mss.GetValue<string>("ServiceUrl", ""));
             var lcs = this.configuration.GetSection("LcsConfig");
-            this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""));
+            this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""), lcs.GetValue<string>("ServiceUrl", ""));
             var cdb = this.configuration.GetSection("CDBConfig");
-            this.cdbConfig = new CDBConfig(cdb.GetValue<string>("Username", ""), cdb.GetValue<string>("Password", ""), cdb.GetValue<string>("Url", ""));
+            this.cdbConfig = new CDBConfig(cdb.GetValue<string>("Username", ""), cdb.GetValue<string>("Password", ""), cdb.GetValue<string>("ServiceUrl", ""));
             var siag = this.configuration.GetSection("SiagConfig");
-            this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""));
+            this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""), siag.GetValue<string>("ServiceUrl", ""));
             var xml = this.configuration.GetSection("XmlConfig");
             this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
             var json = this.configuration.GetSection("JsonConfig");
             this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
             this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("DocUrl", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
-            var ebms = this.configuration.GetSection("EBMSConfig");
-            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("EBMSUser", ""), ebms.GetValue<string>("EBMSPassword", ""));
             var raven = this.configuration.GetSection("RavenConfig");
             this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
             var pushserver = this.configuration.GetSection("PushServerConfig");
@@ -101,10 +103,32 @@ namespace OdhApiCore
             {
                 foreach (var fcmkey in fcmdict)
                 {
-                    var fcmconfigobj = new FCMConfig(fcmkey.Key, fcmkey.GetValue<string>("ServerKey", ""), fcmkey.GetValue<string>("SenderId", ""));
+                    var fcmconfigobj = new FCMConfig(fcmkey.Key, fcmkey.GetValue<string>("ServerKey", ""), fcmkey.GetValue<string>("SenderId", ""), fcmkey.GetValue<string>("ProjectName", ""), fcmkey.GetValue<string>("FCMServiceAccount", ""), fcmkey.GetValue<string>("FCMServiceAccountJson", ""));
                     this.fcmConfig.Add(fcmconfigobj);
                 }
-            }          
+            }
+
+            this.notifierConfig = new List<NotifierConfig>();
+
+            var notifierconfigdict = this.configuration.GetSection("NotifierConfig").GetChildren();
+            if (notifierconfigdict != null)
+            {
+                foreach (var notifiercfg in notifierconfigdict)
+                {
+                    this.notifierConfig.Add(new NotifierConfig(notifiercfg.Key, notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
+                }
+            }
+
+            this.s3Config = new Dictionary<string, S3Config>();
+
+            var s3configdict = this.configuration.GetSection("S3Config").GetChildren();
+            if (s3configdict != null)
+            {
+                foreach (var s3cfg in s3configdict)
+                {
+                    this.s3Config.TryAddOrUpdate(s3cfg.Key, new S3Config(s3cfg.GetValue<string>("AccessKey", ""), s3cfg.GetValue<string>("AccessSecretKey", ""), s3cfg.Key, s3cfg.GetValue<string>("Filename", "")));
+                }
+            }
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -115,9 +139,7 @@ namespace OdhApiCore
         public SiagConfig SiagConfig => this.siagConfig;
         public XmlConfig XmlConfig => this.xmlConfig;
         public JsonConfig JsonConfig => this.jsonConfig;
-        public EBMSConfig EbmsConfig => this.ebmsConfig;
         public S3ImageresizerConfig S3ImageresizerConfig => this.s3imageresizerConfig;
-        public RavenConfig RavenConfig => this.ravenConfig;
         public PushServerConfig PushServerConfig => this.pushserverConfig;
         public List<FCMConfig> FCMConfig => this.fcmConfig;
         public List<Field2HideConfig> Field2HideConfig => this.field2hideConfig;
@@ -126,6 +148,18 @@ namespace OdhApiCore
         public NoRateLimitConfig NoRateLimitConfig => this.noRateLimitConfig;
 
         public DSSConfig DSSConfig => throw new NotImplementedException();
-        public List<NotifierConfig> NotifierConfig => throw new NotImplementedException();
+        public EBMSConfig EbmsConfig => throw new NotImplementedException();
+        public A22Config A22Config => throw new NotImplementedException();
+        public FeratelConfig FeratelConfig => throw new NotImplementedException();
+        public PanomaxConfig PanomaxConfig => throw new NotImplementedException();
+        public PanocloudConfig PanocloudConfig => throw new NotImplementedException();
+        public MusportConfig MusportConfig => throw new NotImplementedException();
+        public SuedtirolWeinConfig SuedtirolWeinConfig => throw new NotImplementedException();
+        public NinjaConfig NinjaConfig => throw new NotImplementedException();
+        public LoopTecConfig LoopTecConfig => throw new NotImplementedException();
+
+        public RavenConfig RavenConfig => this.ravenConfig;
+        public List<NotifierConfig> NotifierConfig => this.notifierConfig;
+        public IDictionary<string, S3Config> S3Config => this.s3Config;
     }
 }

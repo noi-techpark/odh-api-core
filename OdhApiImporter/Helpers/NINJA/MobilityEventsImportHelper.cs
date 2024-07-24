@@ -38,8 +38,8 @@ namespace OdhApiImporter.Helpers
 
         private async Task<Tuple<NinjaObject<NinjaEvent>,NinjaObject<NinjaPlaceRoom>>> ImportList(CancellationToken cancellationToken)
         {
-            var responseevents = await GetNinjaData.GetNinjaEvent();
-            var responseplaces = await GetNinjaData.GetNinjaPlaces();
+            var responseevents = await GetNinjaData.GetNinjaEvent(settings.NinjaConfig.ServiceUrl);
+            var responseplaces = await GetNinjaData.GetNinjaPlaces(settings.NinjaConfig.ServiceUrl);
 
             WriteLog.LogToConsole("", "dataimport", "list.mobilityculture", new ImportLog() { sourceid = "", sourceinterface = "mobility.culture", success = true, error = "" });
 
@@ -56,6 +56,8 @@ namespace OdhApiImporter.Helpers
 
             List<string> idlistspreadsheet = new List<string>();
             List<string> sourcelist = new List<string>();
+            sourcelist.Add("drin");
+            sourcelist.Add("trevilab");
 
             foreach (var ninjadata in ninjadataarr.Select(x => x.tmetadata))
             {
@@ -92,6 +94,7 @@ namespace OdhApiImporter.Helpers
                             errorimportcounter = errorimportcounter + result.error ?? 0;
 
                             idlistspreadsheet.Add(idtocheck.ToUpper());
+
                             if (!sourcelist.Contains(eventtosave.Source))
                                 sourcelist.Add(eventtosave.Source);
 
@@ -115,9 +118,9 @@ namespace OdhApiImporter.Helpers
                 var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
 
                 if(deletedisableresult.Item1 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
                 else if (deletedisableresult.Item2 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.mobilityculture.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "mobility.culture", success = true, error = "" });
 
 
                 deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -139,7 +142,10 @@ namespace OdhApiImporter.Helpers
                 eventtosave.Id = eventtosave.Id?.ToUpper();
 
                 //Set LicenseInfo
-                eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<Event>(eventtosave, Helper.LicenseHelper.GetLicenseforEvent);
+                eventtosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(eventtosave, Helper.LicenseHelper.GetLicenseforEvent);
+
+                //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
+                eventtosave._Meta = MetadataHelper.GetMetadataobject(eventtosave);
 
                 //Set PublishedOn
                 eventtosave.CreatePublishedOnList();
@@ -198,7 +204,7 @@ namespace OdhApiImporter.Helpers
                         data.SmgActive = false;
 
                         updateresult = await QueryFactory.Query("events").Where("id", eventid)
-                                        .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });
+                                        .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });                        
                     }
                 }
             }

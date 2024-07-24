@@ -38,8 +38,9 @@ namespace OdhApiCore.Controllers.api
             this.Logger = logger;
         }
 
+
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
+        [Authorize]
         //[HttpPost, Route("v1/FileUpload/{type}/{directory}")]
         [HttpPost, Route("v1/FileUpload")]
         [HttpPost, Route("v1/FileUpload/Image")]
@@ -81,7 +82,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataModify,DataCreate,ODHPoiCreate,ODHPoiModify,ODHPoiManager,CommonCreate,CommonModify,CommonManager,ArticleCreate,ArticleModify,ArticleManager,EventShortManager,EventShortCreate")]
+        [Authorize]
         [HttpPost, Route("v1/FileUpload/Doc")]
         public async Task<IActionResult> PostFormDataPDF(IFormCollection form)
         {
@@ -118,7 +119,7 @@ namespace OdhApiCore.Controllers.api
         }
 
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataMofify,DataCreate,DataDelete,ODHPoiCreate,ODHPoiModify,ODHPoiManager,ODHPoiUpdate,CommonCreate,CommonModify,CommonManager,CommonDelete,ArticleCreate,ArticleModify,ArticleManager,ArticleDelete")]
+        [Authorize]
         [HttpDelete, Route("v1/FileDelete/{filepath}")]
         public async Task<IActionResult> Delete(string filepath)
         {

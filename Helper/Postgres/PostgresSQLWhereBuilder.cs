@@ -5,6 +5,7 @@
 using SqlKata;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Helper
@@ -13,6 +14,9 @@ namespace Helper
     {
         private static readonly string[] _languagesToSearchFor =
             new[] { "de", "it", "en", "nl", "cs", "pl", "fr", "pl" };
+
+
+
 
         /// <summary>
         /// Provide title fields as JsonPath
@@ -28,6 +32,14 @@ namespace Helper
                 $"Detail.{lang}.Title"
             ).ToArray();
 
+        public static string[] TitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true &&
+                haslanguage != null ? haslanguage.Contains(lang) : true
+            ).Select(lang =>
+                $"Detail.{lang}.Title"
+            ).ToArray();
+
         public static string[] AccoTitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
@@ -35,13 +47,12 @@ namespace Helper
                 $"AccoDetail.{lang}.Name"
             ).ToArray();
 
-
-        //Public for use in Controllers directly
-        public static string[] TypeDescFieldsToSearchFor(string? language) =>
+        public static string[] AccoTitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
             _languagesToSearchFor.Where(lang =>
-                language != null ? lang == language : true
+                language != null ? lang == language : true &&
+                haslanguage != null ? haslanguage.Contains(lang) : true
             ).Select(lang =>
-                $"TypeDesc.{lang}"
+                $"AccoDetail.{lang}.Name"
             ).ToArray();
 
         public static string[] AccoRoomNameFieldsToSearchFor(string? language) =>
@@ -51,9 +62,25 @@ namespace Helper
                 $"AccoRoomDetail.{lang}.Name"
             ).ToArray();
 
+        public static string[] AccoRoomNameFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
+        _languagesToSearchFor.Where(lang =>
+            language != null ? lang == language : true &&
+                haslanguage != null ? haslanguage.Contains(lang) : true
+        ).Select(lang =>
+            $"AccoRoomDetail.{lang}.Name"
+        ).ToArray();
+
         public static string[] EventShortTitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
+            ).Select(lang =>
+                $"EventTitle.{lang}"
+            ).ToArray();
+
+        public static string[] EventShortTitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true &&
+                haslanguage != null ? haslanguage.Contains(lang) : true
             ).Select(lang =>
                 $"EventTitle.{lang}"
             ).ToArray();
@@ -95,6 +122,14 @@ namespace Helper
         //     $"odhdata.Detail.{lang}.Name"
         // ).ToArray();
 
+        //Public for use in Controllers directly
+        public static string[] TypeDescFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"TypeDesc.{lang}"
+            ).ToArray();
+
         public static string[] TagNameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
@@ -107,13 +142,6 @@ namespace Helper
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"Name.{lang}"
-            ).ToArray();
-
-        public static string[] WebcamnameFieldsToSearchFor(string? language) =>
-            _languagesToSearchFor.Where(lang =>
-                language != null ? lang == language : true
-            ).Select(lang =>
-                $"Webcamname.{lang}"
             ).ToArray();
 
         public static string[] WeatherHistoryFieldsToSearchFor(string? language) =>
@@ -152,7 +180,9 @@ namespace Helper
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, bool distance, int distancemin,
             int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin,
             int altitudemax, bool? highlight, bool? activefilter, bool? smgactivefilter, string? searchfilter,
-            string? language, string? lastchange, bool filterClosedData, bool reducedData)
+            string? language, string? lastchange,
+            string? additionalfilter, 
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -188,9 +218,10 @@ namespace Helper
                 .DurationFilter(duration, durationmin, durationmax)
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
                 .HighlightFilter(highlight)                
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Poi
@@ -202,7 +233,8 @@ namespace Helper
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist,
             IReadOnlyCollection<string> arealist, bool? highlight, bool? activefilter,
             bool? smgactivefilter, string? searchfilter, string? language, string? lastchange,
-            bool filterClosedData, bool reducedData)
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -231,9 +263,10 @@ namespace Helper
                 .LocFilterRegionFilter(regionlist)                  //Use generated columns also here?
                 .AreaFilter(arealist)                               //Use generated columns also here?
                 .HighlightFilter(highlight)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());                 //OK GENERATED COLUMNS   
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Gastronomy
@@ -245,7 +278,8 @@ namespace Helper
             IReadOnlyCollection<string> districtlist, IReadOnlyCollection<string> municipalitylist,
             IReadOnlyCollection<string> tourismvereinlist, IReadOnlyCollection<string> regionlist, bool? activefilter,
             bool? smgactivefilter, string? searchfilter, string? language, string? lastchange,
-            bool filterClosedData, bool reducedData)
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -274,9 +308,10 @@ namespace Helper
                 .CategoryCodeFilter(categorycodeslist)
                 .CuisineCodeFilter(facilitycodeslist)
                 .DishCodeFilter(dishcodeslist)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Activity
@@ -290,8 +325,10 @@ namespace Helper
             IReadOnlyCollection<string> categorycodeslist, IReadOnlyCollection<string> dishcodeslist, IReadOnlyCollection<string> ceremonycodeslist, IReadOnlyCollection<string> facilitycodeslist,
             IReadOnlyCollection<string> activitytypelist, IReadOnlyCollection<string> poitypelist, IReadOnlyCollection<string> difficultylist,
             bool distance, int distancemin, int distancemax, bool duration, int durationmin, int durationmax, bool altitude, int altitudemin, int altitudemax,
-            IDictionary<string, List<string>>? tagdict, bool? hasimage,
-            IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
+            IDictionary<string, List<string>>? tagdict, bool? hasimage,IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, 
+            string? lastchange,
+            string? additionalfilter, 
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -340,9 +377,10 @@ namespace Helper
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
                 //.When(tagdict != null && tagdict.ContainsKey("and") && tagdict["and"].Any(), q => q.TaggingFilter_AND(tagdict!["and"]))
                 //.When(tagdict != null && tagdict.ContainsKey("or") && tagdict["or"].Any(), q => q.TaggingFilter_OR(tagdict!["or"]))
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Article
@@ -350,7 +388,9 @@ namespace Helper
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> subtypelist,
             IReadOnlyCollection<string> smgtaglist, bool? highlight, bool? activefilter, bool? smgactivefilter, DateTime? articledate, DateTime? articledateto, IReadOnlyCollection<string> sourcelist,
-            IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
+            IReadOnlyCollection<string> publishedonlist, string? searchfilter, string? language, string? lastchange,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -372,19 +412,17 @@ namespace Helper
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .When(smgtaglist.Count > 0, q => q.SmgTagFilterOr_GeneratedColumn(smgtaglist))  //OK GENERATED COLUMNS //.SmgTagFilter(smgtaglist)                                                                                                 
-                .ArticleDateNewsFilterBeginWithIN_GeneratedColumn(articledate, articledateto)
-                .ArticleDateNewsFilterEndWithIN_GeneratedColumn(articledate, articledateto)
+                //.ArticleDateNewsFilterBeginWithIN_GeneratedColumn(articledate, articledateto)
+                //.ArticleDateNewsFilterEndWithIN_GeneratedColumn(articledate, articledateto)
                 .ArticleDateNewsFilterBeginEndWithIN_GeneratedColumn(articledate, articledateto)
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
-                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
+                //.SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
+                .SourceFilter_GeneratedColumn(sourcelist)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .HighlightFilter(highlight)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //Articledate+ Articledatetofilter
-                //.EventDateFilterEnd_GeneratedColumn(articledate, articledateto)
-                //.EventDateFilterBegin_GeneratedColumn(articledate, articledateto)                
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for Event
@@ -399,7 +437,9 @@ namespace Helper
           DateTime? begindate, DateTime? enddate,
           bool? activefilter, bool? smgactivefilter,
           IReadOnlyCollection<string> publishedonlist,
-          string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
+          string? searchfilter, string? language, string? lastchange,
+          string? additionalfilter,          
+          IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -416,9 +456,11 @@ namespace Helper
             return query
                 .IdUpperFilter(idlist)
                 .EventTopicFilter_GeneratedColumn(topiclist)
-                .EventDateFilterEnd_GeneratedColumn(begindate, enddate)
-                .EventDateFilterBegin_GeneratedColumn(begindate, enddate)
-                .EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
+                //.EventDateFilterEnd_GeneratedColumn(begindate, enddate)
+                //.EventDateFilterBegin_GeneratedColumn(begindate, enddate)
+                //.EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
+                //TEST TSMULTIRANGE
+                .DateFilter_GeneratedColumn(begindate, enddate, "")
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
@@ -429,14 +471,13 @@ namespace Helper
                 .DistrictFilter(districtlist)
                 .LocFilterMunicipalityFilter(municipalitylist)
                 .LocFilterTvsFilter(tourismvereinlist)
-                .LocFilterRegionFilter(regionlist)
-                //.EventTypeFilter(typelist) //Obsolete
-                //.EventRancFilter(ranclist) //Obsolete Ranc
+                .LocFilterRegionFilter(regionlist)                
                 .EventPublisherRancFilter(ranclist)
                 .EventOrgFilter(orglist)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)                                
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))                            
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Accommodation
@@ -449,7 +490,9 @@ namespace Helper
             IReadOnlyCollection<string> regionlist, bool? apartmentfilter, bool? bookable,
             bool altitude, int altitudemin, int altitudemax, bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
-            string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
+            string? searchfilter, string? language, string? lastchange,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -486,9 +529,10 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AccoAltitudeFilter(altitude, altitudemin, altitudemax)
-                .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .SearchFilter(AccoTitleFieldsToSearchFor(language, languagelist), searchfilter)                
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Common
@@ -496,7 +540,9 @@ namespace Helper
             this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> languagelist,
             bool? visibleinsearch, IReadOnlyCollection<string> smgtaglist, bool? activefilter, bool? odhactivefilter,
             IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
-            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
+            string? searchfilter, string? language, string? lastchange,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -514,15 +560,18 @@ namespace Helper
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .SourceFilter_GeneratedColumn(sourcelist)
                 .VisibleInSearchFilter(visibleinsearch)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for Wine
         public static Query WineWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> companyid, IReadOnlyCollection<string> wineid,
             bool? activefilter, bool? odhactivefilter, IReadOnlyCollection<string> sourcelist,
-            string? searchfilter, string? language, string? lastchange, bool filterClosedData)
+            string? searchfilter, string? language, string? lastchange,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -531,14 +580,16 @@ namespace Helper
             );
 
             return query
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(odhactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .SourceFilter_GeneratedColumn(sourcelist)
                 .CompanyIdFilter(companyid)
                 .WineIdFilter(wineid)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for WebCamInfo
@@ -547,7 +598,9 @@ namespace Helper
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
             bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, 
-            string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
+            string? searchfilter, string? language, string? lastchange,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -565,16 +618,20 @@ namespace Helper
                 .OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .LastChangedFilter_GeneratedColumn(lastchange)
-                   //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         public static Query WeatherHistoryWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist,
             IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
              DateTime? begindate, DateTime? enddate, string? searchfilter,
-            string? language, string? lastchange, bool filterClosedData)
+            string? language, string? lastchange,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -592,7 +649,8 @@ namespace Helper
                 .LastChangedFilter_GeneratedColumn(begindate, enddate)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .SearchFilter(WeatherHistoryFieldsToSearchFor(language), searchfilter)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for Measuringpoint
@@ -603,7 +661,9 @@ namespace Helper
             IReadOnlyCollection<string> regionlist, IReadOnlyCollection<string> arealist, IReadOnlyCollection<string> skiarealist,
             bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, IReadOnlyCollection<string> sourcelist,
-            string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
+            string? searchfilter, string? language, string? lastchange,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -628,27 +688,32 @@ namespace Helper
                 .AreaFilterMeasuringpoints(arealist)
                 .SkiAreaFilterMeasuringpoints(skiarealist)
                 .SearchFilter(new string[1]{ $"Shortname" }, searchfilter) //Search only Shortname Field
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
         //Return Where and Parameters for Eventshort
         public static Query EventShortWhereExpression(
             this Query query, 
-            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
-            IReadOnlyCollection<string> eventlocationlist, IReadOnlyCollection<string> webaddresslist,
-            string? activefilter, bool? websiteactivefilter, bool? communityactivefilter,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> sourcelist, IReadOnlyCollection<string> eventlocationlist, 
+            IReadOnlyCollection<string> webaddresslist,
+            bool? activefilter,
+            string? todayactivefilter, bool? websiteactivefilter, bool? communityactivefilter,
             DateTime? start, DateTime? end,
             IReadOnlyCollection<string> publishedonlist,
             string? searchfilter,
-            string? language, string? lastchange, bool filterClosedData, bool getbyrooms = false)
+            string? language, string? lastchange, 
+            string? additionalfilter,
+            IEnumerable<string> userroles, bool getbyrooms = false)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 idlist, sourcelist, eventlocationlist, webaddresslist,
-                activefilter, start, end,
-                searchfilter,
+                todayactivefilter, start, end,
+                searchfilter, activefilter,
                 language, lastchange
             );
 
@@ -659,21 +724,23 @@ namespace Helper
                 .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .EventShortLocationFilter(eventlocationlist)
                 .EventShortWebaddressFilter(webaddresslist)
-                //.ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.EventShortActiveFilter(activefilter)
+                .ActiveFilter_GeneratedColumn(activefilter)                
                 //.OdhActiveFilter_GeneratedColumn(smgactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)                
-                .EventShortActiveFilter(activefilter)
+                .EventShortTodayActiveFilter(todayactivefilter)
                 .EventShortWebsiteActiveFilter(websiteactivefilter)
                 .EventShortCommunityActiveFilter(communityactivefilter)
-                .EventShortDateFilterEnd(start, end, !getbyrooms)
-                .EventShortDateFilterBegin(start, end, !getbyrooms)
-                .EventShortDateFilterBeginEndWithInBehaviour(start, end, !getbyrooms)
-                .EventShortDateFilterEndByRoom(start, end, getbyrooms)
-                .EventShortDateFilterBeginByRoom(start, end, getbyrooms)
-                .EventShortDateFilterBeginEndByRoom(start, end, getbyrooms)
+                //.EventShortDateFilterEnd(start, end, !getbyrooms)
+                //.EventShortDateFilterBegin(start, end, !getbyrooms)
+                .When(!getbyrooms, q => q.EventShortDateFilter_GeneratedColumn(start, end, true, true))
+                //.EventShortDateFilterEndByRoom(start, end, getbyrooms)
+                //.EventShortDateFilterBeginByRoom(start, end, getbyrooms)
+                .When(getbyrooms, q => q.EventShortDateFilter_GeneratedColumn(start, end, true, false))                
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
-                .SearchFilter(EventShortTitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
+                .SearchFilter(EventShortTitleFieldsToSearchFor(language, languagelist), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter_GeneratedColumn(lastchange)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for Venue
@@ -687,7 +754,9 @@ namespace Helper
             bool capacity, int capacitymin, int capacitymax, bool roomcount, int roomcountmin, int roomcountmax, 
             bool? activefilter, bool? smgactivefilter,
             IReadOnlyCollection<string> publishedonlist, 
-            string? searchfilter, string? language, string? lastchange, bool filterClosedData, bool reducedData)
+            string? searchfilter, string? language, string? lastchange,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -723,10 +792,10 @@ namespace Helper
                 .VenueRoomCountFilter(roomcount, roomcountmin, roomcountmax)
                  //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
-                //.When(filterClosedData, q => q.FilterClosedDataVenues());
-                //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles)
+                .FilterReducedDataByRoles(userroles);
         }
 
 
@@ -754,7 +823,9 @@ namespace Helper
         public static Query ODHTagWhereExpression(
             this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> mainentitylist, IReadOnlyCollection<string> validforentitylist, 
             IReadOnlyCollection<string> sourcelist, bool? displayascategory, IReadOnlyCollection<string> publishedonlist,
-            string? searchfilter, string? language, bool filterClosedData)
+            string? searchfilter, string? language,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -770,14 +841,17 @@ namespace Helper
                 .ODHTagValidForEntityFilter(mainentitylist)
                 .ODHTagValidForEntityFilter(validforentitylist)
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
         }
 
         //Return Where and Parameters for OdhTag and Tag
         public static Query PublishersWhereExpression(
-            this Query query, IReadOnlyCollection<string> languagelist, 
-            IReadOnlyCollection<string> sourcelist,
-            string? searchfilter, string? language, bool filterClosedData)
+            this Query query, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
+            string? searchfilter, string? language,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -788,7 +862,53 @@ namespace Helper
             return query
                 .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
                 .SourceFilter_GeneratedColumn(sourcelist)
-                .When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
+                .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
+        }
+
+        public static Query SourcesWhereExpression(
+            this Query query, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> typeslist,
+            string? searchfilter, string? language,
+            string? additionalfilter,
+            IEnumerable<string> userroles)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                searchfilter, language, idlist
+            );
+
+            return query
+                .SearchFilter(NameFieldsToSearchFor(language), searchfilter)
+                .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
+                .When(typeslist != null && typeslist.Count > 0, q => query.SourceTypeFilter(typeslist))
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                .FilterDataByAccessRoles(userroles);
+        }
+
+        public static Query PushResultWhereExpression(
+            this Query query, 
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> publisherlist,
+            DateTime? begin, DateTime? end,
+            IReadOnlyCollection<string> objectidlist, IReadOnlyCollection<string> objecttypelist,
+            string? additionalfilter)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                publisherlist, begin, end, idlist
+            );
+
+            return query
+                .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
+                .When(publisherlist != null && publisherlist.Count > 0, q => query.WhereIn("gen_publisher", publisherlist))
+                .When(objectidlist != null && objectidlist.Count > 0, q => query.WhereIn("gen_objectid", objectidlist))
+                .When(objecttypelist != null && objecttypelist.Count > 0, q => query.WhereIn("gen_objecttype", objecttypelist))
+                .LastChangedFilter_GeneratedColumn(begin, end)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
+                
         }
 
 
@@ -796,7 +916,8 @@ namespace Helper
         public static Query RawdataWhereExpression(
             this Query query, IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourceidlist, 
             IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> sourcelist,
-            bool filterClosedData)
+            string? additionalfilter,
+            IEnumerable<string> userroles)
         {
             LogMethodInfo(
                 System.Reflection.MethodBase.GetCurrentMethod()!,
@@ -809,8 +930,10 @@ namespace Helper
                 .When(typelist != null, q => query.WhereIn("type", typelist))
                 .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist))
                  .When(idlist != null, q => query.WhereIn("id", idlist))
-                //.When(latest, )
-                .When(filterClosedData, q => q.FilterClosedData_Raw());
+                 //.When(latest, )
+                 //.When(filterClosedData, q => q.FilterClosedData_Raw());
+                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                 .FilterDataByAccessRoles(userroles);
             //TODO future opendata rules on 
             //.Anonymous_Logged_UserRule_GeneratedColumn(filterClosedData, !reducedData);
         }

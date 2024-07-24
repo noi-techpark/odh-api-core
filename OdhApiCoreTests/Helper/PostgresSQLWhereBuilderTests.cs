@@ -22,6 +22,7 @@ namespace OdhApiCoreTests.Helper
                 new Query()
                     .From("activities")
                     .ActivityWhereExpression(
+                        languagelist: System.Array.Empty<string>(), 
                         idlist: System.Array.Empty<string>(),
                         activitytypelist: System.Array.Empty<string>(),
                         subtypelist: System.Array.Empty<string>(),
@@ -47,14 +48,14 @@ namespace OdhApiCoreTests.Helper
                         searchfilter: null,
                         language: null,
                         lastchange: null,
-                        languagelist: System.Array.Empty<string>(),
-                        filterClosedData: false,
-                        reducedData: true
+                        additionalfilter: null,
+                        userroles: new List<string>() { "STA" }
                     );
 
             var result = compiler.Compile(query);
 
-            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts') OR (gen_source = 'lts' AND gen_reduced = $$))", result.RawSql);
+            //Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts') OR (gen_source = 'lts' AND gen_reduced = $$))", result.RawSql);
+            Assert.Equal("SELECT * FROM \"activities\" WHERE gen_access_role @> array\\[$$\\]", result.RawSql);
         }
 
         [Fact]
@@ -64,6 +65,7 @@ namespace OdhApiCoreTests.Helper
                 new Query()
                     .From("activities")
                     .ActivityWhereExpression(
+                        languagelist: System.Array.Empty<string>(),
                         idlist: System.Array.Empty<string>(),
                         activitytypelist: System.Array.Empty<string>(),
                         subtypelist: System.Array.Empty<string>(),
@@ -89,14 +91,14 @@ namespace OdhApiCoreTests.Helper
                         searchfilter: null,
                         language: null,
                         lastchange: null,
-                        languagelist: System.Array.Empty<string>(),
-                        filterClosedData: true,
-                        reducedData: true
+                        additionalfilter: null,
+                        new List<string>() { "ANONYMOUS" }
                     );
 
             var result = compiler.Compile(query);
 
-            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$)) OR (gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$))))", result.RawSql);
+            //Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts' AND (gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$)) OR (gen_source = 'lts' AND gen_reduced = true AND ((gen_licenseinfo_closeddata IS NULL OR gen_licenseinfo_closeddata = $$))))", result.RawSql);
+            Assert.Equal("SELECT * FROM \"activities\" WHERE gen_access_role @> array\\[$$\\]", result.RawSql);
         }
 
         [Fact]
@@ -106,6 +108,7 @@ namespace OdhApiCoreTests.Helper
                 new Query()
                     .From("activities")
                     .ActivityWhereExpression(
+                        languagelist: System.Array.Empty<string>(), 
                         idlist: System.Array.Empty<string>(),
                         activitytypelist: System.Array.Empty<string>(),
                         subtypelist: System.Array.Empty<string>(),
@@ -131,14 +134,14 @@ namespace OdhApiCoreTests.Helper
                         searchfilter: null,
                         language: null,
                         lastchange: null,
-                        languagelist: System.Array.Empty<string>(),
-                        filterClosedData: false,
-                        reducedData: false
+                        additionalfilter: null,
+                        userroles: new List<string>() { "IDM" }
                     );
 
             var result = compiler.Compile(query);
 
-            Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts') OR (gen_source = 'lts' AND gen_reduced = $$))", result.RawSql);
+            //Assert.Equal("SELECT * FROM \"activities\" WHERE ((gen_source <> 'lts') OR (gen_source = 'lts' AND gen_reduced = $$))", result.RawSql);
+            Assert.Equal("SELECT * FROM \"activities\" WHERE gen_access_role @> array\\[$$\\]", result.RawSql);
         }
     }
 }

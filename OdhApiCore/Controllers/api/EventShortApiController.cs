@@ -4,7 +4,10 @@
 
 using DataModel;
 using DataModel.Annotations;
+using Geo.Geometries;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +18,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Npgsql;
 using OdhApiCore.Responses;
+using OdhNotifier;
+using ServiceReferenceLCS;
 using SqlKata;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.Annotations;
@@ -23,6 +28,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,8 +41,8 @@ namespace OdhApiCore.Controllers.api
     [NullStringParameterActionFilter]
     public class EventShortController : OdhController
     {        
-        public EventShortController(IWebHostEnvironment env, ISettings settings, ILogger<EventShortController> logger, QueryFactory queryFactory)
-           : base(env, settings, logger, queryFactory)
+        public EventShortController(IWebHostEnvironment env, ISettings settings, ILogger<EventShortController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -53,7 +59,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
         /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>
-        /// <param name="onlyactive">'true' if only Events marked as Active should be returned</param>        
+        /// <param name="onlyactive">'true' if only Events marked as Active for today.noi.bz.it should be returned</param>        
         /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>        
         /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>        
         /// <param name="eventids">comma separated list of event ids</param>
@@ -62,9 +68,14 @@ namespace OdhApiCore.Controllers.api
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
+        /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="optimizedates">Optimizes dates, cuts out all Rooms with Comment "x", revisits and corrects start + enddate</param>
+        /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'true')</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
@@ -74,6 +85,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[EnableCors(origins: "*", headers: "*", methods: "*")]
+        //[AuthorizeODH(PermissionAction.Read)] Also Anonymous can read it
         [HttpGet, Route("EventShort")]
         public async Task<IActionResult> Get(
             uint pagenumber = 1, 
@@ -88,6 +100,7 @@ namespace OdhApiCore.Controllers.api
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
+            bool active = true,
             string? eventids = null,
             string? webaddress = null,
             string? sortorder = "ASC",
@@ -95,6 +108,10 @@ namespace OdhApiCore.Controllers.api
             string? language = null,
             string? langfilter = null,
             bool optimizedates = false,
+            string? latitude = null,
+            string? longitude = null,
+            string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? lastchange = null,
@@ -106,12 +123,17 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default
             )
         {
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
+
             return await GetEventShortList(
                fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
                startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
                    searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
-                   webaddressfilter: webaddress, active: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, optimizedates: optimizedates,
-                   sortorder: sortorder, seed: seed, lastchange: lastchange, publishedon: publishedon, 
+                   webaddressfilter: webaddress, activetoday: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, 
+                   active: active, optimizedates: optimizedates,
+                   sortorder: sortorder, seed: seed, lastchange: lastchange, langfilter: langfilter, publishedon: publishedon,
+                   polygonsearchresult: polygonsearchresult, geosearchresult: geosearchresult,
                    rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
                    cancellationToken: cancellationToken);
         }
@@ -155,8 +177,9 @@ namespace OdhApiCore.Controllers.api
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
         /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>    
-        /// <param name="onlyactive">'true' if only Events marked as Active should be returned</param>        
+        /// <param name="onlyactive">'true' if only Events marked as Active for today.noi.bz.it should be returned</param>        
         /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>        
+        /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'true')</param>
         /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>        
         /// <param name="eventids">comma separated list of event ids</param>
         /// <param name="webaddress">Filter by WebAddress Field</param>
@@ -185,6 +208,7 @@ namespace OdhApiCore.Controllers.api
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
+            bool active = true,
             string? eventids = null, 
             string? webaddress = null,
             string? language = null,
@@ -204,8 +228,8 @@ namespace OdhApiCore.Controllers.api
                 updatefrom = lastchange;
 
             return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, 
-                websiteactive.Value, communityactive.Value, eventids, webaddress, publishedon, updatefrom, language, null, 
-                searchfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, removenullvalues, cancellationToken);
+                websiteactive.Value, communityactive.Value, active, eventids, webaddress, publishedon, updatefrom, language, null, 
+                searchfilter, langfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -218,7 +242,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet, Route("EventShort/RoomMapping")]
         public async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLinkDictionary(
-            string? language = null
+            string? language = "en"
             )
         {
             return await GetBDPNoiRoomsWithLink(language);
@@ -228,6 +252,7 @@ namespace OdhApiCore.Controllers.api
         /// GET EventShort Types
         /// </summary>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
+        /// <param name="type">Type to filter for ('TechnologyFields','CustomTagging')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -240,6 +265,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EventShortTypes")]
         public async Task<IActionResult> GetEventShortTypes(
             string? language,
+            string? type = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -248,7 +274,7 @@ namespace OdhApiCore.Controllers.api
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            return await GetEventShortTypesList(language, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
+            return await GetEventShortTypesList(language, type, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
         }
 
         /// <summary>
@@ -283,27 +309,35 @@ namespace OdhApiCore.Controllers.api
 
         private Task<IActionResult> GetEventShortList(
             string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
-            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? active, bool? websiteactive, bool? communityactive, bool optimizedates, string? sortorder, string? seed,
-            string? lastchange, string? publishedon, string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
+            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? activetoday, bool? websiteactive, bool? communityactive, 
+            bool active, bool optimizedates, string? sortorder, string? seed, string? langfilter,
+            string? lastchange, string? publishedon, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult,
+            string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);                
 
                 EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                    sourcefilter, eventlocationfilter, active, websiteactive, communityactive, idfilter, webaddressfilter, lastchange, sortorder, publishedon);
+                    sourcefilter, eventlocationfilter, activetoday, websiteactive, communityactive, active, idfilter, webaddressfilter, lastchange, langfilter, sortorder, publishedon);
 
                 var query =
                    QueryFactory.Query()
                        .SelectRaw("data")
                        .From("eventeuracnoi")
                        .EventShortWhereExpression(
-                           idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
+                           idlist: myeventshorthelper.idlist, languagelist: myeventshorthelper.languagelist, sourcelist: myeventshorthelper.sourcelist,
                            eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
-                           start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
-                           websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
+                           start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
+                           websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter, 
+                           activefilter: myeventshorthelper.activefilter,
                            publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
-                           filterClosedData: FilterClosedData, getbyrooms: false)
+                           additionalfilter: additionalfilter,
+                           userroles: UserRolesToFilter, getbyrooms: false)
                        .ApplyRawFilter(rawfilter)
+                       //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);                      
+                       //.When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                        .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);
 
                 // Get paginated data
@@ -316,11 +350,9 @@ namespace OdhApiCore.Controllers.api
                 if (optimizedates)
                     data.List = OptimizeRoomForAppList(data.List);
 
-                var fieldsTohide = FieldsToHide;
-
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
 
@@ -342,20 +374,22 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //check if there are additionalfilters to add
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("eventeuracnoi")
                         .Select("data")
                         .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-
-                var fieldsTohide = FieldsToHide;
+                        .FilterDataByAccessRoles(UserRolesToFilter)
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 if (optimizedates && data is { })
                     data = OptimizeRoomForApp(data);
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -365,24 +399,29 @@ namespace OdhApiCore.Controllers.api
 
         private async Task<IActionResult> GetEventShortListbyRoomBooked(
             string? startdate, string? enddate, string? datetimeformat, string? sourcefilter, string? eventlocationfilter, 
-            bool? active, bool? websiteactive, bool? communityactive, string? idfilter, string? webaddressfilter, string? publishedon, string? lastchange, string? language, string? sortorder, 
+            bool? todayactive, bool? websiteactive, bool? communityactive, bool active, string? idfilter, string? webaddressfilter, string? publishedon, string? lastchange, string? language, string? sortorder, string? langfilter,
             string? searchfilter, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
+            //Additional Read Filters to Add Check
+            AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
             EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                  sourcefilter, eventlocationfilter, active, websiteactive, communityactive, idfilter, webaddressfilter, lastchange, sortorder, publishedon);
+                  sourcefilter, eventlocationfilter, todayactive, websiteactive, communityactive, active,
+                  idfilter, webaddressfilter, lastchange, langfilter, sortorder, publishedon);
 
             var query =
                QueryFactory.Query()
                    .SelectRaw("data")
                    .From("eventeuracnoi")
                    .EventShortWhereExpression(
-                       idlist: myeventshorthelper.idlist, sourcelist: myeventshorthelper.sourcelist,
+                       idlist: myeventshorthelper.idlist, languagelist: myeventshorthelper.languagelist, sourcelist: myeventshorthelper.sourcelist,
                        eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
-                       start: myeventshorthelper.start, end: myeventshorthelper.end, activefilter: myeventshorthelper.activefilter,
+                       start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
                        websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
+                       activefilter: myeventshorthelper.activefilter,
                        publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
-                       filterClosedData: FilterClosedData, getbyrooms: false)
+                       additionalfilter: additionalfilter,
+                       userroles: UserRolesToFilter, getbyrooms: false)
                    .ApplyRawFilter(rawfilter);
 
             var data =
@@ -395,14 +434,10 @@ namespace OdhApiCore.Controllers.api
 
             IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
 
-            var fieldsTohide = FieldsToHide;
-
-            var dataTransformed =
+            return Ok(
                     resultraw.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-            
-            return Ok(dataTransformed);
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
+                    ));                       
         }
 
         private IEnumerable<EventShortByRoom> TransformEventShortToRoom(IEnumerable<EventShort> eventsshort, DateTime start, DateTime end)
@@ -441,7 +476,7 @@ namespace OdhApiCore.Controllers.api
                             if (String.IsNullOrEmpty(myeventshortbyroom?.EventDescription?["en"]) && eventshort.EventDescriptionDE != null)
                                 myeventshortbyroom!.EventDescription?.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
 
-                            myeventshortbyroom.EventTitle = myeventshortbyroom.EventDescription;
+                            myeventshortbyroom!.EventTitle = myeventshortbyroom.EventDescription!;
 
                          
 
@@ -541,7 +576,8 @@ namespace OdhApiCore.Controllers.api
             // Sieh nach ob bereits ein Event mit demselben namen und 
             var sameevent = eventshortlistbyroom.Where(x => x.Id == roomtoadd.Id
                                                         && x.RoomStartDate == roomtoadd.RoomStartDate
-                                                        && x.RoomEndDate == roomtoadd.RoomEndDate).FirstOrDefault();
+                                                        && x.RoomEndDate == roomtoadd.RoomEndDate
+                                                        && x.Subtitle == roomtoadd.Subtitle).FirstOrDefault();
 
             if (sameevent != null)
             {
@@ -603,28 +639,24 @@ namespace OdhApiCore.Controllers.api
 
         #region EVENTSHORT TYPES
 
-        private Task<IActionResult> GetEventShortTypesList(string? language, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetEventShortTypesList(string? language, string? typefilter, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
                 var query =
                     QueryFactory.Query("eventshorttypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
+                        .When(!String.IsNullOrEmpty(typefilter), q => q.WhereRaw("data->>'Type' ILIKE $$", typefilter))
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                return
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );                
             });
         }
 
@@ -636,15 +668,12 @@ namespace OdhApiCore.Controllers.api
                     QueryFactory.Query("eventshorttypes")
                         .Select("data")
                         //.WhereJsonb("Key", "ilike", id)
-                        .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                //.Where("Key", "ILIKE", id);
+                        .Where("id", id.ToLower());
+                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -653,34 +682,39 @@ namespace OdhApiCore.Controllers.api
         #region POST PUT DELETE
 
         // POST: api/EventShort
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[EnableCors("DataBrowserCorsPolicy")]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortCreate,VirtualVillageManager")]
+        [AuthorizeODH(PermissionAction.Create)]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpPost, Route("EventShort")]
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Post([FromBody] EventShortLinked eventshort)
         {
+            //Additional Filters on the Action Create
+            AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
             try
             {
                 if (eventshort != null)
                 {
+                    //Adding Source content if not defined
+                    if (String.IsNullOrEmpty(eventshort.Source))
+                        eventshort.Source = "noi";
+
+                    //TOCHECK Set as active on first import?
+                    eventshort.Active = true;
+
                     if (eventshort.EventLocation == null)
-                        throw new Exception("Eventlocation needed");
+                        throw new Exception("EvenLocation needed");
                     
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
-
-                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }) && eventshort.EventLocation != "VV")
-                        throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
-
-                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortCreate" }))
-                        eventshort.Source = User.Identity != null ? User.Identity.Name :"";
-
+                 
                     if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
                         throw new Exception("Start + End Time not set correctly");
+
+                    if(!DateTimeHelper.CompareValidStartEnddate(eventshort.StartDate, eventshort.EndDate))
+                        throw new Exception("Event Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
 
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
@@ -743,6 +777,9 @@ namespace OdhApiCore.Controllers.api
 
                                 room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
                                 room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+
+                                if (!DateTimeHelper.CompareValidStartEnddate(room.StartDate, room.EndDate))
+                                    throw new Exception("Room Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
                             }
                         }
                     }
@@ -787,7 +824,10 @@ namespace OdhApiCore.Controllers.api
                     //TODO, Sync publishedon with current values, remove SETTER from ActiveToday, ActiveWeb, ActiveCommunity and generate it from publishedon, remove 
                     //checkboxes from 
 
-                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", true);
+                    //To Test Trim all Data
+                    eventshort.TrimStringProperties();
+
+                    return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter)); ;
                 }
                 else
                 {
@@ -802,7 +842,8 @@ namespace OdhApiCore.Controllers.api
 
         // PUT: api/EventShort/5
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortModify,EventShortUpdate,VirtualVillageManager")]
+        [AuthorizeODH(PermissionAction.Update)]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -811,20 +852,30 @@ namespace OdhApiCore.Controllers.api
         //[InvalidateCacheOutput("GetReducedAsync")]
         public async Task<IActionResult> Put(string id, [FromBody] EventShortLinked eventshort)
         {
+            //Additional Filters on the Action Update
+            AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
             try
             {
                 if (eventshort != null && id != null)
                 {
+                    //Adding Source content if not defined
+                    if (String.IsNullOrEmpty(eventshort.Source))
+                        eventshort.Source = "noi";
+
                     if (eventshort.EventLocation == null)
                         throw new Exception("Eventlocation needed");
 
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
-                    if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }) && eventshort.EventLocation != "VV")
-                        throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+                    if (!DateTimeHelper.CompareValidStartEnddate(eventshort.StartDate, eventshort.EndDate))
+                        throw new Exception("Event Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
 
-                    if(CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }))
-                        eventshort.Source = User.Identity != null ? User.Identity.Name : "";
+                    //if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }) && eventshort.EventLocation != "VV")
+                    //    throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
+
+                    //if(CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }))
+                    //    eventshort.Source = User.Identity != null ? User.Identity.Name : "";
 
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
@@ -841,6 +892,9 @@ namespace OdhApiCore.Controllers.api
                     {
                         foreach (var room in eventshort.RoomBooked)
                         {
+                            if (!DateTimeHelper.CompareValidStartEnddate(room.StartDate, room.EndDate))
+                                throw new Exception("Room Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
+
                             room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
                             room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
                         }
@@ -871,7 +925,9 @@ namespace OdhApiCore.Controllers.api
                     //Create PublishedonList
                     //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
 
-                    return await UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", false, true);
+                    eventshort.TrimStringProperties();
+
+                    return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
                 }
                 else
                 {
@@ -886,326 +942,89 @@ namespace OdhApiCore.Controllers.api
 
         // DELETE: api/EventShort/5
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        //[Authorize(Roles = "DataWriter,DataCreate,EventShortManager,EventShortDelete,VirtualVillageManager")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpDelete, Route("EventShort/{id}")]
         //[InvalidateCacheOutput("GetReducedAsync")]        
-        public async Task<IActionResult> Delete(string id)
+        public Task<IActionResult> Delete(string id)
         {
-            try
+            return DoAsyncReturn(async () =>
             {
-                if (id != null)
-                {
-                    var query =
-                         QueryFactory.Query("eventeuracnoi")
-                             .Select("data")
-                             .Where("id", id.ToLower());
+                //Additional Filters on the Action Delete
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
 
-                    //var myeventraw = await query.FirstOrDefaultAsync<JsonRaw>();                    
-                    //var myevent = JsonConvert.DeserializeObject<EventShort>(myeventraw.Value);
+                id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
 
-                    var myevent = await query.GetObjectSingleAsync<EventShort>();
+                return await DeleteData<EventShortLinked>(id, new DataInfo("eventeuracnoi", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+            });
 
-                    if (myevent != null)
-                    {
-                        if (myevent.Source != "EBMS")
-                        {
-                            if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataDelete", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
-                                throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
+            //try
+            //{
+            //    if (id != null)
+            //    {
+            //        //check if there are additionalfilters to add
+            //        AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-                            //TODO CHECK IF THIS WORKS     
-                            //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
-                            //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+            //        var query =
+            //             QueryFactory.Query("eventeuracnoi")
+            //                 .Select("data")
+            //                 .Where("id", id.ToLower());
 
-                            return await DeleteData(id, "eventeuracnoi");
-                        }
-                        else
-                        {
-                            if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
-                            {
-                                //TODO CHECK IF THIS WORKS     
-                                //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
-                                //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+            //        var myevent = await query.GetObjectSingleAsync<EventShort>();
 
-                                return await DeleteData(id, "eventeuracnoi");
-                            }
-                            else
-                            {
-                                throw new Exception("EventShort cannot be deleted");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("EventShort not found");
-                    }
-                }
-                else
-                {
-                    throw new Exception("No EventShort Id provided");
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            //        if (myevent != null)
+            //        {
+            //            if (myevent.Source != "EBMS")
+            //            {
+            //                if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataDelete", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
+            //                    throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
+
+            //                //TODO CHECK IF THIS WORKS     
+            //                //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
+
+            //                //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+
+            //                return await DeleteData(id, "eventeuracnoi");
+            //            }
+            //            else
+            //            {
+            //                if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
+            //                {
+            //                    //TODO CHECK IF THIS WORKS     
+            //                    //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
+
+            //                    //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
+
+            //                    return await DeleteData(id, "eventeuracnoi");
+            //                }
+            //                else
+            //                {
+            //                    throw new Exception("EventShort cannot be deleted");
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            throw new Exception("EventShort not found");
+            //        }
+            //    }
+            //    else
+            //    {
+            //        throw new Exception("No EventShort Id provided");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest(ex.Message);
+            //}
         }
-
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
-        //[HttpPost, Route("api/EventShortVirtualVillage")]
-        //[InvalidateCacheOutput("GetReducedAsync")]
-        //public HttpResponseMessage PostVirtualVillage([FromBody] EventShort eventshort)
-        //{
-        //    try
-        //    {
-        //        if (eventshort != null)
-        //        {
-        //            if (!User.IsInRole("VirtualVillageManager"))
-        //                throw new Exception("Not Allowed");
-
-        //            if (eventshort.EventLocation == null)
-        //                throw new Exception("Eventlocation needed");
-
-        //            eventshort.EventLocation = eventshort.EventLocation.ToUpper();
-        //            eventshort.Source = User.Identity.Name;
-
-        //            if (eventshort.EventLocation != "VV")
-        //                throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
-
-        //            if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
-        //                throw new Exception("Start + End Time not set correctly");
-
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-        //                conn.Open();
-
-        //                eventshort.ChangedOn = DateTime.Now;
-
-        //                eventshort.AnchorVenueShort = eventshort.AnchorVenue;
-
-        //                //Save DAtetime without Offset??
-        //                //eventshort.StartDate = DateTime.SpecifyKind(eventshort.StartDate, DateTimeKind.Utc);
-        //                //eventshort.EndDate = DateTime.SpecifyKind(eventshort.EndDate, DateTimeKind.Utc);
-
-        //                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
-        //                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
-
-        //                bool addroomautomatically = false;
-
-        //                if (eventshort.RoomBooked == null)
-        //                {
-        //                    addroomautomatically = true;
-        //                }
-        //                else if (eventshort.RoomBooked.Count == 0)
-        //                {
-        //                    addroomautomatically = true;
-        //                }
-
-        //                if (addroomautomatically)
-        //                {
-        //                    //Default, Add Eventdate as Room
-        //                    RoomBooked myroom = new RoomBooked();
-        //                    myroom.StartDate = eventshort.StartDate;
-        //                    myroom.EndDate = eventshort.EndDate;
-        //                    myroom.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
-        //                    myroom.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
-        //                    myroom.Comment = "";
-        //                    myroom.Space = eventshort.AnchorVenueShort;
-        //                    myroom.SpaceAbbrev = eventshort.AnchorVenue;
-        //                    myroom.SpaceDesc = eventshort.AnchorVenue;
-        //                    //myroom.Space = eventshort.AnchorVenue;
-
-        //                    if (eventshort.EventLocation == "NOI")
-        //                        myroom.SpaceType = "NO";
-        //                    else
-        //                        myroom.SpaceType = eventshort.EventLocation;
-
-        //                    myroom.Subtitle = "";
-
-        //                    eventshort.RoomBooked = new List<RoomBooked>();
-        //                    eventshort.RoomBooked.Add(myroom);
-        //                }
-        //                else
-        //                {
-        //                    //TODO on rooms
-        //                    foreach (var room in eventshort.RoomBooked)
-        //                    {
-        //                        //Save DAtetime without Offset??
-        //                        //room.StartDate = DateTime.SpecifyKind(room.StartDate, DateTimeKind.Utc);
-        //                        //room.EndDate = DateTime.SpecifyKind(room.EndDate, DateTimeKind.Utc);
-
-        //                        room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
-        //                        room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
-        //                    }
-        //                }
-
-        //                //Event Title IT EN
-        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-        //                    eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
-
-        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
-        //                    eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
-
-
-
-        //                //TraceSource tracesource = new TraceSource("CustomData");
-        //                //tracesource.TraceEvent(TraceEventType.Information, 0, "Event Start Date:" + String.Format("{0:dd/MM/yyyy hh:mm}", eventshort.StartDate));
-        //                eventshort.Id = System.Guid.NewGuid().ToString();
-
-        //                //LicenseInfo
-        //                eventshort.LicenseInfo = new LicenseInfo() { Author = User.Identity.Name, ClosedData = false, LicenseHolder = "https://noi.bz.it/", License = "CC0" };
-
-        //                PostgresSQLHelper.InsertDataIntoTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
-        //                //tracesource.TraceEvent(TraceEventType.Information, 0, "Serialized object:" + JsonConvert.SerializeObject(eventshort));
-
-        //                return Request.CreateResponse(HttpStatusCode.Created, new GenericResultExtended() { Message = "INSERT EventShort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No EventShort Data provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
-        //    }
-        //}
-
-        //// PUT: api/EventShort/5
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
-        //[HttpPut, Route("api/EventShortVirtualVillage/{id}")]
-        //[InvalidateCacheOutput("GetReducedAsync")]
-        //public HttpResponseMessage PutVirtualVillage(string id, [FromBody] EventShort eventshort)
-        //{
-        //    try
-        //    {
-        //        if (eventshort != null && id != null)
-        //        {
-        //            if (eventshort.EventLocation == null)
-        //                throw new Exception("Eventlocation needed");
-
-        //            eventshort.EventLocation = eventshort.EventLocation.ToUpper();
-        //            eventshort.Source = User.Identity.Name;
-
-        //            if (eventshort.EventLocation != "VV")
-        //                throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
-
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-
-        //                conn.Open();
-
-        //                eventshort.ChangedOn = DateTime.Now;
-
-        //                eventshort.AnchorVenueShort = eventshort.AnchorVenue;
-
-        //                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
-        //                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
-
-        //                //TODO on rooms
-        //                foreach (var room in eventshort.RoomBooked)
-        //                {
-        //                    room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
-        //                    room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
-        //                }
-
-        //                //Event Title IT EN
-        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-        //                    eventshort.EventDescriptionIT = eventshort.EventDescriptionDE;
-
-        //                if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
-        //                    eventshort.EventDescriptionEN = eventshort.EventDescriptionDE;
-
-
-        //                PostgresSQLHelper.UpdateDataFromTable(conn, "eventeuracnoi", JsonConvert.SerializeObject(eventshort), eventshort.Id);
-
-        //                return Request.CreateResponse(HttpStatusCode.OK, new GenericResultExtended() { Message = "UPDATE eventshort succeeded, Id:" + eventshort.Id, Id = eventshort.Id }, "application/json");
-        //            }
-        //            //}
-        //            //else
-        //            //{
-        //            //    throw new Exception("EventShort cannot be updated");
-        //            //}
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No eventshort Data provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
-        //    }
-        //}
-
-        //// DELETE: api/EventShort/5
-        //[KeyCloakAuthorizationFilter(Roles = "VirtualVillageManager")]
-        //[HttpDelete, Route("api/EventShortVirtualVillage/{id}")]
-        //[InvalidateCacheOutput("GetReducedAsync")]
-        //[ApiExplorerSettings(IgnoreApi = true)]
-        //public HttpResponseMessage DeleteVirtualVillage(string id)
-        //{
-        //    try
-        //    {
-        //        if (id != null)
-        //        {
-        //            using (var conn = new NpgsqlConnection(GlobalPGConnection.PGConnectionString))
-        //            {
-
-        //                conn.Open();
-
-        //                string selectexp = "*";
-        //                string whereexp = "id ILIKE '" + id + "'";
-
-        //                var myevent = PostgresSQLHelper.SelectFromTableDataAsObject<EventShort>(conn, "eventeuracnoi", selectexp, whereexp, "", 0, null).FirstOrDefault();
-
-        //                if (myevent.EventLocation == "VV")
-        //                {
-        //                    PostgresSQLHelper.DeleteDataFromTable(conn, "eventeuracnoi", id);
-
-        //                    return Request.CreateResponse(HttpStatusCode.OK, new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id }, "application/json");
-        //                }
-        //                else
-        //                {
-        //                    throw new Exception("EventShort cannot be deleted");
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new Exception("No EventShort Id provided");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
-        //    }
-        //}
-
-        private bool CheckIfUserIsOnlyInRole(string role, List<string> rolestocheck)
-        {
-            bool returnbool = false;
-
-            if (User.IsInRole(role))
-                returnbool = true;
-
-            foreach(string roletocheck in rolestocheck)
-            {
-                if(User.IsInRole(roletocheck))
-                    returnbool = false;
-            }
-
-            return returnbool;
-        }
-
+   
         #endregion
 
         #region BDPRooms

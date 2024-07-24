@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
+using OdhNotifier;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -24,8 +25,8 @@ namespace OdhApiCore.Controllers.other
     [NullStringParameterActionFilter]
     public class LicenseCountController : OdhController
     {
-        public LicenseCountController(IWebHostEnvironment env, ISettings settings, ILogger<LicenseCountController> logger, QueryFactory queryFactory)
-           : base(env, settings, logger, queryFactory)
+        public LicenseCountController(IWebHostEnvironment env, ISettings settings, ILogger<LicenseCountController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 

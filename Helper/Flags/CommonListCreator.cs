@@ -2,9 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Helper
 {
@@ -52,6 +55,42 @@ namespace Helper
 
             return activityIds;
         }
+
+        public static List<string> CreateStringListFromStringParameter(string? inputstring, string separator = ",", IDStyle transformto = IDStyle.mixed)
+        {
+            List<string> listToReturn = new List<string>();
+
+            if (!String.IsNullOrEmpty(inputstring))
+            {
+                //remove last separator if there
+                if (inputstring.Substring(inputstring.Length - 1, 1) == ",")
+                    inputstring = inputstring.Substring(0, inputstring.Length - 1);
+
+                //Method 1, check if there are quotes inside
+                //Single Quotes?
+                //var splittedfilter = Regex.Split(inputstring, ",(?=(?:[^']*'[^']*')*[^']*$)");
+                //Double Quotes?
+                //var splittedfilter = Regex.Split(inputstring, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                //TODO Remove brackets
+
+                //Method 2 ChatGPT Regex
+                Regex splitregx = new Regex("(?:" + separator + "|\\s*(?:\"([^\"]*)\"|'([^']*)'|([^,]*)))");
+                var substrings = splitregx.Split(inputstring);
+
+                foreach (var filter in substrings.ToList().Where(x => !String.IsNullOrEmpty(x)))
+                {                    
+                        if (transformto == IDStyle.lowercase)
+                            listToReturn.Add(filter.ToLower());
+                        if (transformto == IDStyle.uppercase)
+                            listToReturn.Add(filter.ToUpper());
+                        else
+                            listToReturn.Add(filter);                 
+                }
+            }
+
+            return listToReturn;
+        }
+
 
 
         public static List<string> CreateSmgPoiSourceList(string? sourcestring)

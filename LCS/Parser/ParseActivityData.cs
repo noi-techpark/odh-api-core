@@ -17,7 +17,7 @@ namespace LCS
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Get the Activity Detail Information
-        public static PoiBaseInfos GetActivitiesDetailLTS(string activitytype, string rid, PoiBaseInfos hike, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static PoiBaseInfos GetActivitiesDetailLTS(string activitytype, string rid, PoiBaseInfos hike, string serviceurl, string ltsuser, string ltspswd, string ltsmsgpswd)
         {
             List<string> myactivitylist = new List<string>();
             myactivitylist.Add(rid);
@@ -27,7 +27,7 @@ namespace LCS
             var myactivityrequestit = GetLCSRequests.GetActivityDetailRequest("it", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
             var myactivityrequesten = GetLCSRequests.GetActivityDetailRequest("en", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "0", myactivitylist, "SMG", ltsmsgpswd);
 
-            GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(ltsuser, ltspswd);
+            GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(serviceurl, ltsuser, ltspswd);
             var myactivityresponsede = myactivitysearch.GetActivityDetail(myactivityrequestde);
             var myactivityresponseit = myactivitysearch.GetActivityDetail(myactivityrequestit);
             var myactivityresponseen = myactivitysearch.GetActivityDetail(myactivityrequesten);
@@ -764,7 +764,7 @@ namespace LCS
 
             hike.OwnerRid = theactivityde.Owner.RID;
 
-            List<string> arearidlist = new List<string>();
+            HashSet<string> arearidlist = new HashSet<string>();
 
             if (theactivityde.Memberships != null)
             {
@@ -782,7 +782,7 @@ namespace LCS
                     }
                 }
 
-                hike.AreaId = arearidlist.ToList();
+                hike.AreaId = arearidlist;
             }
 
             //IDM Favorite over Area

@@ -14,8 +14,50 @@ namespace Helper
 {
     public class ODHTypeHelper
     {
+        public static IEnumerable<string> GetAllTypeStrings()
+        {
+            return new List<string>()
+            {
+                "accommodation",
+                "accommodationroom",
+                "ltsactivity",
+                "ltspoi",
+                "ltsgastronomy",
+                "event",
+                "odhactivitypoi",
+                "package",
+                "measuringpoint",
+                "webcam",
+                "article",
+                "venue",
+                "eventshort",
+                "experiencearea",
+                "metaregion",
+                "region",
+                "tourismassociation",
+                "municipality",
+                "district",
+                "skiarea",
+                "skiregion",
+                "area",
+                "wineaward",
+                "odhtag",
+                "publisher",
+                "source",
+                "weatherhistory",
+                "odhmetadata",
+                "tag",
+                "weatherdistrict",
+                "weather",
+                "weatherforecast",
+                "weatherrealtime",
+                "snowreport"
+            };
+        }
+
+
         #region TypeObject2TypeStringANDPGTable
-     
+
         /// <summary>
         /// Translates a ODH Type Object to the Type (Metadata) as String
         /// </summary>
@@ -28,16 +70,16 @@ namespace Helper
             {
                 Accommodation or AccommodationLinked => "accommodation",
                 AccoRoom or AccommodationRoomLinked => "accommodationroom",
-                LTSActivity or LTSActivityLinked => "ltsactivity",
-                LTSPoi or LTSPoiLinked => "ltspoi",
-                Gastronomy or GastronomyLinked => "ltsgastronomy",
+                LTSActivityLinked => "ltsactivity",
+                LTSPoiLinked => "ltspoi",
+                GastronomyLinked => "ltsgastronomy",
                 Event or EventLinked => "event",
                 ODHActivityPoi or ODHActivityPoiLinked => "odhactivitypoi",
                 Package or PackageLinked => "package",
                 Measuringpoint or MeasuringpointLinked => "measuringpoint",
                 WebcamInfo or WebcamInfoLinked => "webcam",
                 Article or ArticlesLinked => "article",
-                //DDVenue => "venue",
+                DDVenue => "venue",
                 Venue or VenueLinked => "venue",
                 EventShort or EventShortLinked => "eventshort",
                 ExperienceArea or ExperienceAreaLinked => "experiencearea",
@@ -50,13 +92,17 @@ namespace Helper
                 SkiRegion or SkiRegionLinked => "skiregion",
                 Area or AreaLinked => "area",
                 Wine or WineLinked => "wineaward",
-                SmgTags or ODHTagLinked => "odhtag",
+                ODHTags or ODHTagLinked => "odhtag",
                 Publisher or PublisherLinked => "publisher",
+                Source or SourceLinked => "source",
                 WeatherHistory or WeatherHistoryLinked => "weatherhistory",
                 Weather or WeatherLinked => "weather",
                 BezirksWeather or WeatherDistrictLinked => "weatherdistrict",
+                WeatherForecast or WeatherForecastLinked => "weatherforecast",
+                WeatherRealTimeLinked or WeatherRealTimeLinked => "weatherrealtime",
                 TourismMetaData => "odhmetadata",
-                //BezirksWeather or DistrictWeatherLinked => "weatherdistrict",
+                TagLinked => "tag",                
+                SnowReportBaseData => "snowreport",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -73,16 +119,16 @@ namespace Helper
             {
                 Accommodation or AccommodationLinked => "accommodations",
                 AccoRoom or AccommodationRoomLinked => "accommodationrooms",
-                LTSActivity or LTSActivityLinked => "activities",
-                LTSPoi or LTSPoiLinked => "pois",
-                Gastronomy or GastronomyLinked => "gastronomies",
+                LTSActivityLinked => "activities",
+                LTSPoiLinked => "pois",
+                GastronomyLinked => "gastronomies",
                 Event or EventLinked => "events",
                 ODHActivityPoi or ODHActivityPoiLinked => "smgpois",
                 Package or PackageLinked => "packages",
                 Measuringpoint or MeasuringpointLinked => "measuringpoints",
                 WebcamInfo or WebcamInfoLinked => "webcams",
                 Article or ArticlesLinked => "articles",
-                //DDVenue => "venues",
+                DDVenue => "venues",
                 Venue or VenueLinked => "venues_v2",
                 EventShort or EventShortLinked => "eventeuracnoi",
                 ExperienceArea or ExperienceAreaLinked => "experienceareas",
@@ -97,8 +143,10 @@ namespace Helper
                 Wine or WineLinked => "wines",
                 ODHTags or ODHTagLinked => "smgtags",
                 Publisher or PublisherLinked => "publishers",
+                Source or SourceLinked => "sources",
                 WeatherHistory or WeatherHistoryLinked => "weatherdatahistory",
                 TourismMetaData => "metadata",
+                TagLinked => "tags",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -141,8 +189,10 @@ namespace Helper
                 "wineaward" => "wines",
                 "odhtag" => "smgtags",
                 "publisher" => "publishers",
+                "source" => "sources",
                 "weatherhistory" => "weatherdatahistory",
                 "odhmetadata" => "metadata",
+                "tag" => "tags",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -181,8 +231,15 @@ namespace Helper
                 "wineaward" => typeof(WineLinked),
                 "odhtag" => typeof(ODHTagLinked),
                 "publisher" => typeof(PublisherLinked),
+                "source" => typeof(SourceLinked),
                 "weatherhistory" => typeof(WeatherHistoryLinked),
+                "weather" => typeof(WeatherLinked),
+                "weatherdistrict" => typeof(WeatherDistrictLinked),
+                "weatherforecast" => typeof(WeatherForecastLinked),
+                "weatherrealtime" => typeof(WeatherRealTimeLinked),
+                "snowreport" => typeof(SnowReportBaseData),
                 "odhmetadata" => typeof(TourismMetaData),
+                "tag" => typeof(TagLinked),
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -225,8 +282,10 @@ namespace Helper
                 "wines" => "wineaward",
                 "smgtags" => "odhtag",
                 "publishers" => "publisher",
+                "sources" => "source",
                 "weatherdatahistory" => "weatherhistory",
                 "metadata" => "odhmetadata",
+                "tags" => "tag",
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -266,8 +325,10 @@ namespace Helper
                 "wines" => typeof(WineLinked),
                 "smgtags" => typeof(ODHTagLinked),
                 "publishers" => typeof(PublisherLinked),
+                "sources" => typeof(SourceLinked),
                 "weatherdatahistory" => typeof(WeatherHistoryLinked),
                 "metadata" => typeof(TourismMetaData),
+                "tags" => typeof(TagLinked),
                 _ => throw new Exception("not known table name")
             };
         }
@@ -313,6 +374,9 @@ namespace Helper
                 "odhtag" => id.ToLower(),
                 "weatherhistory" => id,
                 "odhmetadata" => id.ToLower(),
+                "tag" => id.ToLower(),
+                "publisher" => id.ToLower(),
+                "source" => id.ToLower(),
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -350,8 +414,10 @@ namespace Helper
                 "wineaward" => JsonConvert.DeserializeObject<WineLinked>(raw.Value)!,
                 "odhtag" => JsonConvert.DeserializeObject<ODHTagLinked>(raw.Value)!,
                 "publisher" => JsonConvert.DeserializeObject<PublisherLinked>(raw.Value)!,
+                "source" => JsonConvert.DeserializeObject<SourceLinked>(raw.Value)!,
                 "weatherhistory" => JsonConvert.DeserializeObject<WeatherHistoryLinked>(raw.Value)!,
                 "odhmetadata" => JsonConvert.DeserializeObject<TourismMetaData>(raw.Value)!,
+                "tag" => JsonConvert.DeserializeObject<TagLinked>(raw.Value)!,
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -400,7 +466,6 @@ namespace Helper
             return odhtypes.ToArray();
         }
 
-
         public static Func<string, string[]> TranslateTypeToSearchField(string odhtype)
         {
             return odhtype switch
@@ -408,11 +473,11 @@ namespace Helper
                 "accommodation" => PostgresSQLWhereBuilder.AccoTitleFieldsToSearchFor,
                 "accommodationroom" => PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor,
                 "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
-                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
+                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea" or "webcam" or "venue"
                 => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
                 //"measuringpoint" => PostgresSQLWhereBuilder.,
-                "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
-                "venue" => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
+//                "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
+                //"venue" => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
                 //"eventshort" => "eventeuracnoi",           
                 //"area" => "areas",
                 //"wineaward" => "wines",
@@ -420,8 +485,51 @@ namespace Helper
             };
         }
 
-        #endregion
+        public static string TranslateTypeToEndPoint(string odhtype)
+        {
+            return odhtype switch
+            {
+                "accommodation" => "Accommodation",
+                "odhactivitypoi" => "ODHActivityPoi",
+                "event" => "Event",
+                "region" => "Region",
+                "skiarea" => "SkiArea",
+                "tourismassociation" => "TourismAssociation",
+                "webcam" => "WebcamInfo",
+                "venue" => "Venue",
+                "accommodationroom" => "AccommodationRoom",
+                "package" => "Package",
+                "ltsactivity" => "Activity",
+                "ltspoi" => "Poi",
+                "ltsgastronomy" => "Gastronomy",
+                "measuringpoint" => "Weather/Measuringpoint",
+                "article" => "Article",
+                "municipality" => "Municipality",
+                "district" => "District",
+                "skiregion" => "SkiRegion",
+                "eventshort" => "EventShort",
+                "experiencearea" => "ExperienceArea",
+                "metaregion" => "MetaRegion",
+                "area" => "Area",
+                "wineaward" => "Wine",
+                "odhmetadata" => "MetaData",
+                "odhtag" => "ODHTag",
+                "tag" => "Tag",
+                "publisher" => "Publisher",
+                "source" => "Source",
+                "weatherhistory" => "WeatherHistory",
+                "weatherdistrict" => "Weather/District",
+                "weatherforecast" => "Weather/Forecast",
+                "weatherrealtime" => "Weather/Realtime",
+                "snowreport" => "Weather/SnowReport",
+                "weather" => "Weather",
 
+                _ => throw new Exception("not known odh type")
+            };
+        }
+
+
+        #endregion
 
         //public static Func<string, string[]> TranslateTypeToSearchField(string odhtype, bool searchontext = false)
         //{
@@ -441,8 +549,6 @@ namespace Helper
         //        _ => throw new Exception("not known odh type")
         //    };
         //}
-
-
 
         public static string TranslateTypeToTitleField(string odhtype, string language)
         {

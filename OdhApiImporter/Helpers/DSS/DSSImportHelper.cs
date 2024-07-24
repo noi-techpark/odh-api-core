@@ -17,6 +17,7 @@ using System.Linq;
 using System.Xml.Linq;
 using ServiceReferenceLCS;
 using System.Collections;
+using Helper.Generic;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -170,7 +171,7 @@ namespace OdhApiImporter.Helpers.DSS
                     {
                         if (parsedobject.GpsInfo.FirstOrDefault()?.Latitude != 0 && parsedobject.GpsInfo.FirstOrDefault()?.Longitude != 0)
                         {
-                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault()!.Latitude, parsedobject.GpsInfo.FirstOrDefault()!.Longitude, 30000);
+                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault()!.Latitude, parsedobject.GpsInfo.FirstOrDefault()!.Longitude, 10000);
 
                             if (district != null)
                             {
@@ -180,6 +181,10 @@ namespace OdhApiImporter.Helpers.DSS
                                 parsedobject.TourismorganizationId = locinfo.TvInfo?.Id;
 
                                 getlocationfromarea = false;
+                            }
+                            else
+                            {
+                                parsedobject.LocationInfo = new LocationInfoLinked();
                             }
                         }
                     }
@@ -193,7 +198,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                         if (area?.Id != null)
                         {
-                            parsedobject.AreaId = new List<string>() { area.Id };
+                            parsedobject.AreaId = new HashSet<string>() { area.Id };
                             if (parsedobject.LocationInfo == null)
                                 parsedobject.LocationInfo = new LocationInfoLinked();
 
@@ -321,7 +326,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                     //Special get all Taglist and traduce it on import
 
-                    await GenericTaggingHelper.AddMappingToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
+                    await GenericTaggingHelper.AddTagsToODHActivityPoi(parsedobject, settings.JsonConfig.Jsondir);
                 }
 
                 var sourceid = (string)DSSImportUtil.GetSourceId(item, entitytype);
@@ -364,12 +369,12 @@ namespace OdhApiImporter.Helpers.DSS
 
                 foreach (var idtodelete in idstodelete)
                 {
-                    var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+                    var deletedisableresult = await DeleteOrDisableData<ODHActivityPoiLinked>(idtodelete, false);
 
                     if (deletedisableresult.Item1 > 0)
-                        WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
+                        WriteLog.LogToConsole(idtodelete, "dataimport", "deactivate.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
                     else if (deletedisableresult.Item2 > 0)
-                        WriteLog.LogToConsole(idtodelete, "dataimport", "single.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
+                        WriteLog.LogToConsole(idtodelete, "dataimport", "deactivate.dss" + entitytype, new ImportLog() { sourceid = idtodelete, sourceinterface = "dss." + entitytype, success = true, error = "" });
 
 
                     deleteresult = deleteresult + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -377,7 +382,7 @@ namespace OdhApiImporter.Helpers.DSS
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "deactivate.dss" + entitytype, new ImportLog() { sourceid = "", sourceinterface = "dss." + entitytype, success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "deactivate.dss." + entitytype, new ImportLog() { sourceid = "", sourceinterface = "dss." + entitytype, success = false, error = ex.Message });
 
                 errorresult = errorresult + 1;
             }
@@ -425,6 +430,9 @@ namespace OdhApiImporter.Helpers.DSS
                 odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoi>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
 
                 var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid, "dss." + entitytype + ".import" , importerURL);
+
+                //Publishedon Helper?
+
 
                 //Hack insert also in Activity table
                 await InsertInLegacyActivityTable(odhactivitypoi);
@@ -477,7 +485,7 @@ namespace OdhApiImporter.Helpers.DSS
             var activity = TransformODHActivityPoiToActivity(odhactivitypoi);
             
             //Insert in Table
-            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, "activities", "dss." + entitytype + ".import", importerURL);
+            var pgcrudresult = await QueryFactory.UpsertData<LTSActivityLinked>(activity, new DataInfo("activities", CRUDOperation.Update),new EditInfo("dss." + entitytype + ".import", importerURL), new CRUDConstraints(), new CompareConfig(false,false));
 
             return pgcrudresult;
         }

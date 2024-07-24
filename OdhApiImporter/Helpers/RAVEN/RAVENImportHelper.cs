@@ -4,10 +4,10 @@
 
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Microsoft.AspNetCore.Mvc;
 using OdhNotifier;
 using RAVEN;
-using ServiceReferenceLCS;
 using SqlKata;
 using SqlKata.Execution;
 using System;
@@ -50,24 +50,29 @@ namespace OdhApiImporter.Helpers
             switch (datatype.ToLower())
             {
                 case "accommodation":
-                    mydata = await GetDataFromRaven.GetRavenData<AccommodationLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    var updateresultstomerge = new List<UpdateDetail>();
+                    
+                    mydata = await GetDataFromRaven.GetRavenData<AccommodationRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<AccommodationLinked, AccommodationLinked>((AccommodationLinked)mydata, TransformToPGObject.GetAccommodationPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<AccommodationRaven, AccommodationLinked>((AccommodationRaven)mydata, TransformToPGObject.GetAccommodationPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((AccommodationLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations", true, true);
+                    var myupdateresultacco = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations", true, true, true);
+                    updateresultstomerge.Add(myupdateresultacco);
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<AccommodationLinked>((AccommodationLinked)mypgdata) == true)
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((AccommodationLinked)mypgdata, ReduceDataTransformer.CopyLTSAccommodationToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations");
-                    }               
+                        updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations", false, false, false);
+                    }
+
+                    bool roomschanged = false;
 
                     //UPDATE ACCOMMODATIONROOMS CAUTION this only gets rooms from hgv if both sources exists, Rooms from lts are 
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?getall=true&accoid=");
@@ -91,8 +96,9 @@ namespace OdhApiImporter.Helpers
                             {
                                 var roomdeleteresult = await DeleteRavenObjectFromPG<AccommodationRoomLinked>(roomid, "accommodationrooms", false);
 
-                                //Merge with updateresult
-                                myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, roomdeleteresult });
+                                updateresultstomerge.Add(roomdeleteresult);
+
+                                roomschanged = true;
                             }
                         }
                     }
@@ -104,6 +110,7 @@ namespace OdhApiImporter.Helpers
                         if (((AccommodationLinked)mypgdata).AccoRoomInfo != null && ((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
                             roomsourcecheck = Tuple.Create("hgv", true);
 
+                  
                         foreach (var myroomdata in myroomdatalist)
                         {
                             var mypgroomdata = TransformToPGObject.GetPGObject<AccommodationRoomLinked, AccommodationRoomLinked>((AccommodationRoomLinked)myroomdata, TransformToPGObject.GetAccommodationRoomPGObject);
@@ -111,30 +118,35 @@ namespace OdhApiImporter.Helpers
                             //Add the PublishedOn Logic
                             ((AccommodationRoomLinked)mypgroomdata).CreatePublishedOnList(null, roomsourcecheck);
 
-                            var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms", true, true);
+                            var accoroomresult = await SaveRavenObjectToPG<AccommodationRoomLinked>((AccommodationRoomLinked)mypgroomdata, "accommodationrooms", true, true, true);
                        
-                            //Merge with updateresult
-                            myupdateresult = GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail> { myupdateresult, accoroomresult, });
-                        }
-                    }                                      
-                    
+                            if(accoroomresult.objectchanged > 0)
+                                roomschanged = true;
+
+                            updateresultstomerge.Add(accoroomresult);
+                        }                        
+                    }
+
+                    //Merge with updateresult
+                    myupdateresult = GenericResultsHelper.MergeUpdateDetail(updateresultstomerge);
+
                     //Remove Exception not all accommodations have rooms
                     //else
                     //    throw new Exception("No data found!");
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, new Dictionary<string, bool>() { { "roomschanged", roomschanged } });
 
                     break;
 
                 case "gastronomy":
-                    mydata = await GetDataFromRaven.GetRavenData<GastronomyLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<GastronomyRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<GastronomyLinked, GastronomyLinked>((GastronomyLinked)mydata, TransformToPGObject.GetGastronomyPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<GastronomyRaven, GastronomyLinked>((GastronomyRaven)mydata, TransformToPGObject.GetGastronomyPGObject);
                     else
                         throw new Exception("No data found!");
 
-                    myupdateresult = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies");
+                    myupdateresult = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinked)mypgdata, "gastronomies", false, false, true);
 
                     //No need for Publishedon, neither comparing data since this data is from a deprecated endpoint
 
@@ -143,7 +155,7 @@ namespace OdhApiImporter.Helpers
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((GastronomyLinked)mypgdata, ReduceDataTransformer.CopyLTSGastronomyToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinkedReduced)reducedobject, "gastronomies");
+                        updateresultreduced = await SaveRavenObjectToPG<GastronomyLinked>((GastronomyLinkedReduced)reducedobject, "gastronomies", false, false, false);
                     }
 
                     break;
@@ -155,7 +167,7 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    myupdateresult = await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinked)mypgdata, "activities");
+                    myupdateresult = await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinked)mypgdata, "activities", false, false, true);
 
                     //No need for Publishedon, neither comparing data since this data is from a deprecated endpoint
 
@@ -164,7 +176,7 @@ namespace OdhApiImporter.Helpers
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((LTSActivityLinked)mypgdata, ReduceDataTransformer.CopyLTSActivityToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinkedReduced)reducedobject, "activities");
+                        updateresultreduced = await SaveRavenObjectToPG<LTSActivityLinked>((LTSActivityLinkedReduced)reducedobject, "activities", false, false, false);
                     }
 
                     break;
@@ -176,7 +188,7 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    myupdateresult = await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois");
+                    myupdateresult = await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinked)mypgdata, "pois", false, false, true);
 
                     //No need for Publishedon, neither comparing data since this data is from a deprecated endpoint
 
@@ -185,7 +197,7 @@ namespace OdhApiImporter.Helpers
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((LTSPoiLinked)mypgdata, ReduceDataTransformer.CopyLTSPoiToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinkedReduced)reducedobject, "pois");
+                        updateresultreduced = await SaveRavenObjectToPG<LTSPoiLinked>((LTSPoiLinkedReduced)reducedobject, "pois", false, false, false);
                     }
 
                     break;
@@ -197,15 +209,20 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
                     
+                    //Special Operations
+
                     //Special get all Taglist and traduce it on import
-                    await GenericTaggingHelper.AddMappingToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+                    await GenericTaggingHelper.AddTagsToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+
+                    //TODO Recreate LocationInfo
+                    //TODO Recreate Categories
 
                     //Add the PublishedOn Logic
                     //Exception here all Tags with autopublish has to be passed
                     var autopublishtaglist = await GenericTaggingHelper.GetAllAutoPublishTagsfromJson(settings.JsonConfig.Jsondir);
                     ((ODHActivityPoiLinked)mypgdata).CreatePublishedOnList(autopublishtaglist);
 
-                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true, true);
+                    myupdateresult = await SaveRavenObjectToPG<ODHActivityPoiLinked>((ODHActivityPoiLinked)mypgdata, "smgpois", true, true, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
                     myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
@@ -215,22 +232,22 @@ namespace OdhApiImporter.Helpers
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((ODHActivityPoiLinked)mypgdata, ReduceDataTransformer.CopyLTSODHActivtyPoiToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<ODHActivityPoiLinked>((LTSODHActivityPoiReduced)reducedobject, "smgpois");
+                        updateresultreduced = await SaveRavenObjectToPG<ODHActivityPoiLinked>((LTSODHActivityPoiReduced)reducedobject, "smgpois", false, false, false);
                     }
 
                     break;
 
                 case "event":
-                    mydata = await GetDataFromRaven.GetRavenData<EventLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<EventRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<EventLinked, EventLinked>((EventLinked)mydata, TransformToPGObject.GetEventPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<EventRaven, EventLinked>((EventRaven)mydata, TransformToPGObject.GetEventPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((EventLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events", true, true);
+                    myupdateresult = await SaveRavenObjectToPG<EventLinked>((EventLinked)mypgdata, "events", true, true, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
                     myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
@@ -240,169 +257,169 @@ namespace OdhApiImporter.Helpers
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((EventLinked)mypgdata, ReduceDataTransformer.CopyLTSEventToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<EventLinked>((EventLinkedReduced)reducedobject, "events", true);
+                        updateresultreduced = await SaveRavenObjectToPG<EventLinked>((EventLinkedReduced)reducedobject, "events", false, false, false);
                     }
 
                     break;
 
                 case "webcam":
-                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "WebcamInfo/");
+                    mydata = await GetDataFromRaven.GetRavenData<WebcamInfoRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "WebcamInfo/");
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<WebcamInfoLinked, WebcamInfoLinked>((WebcamInfoLinked)mydata, TransformToPGObject.GetWebcamInfoPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<WebcamInfoRaven, WebcamInfoLinked>((WebcamInfoRaven)mydata, TransformToPGObject.GetWebcamInfoPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((WebcamInfoLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams", true);
+                    myupdateresult = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinked)mypgdata, "webcams", true, false, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     //Check if data has to be reduced and save it
                     if (ReduceDataTransformer.ReduceDataCheck<WebcamInfoLinked>((WebcamInfoLinked)mypgdata) == true)
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((WebcamInfoLinked)mypgdata, ReduceDataTransformer.CopyLTSWebcamInfoToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinkedReduced)reducedobject, "webcams");
+                        updateresultreduced = await SaveRavenObjectToPG<WebcamInfoLinked>((WebcamInfoLinkedReduced)reducedobject, "webcams", false, false, false);
                     }
 
                     break;
 
                 case "metaregion":
-                    mydata = await GetDataFromRaven.GetRavenData<MetaRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<MetaRegion>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<MetaRegionLinked, MetaRegionLinked>((MetaRegionLinked)mydata, TransformToPGObject.GetMetaRegionPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<MetaRegion, MetaRegionLinked>((MetaRegion)mydata, TransformToPGObject.GetMetaRegionPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((MetaRegionLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions", true, true);
+                    myupdateresult = await SaveRavenObjectToPG<MetaRegionLinked>((MetaRegionLinked)mypgdata, "metaregions", true, true, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
                 case "region":
-                    mydata = await GetDataFromRaven.GetRavenData<RegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<Region>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<RegionLinked, RegionLinked>((RegionLinked)mydata, TransformToPGObject.GetRegionPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<Region, RegionLinked>((Region)mydata, TransformToPGObject.GetRegionPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((RegionLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions", true, true);
+                    myupdateresult = await SaveRavenObjectToPG<RegionLinked>((RegionLinked)mypgdata, "regions", true, true, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
                 case "tv":
-                    mydata = await GetDataFromRaven.GetRavenData<TourismvereinLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "TourismAssociation/");
+                    mydata = await GetDataFromRaven.GetRavenData<Tourismverein>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "TourismAssociation/");
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<TourismvereinLinked, TourismvereinLinked>((TourismvereinLinked)mydata, TransformToPGObject.GetTourismAssociationPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<Tourismverein, TourismvereinLinked>((Tourismverein)mydata, TransformToPGObject.GetTourismAssociationPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((TourismvereinLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs", true, true);
+                    myupdateresult = await SaveRavenObjectToPG<TourismvereinLinked>((TourismvereinLinked)mypgdata, "tvs", true, true, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
                 case "municipality":
-                    mydata = await GetDataFromRaven.GetRavenData<MunicipalityLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<Municipality>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<MunicipalityLinked, MunicipalityLinked>((MunicipalityLinked)mydata, TransformToPGObject.GetMunicipalityPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<Municipality, MunicipalityLinked>((Municipality)mydata, TransformToPGObject.GetMunicipalityPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((MunicipalityLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities", true);
+                    myupdateresult = await SaveRavenObjectToPG<MunicipalityLinked>((MunicipalityLinked)mypgdata, "municipalities", true, false, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
                 case "district":
-                    mydata = await GetDataFromRaven.GetRavenData<DistrictLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<District>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<DistrictLinked, DistrictLinked>((DistrictLinked)mydata, TransformToPGObject.GetDistrictPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<District, DistrictLinked>((District)mydata, TransformToPGObject.GetDistrictPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((DistrictLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts", true);
+                    myupdateresult = await SaveRavenObjectToPG<DistrictLinked>((DistrictLinked)mypgdata, "districts", true, false, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
                 case "experiencearea":
-                    mydata = await GetDataFromRaven.GetRavenData<ExperienceAreaLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<ExperienceArea>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<ExperienceAreaLinked, ExperienceAreaLinked>((ExperienceAreaLinked)mydata, TransformToPGObject.GetExperienceAreaPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<ExperienceArea, ExperienceAreaLinked>((ExperienceArea)mydata, TransformToPGObject.GetExperienceAreaPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((ExperienceAreaLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas", true);
+                    myupdateresult = await SaveRavenObjectToPG<ExperienceAreaLinked>((ExperienceAreaLinked)mypgdata, "experienceareas", true, false, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
                 case "skiarea":
-                    mydata = await GetDataFromRaven.GetRavenData<SkiAreaLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<SkiAreaRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<SkiAreaLinked, SkiAreaLinked>((SkiAreaLinked)mydata, TransformToPGObject.GetSkiAreaPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<SkiAreaRaven, SkiAreaLinked>((SkiAreaRaven)mydata, TransformToPGObject.GetSkiAreaPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((SkiAreaLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas", true, true);
+                    myupdateresult = await SaveRavenObjectToPG<SkiAreaLinked>((SkiAreaLinked)mypgdata, "skiareas", true, true, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
                 case "skiregion":
-                    mydata = await GetDataFromRaven.GetRavenData<SkiRegionLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
+                    mydata = await GetDataFromRaven.GetRavenData<SkiRegion>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<SkiRegionLinked, SkiRegionLinked>((SkiRegionLinked)mydata, TransformToPGObject.GetSkiRegionPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<SkiRegion, SkiRegionLinked>((SkiRegion)mydata, TransformToPGObject.GetSkiRegionPGObject);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
                     ((SkiRegionLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions", true, true);
+                    myupdateresult = await SaveRavenObjectToPG<SkiRegionLinked>((SkiRegionLinked)mypgdata, "skiregions", true, true, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
@@ -416,10 +433,10 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((ArticlesLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles", true, true);
+                    myupdateresult = await SaveRavenObjectToPG<ArticlesLinked>((ArticlesLinked)mypgdata, "articles", true, true, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
@@ -430,19 +447,21 @@ namespace OdhApiImporter.Helpers
                     else
                         throw new Exception("No data found!");
 
-                    //PublishedOn Logicadded on TransformToPGObject because ODHTag not implementing ISource
 
-                    myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags", true);
+                    //LicenseInfo Logic added on TransformToPGObject because on the sinfo instance there is no license info
+                    //PublishedOn Logic added on TransformToPGObject because ODHTag not implementing ISource
+
+                    myupdateresult = await SaveRavenObjectToPG<ODHTagLinked>((ODHTagLinked)mypgdata, "smgtags", true, false, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
                     break;
 
                 case "measuringpoint":
-                    mydata = await GetDataFromRaven.GetRavenData<MeasuringpointLinked>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "Weather/Measuringpoint/");
+                    mydata = await GetDataFromRaven.GetRavenData<MeasuringpointRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "Weather/Measuringpoint/");
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<MeasuringpointLinked, MeasuringpointLinked>((MeasuringpointLinked)mydata, TransformToPGObject.GetMeasuringpointPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<MeasuringpointRaven, MeasuringpointLinked>((MeasuringpointRaven)mydata, TransformToPGObject.GetMeasuringpointPGObject);
                     else
                         throw new Exception("No data found!");
 
@@ -454,7 +473,7 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((MeasuringpointLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints", true);
+                    myupdateresult = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinked)mypgdata, "measuringpoints", true, false, true);
 
                     //Check if the Object has Changed and Push all infos to the channels
                     myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
@@ -464,7 +483,7 @@ namespace OdhApiImporter.Helpers
                     {
                         var reducedobject = ReduceDataTransformer.GetReducedObject((MeasuringpointLinked)mypgdata, ReduceDataTransformer.CopyLTSMeasuringpointToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinkedReduced)reducedobject, "measuringpoints");
+                        updateresultreduced = await SaveRavenObjectToPG<MeasuringpointLinked>((MeasuringpointLinkedReduced)reducedobject, "measuringpoints", false, false, false);
                     }
 
                     break;
@@ -488,7 +507,7 @@ namespace OdhApiImporter.Helpers
                     ((DDVenue)mypgdata).odhdata.PublishedOn = ((VenueLinked)mydata).PublishedOn.ToList();
 
                     //TODO Compare result
-                    myupdateresult = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueLinked)mydata, (DDVenue)mypgdata, "venues_v2");
+                    myupdateresult = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueLinked)mydata, (DDVenue)mypgdata, "venues_v2", true);
 
                     //Check if the Object has Changed and Push all infos to the channels
                     myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype);
@@ -499,7 +518,7 @@ namespace OdhApiImporter.Helpers
                         var reducedobject = ReduceDataTransformer.GetReducedObject((VenueLinked)mydata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
                         var reducedobjectdd = ReduceDataTransformer.GetReducedObject((DDVenue)mypgdata, ReduceDataTransformer.CopyLTSVenueToReducedObject);
 
-                        updateresultreduced = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueReduced)reducedobject, (DDVenueReduced)reducedobjectdd, "venues_v2");
+                        updateresultreduced = await SaveRavenDestinationdataObjectToPG<VenueLinked, DDVenue>((VenueReduced)reducedobject, (DDVenueReduced)reducedobjectdd, "venues_v2", false);
                     }
 
                     break;
@@ -514,10 +533,10 @@ namespace OdhApiImporter.Helpers
                     //Add the PublishedOn Logic
                     ((WineLinked)mypgdata).CreatePublishedOnList();
 
-                    myupdateresult = await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines", true);
+                    myupdateresult = await SaveRavenObjectToPG<WineLinked>((WineLinked)mypgdata, "wines", true, false, false);
 
                     //Check if the Object has Changed and Push all infos to the channels
-                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, "redactional.push");
+                    myupdateresult.pushed = await CheckIfObjectChangedAndPush(myupdateresult, mypgdata.Id, datatype, null, "redactional.push");
 
 
                     break;
@@ -527,10 +546,10 @@ namespace OdhApiImporter.Helpers
             }
 
             var mergelist = new List<UpdateDetail>() { myupdateresult };
-            
+
             if (updateresultreduced.updated != null || updateresultreduced.created != null || updateresultreduced.deleted != null)
                 mergelist.Add(updateresultreduced);
-            
+
             return Tuple.Create<string, UpdateDetail>(mypgdata.Id, GenericResultsHelper.MergeUpdateDetail(mergelist));
         }
 
@@ -550,24 +569,28 @@ namespace OdhApiImporter.Helpers
 
                     deleteresult = await DeleteRavenObjectFromPG<AccommodationLinked>(id, "accommodations", true);
                     deleteresult.pushed = await PushDeletedObject(deleteresult, id, datatype);
+                    //TODO DELETE also rooms
 
                     break;
 
                 case "gastronomy":
-                    
-                    deleteresult = await DeleteRavenObjectFromPG(id, "gastronomies", true, IdGenerator.GetIDStyle(typeof(GastronomyLinked)));
+
+                    //deleteresult = await DeleteRavenObjectFromPG(id, "gastronomies", true, IdGenerator.GetIDStyle(typeof(GastronomyLinked)));
+                    deleteresult = await DeleteRavenObjectFromPG<GastronomyLinked>(id, "gastronomies", true);
 
                     break;
 
                 case "activity":
-                    
-                    deleteresult = await DeleteRavenObjectFromPG(id, "activities", true, IdGenerator.GetIDStyle(typeof(LTSActivityLinked)));
+
+                    //deleteresult = await DeleteRavenObjectFromPG(id, "activities", true, IdGenerator.GetIDStyle(typeof(LTSActivityLinked)));
+                    deleteresult = await DeleteRavenObjectFromPG<LTSActivityLinked>(id, "activities", true);
 
                     break;
 
                 case "poi":
 
-                    deleteresult = await DeleteRavenObjectFromPG(id, "pois", true, IdGenerator.GetIDStyle(typeof(LTSPoiLinked)));
+                    //deleteresult = await DeleteRavenObjectFromPG(id, "pois", true, IdGenerator.GetIDStyle(typeof(LTSPoiLinked)));
+                    deleteresult = await DeleteRavenObjectFromPG<LTSPoiLinked>(id, "pois", true);
 
                     break;
 
@@ -694,40 +717,7 @@ namespace OdhApiImporter.Helpers
 
             return Tuple.Create<string, UpdateDetail>(id, GenericResultsHelper.MergeUpdateDetail(mergelist));
         }
-
-        /// <summary>
-        /// Save only, requires Object implementing IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="datatosave"></param>
-        /// <param name="table"></param>
-        /// <returns></returns>
-        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, new()
-        {
-            datatosave._Meta.LastUpdate = datatosave.LastChange;
-        
-            var result = await QueryFactory.UpsertData<T>(datatosave, table, "lts.push.import", "odh.importer", false, false);
-
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = 0, objectimagechanged = 0, comparedobjects = 0, pushchannels = result.pushchannels, changes = null };
-        }
-
-        /// <summary>
-        /// Save and Compare Object changes, requires Object implementing IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, IPublishedOn
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="datatosave"></param>
-        /// <param name="table"></param>
-        /// <param name="compareresult"></param>
-        /// <returns></returns>
-        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool compareresult) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
-        {
-            datatosave._Meta.LastUpdate = datatosave.LastChange;            
-
-            var result = await QueryFactory.UpsertDataAndCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult);
-
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = 0, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
-        }
-
+           
         /// <summary>
         /// Save and Compare Object and Image Changes, requires Object implementing IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, IPublishedOn and IImageGalleryAware
         /// </summary>
@@ -737,17 +727,22 @@ namespace OdhApiImporter.Helpers
         /// <param name="compareresult"></param>
         /// <param name="compareimagechange"></param>
         /// <returns></returns>
-        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool compareresult, bool compareimagechange) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IImageGalleryAware, IPublishedOn, new()
+        private async Task<UpdateDetail> SaveRavenObjectToPG<T>(T datatosave, string table, bool compareresult, bool compareimagechange, bool deletereduceddata) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, new()
         {
             datatosave._Meta.LastUpdate = datatosave.LastChange;
 
-            var result = await QueryFactory.UpsertDataAndFullCompare<T>(datatosave, table, "lts.push.import", "odh.importer", false, false, compareresult, compareimagechange);
+            //Update or Insert depending on data         
+            var result = await QueryFactory.UpsertData<T>(datatosave, new DataInfo(table, CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("lts.push.import", "odh.importer"), new CRUDConstraints(), new CompareConfig(compareresult, compareimagechange));
             
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
+            //Delete the reduced data if available
+            if(deletereduceddata)
+                await QueryFactory.DeleteData<T>(datatosave.Id + "_reduced", new DataInfo(table, CRUDOperation.Delete), new CRUDConstraints());
+
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, pushchannels = result.pushchannels, changes = result.changes };
         }
 
         //For Destinationdata Venue
-        private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table) 
+        private async Task<UpdateDetail> SaveRavenDestinationdataObjectToPG<T, V>(T datatosave, V destinationdatatosave, string table, bool deletereduceddata) 
             where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, IImageGalleryAware, new()
             where V : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo
         {
@@ -755,38 +750,46 @@ namespace OdhApiImporter.Helpers
 
             var result = await QueryFactory.UpsertDataDestinationData<T,V>(datatosave, destinationdatatosave, table, false, false, true, true);
 
-            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimageschanged, pushchannels = result.pushchannels, changes = result.changes };
+            //Delete the reduced data if available
+            if (deletereduceddata)
+                await QueryFactory.DeleteData<T>(datatosave.Id + "_reduced", new DataInfo(table, CRUDOperation.Delete), new CRUDConstraints());
+
+
+            return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, pushchannels = result.pushchannels, changes = result.changes };
         }
 
-        private async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype, string pushorigin = "lts.push")
+        private async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype, IDictionary<string,bool>? additionalpushinfo = null, string pushorigin = "lts.push")
         {
             IDictionary<string,NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
 
             //Check if data has changed and Push To all channels
             if (myupdateresult.objectchanged != null && myupdateresult.objectchanged > 0 && myupdateresult.pushchannels != null && myupdateresult.pushchannels.Count > 0)
-            {                
-                //Check if image has changed
-                bool hasimagechanged = false;
-                if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
-                    hasimagechanged = true;
+            {
+                if (additionalpushinfo == null)
+                    additionalpushinfo = new Dictionary<string, bool>();
 
-                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, hasimagechanged, false, "api", myupdateresult.pushchannels.ToList());
+                //Check if image has changed and add it to the dictionary
+                if (myupdateresult.objectimagechanged != null && myupdateresult.objectimagechanged.Value > 0)
+                    additionalpushinfo.TryAdd("imageschanged", true);
+                else
+                    additionalpushinfo.TryAdd("imageschanged", false);
+
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, additionalpushinfo, false, "api", myupdateresult.pushchannels.ToList());
             }
 
             return pushresults;
         }
-
-
-        private async Task<UpdateDetail> DeleteRavenObjectFromPG(string id, string table, bool deletereduced, IDStyle idstyle)
+        
+        private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(string id, string table, bool deletereduced) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
         {
-            var result = await QueryFactory.DeleteData(IdGenerator.TransformIDbyIdStyle(id, idstyle), table);
+            var result = await QueryFactory.DeleteData<T>(id, new DataInfo(table, CRUDOperation.Delete), new CRUDConstraints());
 
-            var reducedresult = new PGCRUDResult() { changes = null, compareobject = false, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimageschanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
+            var reducedresult = new PGCRUDResult() { changes = null, compareobject = false, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimagechanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
 
             //Check if reduced object has to be deleted
             if (deletereduced)
             {
-                reducedresult = await QueryFactory.DeleteData(IdGenerator.TransformIDbyIdStyle(id + "_reduced", idstyle), table);
+                reducedresult = await QueryFactory.DeleteData<T>(id + "_reduced", new DataInfo(table, CRUDOperation.Delete), new CRUDConstraints());
             }
 
             return new UpdateDetail()
@@ -796,35 +799,7 @@ namespace OdhApiImporter.Helpers
                 deleted = result.deleted + reducedresult.deleted,
                 error = result.error + reducedresult.error,
                 objectchanged = result.objectchanged,
-                objectimagechanged = result.objectimageschanged,
-                comparedobjects = 0,
-                pushchannels = result.pushchannels,
-                changes = result.changes
-            };
-
-        }
-
-
-        private async Task<UpdateDetail> DeleteRavenObjectFromPG<T>(string id, string table, bool deletereduced) where T : IIdentifiable, IImportDateassigneable, IMetaData, ILicenseInfo, IPublishedOn, new()
-        {
-            var result = await QueryFactory.DeleteData<T>(id, table);
-
-            var reducedresult = new PGCRUDResult() { changes = null, compareobject = false, created = 0, deleted = 0, error = 0, id = "", objectchanged = 0, objectimageschanged = 0, operation = "DELETE", pushchannels = null, updated = 0 };
-
-            //Check if redured object has to be deleted
-            if (deletereduced)
-            {
-                reducedresult = await QueryFactory.DeleteData<T>(id + "_reduced", table);
-            }
-
-            return new UpdateDetail()
-            {
-                created = result.created,
-                updated = result.updated,
-                deleted = result.deleted + reducedresult.deleted,
-                error = result.error + reducedresult.error,
-                objectchanged = result.objectchanged,
-                objectimagechanged = result.objectimageschanged,
+                objectimagechanged = result.objectimagechanged,
                 comparedobjects = 0,
                 pushchannels = result.pushchannels,
                 changes = result.changes
@@ -839,12 +814,11 @@ namespace OdhApiImporter.Helpers
             //Check if data has changed and Push To all channels
             if (myupdateresult.deleted > 0 && myupdateresult.pushchannels.Count > 0)
             {
-                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, false, true, "api", myupdateresult.pushchannels.ToList());
+                pushresults = await OdhPushnotifier.PushToPublishedOnServices(id, datatype.ToLower(), pushorigin, null, true, "api", myupdateresult.pushchannels.ToList());
             }
 
             return pushresults;
         }
-
 
         #endregion
     }

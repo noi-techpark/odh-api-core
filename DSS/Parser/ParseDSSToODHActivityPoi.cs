@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +19,7 @@ namespace DSS.Parser
         #region Lift / Slope
 
         public static ODHActivityPoiLinked ParseDSSLiftDataToODHActivityPoi(ODHActivityPoiLinked? myodhactivitypoilinked, dynamic dssitem)
-        {            
+        {
             if (myodhactivitypoilinked == null)
                 myodhactivitypoilinked = new ODHActivityPoiLinked();
 
@@ -52,10 +53,11 @@ namespace DSS.Parser
             myodhactivitypoilinked.Type = "Anderes";
             myodhactivitypoilinked.SubType = "Aufstiegsanlagen";
 
-            myodhactivitypoilinked.SmgTags = new List<string>();
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
-            myodhactivitypoilinked.SmgTags.Add("weitere aufstiegsanlagen"); //?                        
+            myodhactivitypoilinked.SmgTags = new List<string>() {
+                myodhactivitypoilinked.Type.ToLower(),
+                myodhactivitypoilinked.SubType.ToLower(),
+                "weitere aufstiegsanlagen"
+                };
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 
@@ -105,8 +107,6 @@ namespace DSS.Parser
                 }
             }
                         
-
-
             //Operationschedule (opening-times, opening-times-summer, season-summer, season-winter)
             myodhactivitypoilinked.OperationSchedule = new List<OperationSchedule>();
 
@@ -221,13 +221,14 @@ namespace DSS.Parser
             myodhactivitypoilinked.Type = "Winter";
             myodhactivitypoilinked.SubType = "Skirundtouren Pisten";
 
-            myodhactivitypoilinked.SmgTags = new List<string>();
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.Type.ToLower());
-            myodhactivitypoilinked.SmgTags.Add(myodhactivitypoilinked.SubType.ToLower());
-            myodhactivitypoilinked.SmgTags.Add("pisten");
-            myodhactivitypoilinked.SmgTags.Add("ski alpin");
-            myodhactivitypoilinked.SmgTags.Add("piste");
-            myodhactivitypoilinked.SmgTags.Add("weitere pisten"); //?            
+            myodhactivitypoilinked.SmgTags = new List<string>(){
+                myodhactivitypoilinked.Type.ToLower(),
+                myodhactivitypoilinked.SubType.ToLower(),
+                "pisten",
+                "ski alpin",
+                "piste",
+                "weitere pisten"
+            };
 
             myodhactivitypoilinked.HasLanguage = new List<string>() { "de", "it", "en" };
 
@@ -350,7 +351,6 @@ namespace DSS.Parser
 
             mywebcaminfolinked.Id = "dss_" + (string)dssitem.pid;
 
-
             ////ADD MAPPING
             var dssidmap = new Dictionary<string, string>();
 
@@ -373,44 +373,72 @@ namespace DSS.Parser
             var nameen = (string)dssitem["name"]["en"];
 
             if (!String.IsNullOrEmpty(namede))
-                mywebcaminfolinked.Webcamname.TryAddOrUpdate("de", namede);
+            {
+                Detail detailde = new Detail();
+                detailde.Language = "de";
+                detailde.Title = namede;
+                mywebcaminfolinked.Detail.TryAddOrUpdate("de", detailde);
+            }
+                
             if (!String.IsNullOrEmpty(nameit))
-                mywebcaminfolinked.Webcamname.TryAddOrUpdate("it", nameit);
+            {
+                Detail detailit = new Detail();
+                detailit.Language = "it";
+                detailit.Title = nameit;
+                mywebcaminfolinked.Detail.TryAddOrUpdate("it", detailit);
+            }
+
             if (!String.IsNullOrEmpty(nameen))
-                mywebcaminfolinked.Webcamname.TryAddOrUpdate("en", nameen);
+            {
+                Detail detailen = new Detail();
+                detailen.Language = "en";
+                detailen.Title = nameen;
+                mywebcaminfolinked.Detail.TryAddOrUpdate("en", detailen);
+            }
 
             //LOCATION
 
             List<GpsInfo> gpsinfolist = ParseDSSSlopeToODHGpsInfo(dssitem["location"], (int?)dssitem["altitude"]);
             if (gpsinfolist.Count > 0)
-                mywebcaminfolinked.GpsInfo = gpsinfolist.FirstOrDefault();
+                mywebcaminfolinked.GpsInfo = gpsinfolist;
 
             //WEBCAMIMAGE
             var webcamurl = (string)dssitem["original-image"];
-            mywebcaminfolinked.Webcamurl = webcamurl;
+            mywebcaminfolinked.WebCamProperties.WebcamUrl = webcamurl;
+
+
+            mywebcaminfolinked.ImageGallery = new List<ImageGallery>();
+
+            //Add Image in ImageGallery
+            ImageGallery image = new ImageGallery();
+
+            image.ImageName = mywebcaminfolinked.Webcamname.Keys.Count > 0 ? mywebcaminfolinked.Webcamname.First().Value : "";
+            image.ImageUrl = webcamurl;
+            image.ImageSource = "dss";
+            image.IsInGallery = true;
+            image.ListPosition = 0;
+
+            //image.ImageTags = new List<string>() { (string)dssitem["iframe"]["it"] };
+
+
+            mywebcaminfolinked.ImageGallery.Add(image);
+
 
             var webcamiframe = (string)dssitem["iframe"]["it"];
             if(!String.IsNullOrEmpty(webcamiframe))
-                mywebcaminfolinked.Streamurl = webcamiframe;
-
-
+                mywebcaminfolinked.WebCamProperties.StreamUrl = webcamiframe;
 
             //TODO showonSummer?
             mywebcaminfolinked.Active = true;
-            mywebcaminfolinked.SmgActive = true;
 
+            mywebcaminfolinked.SmgActive = mywebcaminfolinked.Active;
 
             if (mywebcaminfolinked.FirstImport == null)
                 mywebcaminfolinked.FirstImport = DateTime.Now;
 
-
             mywebcaminfolinked.WebcamId = "dss_" + (string)dssitem.pid;
 
-
-
-
-
-
+            mywebcaminfolinked.HasLanguage = mywebcaminfolinked.Detail.Keys.ToList();
 
 
             return mywebcaminfolinked;

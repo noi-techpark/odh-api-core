@@ -68,6 +68,10 @@ Custom Functions on DB
 * extract_tags
 * extract_tagkeys
 * is_valid_jsonb
+* json_2_tsrange_array
+* convert_tsrange_array_to_tsmultirange
+* json_2_ts_array
+* get_abs_eventdate_single
 
 These custom functions are used for the generated Columns
 
@@ -110,10 +114,10 @@ Set the needed environment variables
 ### using Docker
 
 go into \OdhApiCore\ folder \
-`docker-compose up` starts the odh-api appliaction on http://localhost:60209/
+`docker-compose up` starts the odh-api appliaction on http://localhost:8001/
 
 go into \OdhApiImporter\ folder \
-`docker-compose up` starts the odh-api appliaction on http://localhost:60210/
+`docker-compose up` starts the odh-api appliaction on http://localhost:8002/
 
 ### using .Net Core CLI
 
@@ -137,6 +141,70 @@ CREATE EXTENSION earthdistance;
 ```
 CREATE EXTENSION pg_trgm;
 ```
+
+Create generated columns on Postgres
+
+* bool
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_bool bool GENERATED ALWAYS AS ((data#>'{Active}')::bool)stored;
+```
+
+*string
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_string text GENERATED ALWAYS AS ((data#>>'{Source}'))stored;
+```
+
+*double
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_double DOUBLE precision GENERATED ALWAYS AS ((data#>'{Latitude}')::DOUBLE precision) stored;
+```
+
+* array (simple)
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_array text[] GENERATED ALWAYS AS (json_array_to_pg_array(data#>'{HasLanguage}')) stored;
+```
+
+* array (object)
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_array text[] GENERATED ALWAYS AS (extract_keys_from_jsonb_object_array(data#>'{Features}','Id')) stored;
+```
+
+* date
+
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_date timestamp GENERATED ALWAYS AS (text2ts(data#>>'{LastChange}')::timestamp) stored;
+```
+
+* tsarray
+```sql
+ALTER TABLE events ADD IF NOT EXISTS gen_tsarray timestamp[] GENERATED ALWAYS AS (json_2_ts_array(data#>'{EventDate}')) stored;
+```
+
+* tsrangearray
+```sql
+ALTER TABLE events ADD IF NOT EXISTS gen_tsrangearray tsrange[] GENERATED ALWAYS AS (json_2_tsrange_array(data#>'{EventDate}')) stored;
+```
+
+* tsmultirange
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_tsmultirange tsmultirange GENERATED ALWAYS AS (convert_tsrange_array_to_tsmultirange(json_2_tsrange_array(data#>'{EventDate}'))) stored;
+```
+
+* jsonb
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_jsonb jsonb GENERATED ALWAYS AS ((data#>'{SomeJsonB}')::jsonb) stored;
+```
+
+* access_based
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_access_role text[] GENERATED ALWAYS AS (calculate_access_array(data#>>'{_Meta,Source}',(data#>'{LicenseInfo,ClosedData}')::bool,(data#>'{_Meta,Reduced}')::bool)) stored;
+```
+ 
 
 Custom functions for Postgres Generated Columns creation
 
@@ -208,6 +276,232 @@ exception
      return null;  
 end; $$ 
 LANGUAGE plpgsql IMMUTABLE;
+```
+
+* json_2_ts_array
+
+```sql
+CREATE OR REPLACE FUNCTION public.json_2_ts_array(jsonarray jsonb)
+ RETURNS timestamp[]
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$ begin if jsonarray <> 'null' then return (
+  select 
+    array(
+      select 
+        (event ->> 'From')::timestamp + (event ->> 'Begin')::time        
+      from 
+        jsonb_array_elements(jsonarray) as event 
+      where 
+        (event ->> 'From')::timestamp + (event ->> 'Begin')::time < (event ->> 'To')::timestamp + (event ->> 'End')::time
+    )
+);
+else return null;
+end if;
+end;
+$function$
+;
+```
+
+* json_2_tsrange_array
+
+Used on Events, creates a TSRange Array from EventDate Json
+
+```sql
+CREATE OR REPLACE FUNCTION public.json_2_tsrange_array(jsonarray jsonb)
+ RETURNS tsrange[]
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$ begin if jsonarray <> 'null' then return (
+  select 
+    array(
+      select 
+        tsrange(
+          ( (event ->> 'From')::timestamp + (event ->> 'Begin')::time), 
+          ( (event ->> 'To')::timestamp + (event ->> 'End')::time)
+        ) 
+      from 
+        jsonb_array_elements(jsonarray) as event 
+      where 
+        (event ->> 'From')::timestamp + (event ->> 'Begin')::time < (event ->> 'To')::timestamp + (event ->> 'End')::time
+    )
+);
+else return null;
+end if;
+end;
+$function$
+```
+
+* convert_tsrange_array_to_tsmultirange
+
+```sql
+CREATE OR REPLACE FUNCTION convert_tsrange_array_to_tsmultirange(tsrange_array tsrange[])
+RETURNS tsmultirange
+LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $$
+DECLARE
+    result tsmultirange := tsmultirange();
+    tsr tsrange;
+BEGIN
+	IF tsrange_array IS NOT NULL THEN
+    -- Durchlaufen des tsrange-Arrays
+    FOREACH tsr IN ARRAY tsrange_array
+    LOOP
+        -- Hinzufügen des tsrange-Elements zum tsmultirange
+        result := result + tsmultirange(tsrange(tsr));
+    END LOOP;
+	END IF;
+
+    RETURN result;
+END;
+$$;
+```
+
+* calculate_access_array
+
+```sql
+CREATE OR REPLACE FUNCTION public.calculate_access_array(source text, closeddata bool, reduced bool)
+RETURNS text[]
+LANGUAGE plpgsql
+IMMUTABLE
+AS $function$
+begin
+-- if data is from source lts and not reduced IDM only access --
+if source = 'lts' and not reduced then return (array['IDM']);
+end if;
+-- If data is from source a22 only access A22 --
+if source = 'a22' then return (array['A22']);
+end if;
+-- if data is from source LTS and reduced give access to all others --
+if source = 'lts' and reduced and not closeddata then return (array['A22','ANONYMOUS','STA']);
+end if;
+-- if data is not from source lts and a22 and not closed data give all access --
+if source <> 'lts' and source <> 'a22' and not closeddata then return (array['A22','ANONYMOUS','IDM','STA']);
+end if;
+return (array['A22','ANONYMOUS','IDM','STA']);
+end;
+$function$
+```
+
+* get_nearest_tsrange_distance
+
+Used on Events calculates the difference between a given date and it's next Date Interval
+
+```sql
+--calculates the distance from given date
+CREATE OR REPLACE FUNCTION public.get_nearest_tsrange_distance(tsrange_array tsrange[], ts_tocalculate timestamp without time zone, sortorder text, prioritizesingledayevents bool)
+ RETURNS bigint
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$
+DECLARE    
+	result bigint;
+	intarr bigint[];
+	mytsrange tsrange;
+    tsr timestamp;
+    singledayadd int;
+
+BEGIN
+	IF tsrange_array IS NOT NULL THEN
+    -- Iterate trough Array
+    FOREACH mytsrange IN array tsrange_array
+    loop
+	    singledayadd = 0;
+	   
+	   if(prioritizesingledayevents = true) then
+	    
+	    -- if prioritiyesingledayevents is used, increase all distances for multidayevents with 1
+		     if(lower(mytsrange)::date = upper(mytsrange)::date) then
+	         	singledayadd = 0;
+	         else
+	         	singledayadd = 1;
+	         end if;
+	        
+	   end if;
+	    
+	    -- get tsrange which is matching (ongoing event) and add 0
+	    if mytsrange @> ts_tocalculate then
+           intarr := array_append(intarr, singledayadd);
+        else
+       -- check if period has already ended
+           if upper(mytsrange)::timestamp > ts_tocalculate then
+               --if period has not ended calculate distance
+               intarr := array_append(intarr, extract(epoch from (lower(mytsrange)::timestamp - ts_tocalculate))::bigint + singledayadd);
+	    	
+           end if;
+        
+       end if;
+       
+    END LOOP;
+
+      --get distance (default minimum distance is returned, desc gets the highest distance)
+	  if sortorder = 'desc' then
+	  	result = (select unnest(intarr) as x order by x desc limit 1);
+	  else
+	   result = (select unnest(intarr) as x order by x asc limit 1);
+	  end if;
+   	  
+	END IF;		
+
+    RETURN result;
+END;
+$function$
+;
+```
+
+* get_nearest_tsrange
+
+Used on Events, gets the next Date Interval to a passed date as TSRange
+
+```sql
+-- GETS the next tsrange to a given date
+CREATE OR REPLACE FUNCTION public.get_nearest_tsrange(tsrange_array tsrange[], ts_tocalculate timestamp without time zone)
+ RETURNS tsrange
+ LANGUAGE plpgsql
+ IMMUTABLE STRICT
+AS $function$
+DECLARE    
+	result tsrange;
+	distance bigint;
+    distancetemp bigint;
+	mytsrange tsrange;
+    tsr timestamp;    
+BEGIN
+	IF tsrange_array IS NOT NULL then
+	
+	distance = 9999999999;
+	-- Iterate trough Array
+    FOREACH mytsrange IN array tsrange_array
+    loop
+	    -- get tsrange which is matching (ongoing event)
+	    if mytsrange @> ts_tocalculate then
+            result = mytsrange;
+            distance = 0;
+        else
+       -- check if period has already ended
+           if upper(mytsrange)::timestamp > ts_tocalculate then
+           
+               --if period has not ended calculate distance
+               distancetemp = extract(epoch from (lower(mytsrange)::timestamp - ts_tocalculate))::bigint;
+	    	
+              if(distance > distancetemp) then
+              	distance = distancetemp;
+              	result = mytsrange;
+              end if;
+              
+           end if;
+        
+       end if;
+       
+    END LOOP;
+ 
+	END IF;		
+
+    RETURN result;
+END;
+$function$
+;
 ```
 
 ### REUSE

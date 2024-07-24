@@ -16,9 +16,9 @@ namespace LCS
 {
     public class GetLCSDataREST
     {
-        public static async Task<XDocument> GetDataAsXML(string user, string pswd, string method, XElement request)
+        public static async Task<XDocument> GetDataAsXML(string serviceurl, string user, string pswd, string method, XElement request)
         {
-            string requesturl = @"https://lcs.lts.it/api/data.svc/xml/" + method;
+            string requesturl = serviceurl + "/xml/" + method;
 
             HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
 
@@ -35,9 +35,9 @@ namespace LCS
             return XDocument.Parse(responsecontent);
         }
 
-        public static async Task<JObject> GetDataAsJSON(string user, string pswd, string method, XElement request)
+        public static async Task<JObject> GetDataAsJSON(string serviceurl, string user, string pswd, string method, XElement request)
         {
-            string requesturl = @"https://lcs.lts.it/api/data.svc/xml/" + method;
+            string requesturl = serviceurl + "/xml/" + method;
 
             HttpClient myclient = new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate });
 

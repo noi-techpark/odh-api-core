@@ -47,7 +47,8 @@ namespace Helper
                         altitudemin: 0, altitudemax: 0,
                         activefilter: null, smgactivefilter: true, publishedonlist: new List<string>(), sourcelist: new List<string>(),
                         searchfilter: null, language: null, lastchange: null, languagelist: new List<string>(),
-                        filterClosedData: false, reducedData: false)
+                        additionalfilter: null,
+                        userroles: new List<string>(){ "IDM" })
                   .OrderByRaw(orderby);
 
             var data = await query.GetAsync<string>();
@@ -103,6 +104,29 @@ namespace Helper
             }
         }
 
+        public static async Task GenerateJSONODHTagCategoriesList(QueryFactory queryFactory, string jsondir, string jsonName)
+        {
+            var serializer = new JsonSerializer();
+
+            var query =
+                queryFactory.Query()
+                  .SelectRaw("data")
+                  .From("smgtags")
+                  .WhereRaw("data->'ValidForEntity' ? $$", "odhactivitypoi")
+                  .WhereRaw("data->>'DisplayAsCategory' = $$", "true");
+
+            var datafirst = await query.GetObjectListAsync<ODHTagLinked>();
+
+            var data = datafirst.Select(x => new CategoriesTags() { Id = x.Id, TagName = x.TagName }).ToList();
+
+            //Save json
+            string fileName = Path.Combine(jsondir, $"{jsonName}.json");
+            using (var writer = File.CreateText(fileName))
+            {
+                serializer.Serialize(writer, data);
+            }
+        }
+        
         public static async Task GenerateJSONLocationlist(QueryFactory queryFactory, string jsondir, string jsonName)
         {
             var serializer = new JsonSerializer();
@@ -145,6 +169,12 @@ namespace Helper
     {
         public string Id { get; set; }
         public IDictionary<string, bool> PublishDataWithTagOn { get; set; }
+    }
+
+    public class CategoriesTags
+    {
+        public string Id { get; set; }
+        public IDictionary<string, string> TagName { get; set; }
     }
 
     public class LocationList

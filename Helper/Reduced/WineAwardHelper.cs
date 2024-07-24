@@ -23,7 +23,8 @@ namespace Helper
                 string select = "data#>>'\\{Id\\}' as Id, data#>>'\\{CompanyId\\}' as CompanyId, (data#>>'\\{Detail,de,Title\\}') as Name";
 
                 var query = QueryFactory.Query("wines")
-                        .SelectRaw(select);
+                        .SelectRaw(select)  //--> to test
+                        .Where("gen_active", true);
 
                 var data =
                     await query

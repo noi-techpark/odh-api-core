@@ -15,7 +15,7 @@ namespace DataModel
         public string to { get; set; }
         public FCMNotification notification { get; set; }
         public dynamic data { get; set; }
-    }
+    }    
 
     public class FCMNotification
     {
@@ -24,5 +24,17 @@ namespace DataModel
         public string? sound { get; set; }
         public string? link { get; set; }
         public string? icon { get; set; }
-    }    
+    }
+
+    public class FCMessageV2
+    {
+        public FCMessageBodyV2 message { get; set; }        
+    }
+
+    public class FCMessageBodyV2
+    {
+        public string topic { get; set; }
+        public FCMNotification notification { get; set; }
+        public dynamic data { get; set; }
+    }
 }

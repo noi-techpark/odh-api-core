@@ -20,6 +20,10 @@ using SqlKata.Execution;
 using OdhApiCore.Filters;
 using OdhApiCore.GenericHelpers;
 using AspNetCore.CacheOutput;
+using OdhNotifier;
+using Amazon.S3.Transfer;
+using Amazon.S3;
+using Helper.S3;
 
 namespace OdhApiCore.Controllers.other
 {
@@ -29,8 +33,8 @@ namespace OdhApiCore.Controllers.other
     {        
         private readonly ISettings settings;
 
-        public JsonGeneratorController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public JsonGeneratorController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }
@@ -117,6 +121,25 @@ namespace OdhApiCore.Controllers.other
             }
         }
 
+        [HttpGet, Route("ODH/OdhTagCategorieslist")]
+        public async Task<IActionResult> ProduceOdhTagCategoriesListJson(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await JsonGeneratorHelper.GenerateJSONODHTagCategoriesList(QueryFactory, settings.JsonConfig.Jsondir, "TagsForCategories");
+
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "ODHTagCategoriesList", "Generate Json ODHTagCategoriesList succeeded", true);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "ODHTagCategoriesList", "Generate Json ODHTagCategoriesList failed", ex, true);
+
+                return BadRequest(result);
+            }
+        }
+
         #endregion
 
         #region STA
@@ -162,6 +185,37 @@ namespace OdhApiCore.Controllers.other
         }
 
         #endregion
-        
+
+        #region Weather
+
+        [HttpGet, Route("ODH/WeatherForecast")]
+        public async Task<IActionResult> DownloadWeatherForecastJsonFromS3(CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (!settings.S3Config.ContainsKey("dc-meteorology-province-forecast"))
+                    throw new Exception("No weatherforecast file found");
+
+                await GetDataFromS3.GetFileFromS3("dc-meteorology-province-forecast",
+                    settings.S3Config["dc-meteorology-province-forecast"].AccessKey,
+                    settings.S3Config["dc-meteorology-province-forecast"].AccessSecretKey,
+                    settings.S3Config["dc-meteorology-province-forecast"].Filename,
+                    settings.JsonConfig.Jsondir);
+
+                var result = GenericResultsHelper.GetSuccessJsonGenerateResult("Json Generation", "Weatherforecast", "Download Json Weatherforecast succeeded", true);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var result = GenericResultsHelper.GetErrorJsonGenerateResult("Json Generation", "Weatherforecast", "Download Json Weatherforecast failed", ex, true);
+
+                return BadRequest(result);
+            }
+        }
+
+
+        #endregion
+
     }
 }

@@ -177,3 +177,6 @@ $RECYCLE.BIN/
 /OdhApiCore/wwwroot/json
 /OdhApiCore/.env
 /OdhApiImporter/.env
+/OdhApiImporter/json/SMOS_MCPL-WX_EXP_SIAG.JSON
+/PushServer/files/noi-community-firebase-adminsdk-qv1b9-5c488d5e06.json
+/google-service-account.noicommunity.json

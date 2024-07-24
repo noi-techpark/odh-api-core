@@ -4,7 +4,10 @@
 
 using AspNetCore.CacheOutput;
 using DataModel;
+using Geo.Geometries;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using Schema.NET;
 using SqlKata.Execution;
 using System;
@@ -31,8 +35,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class GastronomyController : OdhController
     {        
-        public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public GastronomyController(IWebHostEnvironment env, ISettings settings, ILogger<GastronomyController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -57,6 +61,7 @@ namespace OdhApiCore.Controllers
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
@@ -94,6 +99,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -103,6 +109,7 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
@@ -110,7 +117,7 @@ namespace OdhApiCore.Controllers
                     facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter, ceremonycodefilter: ceremonycodefilter, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, active: active,smgactive: odhactive, langfilter: langfilter,
                     smgtags: odhtagfilter, seed: seed, lastchange: updatefrom,
-                    geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
+                    polygonsearchresult: polygonsearchresult, geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues,
                     cancellationToken: cancellationToken);
         }
 
@@ -197,11 +204,14 @@ namespace OdhApiCore.Controllers
             string[] fields, string? language, uint pagenumber, int? pagesize,
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? idfilter, string? searchfilter, string? locfilter, bool? active, bool? smgactive, string? langfilter,
-            string? smgtags, string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            string? smgtags, string? seed, string? lastchange, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 GastronomyHelper mygastronomyhelper = await GastronomyHelper.CreateAsync(
                     QueryFactory, idfilter, locfilter, categorycodefilter,
                     dishcodefilter, ceremonycodefilter, facilitycodefilter, cuisinecodefilter,
@@ -219,8 +229,10 @@ namespace OdhApiCore.Controllers
                             regionlist: mygastronomyhelper.regionlist, activefilter: mygastronomyhelper.active,
                             smgactivefilter: mygastronomyhelper.smgactive,
                             searchfilter: searchfilter, language: language, lastchange: mygastronomyhelper.lastchange, languagelist: mygastronomyhelper.languagelist,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData)
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
@@ -230,11 +242,9 @@ namespace OdhApiCore.Controllers
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
-                var fieldsTohide = FieldsToHide;
-
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -254,17 +264,19 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("gastronomies")
                         .Select("data")
                         .Where("id", id.ToUpper())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -283,21 +295,16 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("gastronomytypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                return
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
-
-                return dataTransformed;
             });
         }
 
@@ -313,14 +320,10 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query("gastronomytypes")
                         .Select("data")
                         .Where("id", id.ToUpper());
-                //.WhereJsonb("Key", id.ToUpper());
-                //.Where("data#>>'\\{Key\\}'", "ILIKE", id);
-
+                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -335,16 +338,20 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetGastronomyList))]
-        [Authorize(Roles = "DataWriter,DataCreate,GastronomyManager,GastronomyCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,GastronomyManager,GastronomyCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Gastronomy")]
         public Task<IActionResult> Post([FromBody] GastronomyLinked gastronomy)
         {
             return DoAsyncReturn(async () =>
-            {             
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 gastronomy.Id = Helper.IdGenerator.GenerateIDFromType(gastronomy);
                 gastronomy.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", true);
+                return await UpsertData<GastronomyLinked>(gastronomy, new DataInfo("gastronomies", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -356,16 +363,20 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetGastronomyList))]
-        [Authorize(Roles = "DataWriter,DataModify,GastronomyManager,GastronomyModify")]
+        //[Authorize(Roles = "DataWriter,DataModify,GastronomyManager,GastronomyModify,GastronomyUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Gastronomy/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] GastronomyLinked gastronomy)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 gastronomy.Id = Helper.IdGenerator.CheckIdFromType<GastronomyLinked>(id);
                 gastronomy.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                return await UpsertData<GastronomyLinked>(gastronomy, "gastronomies", false, true);
+                return await UpsertData<GastronomyLinked>(gastronomy, new DataInfo("gastronomies", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -376,18 +387,21 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetGastronomyList))]
-        [Authorize(Roles = "DataWriter,DataDelete,GastronomyManager,GastronomyDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,GastronomyManager,GastronomyDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Gastronomy/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<GastronomyLinked>(id);
 
-                return await DeleteData(id, "gastronomies");
+                return await DeleteData<GastronomyLinked>(id, new DataInfo("gastronomies", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
-
 
         #endregion
     }

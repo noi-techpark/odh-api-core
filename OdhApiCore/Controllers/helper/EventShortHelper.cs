@@ -20,9 +20,11 @@ namespace OdhApiCore.Controllers.api
         public List<string> eventlocationlist;
         public List<string> webaddresslist;
         public List<string> idlist;
-        public string? activefilter;
+        public List<string> languagelist;
+        public string? todayactivefilter;
         public bool? websiteactivefilter;
         public bool? communityactivefilter;
+        public bool activefilter;
         public string? lastchange;
         public string? sortorder;
         //New Publishedonlist
@@ -30,17 +32,17 @@ namespace OdhApiCore.Controllers.api
 
         public static EventShortHelper Create(
             string? startdate, string? enddate, string? datetimeformat, string? source,
-            string? eventlocation, bool? onlyactive, bool? websiteactive, bool? communityactive,
-            string? eventids, string? webaddress, string? lastchange, string? sortorder, string? publishedonfilter)
+            string? eventlocation, bool? todayactive, bool? websiteactive, bool? communityactive, bool active,
+            string? eventids, string? webaddress, string? lastchange, string? langfilter, string? sortorder, string? publishedonfilter)
         {
-            return new EventShortHelper(startdate, enddate, datetimeformat, source, eventlocation, onlyactive, websiteactive, 
-                communityactive, eventids, webaddress, lastchange, sortorder, publishedonfilter);
+            return new EventShortHelper(startdate, enddate, datetimeformat, source, eventlocation, todayactive, websiteactive, 
+                communityactive, active, eventids, webaddress, lastchange, languagefilter: langfilter, sortorder, publishedonfilter);
         }
 
         private EventShortHelper(
             string? startdate, string? enddate, string? datetimeformat, string? source,
-            string? eventlocation, bool? onlyactive, bool? websiteactive, bool? communityactive, string? eventids, string? webaddress,
-            string? lastchange, string? sortorder, string? publishedonfilter)
+            string? eventlocation, bool? todayactive, bool? websiteactive, bool? communityactive, bool active, string? eventids, string? webaddress,
+            string? lastchange, string? languagefilter, string? sortorder, string? publishedonfilter)
         {            
             idlist = Helper.CommonListCreator.CreateIdList(eventids);
             var sourcelisttemp = Helper.CommonListCreator.CreateIdList(source);                     
@@ -87,15 +89,16 @@ namespace OdhApiCore.Controllers.api
                 }
             }
 
-            if (onlyactive == true)
-                activefilter = "Y";
-            else if (onlyactive == false)
-                activefilter = "N";
+            if (todayactive == true)
+                todayactivefilter = "Y";
+            else if (todayactive == false)
+                todayactivefilter = "N";
             else
-                activefilter = null;
+                todayactivefilter = null;
 
             websiteactivefilter = websiteactive;
             communityactivefilter = communityactive;
+            activefilter = active;
 
             this.sortorder = sortorder;
 
@@ -106,7 +109,9 @@ namespace OdhApiCore.Controllers.api
                 if (sortorder != "ASC" && sortorder != "DESC")
                     sortorder = "";
             }
-            
+
+            languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
+
             this.lastchange = lastchange;
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
@@ -122,13 +127,13 @@ namespace OdhApiCore.Controllers.api
 
                 if (source == "noi")
                 {
-                    if (!sourcelistnew.Contains("Content"))
-                        sourcelistnew.Add("Content");                    
+                    if (!sourcelistnew.Contains("content"))
+                        sourcelistnew.Add("content");                    
                 }
                 else if (source == "eurac")
                 {
-                    if (!sourcelistnew.Contains("EBMS"))
-                        sourcelistnew.Add("EBMS");                    
+                    if (!sourcelistnew.Contains("ebms"))
+                        sourcelistnew.Add("ebms");                    
                 }               
             }
 

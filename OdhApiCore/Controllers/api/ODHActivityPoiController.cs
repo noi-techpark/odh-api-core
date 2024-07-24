@@ -5,6 +5,9 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
+using Helper.Location;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +16,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
+using Schema.NET;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -28,10 +33,13 @@ namespace OdhApiCore.Controllers.api
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class ODHActivityPoiController : OdhController
-    {        
-        public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory)
-           : base(env, settings, logger, queryFactory)
+    {
+        private readonly ISettings settings;
+
+        public ODHActivityPoiController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+           : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
+            this.settings = settings;
         }
 
         #region SWAGGER Exposed API
@@ -58,6 +66,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="odhtagfilter">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible (OR FILTER), available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
         /// <param name="odhtagfilter_and">ODH Taglist Filter (refers to Array SmgTags) (String, Separator ',' more Tags possible (AND FILTER), available Tags reference to 'v1/ODHTag?validforentity=odhactivitypoi'), (default:'null')</param>        
         /// <param name="active">Active ODHActivityPoi Filter (possible Values: 'true' only active ODHActivityPoi, 'false' only not active ODHActivityPoi), (default:'null')</param>        
@@ -127,6 +136,7 @@ namespace OdhApiCore.Controllers.api
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -136,6 +146,7 @@ namespace OdhApiCore.Controllers.api
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFiltered(
                 fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
@@ -144,7 +155,7 @@ namespace OdhApiCore.Controllers.api
                 smgactive: odhactive?.Value, smgtags: odhtagfilter, smgtagsand: odhtagfilter_and,
                 categorycodefilter: categorycodefilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
                 activitytypefilter: activitytype, poitypefilter: poitype, difficultyfilter: difficultyfilter, distancefilter: distancefilter, altitudefilter: altitudefilter, durationfilter: durationfilter,
-                hasimage: hasimage?.Value, tagfilter: tagfilter, publishedon: publishedon, seed: seed, lastchange: updatefrom, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
+                hasimage: hasimage?.Value, tagfilter: tagfilter, publishedon: publishedon, seed: seed, lastchange: updatefrom, polygonsearchresult, geosearchresult, rawfilter: rawfilter, rawsort: rawsort,
                 removenullvalues: removenullvalues, cancellationToken);
         }
 
@@ -243,11 +254,14 @@ namespace OdhApiCore.Controllers.api
             string? categorycodefilter, string? dishcodefilter, string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
             string? activitytypefilter, string? poitypefilter, string? difficultyfilter, string? distancefilter, string? altitudefilter, string? durationfilter,
             bool? hasimage, string? tagfilter, string? publishedon,
-            string? seed, string? lastchange, PGGeoSearchResult geosearchresult,
+            string? seed, string? lastchange, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult,
             string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 ODHActivityPoiHelper myodhactivitypoihelper = await ODHActivityPoiHelper.CreateAsync(
                     queryFactory: QueryFactory,typefilter: type, subtypefilter: subtypefilter, level3typefilter: level3typefilter, 
                     idfilter: idfilter, locfilter: locfilter, areafilter: areafilter,  languagefilter: languagefilter, sourcefilter: sourcefilter, 
@@ -280,7 +294,9 @@ namespace OdhApiCore.Controllers.api
                             hasimage: myodhactivitypoihelper.hasimage,
                             tagdict: myodhactivitypoihelper.tagdict, publishedonlist: myodhactivitypoihelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myodhactivitypoihelper.lastchange,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData)
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyRawFilter(rawfilter)
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
@@ -291,11 +307,9 @@ namespace OdhApiCore.Controllers.api
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
 
-                var fieldsTohide = FieldsToHide;
-
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -315,17 +329,19 @@ namespace OdhApiCore.Controllers.api
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var query =
                     QueryFactory.Query("smgpois")
                         .Select("data")
                         .Where("id", id.ToLower())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData); ;
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -340,21 +356,16 @@ namespace OdhApiCore.Controllers.api
                 var query =
                     QueryFactory.Query("smgpoitypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                return
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
-
-                return dataTransformed;
             });
         }
 
@@ -364,17 +375,12 @@ namespace OdhApiCore.Controllers.api
             {
                 var query =
                     QueryFactory.Query("smgpoitypes")
-                        .Select("data")
-                        //.WhereJsonb("Key", "ilike", id)
-                        .Where("id", id.ToLower())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                //.Where("Key", "ILIKE", id);
+                        .Select("data")                        
+                        .Where("id", id.ToLower());                
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-
-                var fieldsTohide = FieldsToHide;
-
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -390,18 +396,42 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
-        [Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("ODHActivityPoi")]
         public Task<IActionResult> Post([FromBody] ODHActivityPoiLinked odhactivitypoi)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 //GENERATE ID
                 odhactivitypoi.Id = Helper.IdGenerator.GenerateIDFromType(odhactivitypoi);
 
+                //GENERATE HasLanguage
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it","nl","cs","pl","ru","fr" });
-                
-                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", true);
+
+                //POPULATE LocationInfo
+                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
+                //POPULATE Automatic Assigned ODHTags
+                ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+
+                //POPULATE Tags
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //POPULATE Categories
+                await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //TODO DISTANCE Calculation
+
+                //TODO check for Reduced Data                
+
+                //Trim all strings
+                odhactivitypoi.TrimStringProperties();
+
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, new DataInfo("smgpois", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -413,18 +443,42 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
-        [Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiModify,SmgPoiManager,SmgPoiModify")]
+        //[Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiModify,ODHActivityPoiUpdate,SmgPoiManager,SmgPoiModify")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHActivityPoiLinked odhactivitypoi)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 Helper.IdGenerator.CheckIdFromType(odhactivitypoi);
-
+                
+                //GENERATE HasLanguage
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
                 
-                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, "smgpois", false, true);
+                //POPULATE LocationInfo
+                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
+                //POPULATE Automatic Assigned ODHTags
+                ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+
+                //POPULATE Tags
+                await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //POPULATE Categories
+                await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //TODO DISTANCE Calculation
+
+                //TODO check for Reduced Data
+
+                //Trim all strings
+                odhactivitypoi.TrimStringProperties();
+
+                return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, new DataInfo("smgpois", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -435,16 +489,20 @@ namespace OdhApiCore.Controllers.api
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
-        [Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<ODHActivityPoiLinked>(id);
 
-                return await DeleteData(id, "smgpois");
+                return await DeleteData<ODHActivityPoiLinked>(id, new DataInfo("smgpois", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

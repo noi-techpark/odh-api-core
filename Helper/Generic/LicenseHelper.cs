@@ -55,7 +55,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforActivity(LTSActivity data)
+        public static LicenseInfo GetLicenseforActivity(PoiBaseInfos data)
         {
             var isopendata = false;
             var licensetype = "Closed";
@@ -70,7 +70,7 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforPoi(LTSPoi data)
+        public static LicenseInfo GetLicenseforPoi(PoiBaseInfos data)
         {
             var isopendata = false;
             var licensetype = "Closed";
@@ -141,7 +141,9 @@ namespace Helper
             if (data.Source == null)
                 data.Source = "Content";
 
-            if (data.Source.ToLower() == "content" || data.Source.ToLower() == "magnolia" || data.Source.ToLower() == "common")
+            if (data.Source.ToLower() == "noi")
+                licenseholder = "http://noi.bz.it";
+            if (data.Source.ToLower() == "idm" || data.Source.ToLower() == "content" || data.Source.ToLower() == "magnolia" || data.Source.ToLower() == "common")
                 licenseholder = @"https://www.idm-suedtirol.com";
             if (data.Source.ToLower() == "siag")
                 licenseholder = "http://www.provinz.bz.it/kunst-kultur/museen";
@@ -155,6 +157,16 @@ namespace Helper
                 licenseholder = @"https://www.lts.it";
             if (data.Source.ToLower() == "dss")
                 licenseholder = @"https://www.dolomitisuperski.com";
+            if (data.Source.ToLower() == "alperia")
+                licenseholder = @"";
+            if (data.Source.ToLower() == "iit")
+                licenseholder = @"";
+            if (data.Source.ToLower() == "driwe")
+                licenseholder = @"";
+            if (data.Source.ToLower() == "route220")
+                licenseholder = @"";
+            if (data.Source.ToLower() == "echargingspreadsheet")
+                licenseholder = @"";
 
             List<string?> allowedsources = new List<string?>() { 
                 "magnolia", 
@@ -171,7 +183,18 @@ namespace Helper
                 "common",
                 "sta", 
                 "dssliftbase", 
-                "dssslopebase" };
+                "dssslopebase",
+                "noi",
+                "neogy",
+                "driwe",
+                "ecogy gmbh",
+                "route220",
+                "leitner energy",
+                "ötzi genossenschaft",
+                "vek",
+                "pension erlacher",
+                "officina elettrica san vigilio di marebbe spa"
+            };
 
             if (data.Active)
             {
@@ -223,18 +246,44 @@ namespace Helper
 
             if(data.Source?.ToLower() == "content")
             {
+                isopendata = true;
                 licenseholder = @"https://www.idm-suedtirol.com";
-            }
+            }            
 
             if (data.Source?.ToLower() == "dss")
             {
+                isopendata = true;
                 licenseholder = @"https://www.dolomitisuperski.com";
+            }
+
+            if (data.Source?.ToLower() == "feratel")
+            {
+                isopendata = true;
+                licenseholder = @"https://www.feratel.com/";
+            }
+
+            if (data.Source?.ToLower() == "panomax")
+            {
+                isopendata = true;
+                licenseholder = @"https://www.panomax.com/";
+            }
+
+            if (data.Source?.ToLower() == "panocloud")
+            {
+                isopendata = true;
+                licenseholder = @"https://www.it-wms.com/";
+            }
+
+            if (data.Source?.ToLower() == "a22")
+            {
+                isopendata = false;
+                licenseholder = @"https://www.autobrennero.it/";
             }
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static LicenseInfo GetLicenseforArticle(ArticleBaseInfos data)
+        public static LicenseInfo GetLicenseforArticle(Article data)
         {
             var isopendata = false;
             var licensetype = "Closed";
@@ -346,6 +395,15 @@ namespace Helper
                 isopendata = true;
                 licensetype = "CC0";
             }
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
+        public static LicenseInfo GetLicenseforODHTag(SmgTags data)
+        {
+            var isopendata = true;
+            var licensetype = "CC0";
+            var licenseholder = "https://www.idm-suedtirol.com";
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using DataModel;
 using Helper;
+using Microsoft.FSharp.Control;
 
 namespace NINJA.Parser
 {
@@ -129,8 +130,11 @@ namespace NINJA.Parser
 
         public static EventLinked ParseNinjaEventToODHEvent(string id, NinjaEvent ninjaevent, NinjaData<NinjaPlaceRoom> place, NinjaData<NinjaPlaceRoom> room)
         {
-            if (id != "------" && place != null)
+            try
             {
+                if (id == "------" && place == null)
+                    throw new Exception("incomplete data, no id");
+
                 EventLinked myevent = new EventLinked();
                 myevent.Id = id.ToUpper();
 
@@ -208,7 +212,7 @@ namespace NINJA.Parser
 
                 //TODO PARSING FAILS IF format of datetime is not exactly as described
                 //TODO Resolve this "exception": "String '04/04/2022 9:00' was not recognized as a valid DateTime.",                
-                
+
 
                 //Date Info
                 //myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
@@ -217,7 +221,7 @@ namespace NINJA.Parser
                 myevent.DateBegin = TryParsingToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time);
                 myevent.DateEnd = TryParsingToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time);
 
-                
+
 
                 //DateTime.TryParse(ninjaevent.begin_date + " " + ninjaevent.begin_time, CultureInfo.InvariantCulture, out evendatebegin);
                 //DateTime.TryParse(ninjaevent.end_date + " " + ninjaevent.end_time, CultureInfo.InvariantCulture, out evendateend);
@@ -251,9 +255,13 @@ namespace NINJA.Parser
                 myevent._Meta.LastUpdate = myevent.LastChange;
 
                 //Gps Info
-                myevent.Latitude = place != null ? place.scoordinate.y : 0;
-                myevent.Longitude = place != null ? place.scoordinate.x : 0;
-                myevent.Gpstype = "position";
+                GpsInfo eventgpsinfo = new GpsInfo();
+                eventgpsinfo.Latitude = place != null ? place.scoordinate.y : 0;
+                eventgpsinfo.Longitude = place != null ? place.scoordinate.x : 0;
+                eventgpsinfo.Gpstype = "position";
+
+                myevent.GpsInfo = new List<GpsInfo>();
+                myevent.GpsInfo.Add(eventgpsinfo);
 
                 IDictionary<string, string> floor = new Dictionary<string, string>();
                 floor.Add(new KeyValuePair<string, string>("de", "Stock"));
@@ -320,23 +328,26 @@ namespace NINJA.Parser
                 }
 
                 myevent.EventPublisher = new List<EventPublisher>()
-            {
-                new EventPublisher()
                 {
-                    Publish = 1,
-                    PublisherRID = ninjaevent.place,
-                    Ranc = 0
-                }
-            };
+                    new EventPublisher()
+                    {
+                        Publish = 1,
+                        PublisherRID = ninjaevent.place,
+                        Ranc = 0
+                    }
+                };
 
                 myevent.HasLanguage = languages;
 
                 myevent.ImageGallery = new List<ImageGallery>();
 
                 return myevent;
+
             }
-            else
+            catch (Exception e)
+            {
                 return null;
+            }
         }
 
         public static DateTime TryParsingToDateTime(string datetimetoparse)
@@ -348,5 +359,125 @@ namespace NINJA.Parser
             else
                 throw new Exception("DateTime Parsing failed  input:" + datetimetoparse);
         }
+
+
+        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>> data, ODHActivityPoiLinked echargingpoi)
+        {
+            try
+            {
+                if(echargingpoi == null)
+                    echargingpoi = new ODHActivityPoiLinked();
+
+                //Adding Tags
+                echargingpoi.SmgTags = new List<string>()
+                {
+                    "poi",
+                    "mobilität",
+                    "e-tankstellen ladestationen"
+                };
+
+                echargingpoi.Tags = new List<Tags>()
+                {
+                    new Tags(){ Id = "poi", Source = "lts" },
+                    new Tags(){ Id = "mobility", Source = "lts" },
+                    new Tags(){ Id = "electric charging stations", Source = "idm" }
+                };
+
+                echargingpoi.Id = id;
+
+                echargingpoi.Shortname = data.FirstOrDefault().pname;
+
+                //Detail
+                var detail = default(Detail);
+
+                if(echargingpoi.Detail != null && echargingpoi.Detail.ContainsKey("en"))
+                {
+                    echargingpoi.Detail["en"].Title = data.FirstOrDefault().pname;
+                    echargingpoi.Detail.TryAddOrUpdate("en", echargingpoi.Detail["en"]);
+                }
+                else
+                    echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname, Language = "en" });
+
+                //ContactInfo
+                echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.FirstOrDefault().pmetadata.address, City = data.FirstOrDefault().pmetadata.city, Language = "en" });
+
+                //GpsInfo
+                //"pcoordinate": {
+                //    "x": 10.800483,
+                //    "y": 46.313481,
+                //    "srid": 4326
+                //    },
+                if (data.FirstOrDefault().pcoordinate != null && data.FirstOrDefault().pcoordinate.x > 0 && data.FirstOrDefault().pcoordinate.y > 0) {
+                    echargingpoi.GpsInfo = new List<GpsInfo>() { new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.FirstOrDefault().pcoordinate.y, Longitude = data.FirstOrDefault().pcoordinate.x } };
+                }
+
+                //Properties Echargingstation
+                EchargingDataProperties properties = new EchargingDataProperties();
+
+                properties.AccessType = data.FirstOrDefault().pmetadata.accessType;
+
+                properties.AccessTypeInfo = new Dictionary<string, string>();
+                properties.AccessTypeInfo.TryAddOrUpdate("en", data.FirstOrDefault().pmetadata.accessInfo);
+                properties.State = data.FirstOrDefault().pmetadata.state;
+                properties.Capacity = data.FirstOrDefault().pmetadata?.capacity;
+                properties.ChargingStationAccessible = data.FirstOrDefault().pmetadata.accessType != null && (data.FirstOrDefault().pmetadata.accessType.ToLower() == "public" || data.FirstOrDefault().pmetadata.accessType.ToLower() == "private_withpublicaccess") ? true : false;
+                properties.PaymentInfo = data.FirstOrDefault().pmetadata?.paymentInfo;
+
+                properties.ChargingPlugCount = data.Count();
+                properties.ChargingCableType = data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList();
+
+                //TODO do not overwrite the old values
+                var additionalpropertieskey = typeof(EchargingDataProperties).Name;
+
+                if(echargingpoi.AdditionalProperties != null && echargingpoi.AdditionalProperties.ContainsKey(additionalpropertieskey))
+                {
+                    var propstonotoverwrite = echargingpoi.AdditionalProperties[additionalpropertieskey];
+
+                    properties.HorizontalIdentification = propstonotoverwrite.HorizontalIdentification;
+                    properties.SurveyDate = propstonotoverwrite.SurveyDate;
+                    properties.Barrierfree = propstonotoverwrite.Barrierfree;
+                    properties.CarparkingAreaInColumns = propstonotoverwrite.CarparkingAreaInColumns;
+                    properties.CarparkingAreaInRows = propstonotoverwrite.CarparkingAreaInRows; 
+                    properties.ChargingCableLength = propstonotoverwrite.ChargingCableLength;
+                    properties.ChargingPistolOperationHeightMax = propstonotoverwrite.ChargingPistolOperationHeightMax;
+                    properties.ChargingStationAccessible = propstonotoverwrite.ChargingStationAccessible;
+                    properties.HasRoof = propstonotoverwrite.HasRoof;
+                    properties.MaxOperationHeight = propstonotoverwrite.MaxOperationHeight;
+                    properties.SteplessSidewalkConnection = propstonotoverwrite.SteplessSidewalkConnection;
+                    properties.SurveyAnnotations = propstonotoverwrite.SurveyAnnotations;
+                    properties.SurveyDate = propstonotoverwrite.SurveyDate;
+                    properties.SurveyType = propstonotoverwrite.SurveyType;
+                    properties.VerticalIdentification = propstonotoverwrite.VerticalIdentification;
+                }
+
+                //if (echargingpoi.AdditionalProperties == null)
+                //    echargingpoi.AdditionalProperties = new Dictionary<string, dynamic>();
+
+                echargingpoi.AdditionalProperties.TryAddOrUpdate(additionalpropertieskey, properties);
+
+                //Mapping Object
+                //ADD MAPPING
+                var ninjaid = new Dictionary<string, string>() { { "id", data.FirstOrDefault().pname } };
+                echargingpoi.Mapping.TryAddOrUpdate("mobility", ninjaid);
+
+                //Source, SyncSourceInterface
+                echargingpoi.Source = data.FirstOrDefault().porigin.ToLower();
+                echargingpoi.SyncSourceInterface = data.FirstOrDefault().pmetadata.provider.ToLower();
+                echargingpoi.SyncUpdateMode = "partial";
+
+                //Hack spreadsheet
+                if (echargingpoi.Source == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
+                    echargingpoi.Source = "echargingspreadsheet";
+
+
+                return echargingpoi;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
     }
 }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -61,6 +62,8 @@ namespace CDB.Parser
                 Console.ForegroundColor = ConsoleColor.Green;
 
                 DateTime firstimported = DateTime.MinValue;
+
+                List<string> additionalfeaturestoadd = new List<string>();
 
                 string vatnumber = "";
 
@@ -198,6 +201,8 @@ namespace CDB.Parser
                     var mytype = mytypes.Root.Elements("AccoType").Where(x => x.Attribute("RID").Value == ltsTypeRid).FirstOrDefault().Attribute("SmgType").Value;
                     myacco.AccoTypeId = mytype;
 
+                    additionalfeaturestoadd.Add(ltsTypeRid);
+
                     //Setting Category
 
                     string ltsCatRid = category.Attribute("T6RID").Value;
@@ -205,28 +210,31 @@ namespace CDB.Parser
                     var mycategory = mycategories.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == ltsCatRid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
                     myacco.AccoCategoryId = mycategory;
 
+                    additionalfeaturestoadd.Add(ltsCatRid);
+
                     //Setting Board Infos
                     var boardings = category.Elements("Board");
 
                     List<string> accoboardings = new List<string>();
-
+                   
                     foreach (XElement myboardelement in boardings)
                     {
                         string boardrid = myboardelement.Attribute("T8RID").Value;
+
+                        additionalfeaturestoadd.Add(boardrid);
 
                         var myboard = myboards.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == boardrid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault().Attribute("T1Des").Value;
 
                         if (myboard != null)
                             accoboardings.Add(myboard);
                     }
-                    myacco.BoardIds = accoboardings.ToList();                    
+                    myacco.BoardIds = accoboardings.ToList();
                 }
 
+                List<AccoFeatureLinked> featurelist = new List<AccoFeatureLinked>();
+
                 if (tin.Count() > 0)
-                {
-
-                    List<AccoFeatureLinked> featurelist = new List<AccoFeatureLinked>();
-
+                { 
                     //Features
                     foreach (XElement thetin in tin)
                     {
@@ -258,15 +266,40 @@ namespace CDB.Parser
                                     featurelist.Add(new AccoFeatureLinked() { Id = tinrid, Name = myfeatureparsed2, HgvId = hgvamenityid });
                             }
                         }
-                        myacco.Features = featurelist.ToList();
-
+                        
                     }
                 }
-                else
+                //Add Category, Board and Type to features
+                foreach (var featuretoadd in additionalfeaturestoadd)
                 {
-                    if (myacco.Features != null)
-                        myacco.Features.Clear();
+                    var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == featuretoadd).FirstOrDefault();
+
+                    if (myfeature != null)
+                    {
+                        var myfeatureparsed = myfeature.Elements("DataLng").Where(x => x.Attribute("LngID").Value == "EN").FirstOrDefault();
+
+                        if (myfeatureparsed != null)
+                        {
+                            var myfeatureparsed2 = myfeatureparsed.Attribute("T1Des").Value;
+
+                            //Getting HGV ID if available
+
+                            string hgvamenityid = "";
+
+                            //var myamenity = roomamenitylist.Root.Elements("amenity").Elements("ltsrid").Where(x => x.Value == tinrid).FirstOrDefault();
+
+                            var myamenity = roomamenitylist.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == featuretoadd).FirstOrDefault();
+
+                            if (myamenity != null)
+                                hgvamenityid = myamenity.Element("hgvid").Value;
+
+                            if (myfeatureparsed2 != null)
+                                featurelist.Add(new AccoFeatureLinked() { Id = featuretoadd, Name = myfeatureparsed2, HgvId = hgvamenityid });
+                        }
+                    }
                 }
+
+                myacco.Features = featurelist.ToList();
 
                 List<AccoDetail> myaccodetailslist = new List<AccoDetail>();
                 
@@ -336,22 +369,26 @@ namespace CDB.Parser
                 
                 if (coords != null)
                 {
-                    myacco.Gpstype = "position";
+                    myacco.GpsInfo = new List<GpsInfo>();
 
-                    myacco.Longitude = Convert.ToDouble(coords.Attribute("A1GEP").Value, myculture);
-                    myacco.Latitude = Convert.ToDouble(coords.Attribute("A1GNP").Value, myculture);
+                    GpsInfo myinfo = new GpsInfo();
+
+                    myinfo.Gpstype = "position";
+
+                    myinfo.Longitude = Convert.ToDouble(coords.Attribute("A1GEP").Value, myculture);
+                    myinfo.Latitude = Convert.ToDouble(coords.Attribute("A1GNP").Value, myculture);
 
                     if (position != null)
                     {
-                        myacco.Altitude = Convert.ToDouble(position.Attribute("A0Alt").Value, myculture);
-                        myacco.AltitudeUnitofMeasure = "m";
-                    }                    
+                        myinfo.Altitude = Convert.ToDouble(position.Attribute("A0Alt").Value, myculture);
+                        myinfo.AltitudeUnitofMeasure = "m";
+                    }
+
+                    myacco.GpsInfo.Add(myinfo);
                 }
                 else if (coords == null)
                 {
-                    myacco.Latitude = 0;
-                    myacco.Longitude = 0;
-                    myacco.Altitude = null;                    
+                    myacco.GpsInfo = null;                 
                 }
 
                 if (ratings != null)

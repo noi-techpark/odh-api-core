@@ -4,7 +4,10 @@
 
 using AspNetCore.CacheOutput;
 using DataModel;
+using Geo.Geometries;
 using Helper;
+using Helper.Generic;
+using Helper.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
+using OdhNotifier;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -29,8 +33,8 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class VenueController : OdhController
     {        
-        public VenueController(IWebHostEnvironment env, ISettings settings, ILogger<VenueController> logger, QueryFactory queryFactory)
-            : base(env, settings, logger, queryFactory)
+        public VenueController(IWebHostEnvironment env, ISettings settings, ILogger<VenueController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }
 
@@ -56,6 +60,7 @@ namespace OdhApiCore.Controllers
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -99,6 +104,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -109,6 +115,7 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
@@ -116,7 +123,7 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, roomcountfilter: roomcountfilter,
                     featurefilter: featurefilter, setuptypefilter: setuptypefilter, sourcefilter: source,
                     active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
-                    publishedon: publishedon,
+                    publishedon: publishedon, polygonsearchresult: polygonsearchresult,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, destinationdataformat: destinationdataformat,
                     cancellationToken: cancellationToken);
         }
@@ -218,11 +225,15 @@ namespace OdhApiCore.Controllers
           string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
           string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? publishedon,
-          PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, bool destinationdataformat,
+          GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult, 
+          string? rawfilter, string? rawsort, bool removenullvalues, bool destinationdataformat,
           CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 VenueHelper myvenuehelper = await VenueHelper.CreateAsync(
                     QueryFactory, idfilter, categoryfilter, featurefilter, setuptypefilter, locfilter, capacityfilter, roomcountfilter,
                     langfilter, sourcefilter, active, smgactive, smgtags, lastchange, publishedon,
@@ -244,8 +255,10 @@ namespace OdhApiCore.Controllers
                             roomcount: myvenuehelper.roomcount, roomcountmin: myvenuehelper.roomcountmin, roomcountmax: myvenuehelper.roomcountmax,
                             activefilter: myvenuehelper.active, smgactivefilter: myvenuehelper.smgactive, publishedonlist: myvenuehelper.publishedonlist,
                             searchfilter: searchfilter, language: language, lastchange: myvenuehelper.lastchange,
-                            filterClosedData: FilterClosedData, reducedData: ReducedData)
+                            additionalfilter: additionalfilter,
+                            userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data
@@ -254,12 +267,10 @@ namespace OdhApiCore.Controllers
                         .PaginateAsync<JsonRaw>(
                             page: (int)pagenumber,
                             perPage: pagesize ?? 25);
-
-                var fieldsTohide = FieldsToHide;
-
+                
                 var dataTransformed =
                     data.List.Select(
-                        raw => raw.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
+                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
                     );
 
                 uint totalpages = (uint)data.TotalPages;
@@ -279,20 +290,21 @@ namespace OdhApiCore.Controllers
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
                 var venuecolumn = destinationdataformat ? "destinationdata as data" : "data";
 
                 var query =
                     QueryFactory.Query("venues_v2")
                         .Select(venuecolumn)
                         .Where("id", id.ToUpper())
-                        .Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
-                //.When(FilterClosedData, q => q.FilterClosedData());
-
-                var fieldsTohide = FieldsToHide;
+                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
+                        .FilterDataByAccessRoles(UserRolesToFilter);
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -307,21 +319,16 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("venuetypes")
                         .SelectRaw("data")
-                        .When(FilterClosedData, q => q.FilterClosedData())
                         .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
                         .ApplyRawFilter(rawfilter)
                         .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                var fieldsTohide = FieldsToHide;
-
-                var dataTransformed =
+                return
                     data.Select(
-                        raw => raw?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide)
-                    );
-
-                return dataTransformed;
+                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
+                    );                
             });
         }
 
@@ -336,16 +343,11 @@ namespace OdhApiCore.Controllers
                 var query =
                     QueryFactory.Query("venuetypes")
                         .Select("data")
-                         //.WhereJsonb("Key", "ilike", id)
-                         .Where("id", id.ToUpper())
-                        .When(FilterClosedData, q => q.FilterClosedData());
-                //.Where("Key", "ILIKE", id);
-
-                var fieldsTohide = FieldsToHide;
-
+                        .Where("id", id.ToUpper());
+                
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
-                return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: fieldsTohide);
+                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
             });
         }
 
@@ -360,17 +362,21 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
-        [Authorize(Roles = "DataWriter,DataCreate,VenueManager,VenueCreate")]
+        //[Authorize(Roles = "DataWriter,DataCreate,VenueManager,VenueCreate")]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Venue")]
         public Task<IActionResult> Post([FromBody] VenueLinked venue)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+
                 venue.Id = Helper.IdGenerator.GenerateIDFromType(venue);
                 //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
-                return await UpsertData<VenueLinked>(venue, "venues_v2", true);
+                return await UpsertData<VenueLinked>(venue, new DataInfo("venues_v2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -382,17 +388,21 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
-        [Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify")]
+        //[Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify,VenueUpdate")]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("Venue/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] VenueLinked venue)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
+
                 venue.Id = Helper.IdGenerator.CheckIdFromType<VenueLinked>(id);
                 //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
-                return await UpsertData<VenueLinked>(venue, "venues_v2", false, true);
+                return await UpsertData<VenueLinked>(venue, new DataInfo("venues_v2", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -403,15 +413,19 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
-        [Authorize(Roles = "DataWriter,DataDelete,VenueManager,VenueDelete")]
+        //[Authorize(Roles = "DataWriter,DataDelete,VenueManager,VenueDelete")]
+        [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Venue/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
             {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
+
                 id = Helper.IdGenerator.CheckIdFromType<VenueLinked>(id);
 
-                return await DeleteData(id, "venues_v2");
+                return await DeleteData<VenueLinked>(id, new DataInfo("venues_v2", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

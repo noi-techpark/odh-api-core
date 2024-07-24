@@ -64,9 +64,9 @@ namespace Helper
             {
                 Accommodation or AccommodationLinked => IDStyle.uppercase,
                 AccoRoom or AccommodationRoomLinked => IDStyle.uppercase,
-                LTSActivity or LTSActivityLinked => IDStyle.uppercase,
-                LTSPoi or LTSPoiLinked => IDStyle.uppercase,
-                Gastronomy or GastronomyLinked => IDStyle.uppercase,
+                LTSActivityLinked => IDStyle.uppercase,
+                LTSPoiLinked => IDStyle.uppercase,
+                GastronomyLinked => IDStyle.uppercase,
                 Event or EventLinked => IDStyle.uppercase,
                 ODHActivityPoi or ODHActivityPoiLinked => IDStyle.lowercase,
                 Package or PackageLinked => IDStyle.uppercase,
@@ -88,6 +88,7 @@ namespace Helper
                 Wine or WineLinked => IDStyle.uppercase,
                 SmgTags or ODHTagLinked => IDStyle.lowercase,
                 Publisher or PublisherLinked => IDStyle.lowercase,
+                Source or SourceLinked => IDStyle.lowercase,
                 TourismMetaData => IDStyle.lowercase,
                 _ => throw new Exception("not known odh type")
             };
@@ -99,9 +100,9 @@ namespace Helper
             {
                 Type _ when odhtype == typeof(Accommodation) || odhtype == typeof(AccommodationLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(AccoRoom) || odhtype == typeof(AccommodationRoomLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(LTSActivity) || odhtype == typeof(LTSActivityLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(LTSPoi) || odhtype == typeof(LTSPoiLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(Gastronomy) || odhtype == typeof(GastronomyLinked) => IDStyle.uppercase,
+                Type _ when odhtype == typeof(LTSActivityLinked) => IDStyle.uppercase,
+                Type _ when odhtype == typeof(LTSPoiLinked) => IDStyle.uppercase,
+                Type _ when odhtype == typeof(GastronomyLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(Event) || odhtype == typeof(EventLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(ODHActivityPoi) || odhtype == typeof(ODHActivityPoiLinked) => IDStyle.lowercase,
                 Type _ when odhtype == typeof(Package) || odhtype == typeof(PackageLinked) => IDStyle.uppercase,
@@ -123,6 +124,7 @@ namespace Helper
                 Type _ when odhtype == typeof(Wine) || odhtype == typeof(WineLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(SmgTags) || odhtype == typeof(ODHTagLinked) => IDStyle.lowercase,
                 Type _ when odhtype == typeof(Publisher) || odhtype == typeof(PublisherLinked) => IDStyle.lowercase,
+                Type _ when odhtype == typeof(Source) || odhtype == typeof(SourceLinked) => IDStyle.lowercase,
                 Type _ when odhtype == typeof(TourismMetaData) => IDStyle.lowercase,                
                 _ => throw new Exception("not known odh type")
             };

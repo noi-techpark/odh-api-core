@@ -47,7 +47,7 @@ namespace Helper
             }
         }
 
-        private static CheapestRoomCombination CalculateCheapestRoomCombinations(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        private static CheapestRoomCombination CalculateCheapestRoomCombinationsWithCombinations(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
         {
             List<CheapestRoomCombination> mycombinationresult = new List<CheapestRoomCombination>();
 
@@ -100,23 +100,115 @@ namespace Helper
             return cheapestcombination ?? new();
         }
 
-        //Hack because of CPU always over 90%
-        private static CheapestRoomCombination CalculateCheapestRoomCombinationsTemp(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
-        {
-            CheapestRoomCombination cheapestroomcombinationresult = new CheapestRoomCombination();
-            cheapestroomcombinationresult.Service = service;
-            cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { };
 
-            //Get always the cheapest
+        //TO TEST
+        private static CheapestRoomCombination CalculateCheapestRoomCombinations(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        {            
+            //Create an Array with a Collection
+            List<CheapestOffer>[] offerbyroomseq = new List<CheapestOffer>[rooms];
+
+            CheapestRoomCombination cheapestroomcombination = new CheapestRoomCombination();
+            cheapestroomcombination.Service = service;
+            cheapestroomcombination.CheapestRoomCombinationDetail = new List<CheapestOffer>();
+
             for (int i = 1; i <= rooms; i++)
             {
-                var cheapestorffersingle = cheapestofferlist.Where(x => x.RoomSeq == i).OrderBy(x => x.Price).Take(1).FirstOrDefault();
-
-                if (cheapestorffersingle != null)
-                    cheapestroomcombinationresult.CheapestRoomCombinationDetail.Add(cheapestorffersingle);
+                //To check could it be that a roomseq does not exist?
+                offerbyroomseq[i - 1] = cheapestofferlist.Where(x => x.RoomSeq == i).OrderBy(x => x.Price).ToList();
             }
 
-            return cheapestroomcombinationresult;
+            //TO check, are there offerbyroomseq with not enough rooms?
+            if (offerbyroomseq.Count() < rooms)
+                throw new Exception("there is something not working");
+
+            foreach (var roomseq in offerbyroomseq.OrderBy(x => x.Count))
+            {
+                foreach (var room in roomseq)
+                {
+                    //roomfre
+                    int? roomfree = room.RoomFree;
+                    //Count total rooms
+
+                    //Count used rooms in cheapestroomcombination
+                    var usedroomscount = 0;
+                    if (cheapestroomcombination.CheapestRoomCombinationDetail.Count > 0)
+                    {
+                        usedroomscount = cheapestroomcombination.CheapestRoomCombinationDetail.Count(x => x.RoomId == room.RoomId);
+                    }
+
+                    //if roomfree > cheapestroomcombination
+                    if (roomfree > usedroomscount)
+                    {
+                        cheapestroomcombination.CheapestRoomCombinationDetail.Add(room);
+                        break;
+                    }
+                }            
+            }
+
+            //If there are cheapestroomcombinations with not enough rooms return null
+            if (cheapestroomcombination.CheapestRoomCombinationDetail.Count < rooms)
+                return new(); //throw new Exception("there is something not working");
+
+            return cheapestroomcombination;
         }
     }
+
+    public static class CombinationsGeneric
+    {
+        private static void InitIndexes(int[] indexes)
+        {
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                indexes[i] = i;
+            }
+        }
+
+        private static void SetIndexes(int[] indexes, int lastIndex, int count)
+        {
+            indexes[lastIndex]++;
+            if (lastIndex > 0 && indexes[lastIndex] == count)
+            {
+                SetIndexes(indexes, lastIndex - 1, count - 1);
+                indexes[lastIndex] = indexes[lastIndex - 1] + 1;
+            }
+        }
+
+        private static List<T> TakeAt<T>(int[] indexes, IEnumerable<T> list)
+        {
+            List<T> selected = new List<T>();
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                selected.Add(list.ElementAt(indexes[i]));
+            }
+            return selected;
+        }
+
+        private static bool AllPlacesChecked(int[] indexes, int places)
+        {
+            for (int i = indexes.Length - 1; i >= 0; i--)
+            {
+                if (indexes[i] != places)
+                    return false;
+                places--;
+            }
+            return true;
+        }
+
+        public static IEnumerable<List<T>> GetDifferentCombinations<T>(this IEnumerable<T> collection, int count)
+        {
+            int[] indexes = new int[count];
+            int listCount = collection.Count();
+            if (count > listCount)
+                throw new InvalidOperationException($"{nameof(count)} is greater than the collection elements.");
+            InitIndexes(indexes);
+            do
+            {
+                var selected = TakeAt(indexes, collection);
+                yield return selected;
+                SetIndexes(indexes, indexes.Length - 1, listCount);
+            }
+            while (!AllPlacesChecked(indexes, listCount));
+
+        }
+    }    
 }

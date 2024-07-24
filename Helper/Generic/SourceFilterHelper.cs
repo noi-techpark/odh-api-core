@@ -60,6 +60,38 @@ namespace Helper.Generic
                     if (!sourcelistnew.Contains("none"))
                         sourcelistnew.Add("none");
                 }
+                else if (source == "a22")
+                {
+                    if (!sourcelistnew.Contains("tollstation"))
+                        sourcelistnew.Add("tollstation");
+                    if (!sourcelistnew.Contains("servicearea"))
+                        sourcelistnew.Add("servicearea");
+                }
+                else if (source == "iit")
+                {
+                    if (!sourcelistnew.Contains("h2 center"))
+                        sourcelistnew.Add("h2 center");
+                }
+                else if (source == "alperia")
+                {
+                    if (!sourcelistnew.Contains("neogy"))
+                        sourcelistnew.Add("neogy");
+                }
+                else if (source == "echargingspreadsheet")
+                {
+                    if (!sourcelistnew.Contains("ecogy gmbh"))
+                        sourcelistnew.Add("ecogy gmbh");
+                    if (!sourcelistnew.Contains("leitner energy"))
+                        sourcelistnew.Add("leitner energy");
+                    if (!sourcelistnew.Contains("officina elettrica san vigilio di marebbe spa"))
+                        sourcelistnew.Add("officina elettrica san vigilio di marebbe spa");
+                    if (!sourcelistnew.Contains("ötzi genossenschaft"))
+                        sourcelistnew.Add("ötzi genossenschaft");
+                    if (!sourcelistnew.Contains("pension erlacher"))
+                        sourcelistnew.Add("pension erlacher");
+                    if (!sourcelistnew.Contains("vek"))
+                        sourcelistnew.Add("vek");
+                }               
             }
 
             return sourcelistnew;

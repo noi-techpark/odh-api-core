@@ -10,15 +10,38 @@ using System.Threading.Tasks;
 
 namespace DataModel.Annotations
 {
+    //[AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+    //public class SwaggerDeprecatedAttribute : Attribute
+    //{
+    //    public SwaggerDeprecatedAttribute(string? description = null)
+    //    {
+    //        Description = description;
+    //    }
+
+    //    public string Description { get; }
+    //}
+
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
     public class SwaggerDeprecatedAttribute : Attribute
     {
-        public SwaggerDeprecatedAttribute(string? description = null)
+        public SwaggerDeprecatedAttribute(string? description = null, string? deprecationdate = null, string? removedafter = null)
         {
             Description = description;
+
+            if(DateTime.TryParse(deprecationdate, out DateTime deprecationdatetemp))
+                DeprecationDate = deprecationdatetemp;
+            else
+                DeprecationDate = null;
+
+            if (DateTime.TryParse(removedafter, out DateTime removedaftertemp))
+                RemovedAfter = removedaftertemp;
+            else
+                RemovedAfter = null;
         }
 
         public string Description { get; }
+        public DateTime? DeprecationDate { get; }
+        public DateTime? RemovedAfter { get; }
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]

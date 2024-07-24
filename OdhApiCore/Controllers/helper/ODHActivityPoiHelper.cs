@@ -57,8 +57,7 @@ namespace OdhApiCore.Controllers.api
         public IDictionary<string, List<string>> tagdict;
 
         //New Publishedonlist
-        public List<string> publishedonlist;
-
+        public List<string> publishedonlist;        
 
         public static async Task<ODHActivityPoiHelper> CreateAsync(
             QueryFactory queryFactory, 
@@ -81,7 +80,7 @@ namespace OdhApiCore.Controllers.api
             string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
             bool? hasimagefilter,
             string? tagfilter,
-            string? publishedonfilter,
+            string? publishedonfilter,            
             CancellationToken cancellationToken)
         {
             var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
@@ -119,7 +118,7 @@ namespace OdhApiCore.Controllers.api
             string? activitytypefilter, string? poitypefilter, string? distancefilter, string? altitudefilter, string? durationfilter, string? difficultyfilter,
             bool? hasimagefilter,
             string? tagfilter, string? publishedonfilter,
-            string? lastchange,             
+            string? lastchange,                         
             IEnumerable<string>? tourismusvereinids)
         {
             typelist = new();
@@ -163,9 +162,9 @@ namespace OdhApiCore.Controllers.api
 
             this.arealist = arealist.ToList();
 
-            smgtaglist = Helper.CommonListCreator.CreateIdList(smgtags);
+            smgtaglist = Helper.CommonListCreator.CreateStringListFromStringParameter(smgtags);
 
-            smgtaglistand = Helper.CommonListCreator.CreateIdList(smgtagsand);
+            smgtaglistand = Helper.CommonListCreator.CreateStringListFromStringParameter(smgtagsand);
 
             tourismvereinlist = new();
             regionlist = new();
