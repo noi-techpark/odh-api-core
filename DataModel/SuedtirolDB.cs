@@ -808,7 +808,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Accommodation : IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -829,8 +829,6 @@ namespace DataModel
         [SwaggerDeprecated("Use AccoDetail.lang.Name")]
         public string? Shortname { get; set; }
 
-        //public int Units { get; set; }
-        //public int Beds { get; set; }
         public int? Representation { get; set; }
         public bool HasApartment { get; set; }
         public bool? HasRoom { get; set; }
@@ -842,6 +840,7 @@ namespace DataModel
         public bool SmgActive { get; set; }
         public bool? TVMember { get; set; }
         public string? TourismVereinId { get; set; }
+        [SwaggerDeprecated("Deprecated")]
         public string? MainLanguage { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
@@ -893,8 +892,23 @@ namespace DataModel
         public AccoHGVInfo? AccoHGVInfo { get; set; }
 
         public AccoOverview? AccoOverview { get; set; }
-    }
 
+        [SwaggerSchema("Accommodation Id on Trust You")]
+        public string? TrustYouID { get; set; }
+
+        [SwaggerSchema("Review Score on Trust You")]
+        public double? TrustYouScore { get; set; }
+
+        [SwaggerSchema("Number of Ratings in Trust You")]
+        public int? TrustYouResults { get; set; }
+
+        [SwaggerSchema("Active in Trust You")]
+        public bool? TrustYouActive { get; set; }
+
+        [SwaggerSchema("Trust You State on LTS")]
+        public int? TrustYouState { get; set; }
+    }
+   
     public class AccommodationRaven : Accommodation
     {
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
@@ -904,6 +918,7 @@ namespace DataModel
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked? LocationInfo { get; set; }
+
     }
 
     public class AccoRoomInfo
@@ -956,25 +971,7 @@ namespace DataModel
         public string? BookingId { get; set; }
     }
 
-    public abstract class TrustYouInfos
-    {
-        [SwaggerSchema("Accommodation Id on Trust You")]
-        public string? TrustYouID { get; set; }
-
-        [SwaggerSchema("Review Score on Trust You")]
-        public double? TrustYouScore { get; set; }
-
-        [SwaggerSchema("Number of Ratings in Trust You")]
-        public int? TrustYouResults { get; set; }
-
-        [SwaggerSchema("Active in Trust You")]
-        public bool? TrustYouActive { get; set; }
-
-        [SwaggerSchema("Trust You State on LTS")]
-        public int? TrustYouState { get; set; }
-    }
-
-    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
+    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1017,6 +1014,7 @@ namespace DataModel
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public bool Active { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -1086,6 +1084,40 @@ namespace DataModel
         public TimeSpan RoomServiceTo { get; set; }
         public TimeSpan BaggageServiceFrom { get; set; }
         public TimeSpan BaggageServiceTo { get; set; }
+    }
+
+    //Shift all Has, Is Properties to AccoProperties
+    public class AccoProperties
+    {
+        public bool? HasApartment { get; set; }
+        public bool? HasRoom { get; set; }
+        public bool? IsCamping { get; set; }
+        public bool? IsGastronomy { get; set; }
+        public bool? IsBookable { get; set; }
+        public bool? IsAccommodation { get; set; }
+        public bool? HasDorm { get; set; }
+        public bool? HasPitches { get; set; }
+        public bool? TVMember { get; set; }
+
+        //TO REMOVE?
+        //public string? GastronomyId { get; set; }
+        //public string? DistrictId { get; set; }
+        //public string? TourismVereinId { get; set; }
+        //public string? MainLanguage { get; set; }
+    }
+
+    //Shift Trust You To Reviews by using Dictionary
+    public class Review
+    {
+        public string? ReviewId { get; set; }
+
+        public double? Score { get; set; }
+
+        public int? Results { get; set; }
+
+        public bool? Active { get; set; }
+
+        public string? State { get; set; }
     }
 
     #endregion
