@@ -22,7 +22,8 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: '8.0.x'
+        dotnet-quality: 'preview'
     - name: Restore dependencies
       run: dotnet restore OdhApiCore.sln
     - name: Build OdhApiCore Solution
@@ -113,12 +114,19 @@ jobs:
           X_API_URL: ${{ env.API_URL }}
           X_NOICOMMUNITY_SERVERKEY: ${{ secrets.NOICOMMUNITY_SERVERKEY_TEST }}
           X_NOICOMMUNITY_SENDERID: ${{ secrets.NOICOMMUNITY_SENDERID_TEST }}
+          X_NOICOMMUNITY_PROJECTNAME: "noi-community"
+          X_NOICOMMUNITY_FCMSERVICEACCOUNT: "google-service-account.noicommunity.json"
           X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
           X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
           X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
           X_MARKETPLACE_PUSH_URL: ""
           X_MARKETPLACE_PUSH_USER: ""
           X_MARKETPLACE_PUSH_PSWD: ""
+
+      - name: Setup config
+        run: |
+            echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_NOICOMMUNITY }}" > google-service-account.noicommunity.json
+            chmod +r google-service-account.noicommunity.json
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -231,13 +239,20 @@ jobs:
           X_API_URL: ${{ env.API_URL }}
           X_NOICOMMUNITY_SERVERKEY: ${{ secrets.NOICOMMUNITY_SERVERKEY_TEST }}
           X_NOICOMMUNITY_SENDERID: ${{ secrets.NOICOMMUNITY_SENDERID_TEST }}
+          X_NOICOMMUNITY_PROJECTNAME: "noi-community"
+          X_NOICOMMUNITY_FCMSERVICEACCOUNT: "google-service-account.noicommunity.json"
           X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
           X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
           X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
           X_MARKETPLACE_PUSH_URL: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_URL }}
           X_MARKETPLACE_PUSH_USER: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_USERNAME }}
           X_MARKETPLACE_PUSH_PSWD: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_PASSWORD }}
-
+          
+      - name: Setup config
+        run: |
+              echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_NOICOMMUNITY }}" > google-service-account.noicommunity.json
+              chmod +r google-service-account.noicommunity.json
+  
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
         with:
