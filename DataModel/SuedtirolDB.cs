@@ -833,7 +833,9 @@ namespace DataModel
         public bool HasApartment { get; set; }
         public bool? HasRoom { get; set; }
         public bool? IsCamping { get; set; }
-        public bool? IsGastronomy { get; set; }
+
+        //not used removing
+        //public bool? IsGastronomy { get; set; }
         public bool IsBookable { get; set; }
         public bool? IsAccommodation { get; set; }
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
@@ -871,7 +873,8 @@ namespace DataModel
 
         public LocationInfo? LocationInfo { get; set; }
 
-        public string? GastronomyId { get; set; }
+        //Not used remove this property
+        //public string? GastronomyId { get; set; }
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
@@ -1118,6 +1121,10 @@ namespace DataModel
         public bool? Active { get; set; }
 
         public string? State { get; set; }
+
+        public int? StateInteger { get; set; }
+
+        public string Provider { get; set; }
     }
 
     #endregion
@@ -4031,6 +4038,18 @@ namespace DataModel
             catch(Exception ex)
             {
                 return "ODHActivityPoi";
+            }
+        }
+
+        public static string GetTrustYouState(int trustyoustate)
+        {
+            //According to old LTS Documentation State (0=not rated, 1=do not display, 2=display)
+            switch (trustyoustate)
+            {
+                case 2: return "rated";
+                case 1: return "underValued";
+                case 0: return "notRated";
+                default: return "";
             }
         }
     }

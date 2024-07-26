@@ -455,7 +455,7 @@ namespace DataModel
         //Overwrites The LocationInfo
         public new LocationInfoLinked? LocationInfo { get; set; }
 
-        public ICollection<GpsInfo> GpsInfo { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
 
         //Overwrite Latitude/Longitude/
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
@@ -487,6 +487,52 @@ namespace DataModel
                 return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
+
+        //New, holds all Infos of Trust You
+        public IDictionary<string, Review>? Review { get; set; }
+
+
+        //New, holds all Infos of Is/Has etc.. Properties
+        public AccoProperties? AccoProperties { get; set; }
+
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new string? TrustYouID { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].ReviewId : ""; } }
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new double? TrustYouScore { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Score : null; } }
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new int? TrustYouResults { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Results : null; } }
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new bool? TrustYouActive { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Active : null; } }
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new int? TrustYouState { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].StateInteger : null; } }
+
+        //Accommodation Properties
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.HasApartment")]
+        public bool? HasApartment { get { return this.AccoProperties.HasApartment; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.HasRoom")]
+        public bool? HasRoom { get { return this.AccoProperties.HasRoom; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.IsCamping")]
+        public bool? IsCamping { get { return this.AccoProperties.IsCamping; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.IsGastronomy")]
+        public bool? IsGastronomy { get { return this.AccoProperties.IsGastronomy; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.IsBookable")]        
+        public bool? IsBookable { get { return this.AccoProperties.IsBookable; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.IsAccommodation")]
+        public bool? IsAccommodation { get { return this.AccoProperties.IsAccommodation; } }     
+        
+        [SwaggerDeprecated("Deprecated, use AccoProperties.TVMember")]
+        public bool? TVMember { get { return this.AccoProperties.TVMember; } }
     }
 
     public class AccommodationRoomLinked : AccoRoom, IMetaData

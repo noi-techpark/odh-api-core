@@ -84,17 +84,20 @@ namespace RAVEN
             acco.DistrictId = data.DistrictId;
             acco.Features = data.Features;
             acco.FirstImport = data.FirstImport;
-            acco.GastronomyId = data.GastronomyId;
-            acco.HasApartment = data.HasApartment;
             acco.HasLanguage = data.HasLanguage;
-            acco.HasRoom      = data.HasRoom;
             acco.HgvId = data.HgvId;
             acco.ImageGallery = data.ImageGallery;
             acco.IndependentData = data.IndependentData;
-            acco.IsAccommodation = data.IsAccommodation;
-            acco.IsBookable = data.IsBookable;
-            acco.IsCamping = data.IsCamping;
-            acco.IsGastronomy = data.IsGastronomy;
+
+            acco.AccoProperties = new AccoProperties();
+            acco.AccoProperties.IsAccommodation = data.IsAccommodation;
+            acco.AccoProperties.IsBookable = data.IsBookable;
+            acco.AccoProperties.IsCamping = data.IsCamping;
+            acco.AccoProperties.HasApartment = data.HasApartment;
+            acco.AccoProperties.HasRoom = data.HasRoom;
+            acco.AccoProperties.TVMember = data.TVMember;
+            //acco.IsGastronomy = data.IsGastronomy;
+            //acco.GastronomyId = data.GastronomyId;
             acco.LastChange = data.LastChange;
             acco.LicenseInfo = data.LicenseInfo;
             acco.LocationInfo = data.LocationInfo;
@@ -110,12 +113,23 @@ namespace RAVEN
             acco.Source = String.IsNullOrEmpty(data.Source) ? "lts" : data.Source.ToLower();
             acco.ThemeIds = data.ThemeIds;
             acco.TourismVereinId = data.TourismVereinId;
-            acco.TrustYouActive = data.TrustYouActive;  
-            acco.TrustYouID = data.TrustYouID;
-            acco.TrustYouResults = data.TrustYouResults;
-            acco.TrustYouScore = data.TrustYouScore;
-            acco.TrustYouState = data.TrustYouState;
-            acco.TVMember = data.TVMember;
+
+            if(acco.TrustYouID != null)
+            {
+                acco.Review = new Dictionary<string, Review>();
+
+                Review review = new Review();
+                review.Active = data.TrustYouActive;
+                review.ReviewId = data.TrustYouID;
+                review.Results = data.TrustYouResults;
+                review.Score = data.TrustYouScore;
+                review.StateInteger = data.TrustYouState;
+                review.State = DataModelHelpers.GetTrustYouState(data.TrustYouState.Value);
+                review.Provider = "trustyou";
+
+                acco.Review.Add("trustyou",review);
+            }
+
 
             acco.AccoHGVInfo = data.AccoHGVInfo;
             acco.AccoOverview = data.AccoOverview;
@@ -125,6 +139,9 @@ namespace RAVEN
 
             return acco;
         }
+
+        
+
 
         public static ODHActivityPoiLinked GetODHActivityPoiPGObject(ODHActivityPoiLinked data)
         {

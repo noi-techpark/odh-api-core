@@ -160,7 +160,7 @@ namespace JsonLDTransformer
             myhotel.PriceRange = pricerange;
 
             //New Trust You infos Display only if State = 2 and Active = true
-            if (acco.TrustYouActive)
+            if (acco.TrustYouActive != null && acco.TrustYouActive.Value)
             {
                 if (acco.TrustYouState == 2)
                 {
