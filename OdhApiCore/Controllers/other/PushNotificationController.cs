@@ -46,7 +46,7 @@ namespace OdhApiCore.Controllers.api
             IDictionary<string, PushResponse> resultdict = new Dictionary<string, PushResponse>();
 
             //If environment is set on production deactivate usemocks
-            if (!env.IsDevelopment())
+            //if (!env.IsDevelopment())
                 usemocks = false;
 
             foreach (var publish in publisher.Split(","))
@@ -268,7 +268,7 @@ namespace OdhApiCore.Controllers.api
                 {
                     //var result = await FCMPushNotification.SendNotification(message, sendurl, pushserverconfig.SenderId, pushserverconfig.ServerKey);
 
-                    var result = await FCMPushNotification.SendNotificationV2(message, sendurl, "");
+                    var result = await FCMPushNotification.SendNotificationV2(message, sendurl, pushserverconfig.ServiceAccount);
 
                     resultlist.Add(result);
                 }
