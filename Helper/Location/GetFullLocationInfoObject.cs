@@ -165,6 +165,8 @@ namespace Helper.Location
             }
             else
             {
+                //TODO IF no locationinfo is set create it with the District ID (if district exists)
+
                 return null;
             }
         }
