@@ -5,21 +5,17 @@
 using AspNetCore.CacheOutput;
 using CDB;
 using DataModel;
-using Geo.Geometries;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
-using Microsoft.AspNetCore.Authorization;
+using Helper.Location;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MSS;
-using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using OdhNotifier;
-using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -953,8 +949,19 @@ namespace OdhApiCore.Controllers
                 //Additional Filters on the Action Create
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
+                //GENERATE ID
                 accommodation.Id = Helper.IdGenerator.GenerateIDFromType(accommodation);
-                //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //GENERATE HasLanguage
+                accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
+
+                //POPULATE LocationInfo
+                accommodation.LocationInfo = await accommodation.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
+                //TODO DISTANCE Calculation
+
+                //TRIM all strings
+                accommodation.TrimStringProperties();
 
                 return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
@@ -978,8 +985,19 @@ namespace OdhApiCore.Controllers
                 //Additional Filters on the Action Update
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
-                accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
-                //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                //Check ID uppercase lowercase
+                Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(accommodation);
+
+                //GENERATE HasLanguage
+                accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
+
+                //POPULATE LocationInfo
+                accommodation.LocationInfo = await accommodation.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+
+                //TODO DISTANCE Calculation
+
+                //TRIM all strings
+                accommodation.TrimStringProperties();
 
                 return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
