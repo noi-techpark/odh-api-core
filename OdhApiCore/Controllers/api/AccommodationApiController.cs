@@ -956,7 +956,7 @@ namespace OdhApiCore.Controllers
                 accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
 
                 //POPULATE LocationInfo
-                accommodation.LocationInfo = await accommodation.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+                accommodation.LocationInfo = await accommodation.UpdateLocationInfoExtension(QueryFactory);
 
                 //TODO DISTANCE Calculation
 
@@ -992,7 +992,7 @@ namespace OdhApiCore.Controllers
                 accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
 
                 //POPULATE LocationInfo
-                accommodation.LocationInfo = await accommodation.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+                accommodation.LocationInfo = await accommodation.UpdateLocationInfoExtension(QueryFactory);
 
                 //TODO DISTANCE Calculation
 

@@ -164,9 +164,7 @@ namespace Helper.Location
                 return locationInfoLinked;
             }
             else
-            {
-                //TODO IF no locationinfo is set create it with the District ID (if district exists)
-
+            {                
                 return null;
             }
         }
@@ -177,43 +175,35 @@ namespace Helper.Location
         /// <param name="oldlocationinfo"></param>
         /// <param name="queryFactory"></param>
         /// <returns></returns>
-        public static async Task<LocationInfoLinked> UpdateLocationInfoExtension(this LocationInfoLinked? oldlocationinfo, QueryFactory queryFactory, Tuple<string,dynamic> locationdata = null)
+        public static async Task<LocationInfoLinked> UpdateLocationInfoExtension<T>(this T data, QueryFactory queryFactory) where T : IHasLocationInfoLinked
         {
+            LocationInfoLinked? oldlocationinfo = data.LocationInfo;
+
             //Check if Locationinfo is already there
-            if(oldlocationinfo == null)
+            if (oldlocationinfo == null)
             {
-                //now check the Dictionary
-                if (locationdata == null)
+                //IF a DistrictId is there use this
+                if (!String.IsNullOrEmpty((data as IDistrictId).DistrictId))
+                    return await GetTheLocationInfoDistrict(queryFactory, (data as IDistrictId).DistrictId as string);
+                //Else use the GPS Point
+                else if (data is IGPSInfoAware && (data as IGPSInfoAware).GpsInfo != null && (data as IGPSInfoAware).GpsInfo.Count > 0)
                 {
-                    switch(locationdata.Item1)
-                    {
-                        case "gps":
-                            var district = await LocationInfoHelper.GetNearestDistrictbyGPS(queryFactory, (locationdata.Item2 as GpsInfo)!.Latitude, (locationdata.Item2 as GpsInfo)!.Longitude, 30000);
-                            return await GetTheLocationInfoDistrict(queryFactory, district.Id);                            
-                        case "district":
-                            return await GetTheLocationInfoDistrict(queryFactory, locationdata.Item2 as string);                            
-                        case "municipality":
-                            return await GetTheLocationInfoMunicipality(queryFactory, locationdata.Item2 as string);
-                        case "region":
-                            return await GetTheLocationInfoRegion(queryFactory, locationdata.Item2 as string);
-                        case "area":
-                            return await GetTheLocationInfoArea(queryFactory, locationdata.Item2 as string);
-                        case "district_siag":
-                            return await GetTheLocationInfoDistrict_Siag(queryFactory, locationdata.Item2 as string);
-                        case "municipality_siag":
-                            return await GetTheLocationInfoMunicipality_Siag(queryFactory, locationdata.Item2 as string);
-                        default:
-                            return null;
-                    }
+                    var gps = (data as IGPSInfoAware).GpsInfo.Where(x => x.Gpstype == "position").FirstOrDefault();
+                    if (gps == null)
+                        gps = (data as IGPSInfoAware).GpsInfo.FirstOrDefault();
+
+                    var district = await LocationInfoHelper.GetNearestDistrictbyGPS(queryFactory, gps.Latitude, gps.Longitude, 30000);
+                    return await GetTheLocationInfoDistrict(queryFactory, district.Id);
                 }
                 else
                     return null;
+                //TODO Use Area, use TV use SIAG Methods
+                
             }
             else
                 return await UpdateLocationInfo(oldlocationinfo, queryFactory);
         }
-
-
+        
         public static async Task<IEnumerable<District>> GetNearestDistrict(QueryFactory QueryFactory, PGGeoSearchResult geosearchresult, int limitto)
         {
             var districtquery = QueryFactory.Query("districts")

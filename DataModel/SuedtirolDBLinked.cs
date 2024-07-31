@@ -286,7 +286,7 @@ namespace DataModel
 
     #region Linked Main Classes
 
-    public class GastronomyLinked : Gastronomy, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class GastronomyLinked : Gastronomy, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -360,7 +360,7 @@ namespace DataModel
         }
     }
 
-    public class AccommodationLinked : Accommodation, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class AccommodationLinked : Accommodation, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -564,7 +564,7 @@ namespace DataModel
         public AccommodationRoomProperties? Properties { get; set; }
     }
 
-    public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -678,7 +678,7 @@ namespace DataModel
         }
     }
 
-    public class VenueLinked : Venue, IMetaData
+    public class VenueLinked : Venue, IMetaData, IHasLocationInfoLinked
     {
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
@@ -744,7 +744,7 @@ namespace DataModel
         }
     }
 
-    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -815,7 +815,7 @@ namespace DataModel
         public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
-    public class LTSPoiLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class LTSPoiLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -888,7 +888,7 @@ namespace DataModel
         }
     }
 
-    public class LTSActivityLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class LTSActivityLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -1805,7 +1805,7 @@ namespace DataModel
         }
     }
 
-    public class MeasuringpointLinked : Measuringpoint, IMetaData, IGPSPointsAware, IGPSInfoAware
+    public class MeasuringpointLinked : Measuringpoint, IMetaData, IGPSPointsAware, IGPSInfoAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -2165,5 +2165,14 @@ namespace DataModel
         public LicenseInfo? LicenseInfo { get; set; }
     }
 
-    #endregion        
+    #endregion
+
+    #region interfaces
+
+    public interface IHasLocationInfoLinked
+    {
+        LocationInfoLinked? LocationInfo { get; set; }
+    }
+
+    #endregion
 }

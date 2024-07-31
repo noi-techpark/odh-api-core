@@ -53,6 +53,11 @@ namespace DataModel
         DateTime? LastChange { get; set; }
     }
 
+    public interface IDistrictId
+    {
+        string? DistrictId { get; set; }
+    }
+
     public interface IMappingAware
     {
         IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -159,6 +164,8 @@ namespace DataModel
     {
         IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }
+
+    
 
     public interface ILocationInfoAware
     {
@@ -808,7 +815,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Accommodation : IIdentifiable, IShortName, IActivateable, IDistrictId, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1164,7 +1171,7 @@ namespace DataModel
 
     #region Gastronomy
 
-    public abstract class Gastronomy : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
+    public abstract class Gastronomy : IIdentifiable, IActivateable, IDistrictId, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1262,7 +1269,7 @@ namespace DataModel
 
     #region Events
 
-    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
+    public class Event : IIdentifiable, IShortName, IDistrictId, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -3946,7 +3953,7 @@ namespace DataModel
     }
 
     //end Event classes
-
+    
     public class LocationInfo : ILocationInfoAware
     {
         public RegionInfo? RegionInfo { get; set; }
