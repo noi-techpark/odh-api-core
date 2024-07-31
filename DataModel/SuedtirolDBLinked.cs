@@ -499,6 +499,7 @@ namespace DataModel
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
 
         //New Rateplans
+        public ICollection<RatePlan>? RatePlan { get; set; }
 
 
         [SwaggerDeprecated("Deprecated, use Review.trustyou")]
@@ -555,6 +556,12 @@ namespace DataModel
 
         //Overwrites The Features
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
+
+        //New Price From per Unit
+        public Nullable<double> PriceFromPerUnit { get; set; }
+
+        //New Accommodation Room Properties
+        public AccommodationRoomProperties? Properties { get; set; }
     }
 
     public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware

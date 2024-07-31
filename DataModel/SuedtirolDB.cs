@@ -1020,6 +1020,18 @@ namespace DataModel
         public bool Active { get; set; }
     }
 
+    //New Room Properties
+    public class AccommodationRoomProperties
+    {
+        //New Properties
+        public double? SquareMeters { get; set; }
+        public int? SleepingRooms { get; set; }
+        public int? Toilets { get; set; }
+        public int? LivingRooms { get; set; }
+        public int? DiningRooms { get; set; }
+        public int? Baths { get; set; }
+    }
+
     public class AccoRoomDetail : ILanguage
     {
         public string? Language { get; set; }
