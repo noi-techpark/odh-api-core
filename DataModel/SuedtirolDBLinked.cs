@@ -495,6 +495,11 @@ namespace DataModel
         //New, holds all Infos of Is/Has etc.. Properties
         public AccoProperties? AccoProperties { get; set; }
 
+        //New, operationschedules also available on Accommodation
+        public ICollection<OperationSchedule>? OperationSchedule { get; set; }
+
+        //New Rateplans
+
 
         [SwaggerDeprecated("Deprecated, use Review.trustyou")]
         public new string? TrustYouID { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].ReviewId : ""; } }

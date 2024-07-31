@@ -1127,6 +1127,27 @@ namespace DataModel
         public string Provider { get; set; }
     }
 
+    //Rateplans
+    public class RatePlan
+    {
+        public RatePlan()
+        {
+            Name = new Dictionary<string, string>();
+            Description = new Dictionary<string, string>();
+        }
+
+        public string ChargeType { get; set; }
+
+        public string RatePlanId { get; set; }
+        public string Code { get; set; }
+        public IDictionary<string,string> Name { get; set; }
+        public IDictionary<string, string> Description { get; set; }
+
+        public DateTime LastUpdate { get; set; } 
+
+        public string Visibility { get; set; }
+    }
+
     #endregion
 
     #region Gastronomy
