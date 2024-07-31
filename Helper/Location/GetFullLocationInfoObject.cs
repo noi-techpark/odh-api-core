@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Helper.Location
-{
+{    
     public static class LocationInfoHelper
     {
         /// <summary>
@@ -172,14 +172,45 @@ namespace Helper.Location
         }
 
         /// <summary>
-        /// Extension Method 
+        /// Extension Method to update the locationinfo
         /// </summary>
         /// <param name="oldlocationinfo"></param>
         /// <param name="queryFactory"></param>
         /// <returns></returns>
-        public static async Task<LocationInfoLinked> UpdateLocationInfoExtension(this LocationInfoLinked? oldlocationinfo, QueryFactory queryFactory)
+        public static async Task<LocationInfoLinked> UpdateLocationInfoExtension(this LocationInfoLinked? oldlocationinfo, QueryFactory queryFactory, Tuple<string,dynamic> locationdata = null)
         {
-            return await UpdateLocationInfo(oldlocationinfo, queryFactory);
+            //Check if Locationinfo is already there
+            if(oldlocationinfo == null)
+            {
+                //now check the Dictionary
+                if (locationdata == null)
+                {
+                    switch(locationdata.Item1)
+                    {
+                        case "gps":
+                            var district = await LocationInfoHelper.GetNearestDistrictbyGPS(queryFactory, (locationdata.Item2 as GpsInfo)!.Latitude, (locationdata.Item2 as GpsInfo)!.Longitude, 30000);
+                            return await GetTheLocationInfoDistrict(queryFactory, district.Id);                            
+                        case "district":
+                            return await GetTheLocationInfoDistrict(queryFactory, locationdata.Item2 as string);                            
+                        case "municipality":
+                            return await GetTheLocationInfoMunicipality(queryFactory, locationdata.Item2 as string);
+                        case "region":
+                            return await GetTheLocationInfoRegion(queryFactory, locationdata.Item2 as string);
+                        case "area":
+                            return await GetTheLocationInfoArea(queryFactory, locationdata.Item2 as string);
+                        case "district_siag":
+                            return await GetTheLocationInfoDistrict_Siag(queryFactory, locationdata.Item2 as string);
+                        case "municipality_siag":
+                            return await GetTheLocationInfoMunicipality_Siag(queryFactory, locationdata.Item2 as string);
+                        default:
+                            return null;
+                    }
+                }
+                else
+                    return null;
+            }
+            else
+                return await UpdateLocationInfo(oldlocationinfo, queryFactory);
         }
 
 
