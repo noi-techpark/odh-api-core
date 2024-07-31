@@ -14,6 +14,7 @@ using System.Threading;
 using System.Xml.Linq;
 using Helper;
 using ServiceReferenceLCS;
+using Helper.Location;
 
 namespace OdhApiImporter.Helpers
 {
@@ -253,11 +254,11 @@ namespace OdhApiImporter.Helpers
                     {
                         if (mymuseum.GpsInfo.FirstOrDefault()?.Latitude != 0 && mymuseum.GpsInfo.FirstOrDefault()?.Longitude != 0)
                         {
-                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, mymuseum.GpsInfo.FirstOrDefault()!.Latitude, mymuseum.GpsInfo.FirstOrDefault()!.Longitude, 30000);
+                            var district = await LocationInfoHelper.GetNearestDistrictbyGPS(QueryFactory, mymuseum.GpsInfo.FirstOrDefault()!.Latitude, mymuseum.GpsInfo.FirstOrDefault()!.Longitude, 30000);
 
                             if (district != null)
                             {
-                                var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+                                var locinfo = await LocationInfoHelper.GetTheLocationInfoDistrict(QueryFactory, district.Id);
 
                                 mymuseum.LocationInfo = locinfo;
                                 mymuseum.TourismorganizationId = locinfo.TvInfo?.Id;
@@ -269,9 +270,9 @@ namespace OdhApiImporter.Helpers
                     if (mymuseum.LocationInfo == null)
                     {
                         if (gemeindeid.StartsWith("3"))
-                            mymuseum.LocationInfo = await GetLocationInfo.GetTheLocationInfoMunicipality_Siag(QueryFactory, gemeindeid);
+                            mymuseum.LocationInfo = await LocationInfoHelper.GetTheLocationInfoMunicipality_Siag(QueryFactory, gemeindeid);
                         if (gemeindeid.StartsWith("8"))
-                            mymuseum.LocationInfo = await GetLocationInfo.GetTheLocationInfoDistrict_Siag(QueryFactory, gemeindeid);
+                            mymuseum.LocationInfo = await LocationInfoHelper.GetTheLocationInfoDistrict_Siag(QueryFactory, gemeindeid);
 
                         mymuseum.TourismorganizationId = mymuseum.LocationInfo?.TvInfo?.Id;
                     }
