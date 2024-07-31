@@ -1152,12 +1152,12 @@ namespace DataModel
 
         public string RatePlanId { get; set; }
         public string Code { get; set; }
-        public IDictionary<string,string> Name { get; set; }
-        public IDictionary<string, string> Description { get; set; }
+        public IDictionary<string,string>? Name { get; set; }
+        public IDictionary<string, string>? Description { get; set; }
 
         public DateTime LastUpdate { get; set; } 
 
-        public string Visibility { get; set; }
+        public string? Visibility { get; set; }
     }
 
     #endregion
