@@ -491,7 +491,6 @@ namespace DataModel
         //New, holds all Infos of Trust You
         public IDictionary<string, Review>? Review { get; set; }
 
-
         //New, holds all Infos of Is/Has etc.. Properties
         public AccoProperties? AccoProperties { get; set; }
 
@@ -520,25 +519,25 @@ namespace DataModel
         //Accommodation Properties
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.HasApartment")]
-        public bool? HasApartment { get { return this.AccoProperties.HasApartment; } }
+        public new bool? HasApartment { get { return this.AccoProperties.HasApartment; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.HasRoom")]
-        public bool? HasRoom { get { return this.AccoProperties.HasRoom; } }
+        public new bool? HasRoom { get { return this.AccoProperties.HasRoom; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsCamping")]
-        public bool? IsCamping { get { return this.AccoProperties.IsCamping; } }
+        public new bool? IsCamping { get { return this.AccoProperties.IsCamping; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsGastronomy")]
         public bool? IsGastronomy { get { return this.AccoProperties.IsGastronomy; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsBookable")]        
-        public bool? IsBookable { get { return this.AccoProperties.IsBookable; } }
+        public new bool? IsBookable { get { return this.AccoProperties.IsBookable; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsAccommodation")]
-        public bool? IsAccommodation { get { return this.AccoProperties.IsAccommodation; } }     
+        public new bool? IsAccommodation { get { return this.AccoProperties.IsAccommodation; } }     
         
         [SwaggerDeprecated("Deprecated, use AccoProperties.TVMember")]
-        public bool? TVMember { get { return this.AccoProperties.TVMember; } }
+        public new bool? TVMember { get { return this.AccoProperties.TVMember; } }
     }
 
     public class AccommodationRoomLinked : AccoRoom, IMetaData

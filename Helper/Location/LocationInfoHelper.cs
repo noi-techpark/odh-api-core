@@ -82,89 +82,96 @@ namespace Helper.Location
         /// <returns></returns>
         public static async Task<LocationInfoLinked> UpdateLocationInfo(LocationInfoLinked? oldlocationinfo, QueryFactory queryFactory)
         {
-            if(oldlocationinfo != null)
+            try
             {
-                LocationInfoLinked locationInfoLinked = new LocationInfoLinked();
-
-                //Updating Region
-                if (oldlocationinfo.RegionInfo != null && !String.IsNullOrEmpty(oldlocationinfo.RegionInfo.Id))
+                if (oldlocationinfo != null)
                 {
-                    locationInfoLinked.RegionInfo = oldlocationinfo.RegionInfo;
+                    LocationInfoLinked locationInfoLinked = new LocationInfoLinked();
 
-                    var regioninfo = await LocationListCreator.GetLocationFromDB<Region>(queryFactory, "regions", Tuple.Create("id", oldlocationinfo.RegionInfo.Id));
-
-                    if (regioninfo != null && regioninfo.Count() > 0)
+                    //Updating Region
+                    if (oldlocationinfo.RegionInfo != null && !String.IsNullOrEmpty(oldlocationinfo.RegionInfo.Id))
                     {
-                        var regioninfoname = regioninfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
-                        if (regioninfoname != null)
-                            locationInfoLinked.RegionInfo.Name = regioninfoname;
-                    }
-                }
+                        locationInfoLinked.RegionInfo = oldlocationinfo.RegionInfo;
 
-                //Updating TV
-                if (oldlocationinfo.TvInfo != null && !String.IsNullOrEmpty(oldlocationinfo.TvInfo.Id))
+                        var regioninfo = await LocationListCreator.GetLocationFromDB<Region>(queryFactory, "regions", Tuple.Create("id", oldlocationinfo.RegionInfo.Id));
+
+                        if (regioninfo != null && regioninfo.Count() > 0)
+                        {
+                            var regioninfoname = regioninfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
+                            if (regioninfoname != null)
+                                locationInfoLinked.RegionInfo.Name = regioninfoname;
+                        }
+                    }
+
+                    //Updating TV
+                    if (oldlocationinfo.TvInfo != null && !String.IsNullOrEmpty(oldlocationinfo.TvInfo.Id))
+                    {
+                        locationInfoLinked.TvInfo = oldlocationinfo.TvInfo;
+
+                        var tvinfo = await LocationListCreator.GetLocationFromDB<Tourismverein>(queryFactory, "tvs", Tuple.Create("id", oldlocationinfo.TvInfo.Id));
+
+                        if (tvinfo != null && tvinfo.Count() > 0)
+                        {
+                            var tvinfoname = tvinfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
+                            if (tvinfoname != null)
+                                locationInfoLinked.TvInfo.Name = tvinfoname;
+                        }
+                    }
+
+                    //Updating Municipality
+                    if (oldlocationinfo.MunicipalityInfo != null && !String.IsNullOrEmpty(oldlocationinfo.MunicipalityInfo.Id))
+                    {
+                        locationInfoLinked.MunicipalityInfo = oldlocationinfo.MunicipalityInfo;
+
+                        var muninfo = await LocationListCreator.GetLocationFromDB<Municipality>(queryFactory, "municipalities", Tuple.Create("id", oldlocationinfo.MunicipalityInfo.Id));
+
+                        if (muninfo != null && muninfo.Count() > 0)
+                        {
+                            var municipalityinfoname = muninfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
+                            if (municipalityinfoname != null)
+                                locationInfoLinked.MunicipalityInfo.Name = municipalityinfoname;
+                        }
+                    }
+
+                    //Updating District
+                    if (oldlocationinfo.DistrictInfo != null && !String.IsNullOrEmpty(oldlocationinfo.DistrictInfo.Id))
+                    {
+                        locationInfoLinked.DistrictInfo = oldlocationinfo.DistrictInfo;
+
+                        var distinfo = await LocationListCreator.GetLocationFromDB<Tourismverein>(queryFactory, "districts", Tuple.Create("id", oldlocationinfo.DistrictInfo.Id));
+
+                        if (distinfo != null && distinfo.Count() > 0)
+                        {
+                            var districtinfoname = distinfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
+                            if (districtinfoname != null)
+                                locationInfoLinked.DistrictInfo.Name = districtinfoname;
+                        }
+                    }
+
+                    //Updating Area
+                    if (oldlocationinfo.AreaInfo != null && !String.IsNullOrEmpty(oldlocationinfo.AreaInfo.Id))
+                    {
+                        locationInfoLinked.AreaInfo = oldlocationinfo.AreaInfo;
+
+                        var areainfo = await LocationListCreator.GetLocationFromDB<Tourismverein>(queryFactory, "areas", Tuple.Create("id", oldlocationinfo.AreaInfo.Id));
+
+                        if (areainfo != null && areainfo.Count() > 0)
+                        {
+                            var areainfoname = areainfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
+                            if (areainfoname != null)
+                                locationInfoLinked.AreaInfo.Name = areainfoname;
+                        }
+                    }
+
+                    return locationInfoLinked;
+                }
+                else
                 {
-                    locationInfoLinked.TvInfo = oldlocationinfo.TvInfo;
-
-                    var tvinfo = await LocationListCreator.GetLocationFromDB<Tourismverein>(queryFactory, "tvs", Tuple.Create("id", oldlocationinfo.TvInfo.Id));
-
-                    if (tvinfo != null && tvinfo.Count() > 0)
-                    {
-                        var tvinfoname = tvinfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
-                        if (tvinfoname != null)
-                            locationInfoLinked.TvInfo.Name = tvinfoname;
-                    }
+                    return null;
                 }
-
-                //Updating Municipality
-                if (oldlocationinfo.MunicipalityInfo != null && !String.IsNullOrEmpty(oldlocationinfo.MunicipalityInfo.Id))
-                {
-                    locationInfoLinked.MunicipalityInfo = oldlocationinfo.MunicipalityInfo;
-
-                    var muninfo = await LocationListCreator.GetLocationFromDB<Municipality>(queryFactory, "municipalities", Tuple.Create("id", oldlocationinfo.MunicipalityInfo.Id));
-
-                    if (muninfo != null && muninfo.Count() > 0)
-                    {
-                        var municipalityinfoname = muninfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
-                        if (municipalityinfoname != null)
-                            locationInfoLinked.MunicipalityInfo.Name = municipalityinfoname;
-                    }
-                }
-
-                //Updating District
-                if (oldlocationinfo.DistrictInfo != null && !String.IsNullOrEmpty(oldlocationinfo.DistrictInfo.Id))
-                {
-                    locationInfoLinked.DistrictInfo = oldlocationinfo.DistrictInfo;
-
-                    var distinfo = await LocationListCreator.GetLocationFromDB<Tourismverein>(queryFactory, "districts", Tuple.Create("id", oldlocationinfo.DistrictInfo.Id));
-
-                    if (distinfo != null && distinfo.Count() > 0)
-                    {
-                        var districtinfoname = distinfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
-                        if (districtinfoname != null)
-                            locationInfoLinked.DistrictInfo.Name = districtinfoname;
-                    }
-                }
-
-                //Updating Area
-                if (oldlocationinfo.AreaInfo != null && !String.IsNullOrEmpty(oldlocationinfo.AreaInfo.Id))
-                {
-                    locationInfoLinked.AreaInfo = oldlocationinfo.AreaInfo;
-
-                    var areainfo = await LocationListCreator.GetLocationFromDB<Tourismverein>(queryFactory, "areas", Tuple.Create("id", oldlocationinfo.AreaInfo.Id));
-
-                    if (areainfo != null && areainfo.Count() > 0)
-                    {
-                        var areainfoname = areainfo.FirstOrDefault().Detail.ToDictionary(x => x.Key, x => x.Value.Title);
-                        if (areainfoname != null)
-                            locationInfoLinked.AreaInfo.Name = areainfoname;
-                    }
-                }
-
-                return locationInfoLinked;
             }
-            else
-            {                
+            catch(Exception ex)
+            {
                 return null;
             }
         }
@@ -179,11 +186,11 @@ namespace Helper.Location
         {
             LocationInfoLinked? oldlocationinfo = data.LocationInfo;
 
-            //Check if Locationinfo is already there
-            if (oldlocationinfo == null)
+            //Check if Locationinfo is already there //Test ObjectNullCheck
+            if (oldlocationinfo == null || ObjectAndStringNullCheck(oldlocationinfo))
             {
                 //IF a DistrictId is there use this
-                if (!String.IsNullOrEmpty((data as IDistrictId).DistrictId))
+                if (data is IDistrictId && !String.IsNullOrEmpty((data as IDistrictId).DistrictId))
                     return await GetTheLocationInfoDistrict(queryFactory, (data as IDistrictId).DistrictId as string);
                 //Else use the GPS Point
                 else if (data is IGPSInfoAware && (data as IGPSInfoAware).GpsInfo != null && (data as IGPSInfoAware).GpsInfo.Count > 0)
@@ -193,17 +200,27 @@ namespace Helper.Location
                         gps = (data as IGPSInfoAware).GpsInfo.FirstOrDefault();
 
                     //Check if the Gps Point is in South Tyrol
-                    var isinsouthtyrol = await queryFactory.Query()
-                            .SelectRaw($"select ST_Contains((select geometry from shapes where name = 'Bolzano'), st_setsrid(st_makepoint(({gps.Longitude})::double precision, ({gps.Latitude})::double precision), 4326))")
-                            .FirstOrDefaultAsync<bool>();
 
-                    if(isinsouthtyrol)
+                    //var southtyrol = await queryFactory.Query()
+                    //    .SelectRaw("ST_AsText(geometry)")
+                    //    .From("shapes")
+                    //    .Where("name", "Bolzano")
+                    //    .FirstOrDefaultAsync<string>();
+                    CultureInfo culture = CultureInfo.InvariantCulture;
+
+                                     
+                    var isinsouthtyrol = await queryFactory.Query()
+                            .SelectRaw($"ST_Contains((select geometry from shapes where name = 'Bolzano'), st_setsrid(st_makepoint(({gps.Longitude.ToString(culture)})::double precision, ({gps.Latitude.ToString(culture)})::double precision), 4326))")
+                            .FirstOrDefaultAsync<bool>();
+                    
+                    if (isinsouthtyrol)
                     {
                         var district = await LocationInfoHelper.GetNearestDistrictbyGPS(queryFactory, gps.Latitude, gps.Longitude, 30000);
                         return await GetTheLocationInfoDistrict(queryFactory, district.Id);
                     }
                     else
                         return null;
+
                 }
                 else
                     return null;
@@ -551,7 +568,22 @@ namespace Helper.Location
         }
 
 
+        public static bool ObjectAndStringNullCheck(object myObject)
+        {
+            bool isnull = true;
+            foreach(var myobject in myObject.GetType().GetProperties())
+            {
+                if(myobject.PropertyType == typeof(string))
+                {
+                    if (!string.IsNullOrEmpty((string)myobject.GetValue(myObject)))
+                        isnull = false;
+                }
+                else if (myobject.GetValue(myObject) != null)
+                    isnull = false;
+            }
 
+            return isnull;
+        }       
     
        
 
