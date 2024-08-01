@@ -192,13 +192,22 @@ namespace Helper.Location
                     if (gps == null)
                         gps = (data as IGPSInfoAware).GpsInfo.FirstOrDefault();
 
-                    var district = await LocationInfoHelper.GetNearestDistrictbyGPS(queryFactory, gps.Latitude, gps.Longitude, 30000);
-                    return await GetTheLocationInfoDistrict(queryFactory, district.Id);
+                    //Check if the Gps Point is in South Tyrol
+                    var isinsouthtyrol = await queryFactory.Query()
+                            .SelectRaw($"select ST_Contains((select geometry from shapes where name = 'Bolzano'), st_setsrid(st_makepoint(({gps.Longitude})::double precision, ({gps.Latitude})::double precision), 4326))")
+                            .FirstOrDefaultAsync<bool>();
+
+                    if(isinsouthtyrol)
+                    {
+                        var district = await LocationInfoHelper.GetNearestDistrictbyGPS(queryFactory, gps.Latitude, gps.Longitude, 30000);
+                        return await GetTheLocationInfoDistrict(queryFactory, district.Id);
+                    }
+                    else
+                        return null;
                 }
                 else
                     return null;
-                //TODO Use Area, use TV use SIAG Methods
-                
+                //TODO Use Area, use TV use SIAG Methods                
             }
             else
                 return await UpdateLocationInfo(oldlocationinfo, queryFactory);
