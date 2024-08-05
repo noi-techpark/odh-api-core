@@ -403,6 +403,7 @@ namespace DataModel
         public object? Response { get; set; }
         public HttpStatusCode HttpStatusCode { get; set; }
         public string Service { get; set; }
+        public bool Success { get; set; }
     }
 
     public class IdmMarketPlacePushResponse

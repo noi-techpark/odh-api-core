@@ -15,6 +15,9 @@ namespace Helper
         private static readonly string[] _languagesToSearchFor =
             new[] { "de", "it", "en", "nl", "cs", "pl", "fr", "pl" };
 
+
+
+
         /// <summary>
         /// Provide title fields as JsonPath
         /// </summary>
@@ -29,6 +32,14 @@ namespace Helper
                 $"Detail.{lang}.Title"
             ).ToArray();
 
+        public static string[] TitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true &&
+                haslanguage != null ? haslanguage.Contains(lang) : true
+            ).Select(lang =>
+                $"Detail.{lang}.Title"
+            ).ToArray();
+
         public static string[] AccoTitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
@@ -36,13 +47,12 @@ namespace Helper
                 $"AccoDetail.{lang}.Name"
             ).ToArray();
 
-
-        //Public for use in Controllers directly
-        public static string[] TypeDescFieldsToSearchFor(string? language) =>
+        public static string[] AccoTitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
             _languagesToSearchFor.Where(lang =>
-                language != null ? lang == language : true
+                language != null ? lang == language : true &&
+                haslanguage != null ? haslanguage.Contains(lang) : true
             ).Select(lang =>
-                $"TypeDesc.{lang}"
+                $"AccoDetail.{lang}.Name"
             ).ToArray();
 
         public static string[] AccoRoomNameFieldsToSearchFor(string? language) =>
@@ -52,9 +62,25 @@ namespace Helper
                 $"AccoRoomDetail.{lang}.Name"
             ).ToArray();
 
+        public static string[] AccoRoomNameFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
+        _languagesToSearchFor.Where(lang =>
+            language != null ? lang == language : true &&
+                haslanguage != null ? haslanguage.Contains(lang) : true
+        ).Select(lang =>
+            $"AccoRoomDetail.{lang}.Name"
+        ).ToArray();
+
         public static string[] EventShortTitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
+            ).Select(lang =>
+                $"EventTitle.{lang}"
+            ).ToArray();
+
+        public static string[] EventShortTitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true &&
+                haslanguage != null ? haslanguage.Contains(lang) : true
             ).Select(lang =>
                 $"EventTitle.{lang}"
             ).ToArray();
@@ -96,6 +122,14 @@ namespace Helper
         //     $"odhdata.Detail.{lang}.Name"
         // ).ToArray();
 
+        //Public for use in Controllers directly
+        public static string[] TypeDescFieldsToSearchFor(string? language) =>
+            _languagesToSearchFor.Where(lang =>
+                language != null ? lang == language : true
+            ).Select(lang =>
+                $"TypeDesc.{lang}"
+            ).ToArray();
+
         public static string[] TagNameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
@@ -108,13 +142,6 @@ namespace Helper
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"Name.{lang}"
-            ).ToArray();
-
-        public static string[] WebcamnameFieldsToSearchFor(string? language) =>
-            _languagesToSearchFor.Where(lang =>
-                language != null ? lang == language : true
-            ).Select(lang =>
-                $"Webcamname.{lang}"
             ).ToArray();
 
         public static string[] WeatherHistoryFieldsToSearchFor(string? language) =>
@@ -191,7 +218,7 @@ namespace Helper
                 .DurationFilter(duration, durationmin, durationmax)
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
                 .HighlightFilter(highlight)                
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                  .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles)
                 .FilterReducedDataByRoles(userroles);
@@ -236,7 +263,7 @@ namespace Helper
                 .LocFilterRegionFilter(regionlist)                  //Use generated columns also here?
                 .AreaFilter(arealist)                               //Use generated columns also here?
                 .HighlightFilter(highlight)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles)
                 .FilterReducedDataByRoles(userroles);
@@ -281,7 +308,7 @@ namespace Helper
                 .CategoryCodeFilter(categorycodeslist)
                 .CuisineCodeFilter(facilitycodeslist)
                 .DishCodeFilter(dishcodeslist)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles)
                 .FilterReducedDataByRoles(userroles);
@@ -350,7 +377,7 @@ namespace Helper
                 .AltitudeFilter(altitude, altitudemin, altitudemax)
                 //.When(tagdict != null && tagdict.ContainsKey("and") && tagdict["and"].Any(), q => q.TaggingFilter_AND(tagdict!["and"]))
                 //.When(tagdict != null && tagdict.ContainsKey("or") && tagdict["or"].Any(), q => q.TaggingFilter_OR(tagdict!["or"]))
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles)
                 .FilterReducedDataByRoles(userroles);
@@ -393,7 +420,7 @@ namespace Helper
                 .SourceFilter_GeneratedColumn(sourcelist)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .HighlightFilter(highlight)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles);
         }
@@ -447,7 +474,7 @@ namespace Helper
                 .LocFilterRegionFilter(regionlist)                
                 .EventPublisherRancFilter(ranclist)
                 .EventOrgFilter(orglist)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)                                
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)                                
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))                            
                 .FilterDataByAccessRoles(userroles)
                 .FilterReducedDataByRoles(userroles);
@@ -502,7 +529,7 @@ namespace Helper
                 .LocFilterTvsFilter(tourismvereinlist)
                 .LocFilterRegionFilter(regionlist)
                 .AccoAltitudeFilter(altitude, altitudemin, altitudemax)
-                .SearchFilter(AccoTitleFieldsToSearchFor(language), searchfilter)                
+                .SearchFilter(AccoTitleFieldsToSearchFor(language, languagelist), searchfilter)                
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles)
                 .FilterReducedDataByRoles(userroles);
@@ -533,7 +560,7 @@ namespace Helper
                 .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
                 .SourceFilter_GeneratedColumn(sourcelist)
                 .VisibleInSearchFilter(visibleinsearch)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles);
         }
@@ -553,7 +580,8 @@ namespace Helper
             );
 
             return query
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .ActiveFilter_GeneratedColumn(activefilter)         //OK GENERATED COLUMNS //.ActiveFilter(activefilter)
                 .OdhActiveFilter_GeneratedColumn(odhactivefilter)   //OK GENERATED COLUMNS //.SmgActiveFilter(smgactivefilter)
@@ -591,7 +619,7 @@ namespace Helper
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 //.When(filterClosedData, q => q.FilterClosedData_GeneratedColumn());
-                .SearchFilter(WebcamnameFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles)
                 .FilterReducedDataByRoles(userroles);
@@ -668,8 +696,9 @@ namespace Helper
         //Return Where and Parameters for Eventshort
         public static Query EventShortWhereExpression(
             this Query query, 
-            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> sourcelist,
-            IReadOnlyCollection<string> eventlocationlist, IReadOnlyCollection<string> webaddresslist,
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> languagelist,
+            IReadOnlyCollection<string> sourcelist, IReadOnlyCollection<string> eventlocationlist, 
+            IReadOnlyCollection<string> webaddresslist,
             bool? activefilter,
             string? todayactivefilter, bool? websiteactivefilter, bool? communityactivefilter,
             DateTime? start, DateTime? end,
@@ -707,7 +736,8 @@ namespace Helper
                 //.EventShortDateFilterBeginByRoom(start, end, getbyrooms)
                 .When(getbyrooms, q => q.EventShortDateFilter_GeneratedColumn(start, end, true, false))                
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)   //.PublishedOnFilter(publishedonlist)
-                .SearchFilter(EventShortTitleFieldsToSearchFor(language), searchfilter) //TODO here the title is in another field
+                .When(languagelist.Count > 0, q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)) //.HasLanguageFilter(languagelist)
+                .SearchFilter(EventShortTitleFieldsToSearchFor(language, languagelist), searchfilter) //TODO here the title is in another field
                 .LastChangedFilter_GeneratedColumn(lastchange)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles);
@@ -762,7 +792,7 @@ namespace Helper
                 .VenueRoomCountFilter(roomcount, roomcountmin, roomcountmax)
                  //TODO
                 //.VenueCapacityFilter(capacity, capacitymin, capacitymax)
-                .SearchFilter(TitleFieldsToSearchFor(language), searchfilter)
+                .SearchFilter(TitleFieldsToSearchFor(language, languagelist), searchfilter)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles)
                 .FilterReducedDataByRoles(userroles);
@@ -856,6 +886,29 @@ namespace Helper
                 .When(typeslist != null && typeslist.Count > 0, q => query.SourceTypeFilter(typeslist))
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                 .FilterDataByAccessRoles(userroles);
+        }
+
+        public static Query PushResultWhereExpression(
+            this Query query, 
+            IReadOnlyCollection<string> idlist, IReadOnlyCollection<string> publisherlist,
+            DateTime? begin, DateTime? end,
+            IReadOnlyCollection<string> objectidlist, IReadOnlyCollection<string> objecttypelist,
+            string? additionalfilter)
+        {
+            LogMethodInfo(
+                System.Reflection.MethodBase.GetCurrentMethod()!,
+                 "<query>", // not interested in query
+                publisherlist, begin, end, idlist
+            );
+
+            return query
+                .When(idlist != null && idlist.Count > 0, q => query.WhereIn("id", idlist))
+                .When(publisherlist != null && publisherlist.Count > 0, q => query.WhereIn("gen_publisher", publisherlist))
+                .When(objectidlist != null && objectidlist.Count > 0, q => query.WhereIn("gen_objectid", objectidlist))
+                .When(objecttypelist != null && objecttypelist.Count > 0, q => query.WhereIn("gen_objecttype", objecttypelist))
+                .LastChangedFilter_GeneratedColumn(begin, end)
+                .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
+                
         }
 
 

@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   api:
     image: ${DOCKER_IMAGE}:${DOCKER_TAG}
@@ -62,14 +60,16 @@ services:
       ASPNETCORE_RavenConfig__ServiceUrl: ${RAVEN_SERVICEURL}
       ASPNETCORE_RavenConfig__Username: ${RAVEN_USER}
       ASPNETCORE_RavenConfig__Password: ${RAVEN_PSWD}
-      ASPNETCORE_FCMConfig__noicommunityapp__ServerKey: ${NOICOMMUNITY_SERVERKEY}
-      ASPNETCORE_FCMConfig__noicommunityapp__SenderId: ${NOICOMMUNITY_SENDERID}
+      ASPNETCORE_FCMConfig__noi-communityapp__ServerKey: ${NOICOMMUNITY_SERVERKEY}
+      ASPNETCORE_FCMConfig__noi-communityapp__SenderId: ${NOICOMMUNITY_SENDERID}
+      ASPNETCORE_FCMConfig__noi-communityapp__ProjectName: ${NOICOMMUNITY_PROJECTNAME}
+      ASPNETCORE_FCMConfig__noi-communityapp__FCMServiceAccount: ${NOICOMMUNITY_FCMSERVICEACCOUNT}      
       ASPNETCORE_NotifierConfig__idm-marketplace__Url: ${MARKETPLACE_PUSH_URL}
       ASPNETCORE_NotifierConfig__idm-marketplace__User: ${MARKETPLACE_PUSH_USER}
       ASPNETCORE_NotifierConfig__idm-marketplace__Password: ${MARKETPLACE_PUSH_PSWD}
       ASPNETCORE_S3Config__dc-meteorology-province-forecast__Filename: ${S3_WEATHERFORECAST_FILENAME}
       ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessKey: ${S3_WEATHERFORECAST_ACCESSKEY}
-      ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessSecretKey: ${S3_WEATHERFORECAST_SECRET}
+      ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessSecretKey: ${S3_WEATHERFORECAST_SECRET}      
     restart: unless-stopped
     ports:
       - "${SERVER_PORT}:80"

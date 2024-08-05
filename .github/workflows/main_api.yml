@@ -22,7 +22,8 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.x
+        dotnet-version: '8.0.x'
+        dotnet-quality: 'preview'
     - name: Restore dependencies
       run: dotnet restore OdhApiCore.sln
     - name: Build OdhApiCore Solution
@@ -65,7 +66,7 @@ jobs:
           X_CDB_SERVICEURL: "https://lcs.lts.it/data/cdbdata.asmx"       
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
           X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
-          X_SIAG_SERVICEURL: ${{ secrets.SIAG_URL_TEST }}
+          X_SIAG_SERVICEURL: "http://daten.buergernetz.bz.it/services/weather/"
           X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
           X_IMG_URL: "https://images.tourism.testingmachine.eu/api/Image/GetImage?imageurl="
           X_DOC_URL: "https://images.tourism.testingmachine.eu/api/File/GetFile/"
@@ -75,7 +76,37 @@ jobs:
           X_OAUTH_AUTORITY: "https://auth.opendatahub.testingmachine.eu/auth/realms/noi/"
           X_ELK_URL: ${{ secrets.ELK_URL_TEST }}
           X_ELK_TOKEN: ${{ secrets.ELK_TOKEN_TEST }}
-          X_JSONPATH: "./wwwroot/json/"          
+          X_JSONPATH: "./wwwroot/json/"
+          X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
+          X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
+          X_EBMS_SERVICEURL: ${{ secrets.EBMS_URL_TEST }}
+          X_DSS_SERVICEURL: "https://www.dolomitisuperski.com/jsonexport/export/"
+          X_DSS_USER: ${{ secrets.DSS_USER_TEST }}
+          X_DSS_PSWD: ${{ secrets.DSS_PSWD_TEST }}
+          X_A22_USER: ${{ secrets.A22_USER_TEST }}
+          X_A22_PSWD: ${{ secrets.A22_PSWD_TEST }}
+          X_A22_SERVICEURL: ${{ secrets.A22_URL_TEST }}
+          X_FERATEL_USER: ""
+          X_FERATEL_PSWD: ""
+          X_FERATEL_SERVICEURL: ${{ secrets.FERATEL_URL_TEST }}
+          X_PANOMAX_USER: ""
+          X_PANOMAX_PSWD: ""
+          X_PANOMAX_SERVICEURL: ${{ secrets.PANOMAX_URL_TEST }}
+          X_PANOCLOUD_USER: ""
+          X_PANOCLOUD_PSWD: ""
+          X_PANOCLOUD_SERVICEURL: ${{ secrets.PANOCLOUD_URL_TEST }}
+          X_LOOPTEC_USER: ""
+          X_LOOPTEC_PSWD: ""
+          X_LOOPTEC_SERVICEURL: ${{ secrets.LOOPTEC_URL_TEST }}
+          X_SUEDTIROLWEIN_USER: ""
+          X_SUEDTIROLWEIN_PSWD: ""
+          X_SUEDTIROLWEIN_SERVICEURL: "https://suedtirolwein.secure.consisto.net/"
+          X_MUSPORT_USER: ""
+          X_MUSPORT_PSWD: ""
+          X_MUSPORT_SERVICEURL: "https://musport.prov.bz.it/musport/services/MuseumsService/"
+          X_NINJA_USER: ""
+          X_NINJA_PSWD: ""
+          X_NINJA_SERVICEURL: "https://mobility.api.opendatahub.com/v2/flat/"
           X_DATABROWSER_URL: "https://frontend.tourism.testingmachine.eu/"
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
@@ -83,9 +114,19 @@ jobs:
           X_API_URL: ${{ env.API_URL }}
           X_NOICOMMUNITY_SERVERKEY: ${{ secrets.NOICOMMUNITY_SERVERKEY_TEST }}
           X_NOICOMMUNITY_SENDERID: ${{ secrets.NOICOMMUNITY_SENDERID_TEST }}
+          X_NOICOMMUNITY_PROJECTNAME: "noi-community"
+          X_NOICOMMUNITY_FCMSERVICEACCOUNT: "google-service-account.noicommunity.json"
           X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
           X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
           X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
+          X_MARKETPLACE_PUSH_URL: ""
+          X_MARKETPLACE_PUSH_USER: ""
+          X_MARKETPLACE_PUSH_PSWD: ""
+
+      - name: Setup config
+        run: |
+            echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_NOICOMMUNITY }}" > google-service-account.noicommunity.json
+            chmod +r google-service-account.noicommunity.json
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -149,7 +190,7 @@ jobs:
           X_CDB_PSWD: ${{ secrets.CDB_PSWD_TEST }}
           X_CDB_SERVICEURL: "https://lcs.lts.it/data/cdbdata.asmx"
           X_SIAG_USER: ${{ secrets.SIAG_USER_TEST }}
-          X_SIAG_PSWD: ${{ secrets.SIAG_PSWD_TEST }}
+          X_SIAG_PSWD: "http://daten.buergernetz.bz.it/services/weather/"
           X_SIAG_SERVICEURL: ${{ secrets.SIAG_URL_TEST }}          
           X_XMLDIR: ${{ secrets.XMLDIR_TEST }}
           X_IMG_URL: "https://tourism.images.opendatahub.com/api/Image/GetImage?imageurl="
@@ -161,6 +202,36 @@ jobs:
           X_ELK_URL: ${{ secrets.ELK_URL_TEST }}
           X_ELK_TOKEN: ${{ secrets.ELK_TOKEN_TEST }}
           X_JSONPATH: "./wwwroot/json/"
+          X_EBMS_USER: ${{ secrets.EBMS_USER_TEST }}
+          X_EBMS_PASS: ${{ secrets.EBMS_PASS_TEST }}
+          X_EBMS_SERVICEURL: ${{ secrets.EBMS_URL_TEST }}
+          X_DSS_SERVICEURL: "https://www.dolomitisuperski.com/jsonexport/export/"
+          X_DSS_USER: ${{ secrets.DSS_USER_TEST }}
+          X_DSS_PSWD: ${{ secrets.DSS_PSWD_TEST }}
+          X_A22_USER: ${{ secrets.A22_USER_TEST }}
+          X_A22_PSWD: ${{ secrets.A22_PSWD_TEST }}
+          X_A22_SERVICEURL: ${{ secrets.A22_URL_TEST }}
+          X_FERATEL_USER: ""
+          X_FERATEL_PSWD: ""
+          X_FERATEL_SERVICEURL: ${{ secrets.FERATEL_URL_TEST }}
+          X_PANOMAX_USER: ""
+          X_PANOMAX_PSWD: ""
+          X_PANOMAX_SERVICEURL: ${{ secrets.PANOMAX_URL_TEST }}
+          X_PANOCLOUD_USER: ""
+          X_PANOCLOUD_PSWD: ""
+          X_PANOCLOUD_SERVICEURL: ${{ secrets.PANOCLOUD_URL_TEST }}
+          X_LOOPTEC_USER: ""
+          X_LOOPTEC_PSWD: ""
+          X_LOOPTEC_SERVICEURL: ${{ secrets.LOOPTEC_URL_TEST }}
+          X_SUEDTIROLWEIN_USER: ""
+          X_SUEDTIROLWEIN_PSWD: ""
+          X_SUEDTIROLWEIN_SERVICEURL: "https://suedtirolwein.secure.consisto.net/"
+          X_MUSPORT_USER: ""
+          X_MUSPORT_PSWD: ""
+          X_MUSPORT_SERVICEURL: "https://musport.prov.bz.it/musport/services/MuseumsService/"
+          X_NINJA_USER: ""
+          X_NINJA_PSWD: ""
+          X_NINJA_SERVICEURL: "https://mobility.api.opendatahub.com/v2/flat/"
           X_DATABROWSER_URL: "https://databrowser.opendatahub.com/"
           X_RAVEN_SERVICEURL: "https://service.suedtirol.info/api/"
           X_RAVEN_USER: ${{ secrets.RAVEN_USER_TEST }}
@@ -168,10 +239,20 @@ jobs:
           X_API_URL: ${{ env.API_URL }}
           X_NOICOMMUNITY_SERVERKEY: ${{ secrets.NOICOMMUNITY_SERVERKEY_TEST }}
           X_NOICOMMUNITY_SENDERID: ${{ secrets.NOICOMMUNITY_SENDERID_TEST }}
+          X_NOICOMMUNITY_PROJECTNAME: "noi-community"
+          X_NOICOMMUNITY_FCMSERVICEACCOUNT: "google-service-account.noicommunity.json"
           X_S3_WEATHERFORECAST_FILENAME: "SMOS_MCPL-WX_EXP_SIAG.JSON"
           X_S3_WEATHERFORECAST_ACCESSKEY: ${{ secrets.S3_WEATHERFORECAST_ACCESSKEY }}
           X_S3_WEATHERFORECAST_SECRET: ${{ secrets.S3_WEATHERFORECAST_SECRET }}
-
+          X_MARKETPLACE_PUSH_URL: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_URL }}
+          X_MARKETPLACE_PUSH_USER: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_USERNAME }}
+          X_MARKETPLACE_PUSH_PSWD: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_PASSWORD }}
+          
+      - name: Setup config
+        run: |
+              echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_NOICOMMUNITY }}" > google-service-account.noicommunity.json
+              chmod +r google-service-account.noicommunity.json
+  
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
         with:

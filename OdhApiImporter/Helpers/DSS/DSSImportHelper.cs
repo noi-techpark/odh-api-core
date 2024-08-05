@@ -171,7 +171,7 @@ namespace OdhApiImporter.Helpers.DSS
                     {
                         if (parsedobject.GpsInfo.FirstOrDefault()?.Latitude != 0 && parsedobject.GpsInfo.FirstOrDefault()?.Longitude != 0)
                         {
-                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault()!.Latitude, parsedobject.GpsInfo.FirstOrDefault()!.Longitude, 30000);
+                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault()!.Latitude, parsedobject.GpsInfo.FirstOrDefault()!.Longitude, 10000);
 
                             if (district != null)
                             {
@@ -181,6 +181,10 @@ namespace OdhApiImporter.Helpers.DSS
                                 parsedobject.TourismorganizationId = locinfo.TvInfo?.Id;
 
                                 getlocationfromarea = false;
+                            }
+                            else
+                            {
+                                parsedobject.LocationInfo = new LocationInfoLinked();
                             }
                         }
                     }

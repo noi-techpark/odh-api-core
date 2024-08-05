@@ -24,7 +24,7 @@ namespace DataModel
         {
             get
             {
-                return "Events/" + Uri.EscapeDataString(this.Id);
+                return this.Id != null ? "Events/" + Uri.EscapeDataString(this.Id) : null;                
             }
         }
 
@@ -37,7 +37,10 @@ namespace DataModel
         public ICollection<string>? HasLanguage { get; set; }
         public ICollection<string>? PublishedOn { get; set; }
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        //We use RelatedContent to store Parent/Child Event Information
         public ICollection<RelatedContent>? RelatedContent { get; set; }
+
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
         //Tags
         public List<Tags> Tags { get; set; }
@@ -47,6 +50,8 @@ namespace DataModel
         public IDictionary<string, Detail> Detail { get; set; }
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
 
+        //Event Organizer
+        public IDictionary<string, ContactInfos> Organizer { get; set; }
 
         //ImageGallery and Video Data
         public ICollection<ImageGallery>? ImageGallery { get; set; }
@@ -55,38 +60,16 @@ namespace DataModel
         //Gps Information and LocationInfo or should the venue GPS Info used?
         public ICollection<GpsInfo> GpsInfo { get; set; }
         public LocationInfoLinked? LocationInfo { get; set; }
-        
+                   
 
-        //Assigned Venues or should we use RelatedContent?
-        public List<string> VenueIds { get; set; }
-
-        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public ICollection<VenueLink> Venues
-        {
-            get
-            {
-                return this.Venues != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = ODHConstant.ApplicationURL + "Venue/" + x }).ToList() : new List<VenueLink>();
-            }
-        }
-
-        //TODO Add Subevent Use RelatedContent?
-
-        //TODO Add Documents
-        public IDictionary<string, List<Document>?> Documents { get; set; }
-
+        public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }
 
         //TODO Add EventDates
+        public ICollection<EventInfo> EventInfo { get; set; }
 
         //TODO Add Booking Info
 
-        //to check if this is needed?
-
-        //TODO Properties LIST (simple Key Value List)
-        public IDictionary<string,string>? Properties { get; set; }
-
-        //TODO Properties Language Based LIST (Key Value List Language Dependant)
-        public IDictionary<string, IDictionary<string,string>>? PropertiesLocalized { get; set; }
-
+        //TODO Add Subevent Use RelatedContent?
     }
 
     public class VenueLink
@@ -95,12 +78,43 @@ namespace DataModel
         public string? Self { get; set; }
     }
 
-    public class DateRanges
+    public class EventInfo
     {
         public DateTime Begin { get; set; }
         public DateTime End { get; set; }
+
+        public List<string> VenueIds { get; set; }
+
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        public ICollection<VenueLink> Venues
+        {
+            get
+            {
+                return this.Venues != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "Venue/" + x }).ToList() : new List<VenueLink>();
+            }
+        }
+
+        //to check if this is needed
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public IDictionary<string, Detail> Detail { get; set; }
+
+        public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }
     }
 
+    public class DocumentDetailed : Document
+    {
+        public string Description { get; set; }
+        public string DocumentExtension { get; set; }
+        public string DocumentMimeType { get; set; }
+    }
 
+    //SFSCon Specific
+
+
+    //LTS Specific
+
+
+    //EventShort Specific
 
 }

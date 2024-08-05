@@ -165,30 +165,47 @@ namespace Helper
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
 
-        //public static string GetGeoWhereSimple(string latitude, string longitude, string radius)
-        //{
-        //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision)) < " + radius;
-        //}
+        public static string GetGeoWhereInPolygon_GeneratedColumns(string? wkt, List<Tuple<double, double>>? polygon, string srid, string? operation = null)
+        {
+            if (String.IsNullOrEmpty(wkt))
+                return GetGeoWhereInPolygon_GeneratedColumns(polygon, srid, operation);
+            else
+                return GetGeoWhereInPolygon_GeneratedColumns(wkt, srid, operation);
+        }
+
+        public static string GetGeoWhereInPolygon_GeneratedColumns(List<Tuple<double,double>> polygon, string srid = "4326", string? operation = "intersects")
+        {
+            if(srid != "4326")
+                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', {srid}), ST_Transform(gen_position,{srid}))"; 
+            else
+                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', 4326), gen_position)";
+        }
+        
+        public static string GetGeoWhereInPolygon_GeneratedColumns(string wkt, string srid = "4326", string? operation = "intersects")
+        {
+            if(srid != "4326")
+                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', {srid}), ST_Transform(gen_position,{srid}))";
+            else
+                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', 4326), gen_position)";
+        }        
+
+        public static string GetPolygonOperator(string? operation) => operation switch
+        {
+            "contains" => "ST_Contains",
+            "intersects" => "ST_Intersects",
+            _ => "ST_Contains"
+        };        
+
 
         public static string GetGeoOrderBySimple_GeneratedColumns(double latitude, double longitude)
         {
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision))";
-        }
-
-        //public static string GetGeoOrderBySimple(string latitude, string longitude)
-        //{
-        //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->>'Latitude')::double precision, (data->>'Longitude')::double precision))";
-        //}
+        }      
         
         public static string GetGeoWhereExtended_GeneratedColumns(double latitude, double longitude, int radius)
         {
             return $"earth_distance(ll_to_earth({latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}),ll_to_earth((gen_latitude)::double precision, (gen_longitude)::double precision)) < {radius.ToString()}";
         }
-
-        //public static string GetGeoWhereExtended(string latitude, string longitude, string radius)
-        //{
-        //    return "earth_distance(ll_to_earth(" + latitude + ", " + longitude + "),ll_to_earth((data->'GpsPoints'->'position'->>'Latitude')::double precision, (data->'GpsPoints'->'position'->>'Longitude')::double precision)) < " + radius;
-        //}
 
         public static string GetGeoOrderByExtended_GeneratedColumns(double latitude, double longitude)
         {

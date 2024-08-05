@@ -216,6 +216,16 @@ namespace RAVEN
             if (!String.IsNullOrEmpty(data.LTSId))
                 data.LTSId = data.LTSId.ToUpper();
 
+            //Shortdesc Longdesc fix, Data is imported wrong on the ravendb instance
+            foreach (var detail in data.AccoRoomDetail)
+            {
+                var shortdesc = detail.Value.Longdesc;
+                var longdesc = detail.Value.Shortdesc;
+
+                detail.Value.Shortdesc = shortdesc;
+                detail.Value.Longdesc = longdesc;
+            }
+
             //fix if source is null
             string datasource = data.Source.ToLower();
 
@@ -230,6 +240,8 @@ namespace RAVEN
             {
                 datasource = datasource.ToLower();
             }
+
+            data.Source = datasource.ToLower();
 
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationRoomLinked>(data, MetadataHelper.GetMetadataforAccommodationRoom); //GetMetadata(data.Id, "accommodationroom", datasource, data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodationroom", true);
@@ -293,7 +305,11 @@ namespace RAVEN
             data2.WayNumber = data.WayNumber;
             data2.Number = data.Number;
             data2.LicenseInfo = data.LicenseInfo;
-            data2.Source = data.Source.ToLower();
+
+            if (String.IsNullOrEmpty(data.Source))
+                data2.Source = "lts";
+            else
+                data2.Source = data.Source.ToLower();
 
             data2.Id = data2.Id.ToUpper();
 
@@ -629,6 +645,8 @@ namespace RAVEN
             else
                 webcam.Source = data.Source.ToLower();
 
+            webcam.CheckMyInsertedLanguages();
+
             webcam._Meta = MetadataHelper.GetMetadataobject<WebcamInfoLinked>(webcam, MetadataHelper.GetMetadataforWebcam); //GetMetadata(data.Id, "webcam", sourcemeta, data.LastChange);
             var webcampublished = data.WebcamAssignedOn != null && data.WebcamAssignedOn.Count > 0 ? true : false;
 
@@ -719,7 +737,7 @@ namespace RAVEN
             }
 
             data.odhdata.ODHActive = !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH") ? true : false;
-            data.links.self = ODHConstant.ApplicationURL + "Venue/" + data.Id;
+            data.links.self = "Venue/" + data.Id;
 
             data._Meta = MetadataHelper.GetMetadataobject<DDVenue>(data, MetadataHelper.GetMetadataforDDVenue);
             //data.odhdata.PublishedOn = PublishedOnHelper.GetPublishenOnList("venue", data.odhdata.ODHActive);

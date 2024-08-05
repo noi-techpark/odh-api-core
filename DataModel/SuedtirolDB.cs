@@ -13,6 +13,7 @@ using DataModel.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Net;
 
 namespace DataModel
 {
@@ -1371,6 +1372,8 @@ namespace DataModel
         {
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            Detail = new Dictionary<string, Detail>();
+            ContactInfos = new Dictionary<string, ContactInfos>();
             AdditionalProperties = new Dictionary<string, dynamic>();
         }
              
@@ -1383,24 +1386,25 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
+        
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         
         public ICollection<string>? SmgTags { get; set; }
 
-        public LocationInfo LocationInfo { get; set; }
-        public ICollection<string> HasLanguage { get; set; }
+        public LocationInfo? LocationInfo { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
 
-        public ICollection<VenueType> VenueCategory { get; set; }
+        public ICollection<VenueType>? VenueCategory { get; set; }
 
-        public ICollection<GpsInfo> GpsInfo { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
 
         public string Source { get; set; }
-        public string SyncSourceInterface { get; set; }
+        public string? SyncSourceInterface { get; set; }
 
         //New Details
         public int? RoomCount { get; set; }
-        public ICollection<VenueRoomDetails> RoomDetails { get; set; }
+        public ICollection<VenueRoomDetails>? RoomDetails { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
@@ -1416,14 +1420,14 @@ namespace DataModel
 
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
 
-        public ICollection<ImageGallery> ImageGallery { get; set; }
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
 
         //New Mapping
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public DistanceInfo DistanceInfo { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
 
         public int? Beds { get; set; }
 
@@ -1440,7 +1444,7 @@ namespace DataModel
     #region Articles    
 
     //BaseInfo Article
-    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IRelatedContentAware, IAdditionalPropertiesAware
+    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IHasLanguage, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2997,7 +3001,9 @@ namespace DataModel
     //For Types Api
     public class AccoFeatures : AccoTypes
     {
+        public string? ClusterId { get; set; }
 
+        public string? ClusterCustomId { get; set; }
     }
 
     //For Types Api 
@@ -3193,6 +3199,75 @@ namespace DataModel
         public IDictionary<string, bool>? PublishDataWithTagOn { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
+    }
+
+    public class Publisher : IIdentifiable, IImportDateassigneable, ILicenseInfo
+    {
+        public LicenseInfo? LicenseInfo { get; set; }
+
+        public Publisher()
+        {
+            Name = new Dictionary<string, string>();
+
+            //Mapping = new Dictionary<string, IDictionary<string, string>>();
+        }
+
+        public string? Id { get; set; }
+        
+        public string Key { get; set; }
+
+        public IDictionary<string, string> Name { get; set; }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        public string? Url { get; set; }
+
+        //New fields to store Information on Push
+        public ICollection<PushConfig>? PushConfig { get; set; }
+    }
+
+    public class PushConfig
+    {
+        public ICollection<string>? PathParam { get; set; }
+
+        public string? BaseUrl { get; set; }
+
+        public string? PushApiUrl
+        {
+            get
+            {
+                return String.Format("{0}/{1}", this.BaseUrl != null ? this.BaseUrl : "", String.Join("/", this.PathParam));
+            }
+        }
+    }
+
+    public class Source : IIdentifiable, IImportDateassigneable, ILicenseInfo
+    {
+        public LicenseInfo? LicenseInfo { get; set; }
+
+        public Source()
+        {
+            Name = new Dictionary<string, string>();
+            Description = new Dictionary<string, string>();
+        }
+
+        public string? Id { get; set; }
+        
+        public string Key { get; set; }
+
+        public IDictionary<string, string> Name { get; set; }
+        public IDictionary<string, string> Description { get; set; }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        public string? Url { get; set; }
+
+        [SwaggerSchema("Interfaces that are offered by the source")]
+        public ICollection<string>? Interfaces { get; set; }
+
+        public ICollection<string> Types { get; set; }
     }
 
     public class LTSTaggingType
@@ -4060,4 +4135,42 @@ namespace DataModel
     }
     
     #endregion
+
+    public class PushResponse
+    {
+        public string Id { get; set; }
+        public string Publisher { get; set; }
+        public DateTime Date { get; set; }
+        public dynamic Result { get; set; }
+
+        public PushObject? PushObject { get; set; }
+    }
+
+    public class PushObject
+    {
+        public string Id { get; set; }
+
+        //Add the info for the pushed object
+        public string Type { get; set; }
+    }
+
+    public class PushResult
+    {
+        public int? Messages { get; set; }
+        public bool Success { get; set; }
+        public string? Response { get; set; }
+        public string? Error { get; set; }
+
+        public static PushResult MergeMultipleFCMPushNotificationResponses(IEnumerable<PushResult> responses)
+        {
+            return new PushResult()
+            {
+                Messages = responses.Sum(x => x.Messages),
+                Error = String.Join("|", responses.Select(x => x.Error)),
+                Success = responses.Any(x => x.Success == true),
+                Response = String.Join("|", responses.Select(x => x.Response))
+            };
+        }
+    }
+
 }
