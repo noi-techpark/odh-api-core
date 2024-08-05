@@ -65,9 +65,7 @@ namespace OdhApiCore.Controllers.api
         {
 
             return Ok(JsonConvert.SerializeObject(settings.NoRateLimitConfig));
-        }
-
-        
+        }       
 
 
         [HttpGet, Route("UrlHelper", Name = "UrlHelperTest")]
@@ -199,6 +197,19 @@ namespace OdhApiCore.Controllers.api
              .GetObjectListAsync<ODHTagLinked>();
 
             return Ok(subcategories);
+        }
+
+        [HttpGet, Route("TestQueryDynamic")]
+        public async Task<IActionResult> TestQueryDynamic()
+        {           
+            var query = QueryFactory.Query()
+             .Select("data")
+             .From("smgpois")
+             .Where("id", "echarging_asm_00000766");
+
+            var result = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();  //.FirstOrDefaultAsync<JsonRaw>();
+
+            return Ok(result);
         }
 
         [HttpGet, Route("TestLocReduced")]
