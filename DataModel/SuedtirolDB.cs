@@ -53,6 +53,11 @@ namespace DataModel
         DateTime? LastChange { get; set; }
     }
 
+    public interface IDistrictId
+    {
+        string? DistrictId { get; set; }
+    }
+
     public interface IMappingAware
     {
         IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -159,6 +164,8 @@ namespace DataModel
     {
         IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }
+
+    
 
     public interface ILocationInfoAware
     {
@@ -808,7 +815,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Accommodation : IIdentifiable, IShortName, IActivateable, IDistrictId, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -829,19 +836,20 @@ namespace DataModel
         [SwaggerDeprecated("Use AccoDetail.lang.Name")]
         public string? Shortname { get; set; }
 
-        //public int Units { get; set; }
-        //public int Beds { get; set; }
         public int? Representation { get; set; }
         public bool HasApartment { get; set; }
         public bool? HasRoom { get; set; }
         public bool? IsCamping { get; set; }
-        public bool? IsGastronomy { get; set; }
+
+        //not used removing
+        //public bool? IsGastronomy { get; set; }
         public bool IsBookable { get; set; }
         public bool? IsAccommodation { get; set; }
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public bool? TVMember { get; set; }
         public string? TourismVereinId { get; set; }
+        [SwaggerDeprecated("Deprecated")]
         public string? MainLanguage { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
@@ -872,7 +880,8 @@ namespace DataModel
 
         public LocationInfo? LocationInfo { get; set; }
 
-        public string? GastronomyId { get; set; }
+        //Not used remove this property
+        //public string? GastronomyId { get; set; }
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
@@ -893,8 +902,23 @@ namespace DataModel
         public AccoHGVInfo? AccoHGVInfo { get; set; }
 
         public AccoOverview? AccoOverview { get; set; }
-    }
 
+        [SwaggerSchema("Accommodation Id on Trust You")]
+        public string? TrustYouID { get; set; }
+
+        [SwaggerSchema("Review Score on Trust You")]
+        public double? TrustYouScore { get; set; }
+
+        [SwaggerSchema("Number of Ratings in Trust You")]
+        public int? TrustYouResults { get; set; }
+
+        [SwaggerSchema("Active in Trust You")]
+        public bool? TrustYouActive { get; set; }
+
+        [SwaggerSchema("Trust You State on LTS")]
+        public int? TrustYouState { get; set; }
+    }
+   
     public class AccommodationRaven : Accommodation
     {
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
@@ -904,6 +928,7 @@ namespace DataModel
 
         //Overwrites The LocationInfo
         public new LocationInfoLinked? LocationInfo { get; set; }
+
     }
 
     public class AccoRoomInfo
@@ -956,25 +981,7 @@ namespace DataModel
         public string? BookingId { get; set; }
     }
 
-    public abstract class TrustYouInfos
-    {
-        [SwaggerSchema("Accommodation Id on Trust You")]
-        public string? TrustYouID { get; set; }
-
-        [SwaggerSchema("Review Score on Trust You")]
-        public double TrustYouScore { get; set; }
-
-        [SwaggerSchema("Number of Ratings in Trust You")]
-        public int TrustYouResults { get; set; }
-
-        [SwaggerSchema("Active in Trust You")]
-        public bool TrustYouActive { get; set; }
-
-        [SwaggerSchema("Trust You State on LTS")]
-        public int TrustYouState { get; set; }
-    }
-
-    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn
+    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1017,6 +1024,19 @@ namespace DataModel
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public bool Active { get; set; }
+    }
+
+    //New Room Properties
+    public class AccommodationRoomProperties
+    {
+        //New Properties
+        public double? SquareMeters { get; set; }
+        public int? SleepingRooms { get; set; }
+        public int? Toilets { get; set; }
+        public int? LivingRooms { get; set; }
+        public int? DiningRooms { get; set; }
+        public int? Baths { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -1088,11 +1108,70 @@ namespace DataModel
         public TimeSpan BaggageServiceTo { get; set; }
     }
 
+    //Shift all Has, Is Properties to AccoProperties
+    public class AccoProperties
+    {
+        public bool? HasApartment { get; set; }
+        public bool? HasRoom { get; set; }
+        public bool? IsCamping { get; set; }
+        public bool? IsGastronomy { get; set; }
+        public bool? IsBookable { get; set; }
+        public bool? IsAccommodation { get; set; }
+        public bool? HasDorm { get; set; }
+        public bool? HasPitches { get; set; }
+        public bool? TVMember { get; set; }
+
+        //TO REMOVE?
+        //public string? GastronomyId { get; set; }
+        //public string? DistrictId { get; set; }
+        //public string? TourismVereinId { get; set; }
+        //public string? MainLanguage { get; set; }
+    }
+
+    //Shift Trust You To Reviews by using Dictionary
+    public class Review
+    {
+        public string? ReviewId { get; set; }
+
+        public double? Score { get; set; }
+
+        public int? Results { get; set; }
+
+        public bool? Active { get; set; }
+
+        public string? State { get; set; }
+
+        public int? StateInteger { get; set; }
+
+        public string Provider { get; set; }
+    }
+
+    //Rateplans
+    public class RatePlan
+    {
+        public RatePlan()
+        {
+            Name = new Dictionary<string, string>();
+            Description = new Dictionary<string, string>();
+        }
+
+        public string ChargeType { get; set; }
+
+        public string RatePlanId { get; set; }
+        public string Code { get; set; }
+        public IDictionary<string,string>? Name { get; set; }
+        public IDictionary<string, string>? Description { get; set; }
+
+        public DateTime LastUpdate { get; set; } 
+
+        public string? Visibility { get; set; }
+    }
+
     #endregion
 
     #region Gastronomy
 
-    public abstract class Gastronomy : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
+    public abstract class Gastronomy : IIdentifiable, IActivateable, IDistrictId, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1190,7 +1269,7 @@ namespace DataModel
 
     #region Events
 
-    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
+    public class Event : IIdentifiable, IShortName, IDistrictId, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -3874,7 +3953,7 @@ namespace DataModel
     }
 
     //end Event classes
-
+    
     public class LocationInfo : ILocationInfoAware
     {
         public RegionInfo? RegionInfo { get; set; }
@@ -3999,6 +4078,18 @@ namespace DataModel
             catch(Exception ex)
             {
                 return "ODHActivityPoi";
+            }
+        }
+
+        public static string GetTrustYouState(int trustyoustate)
+        {
+            //According to old LTS Documentation State (0=not rated, 1=do not display, 2=display)
+            switch (trustyoustate)
+            {
+                case 2: return "rated";
+                case 1: return "underValued";
+                case 0: return "notRated";
+                default: return "";
             }
         }
     }

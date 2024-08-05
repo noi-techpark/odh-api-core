@@ -413,7 +413,7 @@ namespace OdhApiCore.Controllers.api
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it","nl","cs","pl","ru","fr" });
 
                 //POPULATE LocationInfo
-                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+                odhactivitypoi.LocationInfo = await odhactivitypoi.UpdateLocationInfoExtension(QueryFactory);
 
                 //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
@@ -424,11 +424,9 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
 
-                //TODO DISTANCE Calculation
+                //TODO DISTANCE Calculation                               
 
-                //TODO check for Reduced Data                
-
-                //Trim all strings
+                //TRIM all strings
                 odhactivitypoi.TrimStringProperties();
 
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, new DataInfo("smgpois", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -460,7 +458,7 @@ namespace OdhApiCore.Controllers.api
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
                 
                 //POPULATE LocationInfo
-                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+                odhactivitypoi.LocationInfo = await odhactivitypoi.UpdateLocationInfoExtension(QueryFactory);
 
                 //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
@@ -471,11 +469,9 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
 
-                //TODO DISTANCE Calculation
+                //TODO DISTANCE Calculation                
 
-                //TODO check for Reduced Data
-
-                //Trim all strings
+                //TRIM all strings
                 odhactivitypoi.TrimStringProperties();
 
                 return await UpsertData<ODHActivityPoiLinked>(odhactivitypoi, new DataInfo("smgpois", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));

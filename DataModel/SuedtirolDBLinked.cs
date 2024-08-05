@@ -286,7 +286,7 @@ namespace DataModel
 
     #region Linked Main Classes
 
-    public class GastronomyLinked : Gastronomy, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class GastronomyLinked : Gastronomy, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -360,7 +360,7 @@ namespace DataModel
         }
     }
 
-    public class AccommodationLinked : Accommodation, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class AccommodationLinked : Accommodation, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -455,7 +455,7 @@ namespace DataModel
         //Overwrites The LocationInfo
         public new LocationInfoLinked? LocationInfo { get; set; }
 
-        public ICollection<GpsInfo> GpsInfo { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
 
         //Overwrite Latitude/Longitude/
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
@@ -487,6 +487,57 @@ namespace DataModel
                 return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
+
+        //New, holds all Infos of Trust You
+        public IDictionary<string, Review>? Review { get; set; }
+
+        //New, holds all Infos of Is/Has etc.. Properties
+        public AccoProperties? AccoProperties { get; set; }
+
+        //New, operationschedules also available on Accommodation
+        public ICollection<OperationSchedule>? OperationSchedule { get; set; }
+
+        //New Rateplans
+        public ICollection<RatePlan>? RatePlan { get; set; }
+
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new string? TrustYouID { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].ReviewId : ""; } }
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new double? TrustYouScore { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Score : null; } }
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new int? TrustYouResults { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Results : null; } }
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new bool? TrustYouActive { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Active : null; } }
+
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new int? TrustYouState { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].StateInteger : null; } }
+
+        //Accommodation Properties
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.HasApartment")]
+        public new bool? HasApartment { get { return this.AccoProperties.HasApartment; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.HasRoom")]
+        public new bool? HasRoom { get { return this.AccoProperties.HasRoom; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.IsCamping")]
+        public new bool? IsCamping { get { return this.AccoProperties.IsCamping; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.IsGastronomy")]
+        public bool? IsGastronomy { get { return this.AccoProperties.IsGastronomy; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.IsBookable")]        
+        public new bool? IsBookable { get { return this.AccoProperties.IsBookable; } }
+
+        [SwaggerDeprecated("Deprecated, use AccoProperties.IsAccommodation")]
+        public new bool? IsAccommodation { get { return this.AccoProperties.IsAccommodation; } }     
+        
+        [SwaggerDeprecated("Deprecated, use AccoProperties.TVMember")]
+        public new bool? TVMember { get { return this.AccoProperties.TVMember; } }
     }
 
     public class AccommodationRoomLinked : AccoRoom, IMetaData
@@ -504,9 +555,15 @@ namespace DataModel
 
         //Overwrites The Features
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
+
+        //New Price From per Unit
+        public Nullable<double> PriceFromPerUnit { get; set; }
+
+        //New Accommodation Room Properties
+        public AccommodationRoomProperties? Properties { get; set; }
     }
 
-    public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -620,7 +677,7 @@ namespace DataModel
         }
     }
 
-    public class VenueLinked : Venue, IMetaData
+    public class VenueLinked : Venue, IMetaData, IHasLocationInfoLinked
     {
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public string? Self
@@ -686,7 +743,7 @@ namespace DataModel
         }
     }
 
-    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -757,7 +814,7 @@ namespace DataModel
         public new List<LTSTagsLinked>? LTSTags { get; set; }
     }
 
-    public class LTSPoiLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class LTSPoiLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -830,7 +887,7 @@ namespace DataModel
         }
     }
 
-    public class LTSActivityLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware
+    public class LTSActivityLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -1747,7 +1804,7 @@ namespace DataModel
         }
     }
 
-    public class MeasuringpointLinked : Measuringpoint, IMetaData, IGPSPointsAware, IGPSInfoAware
+    public class MeasuringpointLinked : Measuringpoint, IMetaData, IGPSPointsAware, IGPSInfoAware, IHasLocationInfoLinked
     {
         public Metadata? _Meta { get; set; }
 
@@ -2107,5 +2164,14 @@ namespace DataModel
         public LicenseInfo? LicenseInfo { get; set; }
     }
 
-    #endregion        
+    #endregion
+
+    #region interfaces
+
+    public interface IHasLocationInfoLinked
+    {
+        LocationInfoLinked? LocationInfo { get; set; }
+    }
+
+    #endregion
 }

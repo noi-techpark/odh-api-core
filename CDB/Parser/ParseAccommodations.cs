@@ -92,18 +92,7 @@ namespace CDB.Parser
 
                 if (definition != null)
                 {
-                    //if (definition.Attribute("A0TAUnits") != null)
-                    //    myacco.Units = Convert.ToInt32(definition.Attribute("A0TAUnits").Value);
-                    //else
-                    //    myacco.Units = 0;
-
-                    //if (definition.Attribute("A0TABeds") != null)
-                    //    myacco.Beds = Convert.ToInt32(definition.Attribute("A0TABeds").Value);
-                    //else
-                    //    myacco.Beds = 0;
-
-                    //myacco.Units = 0;
-                    //myacco.Beds = 0;
+                    myacco.AccoProperties = new AccoProperties();
 
                     if (definition.Attribute("A0Ene") != null)
                     {
@@ -124,49 +113,49 @@ namespace CDB.Parser
                     if (definition.Attribute("A0Apa") != null)
                     {
                         if (definition.Attribute("A0Apa").Value == "1")
-                            myacco.HasApartment = true;
+                            myacco.AccoProperties.HasApartment = true;
                         else
-                            myacco.HasApartment = false;
+                            myacco.AccoProperties.HasApartment = false;
                     }
 
                     if (definition.Attribute("A0Roo") != null)
                     {
                         if (definition.Attribute("A0Roo").Value == "1")
-                            myacco.HasRoom = true;
+                            myacco.AccoProperties.HasRoom = true;
                         else
-                            myacco.HasRoom = false;
+                            myacco.AccoProperties.HasRoom = false;
                     }
 
                     if (definition.Attribute("A0MTV") != null)
                     {
                         if (definition.Attribute("A0MTV").Value == "1")
-                            myacco.TVMember = true;
+                            myacco.AccoProperties.TVMember = true;
                         else
-                            myacco.TVMember = false;
+                            myacco.AccoProperties.TVMember = false;
                     }
 
                     if (definition.Attribute("A0Cmp") != null)
                     {
                         if (definition.Attribute("A0Cmp").Value == "1")
-                            myacco.IsCamping = true;
+                            myacco.AccoProperties.IsCamping = true;
                         else
-                            myacco.IsCamping = false;
+                            myacco.AccoProperties.IsCamping = false;
                     }
 
                     if (definition.Attribute("A0Gst") != null)
                     {
                         if (definition.Attribute("A0Gst").Value == "1")
-                            myacco.IsGastronomy = true;
+                            myacco.AccoProperties.IsGastronomy = true;
                         else
-                            myacco.IsGastronomy = false;
+                            myacco.AccoProperties.IsGastronomy = false;
                     }
 
                     if (definition.Attribute("A0Acc") != null)
                     {
                         if (definition.Attribute("A0Acc").Value == "1")
-                            myacco.IsAccommodation = true;
+                            myacco.AccoProperties.IsAccommodation = true;
                         else
-                            myacco.IsAccommodation = false;
+                            myacco.AccoProperties.IsAccommodation = false;
                     }
 
                     if (definition.Attribute("A0Rep") != null)
@@ -393,31 +382,33 @@ namespace CDB.Parser
 
                 if (ratings != null)
                 {
-                    myacco.TrustYouID = ratings.Attribute("A20ID").Value;
-                    myacco.TrustYouResults = Convert.ToInt32(ratings.Attribute("A20Cou").Value);
+                    myacco.Review = new Dictionary<string, Review>();
+
+                    Review review = new Review();
+                    review.ReviewId = ratings.Attribute("A20ID").Value;
+                    review.Results = Convert.ToInt32(ratings.Attribute("A20Cou").Value);
 
                     double ratingresult = 0;
 
                     var style = NumberStyles.AllowDecimalPoint;
 
                     if (Double.TryParse(ratings.Attribute("A20Rat").Value, style, myculture, out ratingresult))
-                        myacco.TrustYouScore = ratingresult * 10; //Fix because i didn't save the comma. and the app is working with example to display 94 --> 940
+                        review.Score = ratingresult * 10; //Fix because i didn't save the comma. and the app is working with example to display 94 --> 940
                     else
-                        myacco.TrustYouScore = 0;
+                        review.Score = 0;
 
                     if (ratings.Attribute("A20Ene").Value == "1")
-                        myacco.TrustYouActive = true;
+                        review.Active = true;
                     else if (ratings.Attribute("A20Ene").Value == "0")
-                        myacco.TrustYouActive = false;
+                        review.Active = false;
 
-                    myacco.TrustYouState = Convert.ToInt32(ratings.Attribute("A20Sta").Value);                    
+                    review.StateInteger = Convert.ToInt32(ratings.Attribute("A20Sta").Value);
+                    review.State = DataModelHelpers.GetTrustYouState(review.StateInteger.Value);
+                    review.Provider = "trustyou";
+
+                    myacco.Review.TryAddOrUpdate("trustyou", review);
                 }
-                else if (ratings == null)
-                {
-                    myacco.TrustYouID = null;
-                    myacco.TrustYouResults = 0;
-                    myacco.TrustYouScore = 0;                    
-                }
+
 
                 List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
@@ -572,9 +563,9 @@ namespace CDB.Parser
                     myacco.AccoBookingChannel = mybookingchannelslist.ToList();
 
                     if (bookable)
-                        myacco.IsBookable = true;
+                        myacco.AccoProperties.IsBookable = true;
                     else
-                        myacco.IsBookable = false;
+                        myacco.AccoProperties.IsBookable = false;
                 }
                 else
                 {
@@ -583,7 +574,7 @@ namespace CDB.Parser
                         if (myacco.AccoBookingChannel.Count > 0)
                         {
                             myacco.AccoBookingChannel.Clear();
-                            myacco.IsBookable = false;
+                            myacco.AccoProperties.IsBookable = false;
                         }
                     }                    
                 }

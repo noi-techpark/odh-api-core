@@ -5,6 +5,7 @@
 using Amazon.Runtime.Internal.Transform;
 using DataModel;
 using Helper;
+using Helper.Location;
 using SqlKata.Execution;
 using SuedtirolWein;
 using SuedtirolWein.Parser;
@@ -186,11 +187,11 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
                     if (suedtirolweinpoi.GpsInfo != null && suedtirolweinpoi.GpsInfo.Count > 0 && suedtirolweinpoi.GpsInfo.FirstOrDefault()?.Latitude != 0 && suedtirolweinpoi.GpsInfo.FirstOrDefault()?.Longitude != 0)
                     {
-                        var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, suedtirolweinpoi.GpsInfo.FirstOrDefault()!.Latitude, suedtirolweinpoi.GpsInfo.FirstOrDefault()!.Longitude, 30000);
+                        var district = await LocationInfoHelper.GetNearestDistrictbyGPS(QueryFactory, suedtirolweinpoi.GpsInfo.FirstOrDefault()!.Latitude, suedtirolweinpoi.GpsInfo.FirstOrDefault()!.Longitude, 30000);
 
                         if (district != null)
                         {
-                            var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+                            var locinfo = await LocationInfoHelper.GetTheLocationInfoDistrict(QueryFactory, district.Id);
 
                             suedtirolweinpoi.LocationInfo = locinfo;
                             suedtirolweinpoi.TourismorganizationId = locinfo.TvInfo?.Id;

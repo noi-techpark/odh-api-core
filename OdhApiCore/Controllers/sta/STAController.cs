@@ -24,6 +24,7 @@ using OdhApiCore.GenericHelpers;
 using OdhApiCore.Controllers.helper;
 using OdhNotifier;
 using Helper.Generic;
+using Helper.Location;
 
 namespace OdhApiCore.Controllers.sta
 {
@@ -211,12 +212,12 @@ namespace OdhApiCore.Controllers.sta
                     {
                         //Get Nearest District
                         var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(odhactivitypoi.GpsPoints["position"].Latitude, odhactivitypoi.GpsPoints["position"].Longitude, 10000);
-                        var nearestdistrict = await GetLocationInfo.GetNearestDistrict(QueryFactory, geosearchresult, 1);
+                        var nearestdistrict = await LocationInfoHelper.GetNearestDistrict(QueryFactory, geosearchresult, 1);
 
                         if (nearestdistrict != null && nearestdistrict.Count() > 0)
                         {
                             //Get LocationInfo Object
-                            var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault()?.Id);
+                            var locationinfo = await LocationInfoHelper.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault()?.Id);
 
                             if (locationinfo != null)
                                 odhactivitypoi.LocationInfo = locationinfo;

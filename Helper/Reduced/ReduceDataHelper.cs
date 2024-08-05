@@ -293,12 +293,13 @@ namespace Helper
             reduced.GpsInfo = myacco.GpsInfo;
 
             //A0Roo
-            reduced.HasRoom = myacco.HasRoom;
+            reduced.AccoProperties = new AccoProperties();
+            reduced.AccoProperties.HasRoom = myacco.HasRoom;
             //A0App
-            reduced.HasApartment = myacco.HasApartment;
+            reduced.AccoProperties.HasApartment = myacco.HasApartment;
 
             //fix 
-            reduced.IsBookable = false;
+            reduced.AccoProperties.IsBookable = false;
 
             //T6RID
             reduced.AccoCategoryId = myacco.AccoCategoryId;

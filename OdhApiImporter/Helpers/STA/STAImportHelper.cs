@@ -4,6 +4,7 @@
 
 using DataModel;
 using Helper;
+using Helper.Location;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using SqlKata.Execution;
@@ -78,12 +79,12 @@ namespace OdhApiImporter.Helpers
                         {
                             //Get Nearest District
                             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(odhactivitypoi.GpsPoints["position"].Latitude, odhactivitypoi.GpsPoints["position"].Longitude, 10000);
-                            var nearestdistrict = await GetLocationInfo.GetNearestDistrict(QueryFactory, geosearchresult, 1);
+                            var nearestdistrict = await LocationInfoHelper.GetNearestDistrict(QueryFactory, geosearchresult, 1);
 
                             if (nearestdistrict != null && nearestdistrict.Count() > 0)
                             {
                                 //Get LocationInfo Object
-                                var locationinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault()?.Id);
+                                var locationinfo = await LocationInfoHelper.GetTheLocationInfoDistrict(QueryFactory, nearestdistrict.FirstOrDefault()?.Id);
 
                                 if (locationinfo != null)
                                     odhactivitypoi.LocationInfo = locationinfo;
