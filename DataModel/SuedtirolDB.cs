@@ -3074,60 +3074,7 @@ namespace DataModel
         public bool Reduced { get; set; }
 
         public UpdateInfo? UpdateInfo { get; set; }
-    }
-
-
-    public class Publisher : IIdentifiable, IImportDateassigneable, ILicenseInfo
-    {
-        public LicenseInfo? LicenseInfo { get; set; }
-
-        public Publisher()
-        {
-            Name = new Dictionary<string, string>();
-
-            //Mapping = new Dictionary<string, IDictionary<string, string>>();
-        }
-
-        public string? Id { get; set; }
-
-        public string Key { get; set; }
-
-        public IDictionary<string, string> Name { get; set; }
-
-        public DateTime? FirstImport { get; set; }
-        public DateTime? LastChange { get; set; }
-
-        public string? Url { get; set; }
-    }
-
-    public class Source : IIdentifiable, IImportDateassigneable, ILicenseInfo
-    {
-        public LicenseInfo? LicenseInfo { get; set; }
-
-        public Source()
-        {
-            Name = new Dictionary<string, string>();
-            Description = new Dictionary<string, string>();
-        }
-
-        public string? Id { get; set; }
-
-        public string Key { get; set; }
-
-        public IDictionary<string, string> Name { get; set; }
-        public IDictionary<string, string> Description { get; set; }
-
-        public DateTime? FirstImport { get; set; }
-        public DateTime? LastChange { get; set; }
-
-        public string? Url { get; set; }
-
-        [SwaggerSchema("Interfaces that are offered by the source")]
-        public ICollection<string>? Interfaces { get; set; }
-
-        public ICollection<string> Types { get; set; }
-    }
-
+    }   
 
     public class LicenseInfo
     {
@@ -3145,7 +3092,6 @@ namespace DataModel
 
         public string? UpdateSource { get; set; }
     }
-
 
     #endregion
 
