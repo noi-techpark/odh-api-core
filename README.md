@@ -57,6 +57,7 @@ Extensions active on DB
 * extension earthdistance;
 * extension cube;
 * extension pg_trgm;
+* extension postgis
 
 Custom Functions on DB
 
@@ -140,6 +141,9 @@ CREATE EXTENSION earthdistance;
 ```
 ```
 CREATE EXTENSION pg_trgm;
+```
+```
+CREATE EXTENSION postgis;
 ```
 
 Create generated columns on Postgres
@@ -348,7 +352,7 @@ BEGIN
     -- Durchlaufen des tsrange-Arrays
     FOREACH tsr IN ARRAY tsrange_array
     LOOP
-        -- Hinzufügen des tsrange-Elements zum tsmultirange
+        -- HinzufÃ¼gen des tsrange-Elements zum tsmultirange
         result := result + tsmultirange(tsrange(tsr));
     END LOOP;
 	END IF;
