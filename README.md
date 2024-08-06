@@ -204,6 +204,11 @@ ALTER TABLE tablename ADD IF NOT EXISTS gen_tsmultirange tsmultirange GENERATED 
 ALTER TABLE tablename ADD IF NOT EXISTS gen_jsonb jsonb GENERATED ALWAYS AS ((data#>'{SomeJsonB}')::jsonb) stored;
 ```
 
+* geometry (postgis)
+```sql
+ALTER TABLE tablename ADD IF NOT EXISTS gen_position public.geometry GENERATED ALWAYS AS (st_setsrid(st_makepoint((data #> '{GpsPoints,position,Longitude}'::text[])::double precision, (data #> '{GpsPoints,position,Latitude}'::text[])::double precision), 4326)) STORED NULL;
+```
+
 * access_based
 ```sql
 ALTER TABLE tablename ADD IF NOT EXISTS gen_access_role text[] GENERATED ALWAYS AS (calculate_access_array(data#>>'{_Meta,Source}',(data#>'{LicenseInfo,ClosedData}')::bool,(data#>'{_Meta,Reduced}')::bool)) stored;
