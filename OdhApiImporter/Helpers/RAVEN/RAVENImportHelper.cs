@@ -74,7 +74,7 @@ namespace OdhApiImporter.Helpers
 
                     bool roomschanged = false;
 
-                    //UPDATE ACCOMMODATIONROOMS CAUTION this only gets rooms from hgv if both sources exists, Rooms from lts are 
+                    //UPDATE ACCOMMODATIONROOMS
                     var myroomdatalist = await GetDataFromRaven.GetRavenData<IEnumerable<AccommodationRoomLinked>>("accommodationroom", id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken, "AccommodationRoom?getall=true&accoid=");
 
                     //TODO make a call on all rooms, save the processed rooms and delete all rooms that are no more on the list

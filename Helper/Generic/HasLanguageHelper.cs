@@ -4,8 +4,10 @@
 
 using DataModel;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +38,7 @@ namespace Helper
             if (String.IsNullOrEmpty(mydetail.Language))
                 mydetail.Language = language;
         }
-
+         
         //For Articles
         public static void CheckMyInsertedLanguages(this Article myarticle, List<string> availablelanguages)
         {

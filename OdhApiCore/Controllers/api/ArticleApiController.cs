@@ -356,6 +356,8 @@ namespace OdhApiCore.Controllers.api
                 if (article.LicenseInfo == null)
                     article.LicenseInfo = new LicenseInfo() { ClosedData = false };
 
+                article.TrimStringProperties();
+
                 return await UpsertData<ArticlesLinked>(article, new DataInfo("articles", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
@@ -391,6 +393,8 @@ namespace OdhApiCore.Controllers.api
 
                 if (article.ArticleDateTo == null)
                     article.ArticleDateTo = DateTime.MaxValue;
+
+                article.TrimStringProperties();
 
                 return await UpsertData<ArticlesLinked>(article, new DataInfo("articles", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });

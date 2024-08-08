@@ -163,6 +163,7 @@ namespace STA
             contactInfosde.Phonenumber = vendingpoint.Tel;
             contactInfosde.Email = vendingpoint.E_Mail;
             contactInfosde.Language = "de";
+            //contactInfosde.Vat = vendingpoint.Parita_IVA; TO CHECK WITH ROBERTO
             mypoi.ContactInfos.TryAddOrUpdate("de", contactInfosde);
 
             ContactInfos contactInfosit = new ContactInfos();
@@ -173,6 +174,7 @@ namespace STA
             contactInfosit.Phonenumber = vendingpoint.Tel;
             contactInfosit.Email = vendingpoint.E_Mail;
             contactInfosit.Language = "it";
+            //contactInfosit.Vat = vendingpoint.Parita_IVA; TO CHECK WITH ROBERTO
             mypoi.ContactInfos.TryAddOrUpdate("it", contactInfosit);
 
             ContactInfos contactInfosen = new ContactInfos();
@@ -183,6 +185,7 @@ namespace STA
             contactInfosen.Phonenumber = vendingpoint.Tel;
             contactInfosen.Email = vendingpoint.E_Mail;
             contactInfosen.Language = "en";
+            //contactInfosen.Vat = vendingpoint.Parita_IVA; TO CHECK WITH ROBERTO
             mypoi.ContactInfos.TryAddOrUpdate("en", contactInfosen);
 
             ContactInfos contactInfoslad = new ContactInfos();
@@ -193,6 +196,7 @@ namespace STA
             contactInfoslad.Phonenumber = vendingpoint.Tel;
             contactInfoslad.Email = vendingpoint.E_Mail;
             contactInfoslad.Language = "ld";
+            //contactInfoslad.Vat = vendingpoint.Parita_IVA; TO CHECK WITH ROBERTO
             mypoi.ContactInfos.TryAddOrUpdate("ld", contactInfoslad);
 
             //END Address Parsing

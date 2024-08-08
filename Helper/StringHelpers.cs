@@ -3,8 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -90,6 +92,39 @@ namespace Helper
 
             return strlist.ToArray();
         }
+
+        public static T TrimStringProperties<T>(this T input)
+        {
+            if (input is null)
+            {
+                return input;
+            }
+
+            var props = input.GetType()
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(prop => prop.GetIndexParameters().Length == 0)
+                    .Where(prop => prop.CanWrite && prop.CanRead);
+
+            foreach (PropertyInfo prop in props)
+            {
+                var value = prop.GetValue(input, null);
+
+                if (value is string stringValue && stringValue != null)
+                {
+                    prop.SetValue(input, stringValue.Trim(), null);
+                }
+                else if (value is IEnumerable enumerable)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        TrimStringProperties(item);
+                    }
+                }
+            }
+
+            return input;
+        }
+
     }
 
 

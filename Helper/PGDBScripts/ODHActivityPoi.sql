@@ -24,3 +24,55 @@ AS $function$ begin return (select array(select concat(x.tags->> 'Source', '.', 
 ;
 
 ALTER TABLE public.smgpois ADD gen_tags _text NULL GENERATED ALWAYS AS (array_cat(extract_tagkeys(data #> '{Tags}'::text[]), extract_tags(data #> '{Tags}'::text[]))) STORED;
+
+CREATE OR REPLACE FUNCTION public.createshapejson(
+id int, 
+country text, 
+code_rip float, 
+code_reg float, 
+code_prov float,
+code_cm float,
+code_uts float, 
+istatnumber text, 
+abbrev text, 
+type_uts text,
+"type" text,
+name text, 
+name_alternative text, 
+shape_leng float, 
+shape_area float, 
+source text,
+meta jsonb,
+licenseinfo jsonb,
+geom geometry)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ IMMUTABLE 
+AS $function$ begin
+	return
+		json_build_object(
+		'Id',id,
+		'Country',country,
+		'Code_Rip',code_rip,
+		'Code_Reg',code_reg,
+		'Code_Prov',code_prov,
+		'Code_Cm',code_cm,
+		'Code_Uts',code_uts,
+		'Istatnumber',istatnumber,
+		'Abbrev',abbrev,
+		'Type_Uts',type_uts,
+		'Name',name,
+		'Name_Alternative',name_alternative,
+		'Shape_length',shape_leng,
+		'Shape_area',shape_area,
+		'Source',"source",
+		'Type', "type",
+		'_Meta', meta,		
+		'LicenseInfo', licenseinfo,		
+		'Geometry',geom);
+end; $function$
+
+ALTER TABLE shapes ADD IF NOT EXISTS "data" jsonb GENERATED ALWAYS AS ((
+createshapejson(id, country, code_rip, code_reg, code_prov, code_cm, code_uts, 
+istatnumber, abbrev, type_uts, "type", name, name_alternative, shape_leng, shape_area, source, meta, licenseinfo, geometry)
+))stored;

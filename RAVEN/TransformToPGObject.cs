@@ -216,6 +216,16 @@ namespace RAVEN
             if (!String.IsNullOrEmpty(data.LTSId))
                 data.LTSId = data.LTSId.ToUpper();
 
+            //Shortdesc Longdesc fix, Data is imported wrong on the ravendb instance
+            foreach (var detail in data.AccoRoomDetail)
+            {
+                var shortdesc = detail.Value.Longdesc;
+                var longdesc = detail.Value.Shortdesc;
+
+                detail.Value.Shortdesc = shortdesc;
+                detail.Value.Longdesc = longdesc;
+            }
+
             //fix if source is null
             string datasource = data.Source.ToLower();
 

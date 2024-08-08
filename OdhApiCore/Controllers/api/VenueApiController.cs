@@ -4,6 +4,7 @@
 
 using AspNetCore.CacheOutput;
 using DataModel;
+using Geo.Geometries;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
@@ -59,6 +60,7 @@ namespace OdhApiCore.Controllers
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -102,6 +104,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -112,6 +115,7 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetFiltered(
                     fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber,
@@ -119,7 +123,7 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter, locfilter: locfilter, roomcountfilter: roomcountfilter,
                     featurefilter: featurefilter, setuptypefilter: setuptypefilter, sourcefilter: source,
                     active: active, smgactive: odhactive, smgtags: odhtagfilter, seed: seed, lastchange: updatefrom, langfilter: langfilter,
-                    publishedon: publishedon,
+                    publishedon: publishedon, polygonsearchresult: polygonsearchresult,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, destinationdataformat: destinationdataformat,
                     cancellationToken: cancellationToken);
         }
@@ -221,7 +225,8 @@ namespace OdhApiCore.Controllers
           string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, string? categoryfilter, string? capacityfilter,
           string? searchfilter, string? locfilter, string? roomcountfilter, string? featurefilter, string? setuptypefilter,
           string? sourcefilter, bool? active, bool? smgactive, string? smgtags, string? seed, string? lastchange, string? langfilter, string? publishedon,
-          PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, bool destinationdataformat,
+          GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult, 
+          string? rawfilter, string? rawsort, bool removenullvalues, bool destinationdataformat,
           CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -253,6 +258,7 @@ namespace OdhApiCore.Controllers
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort); //.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data

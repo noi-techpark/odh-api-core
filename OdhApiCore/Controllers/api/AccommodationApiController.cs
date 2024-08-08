@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using CDB;
 using DataModel;
+using Geo.Geometries;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
@@ -93,6 +94,7 @@ namespace OdhApiCore.Controllers
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
+        /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language, possible values: 'de|it|en|nl|cs|pl|fr|ru' only one language supported (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
@@ -143,6 +145,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             string? publishedon = null,
             string? language = null,
             string? langfilter = null,
@@ -162,6 +165,7 @@ namespace OdhApiCore.Controllers
             }
 
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             List<string> bokfilterlist = bokfilter?.Split(',').ToList() ?? new List<string>();
 
@@ -172,7 +176,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, idlist: new List<string>(), locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter, sourcefilter: source, publishedon: publishedon,
-                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, polygonsearchresult, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }
             else if (availabilitycheck?.Value == true)
             {
@@ -193,7 +197,7 @@ namespace OdhApiCore.Controllers
                     pagesize: pagesize, idfilter: idfilter, idlist: availableonlineaccos, locfilter: locfilter, categoryfilter: categoryfilter,
                     typefilter: typefilter, boardfilter: boardfilter, featurefilter: featurefilter, featureidfilter: featureidfilter, themefilter: themefilter, badgefilter: badgefilter,
                     altitudefilter: altitudefilter, active: active, smgactive: odhactive, bookablefilter: bookablefilter, smgtagfilter: odhtagfilter, sourcefilter: source, publishedon: publishedon,
-                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
+                    seed: seed, updatefrom: updatefrom, langfilter: langfilter, searchfilter: searchfilter, polygonsearchresult: polygonsearchresult, geosearchresult, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, cancellationToken);
             }            
             else
             {
@@ -569,7 +573,8 @@ namespace OdhApiCore.Controllers
                 pagesize: int.MaxValue, idfilter: idfilter, idlist: availableonlineaccos, locfilter: null, categoryfilter: null,
                 typefilter: null, boardfilter: boardfilter, featurefilter: null, featureidfilter: null, themefilter: null, badgefilter: null,
                 altitudefilter: null, active: null, smgactive: null, bookablefilter: null, smgtagfilter: null, sourcefilter: null,
-                publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
+                publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, new GeoPolygonSearchResult(), 
+                new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
                 rawfilter: null, rawsort: null, removenullvalues: false, cancellationToken);
             }                      
         }
@@ -617,7 +622,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> GetFiltered(string[] fields, string? language, uint pagenumber, int? pagesize, string? idfilter, List<string> idlist, string? locfilter,
             string? categoryfilter, string? typefilter, string? boardfilter, string? featurefilter, string? featureidfilter, string? themefilter, string? badgefilter, string? altitudefilter, 
             bool? active, bool? smgactive, bool? bookablefilter, string? smgtagfilter, string? sourcefilter, string? publishedon,
-            string? seed, string? updatefrom, string? langfilter, string? searchfilter, 
+            string? seed, string? updatefrom, string? langfilter, string? searchfilter, GeoPolygonSearchResult? polygonsearchresult,
             PGGeoSearchResult geosearchresult, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
         {
             return DoAsyncReturn(async () =>
@@ -653,6 +658,7 @@ namespace OdhApiCore.Controllers
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
 
                 // Get paginated data

@@ -50,14 +50,11 @@ namespace Helper.Identity
                     //}
                 }
             }
-        }
-
-        public class Resource_Roles
-        {
-            public List<string> roles { get; set; }
-        }
-
+        }        
+    }
+    public class Resource_Roles
+    {
+        public List<string> roles { get; set; }
     }
 
-   
 }

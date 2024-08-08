@@ -40,6 +40,7 @@ using Humanizer.Localisation;
 using System.Drawing;
 using Geo.Measure;
 using SIAG.WeatherModel;
+using Geo.Geometries;
 
 namespace OdhApiCore.Controllers
 {
@@ -144,6 +145,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
             string? searchfilter = null,
@@ -159,7 +161,7 @@ namespace OdhApiCore.Controllers
                     pagenumber: pagenumber, pagesize: pagesize, language: language, 
                     idfilter: idlist, locfilter: locfilter, datefrom: datefrom, dateto: dateto,
                     lastchange: lastchange, searchfilter: searchfilter, seed: seed,
-                    fields: fields ?? Array.Empty<string>(), new PGGeoSearchResult(), rawfilter, rawsort, removenullvalues, cancellationToken);
+                    fields: fields ?? Array.Empty<string>(), new GeoPolygonSearchResult(), new PGGeoSearchResult(), rawfilter, rawsort, removenullvalues, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -312,6 +314,7 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="language">Language</param>
         /// <param name="locfilter">Locfilter (possible values: filter on reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction))</param>
+        /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
         /// <returns>WeatherForecast Object</returns>
         [ProducesResponseType(typeof(IEnumerable<WeatherForecastLinked>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -327,13 +330,15 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             CancellationToken cancellationToken = default)
         {
             try
             {
                 var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+                var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
-                return await GetWeatherForecastFromFile(pagenumber, pagesize, fields: fields ?? Array.Empty<string>(), language ?? "en", null, locfilter, geosearchresult, cancellationToken);
+                return await GetWeatherForecastFromFile(pagenumber, pagesize, fields: fields ?? Array.Empty<string>(), language ?? "en", null, locfilter, polygonsearchresult, geosearchresult, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -359,7 +364,7 @@ namespace OdhApiCore.Controllers
         {
             try
             {
-                return await GetWeatherForecastFromFile(null, null, fields: fields ?? Array.Empty<string>(), language ?? "en", id, null, null, cancellationToken);
+                return await GetWeatherForecastFromFile(null, null, fields: fields ?? Array.Empty<string>(), language ?? "en", id, null, null, null, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -380,6 +385,7 @@ namespace OdhApiCore.Controllers
         /// <param name="latitude">GeoFilter FLOAT Latitude Format: '46.624975', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter' target="_blank">Wiki geosort</a></param>
+        /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
@@ -410,6 +416,7 @@ namespace OdhApiCore.Controllers
             string? latitude = null,
             string? longitude = null,
             string? radius = null,
+            string? polygon = null,
             string? seed = null,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))]
             string[]? fields = null,
@@ -420,12 +427,13 @@ namespace OdhApiCore.Controllers
             CancellationToken cancellationToken = default)
         {
             var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
 
             return await GetMeasuringPointList(pagenumber, pagesize,
                 fields: fields ?? Array.Empty<string>(), language: language, idfilter: idlist,
                     searchfilter: searchfilter, locfilter: locfilter, areafilter: areafilter,
                     skiareafilter: skiareafilter, source: source, active: active, publishedon: publishedon,
-                    smgactive: odhactive, seed: seed, lastchange: updatefrom,
+                    smgactive: odhactive, seed: seed, lastchange: updatefrom, polygonsearchresult: polygonsearchresult,
                     geosearchresult: geosearchresult, rawfilter: rawfilter, rawsort: rawsort, 
                     removenullvalues: removenullvalues, cancellationToken: cancellationToken);
         }
@@ -830,6 +838,7 @@ namespace OdhApiCore.Controllers
             string language,
             string? id,
             string? locfilter,
+            GeoPolygonSearchResult? polygonsearchresult,
             PGGeoSearchResult geosearchresult,
             CancellationToken cancellationToken)
         {
@@ -867,6 +876,7 @@ namespace OdhApiCore.Controllers
                    .When(municipalitycodes.Count > 0, x => x.WhereInJsonb(municipalitycodes, "IstatNumber"))
                    .When(tvids.Count > 0, x => x.WhereInJsonb(tvids, "TourismvereinId"))
                    .When(regids.Count > 0, x => x.WhereInJsonb(regids, "RegionId"))
+                   .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                    .GeoSearchFilterAndOrderby_GeneratedColumns(geosearchresult);
 
             municipalities = await query.GetAsync<MunicipalityIdIstatNumber>();
@@ -966,6 +976,7 @@ namespace OdhApiCore.Controllers
            string? searchfilter,
            string? seed,
            string[] fields,
+           GeoPolygonSearchResult? polygonsearchresult,
            PGGeoSearchResult geosearchresult,
            string? rawfilter,
            string? rawsort,
@@ -989,6 +1000,7 @@ namespace OdhApiCore.Controllers
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilter)
                         .ApplyRawFilter(rawfilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyOrdering(ref seed, geosearchresult, rawsort);
                 //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//
 
@@ -1068,6 +1080,7 @@ namespace OdhApiCore.Controllers
             string? searchfilter,
             string? seed,
             string[] fields,
+            GeoPolygonSearchResult? polygonsearchresult,
             PGGeoSearchResult geosearchresult,
             string? rawfilter,
             string? rawsort,
@@ -1100,6 +1113,7 @@ namespace OdhApiCore.Controllers
                             additionalfilter: additionalfilter,
                             userroles: UserRolesToFilterEndpoint("Weather/Measuringpoint"))
                         .ApplyRawFilter(rawfilter)
+                        .When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
                         .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);//.ApplyOrdering(ref seed, geosearchresult, rawsort);
 
 
