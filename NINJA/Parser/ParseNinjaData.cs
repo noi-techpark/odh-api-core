@@ -361,7 +361,7 @@ namespace NINJA.Parser
         }
 
 
-        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation> data, ODHActivityPoiLinked echargingpoi)
+        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation> data, ODHActivityPoiLinked echargingpoi, ODHTagLinked echargingstationtag)
         {
             try
             {
@@ -382,6 +382,17 @@ namespace NINJA.Parser
                     new Tags(){ Id = "mobility", Source = "lts" },
                     new Tags(){ Id = "electric charging stations", Source = "idm" }
                 };
+
+                //Adding Category 
+                if(echargingstationtag.DisplayAsCategory == true)
+                {
+                    echargingpoi.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
+                    foreach(var lang in new List<string>() { "de", "it", "en"})
+                    {
+                        echargingpoi.AdditionalPoiInfos.Add(lang, new AdditionalPoiInfos() { Language = lang, Categories = new List<string>() { echargingstationtag.TagName[lang] } });
+                    }                    
+                }
+                
 
                 echargingpoi.Id = id;
 
@@ -426,7 +437,7 @@ namespace NINJA.Parser
                 properties.ChargingStationAccessible = data.pmetadata.accessType != null && (data.pmetadata.accessType.ToLower() == "public" || data.pmetadata.accessType.ToLower() == "private_withpublicaccess") ? true : false;
                 properties.PaymentInfo = data.pmetadata?.paymentInfo;
 
-                properties.ChargingPlugCount = 1;
+                //properties.ChargingPlugCount = 1;
                 properties.ChargingCableType = data.smetadata.outlets.Select(y => y.outletTypeCode).Distinct().ToList();
 
                 //TODO do not overwrite the old values
@@ -472,6 +483,8 @@ namespace NINJA.Parser
                 if (echargingpoi.Source == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
                     echargingpoi.Source = "echargingspreadsheet";
 
+                if (echargingpoi.HasLanguage == null)
+                    echargingpoi.HasLanguage = new List<string>() { "en" };
 
                 return echargingpoi;
             }

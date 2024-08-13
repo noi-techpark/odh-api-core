@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
 using ServiceReferenceLCS;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -60,9 +61,14 @@ namespace OdhApiImporter.Helpers
             var sourcelist = GetAndParseProviderList(ninjadata);
 
 
+            var tagquery = QueryFactory.Query("smgtags")
+                    .Select("data")
+                    .Where("id", "e-tankstellen ladestationen");
+            var echargingtag = await tagquery.GetObjectSingleAsync<ODHTagLinked>();
+
             foreach (var data in ninjadata.data)
             {
-                string id = "echarging_" + data.sname.ToLower();
+                string id = "echarging_" + data.scode.ToLower();
 
                 //See if data exists
                 var query = QueryFactory.Query("smgpois")
@@ -71,7 +77,7 @@ namespace OdhApiImporter.Helpers
 
                 var objecttosave = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
 
-                objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data, objecttosave);
+                objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data, objecttosave, echargingtag);
 
                 if (objecttosave != null)
                 {

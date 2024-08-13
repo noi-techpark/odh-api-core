@@ -739,9 +739,7 @@ namespace DataModel
 
         //If accesstype public, or private_withpublicaccess set to true
         public bool? ChargingStationAccessible { get; set; }
-
-        public int? ChargingPlugCount { get; set;}
-
+       
         public string AccessTypeInfo { get; set; }
 
         public DateTime? SurveyDate { get; set; }
