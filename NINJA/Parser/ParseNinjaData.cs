@@ -361,7 +361,7 @@ namespace NINJA.Parser
         }
 
 
-        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>> data, ODHActivityPoiLinked echargingpoi)
+        public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation> data, ODHActivityPoiLinked echargingpoi)
         {
             try
             {
@@ -385,21 +385,23 @@ namespace NINJA.Parser
 
                 echargingpoi.Id = id;
 
-                echargingpoi.Shortname = data.FirstOrDefault().pname;
+                echargingpoi.Shortname = data.sname;
 
                 //Detail
                 var detail = default(Detail);
 
                 if(echargingpoi.Detail != null && echargingpoi.Detail.ContainsKey("en"))
                 {
-                    echargingpoi.Detail["en"].Title = data.FirstOrDefault().pname;
+                    //sname
+                    echargingpoi.Detail["en"].Title = data.sname;
+                    echargingpoi.Detail["en"].AdditionalText = data.pname;
                     echargingpoi.Detail.TryAddOrUpdate("en", echargingpoi.Detail["en"]);
                 }
                 else
-                    echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.FirstOrDefault().pname, Language = "en" });
+                    echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.sname, AdditionalText = data.pname, Language = "en" });
 
                 //ContactInfo
-                echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.FirstOrDefault().pmetadata.address, City = data.FirstOrDefault().pmetadata.city, Language = "en" });
+                echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.pmetadata.address, City = data.pmetadata.city, Language = "en" });
 
                 //GpsInfo
                 //"pcoordinate": {
@@ -407,24 +409,25 @@ namespace NINJA.Parser
                 //    "y": 46.313481,
                 //    "srid": 4326
                 //    },
-                if (data.FirstOrDefault().pcoordinate != null && data.FirstOrDefault().pcoordinate.x > 0 && data.FirstOrDefault().pcoordinate.y > 0) {
-                    echargingpoi.GpsInfo = new List<GpsInfo>() { new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.FirstOrDefault().pcoordinate.y, Longitude = data.FirstOrDefault().pcoordinate.x } };
+                if (data.pcoordinate != null && data.pcoordinate.x > 0 && data.pcoordinate.y > 0) {
+                    echargingpoi.GpsInfo = new List<GpsInfo>() { new GpsInfo() { Gpstype = "position", Altitude = null, AltitudeUnitofMeasure = "m", Latitude = data.pcoordinate.y, Longitude = data.pcoordinate.x } };
                 }
 
                 //Properties Echargingstation
                 EchargingDataProperties properties = new EchargingDataProperties();
 
-                properties.AccessType = data.FirstOrDefault().pmetadata.accessType;
+                properties.AccessType = data.pmetadata.accessType;
 
-                properties.AccessTypeInfo = new Dictionary<string, string>();
-                properties.AccessTypeInfo.TryAddOrUpdate("en", data.FirstOrDefault().pmetadata.accessInfo);
-                properties.State = data.FirstOrDefault().pmetadata.state;
-                properties.Capacity = data.FirstOrDefault().pmetadata?.capacity;
-                properties.ChargingStationAccessible = data.FirstOrDefault().pmetadata.accessType != null && (data.FirstOrDefault().pmetadata.accessType.ToLower() == "public" || data.FirstOrDefault().pmetadata.accessType.ToLower() == "private_withpublicaccess") ? true : false;
-                properties.PaymentInfo = data.FirstOrDefault().pmetadata?.paymentInfo;
+                //properties.AccessTypeInfo = new Dictionary<string, string>();
+                //no multilingual field
+                properties.AccessTypeInfo = data.pmetadata.accessInfo;
+                properties.State = data.pmetadata.state;
+                properties.Capacity = data.pmetadata?.capacity;
+                properties.ChargingStationAccessible = data.pmetadata.accessType != null && (data.pmetadata.accessType.ToLower() == "public" || data.pmetadata.accessType.ToLower() == "private_withpublicaccess") ? true : false;
+                properties.PaymentInfo = data.pmetadata?.paymentInfo;
 
-                properties.ChargingPlugCount = data.Count();
-                properties.ChargingCableType = data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList();
+                properties.ChargingPlugCount = 1;
+                properties.ChargingCableType = data.smetadata.outlets.Select(y => y.outletTypeCode).Distinct().ToList();
 
                 //TODO do not overwrite the old values
                 var additionalpropertieskey = typeof(EchargingDataProperties).Name;
@@ -457,12 +460,12 @@ namespace NINJA.Parser
 
                 //Mapping Object
                 //ADD MAPPING
-                var ninjaid = new Dictionary<string, string>() { { "id", data.FirstOrDefault().pname } };
+                var ninjaid = new Dictionary<string, string>() { { "id", data.sname } };
                 echargingpoi.Mapping.TryAddOrUpdate("mobility", ninjaid);
 
                 //Source, SyncSourceInterface
-                echargingpoi.Source = data.FirstOrDefault().porigin.ToLower();
-                echargingpoi.SyncSourceInterface = data.FirstOrDefault().pmetadata.provider.ToLower();
+                echargingpoi.Source = data.porigin.ToLower();
+                echargingpoi.SyncSourceInterface = data.pmetadata.provider.ToLower();
                 echargingpoi.SyncUpdateMode = "partial";
 
                 //Hack spreadsheet

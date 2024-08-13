@@ -742,7 +742,7 @@ namespace DataModel
 
         public int? ChargingPlugCount { get; set;}
 
-        public IDictionary<string, string> AccessTypeInfo { get; set; }
+        public string AccessTypeInfo { get; set; }
 
         public DateTime? SurveyDate { get; set; }
         public string? SurveyType { get; set; }

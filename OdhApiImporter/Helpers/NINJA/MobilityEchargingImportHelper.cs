@@ -60,9 +60,9 @@ namespace OdhApiImporter.Helpers
             var sourcelist = GetAndParseProviderList(ninjadata);
 
 
-            foreach (var data in ninjadata.data.GroupBy(x => x.pcode))
+            foreach (var data in ninjadata.data)
             {
-                string id = "echarging_" + data.FirstOrDefault().pcode.ToLower();
+                string id = "echarging_" + data.sname.ToLower();
 
                 //See if data exists
                 var query = QueryFactory.Query("smgpois")
