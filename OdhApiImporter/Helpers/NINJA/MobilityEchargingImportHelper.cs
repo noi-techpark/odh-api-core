@@ -68,7 +68,7 @@ namespace OdhApiImporter.Helpers
 
             foreach (var data in ninjadata.data)
             {
-                string id = "echarging_" + data.scode.ToLower();
+                string id = "echarging_" + data.scode.Replace("/","").ToLower();
 
                 //See if data exists
                 var query = QueryFactory.Query("smgpois")

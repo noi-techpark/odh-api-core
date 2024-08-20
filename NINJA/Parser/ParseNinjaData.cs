@@ -471,7 +471,10 @@ namespace NINJA.Parser
 
                 //Mapping Object
                 //ADD MAPPING
-                var ninjaid = new Dictionary<string, string>() { { "id", data.sname } };
+                var ninjaid = new Dictionary<string, string>() {
+                    { "sname", data.sname },
+                    { "scode", data.scode }
+                };
                 echargingpoi.Mapping.TryAddOrUpdate("mobility", ninjaid);
 
                 //Source, SyncSourceInterface
