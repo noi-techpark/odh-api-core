@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
 using ServiceReferenceLCS;
+using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -60,9 +61,14 @@ namespace OdhApiImporter.Helpers
             var sourcelist = GetAndParseProviderList(ninjadata);
 
 
-            foreach (var data in ninjadata.data.GroupBy(x => x.pcode))
+            var tagquery = QueryFactory.Query("smgtags")
+                    .Select("data")
+                    .Where("id", "e-tankstellen ladestationen");
+            var echargingtag = await tagquery.GetObjectSingleAsync<ODHTagLinked>();
+
+            foreach (var data in ninjadata.data)
             {
-                string id = "echarging_" + data.FirstOrDefault().pcode.ToLower();
+                string id = "echarging_" + data.scode.Replace("/","").ToLower();
 
                 //See if data exists
                 var query = QueryFactory.Query("smgpois")
@@ -71,7 +77,7 @@ namespace OdhApiImporter.Helpers
 
                 var objecttosave = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
 
-                objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data, objecttosave);
+                objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data, objecttosave, echargingtag);
 
                 if (objecttosave != null)
                 {
@@ -89,7 +95,7 @@ namespace OdhApiImporter.Helpers
                     //if (idtocheck.Length > 50)
                     //    idtocheck = idtocheck.Substring(0, 50);
 
-                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>>(id, data));
+                    var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>(id, data));
 
                     newimportcounter = newimportcounter + result.created ?? 0;
                     updateimportcounter = updateimportcounter + result.updated ?? 0;
@@ -129,7 +135,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }        
    
-        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>> ninjadata)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked objecttosave, KeyValuePair<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>> ninjadata)
         {
             try
             {
@@ -154,12 +160,12 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        private async Task<int> InsertInRawDataDB(KeyValuePair<string, IGrouping<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>> ninjadata)
+        private async Task<int> InsertInRawDataDB(KeyValuePair<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>> ninjadata)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
-                            datasource = ninjadata.Value.FirstOrDefault().porigin,
+                            datasource = ninjadata.Value.porigin,
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(ninjadata.Value),
                             sourceinterface = "echarging",

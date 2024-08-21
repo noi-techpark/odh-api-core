@@ -12,11 +12,13 @@ AS $function$
 	end if;
 	if source = 'lts' and not reduced then return (array['IDM']);
 	end if;    
+	if source = 'hgv' then return (array['IDM']);  
+	end if;
     if source = 'a22' then return (array['A22']);  
 	end if;
 	if source = 'lts' and reduced and not closeddata then return (array['A22','ANONYMOUS','STA']);
 	end if; 
-	if source <> 'lts' and source <> 'a22' then return (array['A22','ANONYMOUS','IDM','STA']);
+	if source <> 'lts' and source <> 'a22' and source <> 'hgv' then return (array['A22','ANONYMOUS','IDM','STA']);	
 	end if;
 	return (array['A22','ANONYMOUS','IDM','STA']);
 end;
@@ -32,6 +34,9 @@ begin
 -- if data is from source lts and not reduced IDM only access --
 if source = 'lts' then return (array['IDM']);
 end if;
+-- If data is from source hgv only access IDM --
+if source = 'hgv' then return (array['IDM']);  
+	end if;
 -- If data is from source a22 only access A22 --
 if source = 'a22' then return (array['A22']);
 end if;
