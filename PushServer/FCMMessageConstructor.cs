@@ -76,7 +76,13 @@ namespace PushServer
 
                 string deeplink = "noi-community://it.bz.noi.community/newsDetails/" + myobject.Id;
 
-                messagebody.data = new { deep_link = deeplink };
+                //messagebody.data = new { deep_link = deeplink };
+                messagebody.data = new Dictionary<string, string>()
+                {
+                    { "deep_link", deeplink },
+                    { "gcm.n.link_android", deeplink }
+                };
+
                 FCMNotification notification = new FCMNotification();
 
                 //notification.icon = "ic_notification";
