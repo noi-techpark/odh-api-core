@@ -407,7 +407,7 @@ namespace NINJA.Parser
                     echargingpoi.Detail["en"].Title = data.sname;
 
                     //If data is from static spreadsheet use scode
-                    if (echargingpoi.Source == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
+                    if (data.porigin.ToLower() == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
                         echargingpoi.Detail["en"].Title = data.scode;
 
                     echargingpoi.Detail["en"].AdditionalText = data.pname;
