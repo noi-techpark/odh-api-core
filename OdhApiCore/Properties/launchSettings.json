@@ -27,7 +27,16 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/status"
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://+:80",
+        "ASPNETCORE_ConnectionStrings__PgConnection": "PG_CONNECTION",
+        "ASPNETCORE_JsonConfig__Jsondir": "wwwroot/json/",
+        "ASPNETCORE_Xmldir__Xmldir": "XMLDIR"
+      },
+      "httpPort": 8001,
+      "useSSL": false
     },
     "dotnet": {
       "commandName": "Project",
