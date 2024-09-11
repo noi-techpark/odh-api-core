@@ -17,16 +17,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Serilog.Context;
-using Microsoft.AspNetCore.Authorization;
-using Swashbuckle.AspNetCore.Annotations;
-using OdhApiCore.Filters;
-using ServiceReferenceLCS;
 using OdhApiCore.Controllers.api;
 using Helper.Identity;
 using OdhNotifier;
 using Helper.Generic;
-using Geo.Geometries;
 
 namespace OdhApiCore.Controllers
 {
