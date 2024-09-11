@@ -373,7 +373,7 @@ namespace NINJA.Parser
                 {
                     "poi",
                     "mobilität",
-                    "e-tankstellen ladestationen"
+                    "e-auto ladestation"
                 };
 
                 echargingpoi.Tags = new List<Tags>()
