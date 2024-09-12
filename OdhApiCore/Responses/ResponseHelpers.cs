@@ -2,18 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using DataModel;
 
 namespace OdhApiCore.Responses

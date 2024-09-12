@@ -2,19 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using Helper;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using OdhApiCore.Controllers;
-using OdhApiCore.Controllers.api;
 using OdhApiCore.Responses;
 using SqlKata.Execution;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 

@@ -2,28 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using AspNetCore.CacheOutput;
-using DataModel;
 using Helper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OdhApiCore.GenericHelpers;
-using OdhApiCore.Responses;
 using OdhNotifier;
-using ServiceReferenceLCS;
-using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 

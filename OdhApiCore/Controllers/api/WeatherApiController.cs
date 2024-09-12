@@ -2,10 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Amazon.Runtime;
-using Amazon.S3.Model;
-using Amazon.S3;
-using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
 using Helper.Generic;
@@ -17,13 +13,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Npgsql;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using OdhNotifier;
-using ServiceReferenceLCS;
 using SIAG;
-using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -31,16 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon;
-using Amazon.S3.Transfer;
-using SharpCompress.Common;
-using Schema.NET;
 using SIAG.Model;
-using Humanizer.Localisation;
-using System.Drawing;
-using Geo.Measure;
-using SIAG.WeatherModel;
-using Geo.Geometries;
 
 namespace OdhApiCore.Controllers
 {

@@ -2,17 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using Helper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using OdhApiCore.Controllers;
-using OdhApiCore.Responses;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 

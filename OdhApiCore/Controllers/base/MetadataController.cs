@@ -3,29 +3,22 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.Auth.AccessControlPolicy;
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using OdhApiCore.Controllers.api;
 using OdhApiCore.Responses;
 using OdhNotifier;
-using Schema.NET;
-using ServiceReferenceLCS;
 using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers

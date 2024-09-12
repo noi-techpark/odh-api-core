@@ -724,7 +724,7 @@ namespace Helper
         Parkplaetze = 1 << 1,
         [Description("Tankstellen Benzin Diesel")]
         TankstellenBenzinDiesel = 1 << 2,
-        [Description("E-Tankstellen Ladestationen")]
+        [Description("E-Auto Ladestation")]
         ETankstellenLadestationen = 1 << 3,
         [Description("Taxi, Mietwagen mit Fahrer, Bus")]
         TaxiMietwagenmitFahrerBus = 1 << 4,
@@ -2088,7 +2088,7 @@ namespace Helper
         Parkplaetze = 1 << 1,
         [Description("Tankstellen Benzin Diesel")]
         TankstellenBenzinDiesel = 1 << 2,
-        [Description("E-Tankstellen Ladestationen")]
+        [Description("E-Auto Ladestation")]
         ETankstellenLadestationen = 1 << 3,
         [Description("Taxi, Mietwagen mit Fahrer, Bus")]
         TaxiMietwagenmitFahrerBus = 1 << 4,
