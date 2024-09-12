@@ -37,7 +37,7 @@ namespace OdhApiImporter.Controllers
         private readonly IWebHostEnvironment env;
         private IOdhPushNotifier OdhPushnotifier;
 
-        public PushDataApiController(IWebHostEnvironment env, ISettings settings, ILogger<UpdateApiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+        public PushDataApiController(IWebHostEnvironment env, ISettings settings, ILogger<PushDataApiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
         {
             this.env = env;
             this.settings = settings;

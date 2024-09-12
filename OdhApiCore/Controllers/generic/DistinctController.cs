@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class DistinctController : OdhController
     {        
-        public DistinctController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+        public DistinctController(IWebHostEnvironment env, ISettings settings, ILogger<DistinctController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
             : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }

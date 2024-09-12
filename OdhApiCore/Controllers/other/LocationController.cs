@@ -29,7 +29,7 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly IHttpClientFactory httpClientFactory;
 
-        public LocationController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
+        public LocationController(IWebHostEnvironment env, ISettings settings, ILogger<LocationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.httpClientFactory = httpClientFactory;

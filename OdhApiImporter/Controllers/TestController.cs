@@ -32,7 +32,7 @@ namespace OdhApiImporter.Controllers
         private IOdhPushNotifier OdhPushnotifier;
         private readonly IMongoDBFactory MongoDBFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<JsonGeneratorController> logger, QueryFactory queryFactory, IMongoDBFactory mongoDBFactory, IOdhPushNotifier odhpushnotifier)
+        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<TestController> logger, QueryFactory queryFactory, IMongoDBFactory mongoDBFactory, IOdhPushNotifier odhpushnotifier)
         {
             this.env = env;
             this.settings = settings;
