@@ -33,7 +33,7 @@ namespace OdhApiImporter.Controllers
     {
         private readonly ISettings settings;
         private readonly QueryFactory QueryFactory;
-        private readonly ILogger<UpdateApiController> logger;
+        private readonly ILogger<PushDataApiController> logger;
         private readonly IWebHostEnvironment env;
         private IOdhPushNotifier OdhPushnotifier;
 

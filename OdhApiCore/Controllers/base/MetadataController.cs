@@ -30,7 +30,7 @@ namespace OdhApiCore.Controllers
         private static string absoluteUri = "";
         private readonly ISettings settings;
 
-        public MetaDataController(IWebHostEnvironment env, ISettings settings, ILogger<ODHActivityPoiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier) : base(env, settings, logger, queryFactory, odhpushnotifier)
+        public MetaDataController(IWebHostEnvironment env, ISettings settings, ILogger<MetaDataController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier) : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }

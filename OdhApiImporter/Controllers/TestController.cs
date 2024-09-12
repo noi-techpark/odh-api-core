@@ -27,7 +27,7 @@ namespace OdhApiImporter.Controllers
     {
         private readonly ISettings settings;
         private readonly QueryFactory QueryFactory;
-        private readonly ILogger<JsonGeneratorController> logger;
+        private readonly ILogger<TestController> logger;
         private readonly IWebHostEnvironment env;
         private IOdhPushNotifier OdhPushnotifier;
         private readonly IMongoDBFactory MongoDBFactory;

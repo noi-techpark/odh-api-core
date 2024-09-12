@@ -32,7 +32,7 @@ namespace OdhApiImporter.Controllers
     {
         private readonly ISettings settings;
         private readonly QueryFactory QueryFactory;
-        private readonly ILogger<UpdateApiController> logger;
+        private readonly ILogger<DataModifyApiController> logger;
         private readonly IWebHostEnvironment env;
 
         public DataModifyApiController(IWebHostEnvironment env, ISettings settings, ILogger<DataModifyApiController> logger, QueryFactory queryFactory)
