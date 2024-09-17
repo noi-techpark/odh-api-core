@@ -1541,6 +1541,13 @@ namespace Helper
         Shop = 1L << 21, //2097152,  
         [Description("F6FABAA6C6C3475FBF2157287DAA8A28")]
         Bergbahn = 1L << 22, //4194304,  
+        [Description("1186AFACB68D4AEDA19487ADF62BA1BC")]
+        Restaurant = 1L << 23, //4194304,  
+        [Description("2E067878076C4FB0B0C17F6D731006B8")]
+        Buchvorstellung = 1L << 24, //4194304,  
+        [Description("B7EB85224DA445A080707D9CA2957860")]
+        Startgebuehrparagleiten = 1L << 25, //4194304,  
+
     }
 
     #endregion
