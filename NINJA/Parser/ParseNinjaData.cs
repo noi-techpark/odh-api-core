@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using DataModel;
 using Helper;
@@ -15,6 +16,8 @@ namespace NINJA.Parser
 {
     public class ParseNinjaData
     {
+        #region EventV1Parsing
+
         //TODO Redefine Mapping ODH - Centro Trevi / Drin
         public static List<TopicLinked> GetTopicRid(string ninjaeventtype)
         {
@@ -349,6 +352,7 @@ namespace NINJA.Parser
                 return null;
             }
         }
+     
 
         public static DateTime TryParsingToDateTime(string datetimetoparse)
         {
@@ -360,6 +364,243 @@ namespace NINJA.Parser
                 throw new Exception("DateTime Parsing failed  input:" + datetimetoparse);
         }
 
+        #endregion
+
+        #region EventV2Parsing
+
+        //V2 Parsing
+        public static VenueV2 ParseNinjaEventToVenueV2(string id, NinjaData<NinjaPlaceRoom> place, NinjaData<NinjaPlaceRoom> room)
+        {
+            VenueV2 venue = new VenueV2();
+            venue.Id = "venue_culture_" + place.scode;
+            //Venue Name it/de/en:Name
+
+            //Venue Desc it/de/en:Description
+
+            //Venue Address it/de/en:Address
+
+            //Venue City it/de/en City
+
+            //Zipcode
+
+            //Province
+
+            //Email
+
+            //Phone
+
+            //Openingtimes
+
+            //Rooms add to Place
+
+            return venue;
+        }
+
+        public static EventV2 ParseNinjaEventToODHEventV2(string id, NinjaEvent ninjaevent, string venueId)
+        {
+            try
+            {
+                if (id == "------")
+                    throw new Exception("incomplete data, no id");
+
+                EventV2 myevent = new EventV2();
+                myevent.Id = id.ToUpper();
+
+           //     //ADD MAPPING
+           //     var ninjaid = new Dictionary<string, string>() { { "id", id } };
+           //     myevent.Mapping.TryAddOrUpdate("culture", ninjaid);
+
+           //     myevent.IsRoot = true;
+           //     myevent.EventGroupId = null;
+
+           //     string source = !String.IsNullOrEmpty(place.sname) ? place.sname.ToLower() : "ninja";
+
+           //     Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "eventv2" };
+           //     myevent._Meta = metainfo;
+
+           //     myevent.Source = source;
+
+           //     LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
+           //     myevent.LicenseInfo = licenseInfo;
+
+           //     //Take only Languages that are defined on title
+           //     var languages = ninjaevent.title.Keys;
+
+           //     //Detail Info
+           //     foreach (var language in languages)
+           //     {
+           //         Detail mydetail = new Detail();
+           //         mydetail.Language = language;
+           //         mydetail.Title = ninjaevent.title != null ? ninjaevent.title.ContainsKey(language) ? ninjaevent.title[language] : "no title" : "no title";
+           //         mydetail.BaseText = ninjaevent.decription != null ? ninjaevent.decription.ContainsKey(language) ? ninjaevent.decription[language] : "" : "";
+
+           //         myevent.Detail.TryAddOrUpdate(language, mydetail);
+           //     }
+
+           //     bool ticket = false;
+
+           //     //Ticket and Price Info
+           //     if (ninjaevent.ticket == "Yes")
+           //         ticket = true;
+
+           //     //Try to convert price to double
+           //     if (Double.TryParse(ninjaevent.price, out var pricedouble))
+           //     {
+           //         if (pricedouble > 0)
+           //         {
+           //             foreach (var language in languages)
+           //             {
+           //                 EventPrice myeventprice = new EventPrice();
+           //                 myeventprice.Language = language;
+           //                 myeventprice.Price = pricedouble;
+           //                 myeventprice.Type = ninjaevent.event_type_key;
+
+           //                 myevent.EventPrice.TryAddOrUpdate(language, myeventprice);
+           //             }
+           //         }
+           //     }
+
+
+           //     //Add Type info
+           //     myevent.Topics = GetTopicRid(ninjaevent.event_type_key);
+           //     myevent.TopicRIDs = myevent.Topics.Select(x => x.TopicRID).ToList();
+
+           //     //Console.WriteLine("Parsing: " + ninjaevent.begin_date + " " + ninjaevent.begin_time);
+
+           //     //TODO PARSING FAILS IF format of datetime is not exactly as described
+           //     //TODO Resolve this "exception": "String '04/04/2022 9:00' was not recognized as a valid DateTime.",                
+
+
+           //     //Date Info
+           //     //myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+           //     //myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
+           //     myevent.Begin = TryParsingToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time);
+           //     myevent.End = TryParsingToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time);
+
+           //     myevent.BeginUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(myevent.Begin);
+           //     myevent.EndUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(myevent.End);
+
+           //     //DateTime.TryParse(ninjaevent.begin_date + " " + ninjaevent.begin_time, CultureInfo.InvariantCulture, out evendatebegin);
+           //     //DateTime.TryParse(ninjaevent.end_date + " " + ninjaevent.end_time, CultureInfo.InvariantCulture, out evendateend);
+
+           //     //CultureInfo myculture = new CultureInfo("en-GB");
+           //     //string begindate = ninjaevent.begin_date + " " + ninjaevent.begin_time + ":00";
+           //     //string enddate = ninjaevent.end_date + " " + ninjaevent.end_time + ":00";
+           //     //myevent.DateBegin = Convert.ToDateTime(begindate, myculture);
+           //     //myevent.DateEnd = Convert.ToDateTime(enddate, myculture);
+
+
+           //     Ticket = ticket,
+           //MaxPersons = !String.IsNullOrEmpty(ninjaevent.number_of_seats) && int.TryParse(ninjaevent.number_of_seats, out var numberofseatsint) ? numberofseatsint : 0
+     
+           //myevent.Ticket = ticketstr;
+
+           //     myevent.Shortname = myevent.Detail.FirstOrDefault().Value.Title;
+           //     myevent.LastChange = DateTime.Now;
+           //     myevent._Meta.LastUpdate = myevent.LastChange;
+
+           //     //Gps Info
+           //     GpsInfo eventgpsinfo = new GpsInfo();
+           //     eventgpsinfo.Latitude = place != null ? place.scoordinate.y : 0;
+           //     eventgpsinfo.Longitude = place != null ? place.scoordinate.x : 0;
+           //     eventgpsinfo.Gpstype = "position";
+
+           //     myevent.GpsInfo = new List<GpsInfo>();
+           //     myevent.GpsInfo.Add(eventgpsinfo);
+
+           //     IDictionary<string, string> floor = new Dictionary<string, string>();
+           //     floor.Add(new KeyValuePair<string, string>("de", "Stock"));
+           //     floor.Add(new KeyValuePair<string, string>("it", "piano"));
+           //     floor.Add(new KeyValuePair<string, string>("en", "floor"));
+
+           //     //Contact Info            
+           //     foreach (var language in languages)
+           //     {
+           //         if (room != null)
+           //         {
+           //             string floorstr = " ";
+           //             if (!String.IsNullOrEmpty(room.smetadata.floor.ToString()) && floor.ContainsKey(language))
+           //                 floorstr = floorstr + room.smetadata.floor + " " + floor[language];
+
+           //             ContactInfos mycontact = new ContactInfos();
+           //             mycontact.Language = language;
+           //             mycontact.Address = room.smetadata.address != null ? room.smetadata.address.ContainsKey(language) ? room.smetadata.address[language] + floorstr : "" : "";
+           //             mycontact.City = room.smetadata.city != null ? room.smetadata.city.ContainsKey(language) ? room.smetadata.city[language] : "" : "";
+           //             mycontact.CompanyName = room.smetadata.name != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "" : "";
+           //             mycontact.Phonenumber = room.smetadata.phone;
+           //             mycontact.Email = room.smetadata.email;
+           //             mycontact.ZipCode = room.smetadata.zipcode;
+           //             mycontact.Email = room.smetadata.email;
+           //             mycontact.CountryCode = "IT";
+           //             myevent.ContactInfos.TryAddOrUpdate(language, mycontact);
+           //         }
+           //     }
+
+           //     //Organizer Info
+           //     foreach (var language in languages)
+           //     {
+           //         if (place != null)
+           //         {
+           //             string floorstr = " ";
+           //             if (!String.IsNullOrEmpty(place.smetadata.floor.ToString()) && floor.ContainsKey(language))
+           //                 floorstr = floorstr + place.smetadata.floor + " " + floor[language];
+
+           //             ContactInfos orgcontact = new ContactInfos();
+           //             orgcontact.Language = language;
+           //             orgcontact.Address = place.smetadata.address != null ? place.smetadata.address.ContainsKey(language) ? place.smetadata.address[language] + floorstr : "" : "";
+           //             orgcontact.City = place.smetadata.city != null ? place.smetadata.city.ContainsKey(language) ? place.smetadata.city[language] : "" : "";
+           //             orgcontact.CompanyName = place.smetadata.name != null ? place.smetadata.name.ContainsKey(language) ? place.smetadata.name[language] : "" : "";
+           //             orgcontact.Phonenumber = place.smetadata.phone;
+           //             orgcontact.Email = place.smetadata.email;
+           //             orgcontact.ZipCode = place.smetadata.zipcode;
+           //             orgcontact.CountryCode = "IT";
+
+           //             myevent.OrganizerInfos.TryAddOrUpdate(language, orgcontact);
+           //         }
+           //     }
+
+           //     myevent.OrgRID = place.sname;
+
+           //     //Event Additional Infos
+           //     foreach (var language in languages)
+           //     {
+           //         EventAdditionalInfos eventadditionalinfo = new EventAdditionalInfos();
+           //         eventadditionalinfo.Language = language;
+           //         eventadditionalinfo.Location = room != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "" : "";
+           //         eventadditionalinfo.Reg = ninjaevent.link_to_ticket_info;
+
+           //         myevent.EventAdditionalInfos.TryAddOrUpdate(language, eventadditionalinfo);
+           //     }
+
+           //     myevent.EventPublisher = new List<EventPublisher>()
+           //{
+           //    new EventPublisher()
+           //    {
+           //        Publish = 1,
+           //        PublisherRID = ninjaevent.place,
+           //        Ranc = 0
+           //    }
+           //};
+
+           //     myevent.HasLanguage = languages;
+
+           //     myevent.ImageGallery = new List<ImageGallery>();
+
+                return myevent;
+
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
+        #endregion
+
+
+        #region E-ChargingData Parsing
 
         public static ODHActivityPoiLinked ParseNinjaEchargingToODHActivityPoi(string id, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation> data, ODHActivityPoiLinked echargingpoi, ODHTagLinked echargingstationtag)
         {
@@ -502,6 +743,6 @@ namespace NINJA.Parser
             }
         }
 
-
+        #endregion
     }
 }
