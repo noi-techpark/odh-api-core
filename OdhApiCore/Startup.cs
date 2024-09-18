@@ -3,17 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using AspNetCore.CacheOutput.InMemory.Extensions;
-using DataModel;
 using Helper;
 using Helper.Factories;
-using Helper.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Rewrite;
@@ -21,44 +17,28 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using MongoDB.Bson;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Npgsql;
 using OdhApiCore.Controllers;
 using OdhApiCore.Swagger;
 using OdhNotifier;
-using Schema.NET;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using Serilog.Formatting.Json;
-using Serilog.Sinks.Elasticsearch;
-using Serilog.Sinks.File;
-using SqlKata.Compilers;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OdhApiCore
 {

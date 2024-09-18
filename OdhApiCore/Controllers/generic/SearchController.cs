@@ -2,19 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using OdhApiCore.Responses;
 using OdhNotifier;
-using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -28,7 +23,7 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class SearchController : OdhController
     {        
-        public SearchController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+        public SearchController(IWebHostEnvironment env, ISettings settings, ILogger<SearchController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
             : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }

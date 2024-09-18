@@ -8,8 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
-using System.Security.Claims;
-using System.Linq;
 
 namespace OdhApiCore
 {

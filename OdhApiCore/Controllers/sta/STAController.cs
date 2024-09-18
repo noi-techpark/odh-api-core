@@ -13,15 +13,11 @@ using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
 using OdhApiCore.Filters;
-using AspNetCore.CacheOutput;
 using System.IO;
-using OdhApiCore.GenericHelpers;
-using OdhApiCore.Controllers.helper;
 using OdhNotifier;
 using Helper.Generic;
 

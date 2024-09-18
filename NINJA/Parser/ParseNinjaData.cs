@@ -373,7 +373,7 @@ namespace NINJA.Parser
                 {
                     "poi",
                     "mobilität",
-                    "e-tankstellen ladestationen"
+                    "e-auto ladestation"
                 };
 
                 echargingpoi.Tags = new List<Tags>()
@@ -405,6 +405,11 @@ namespace NINJA.Parser
                 {
                     //sname
                     echargingpoi.Detail["en"].Title = data.sname;
+
+                    //If data is from static spreadsheet use scode
+                    if (data.porigin.ToLower() == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
+                        echargingpoi.Detail["en"].Title = data.scode;
+
                     echargingpoi.Detail["en"].AdditionalText = data.pname;
                     echargingpoi.Detail.TryAddOrUpdate("en", echargingpoi.Detail["en"]);
                 }

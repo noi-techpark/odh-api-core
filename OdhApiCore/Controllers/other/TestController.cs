@@ -5,27 +5,19 @@
 using DataModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Helper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using SqlKata.Execution;
-using OdhApiCore.Filters;
-using AspNetCore.CacheOutput;
-using Microsoft.Extensions.Primitives;
 using System.Globalization;
 using System.Net.Http;
-using Swashbuckle.AspNetCore.Annotations;
 using DataModel.Annotations;
 using OdhNotifier;
-using PushServer;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -38,7 +30,7 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<AccommodationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
+        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<TestController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
             : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.httpClientFactory = httpClientFactory;
