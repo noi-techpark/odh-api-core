@@ -284,7 +284,7 @@ namespace DataModel
 
         //Tags Categorization is done via Tags ?????
         //TODO Populate on Save the Tags
-        public ICollection<Tags> Tags { get; set; }
+        public ICollection<Tags> Tags { get; set; }        
     }
 
     //public class TagV2 : Tags

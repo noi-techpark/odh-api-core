@@ -382,6 +382,9 @@ namespace NINJA.Parser
 
             venue.Source = source;
 
+            LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
+            venue.LicenseInfo = licenseInfo;
+
             var languages = place.smetadata.name.Keys;
 
             //Venue Name it/de/en:Name it/de/en:Description
@@ -442,6 +445,9 @@ namespace NINJA.Parser
                 EventV2 myevent = new EventV2();
                 myevent.Id = id.ToUpper();
 
+                myevent.LastChange = DateTime.Now;                
+                myevent.VenueId = venueId;
+
                 //ADD MAPPING
                 var ninjaid = new Dictionary<string, string>() { { "id", id } };
                 myevent.Mapping.TryAddOrUpdate("culture", ninjaid);
@@ -454,87 +460,66 @@ namespace NINJA.Parser
                 Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "eventv2" };
                 myevent._Meta = metainfo;
 
+                myevent._Meta.LastUpdate = myevent.LastChange;
+
                 myevent.Source = source;
 
-                //     LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
-                //     myevent.LicenseInfo = licenseInfo;
+                LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
+                myevent.LicenseInfo = licenseInfo;
 
-                //     //Take only Languages that are defined on title
-                //     var languages = ninjaevent.title.Keys;
+                //Take only Languages that are defined on title
+                var languages = ninjaevent.title.Keys;
 
-                //     //Detail Info
-                //     foreach (var language in languages)
-                //     {
-                //         Detail mydetail = new Detail();
-                //         mydetail.Language = language;
-                //         mydetail.Title = ninjaevent.title != null ? ninjaevent.title.ContainsKey(language) ? ninjaevent.title[language] : "no title" : "no title";
-                //         mydetail.BaseText = ninjaevent.decription != null ? ninjaevent.decription.ContainsKey(language) ? ninjaevent.decription[language] : "" : "";
+                myevent.Shortname = myevent.Detail.FirstOrDefault().Value.Title;
 
-                //         myevent.Detail.TryAddOrUpdate(language, mydetail);
-                //     }
+                //Detail Info
+                foreach (var language in languages)
+                {
+                    Detail mydetail = new Detail();
+                    mydetail.Language = language;
+                    mydetail.Title = ninjaevent.title != null ? ninjaevent.title.ContainsKey(language) ? ninjaevent.title[language] : "no title" : "no title";
+                    mydetail.BaseText = ninjaevent.decription != null ? ninjaevent.decription.ContainsKey(language) ? ninjaevent.decription[language] : "" : "";
 
-                //     bool ticket = false;
+                    myevent.Detail.TryAddOrUpdate(language, mydetail);
+                }
 
-                //     //Ticket and Price Info
-                //     if (ninjaevent.ticket == "Yes")
-                //         ticket = true;
+                bool ticket = false;
 
-                //     //Try to convert price to double
-                //     if (Double.TryParse(ninjaevent.price, out var pricedouble))
-                //     {
-                //         if (pricedouble > 0)
-                //         {
-                //             foreach (var language in languages)
-                //             {
-                //                 EventPrice myeventprice = new EventPrice();
-                //                 myeventprice.Language = language;
-                //                 myeventprice.Price = pricedouble;
-                //                 myeventprice.Type = ninjaevent.event_type_key;
+                //Ticket and Price Info
+                if (ninjaevent.ticket == "Yes")
+                    ticket = true;
 
-                //                 myevent.EventPrice.TryAddOrUpdate(language, myeventprice);
-                //             }
-                //         }
-                //     }
+                myevent.AdditionalProperties.Add("ticket", ticket);
+
+                //Try to convert price to double
+                if (Double.TryParse(ninjaevent.price, out var pricedouble))
+                {
+                    myevent.AdditionalProperties.Add("price", pricedouble);
+                }
+
+                //Date Info                
+                myevent.Begin = TryParsingToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time);
+                myevent.End = TryParsingToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time);
+
+                myevent.BeginUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(myevent.Begin);
+                myevent.EndUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(myevent.End);
+
+
+                if(!String.IsNullOrEmpty(ninjaevent.number_of_seats) && int.TryParse(ninjaevent.number_of_seats, out var numberofseatsint))
+                {
+                    myevent.Capacity = numberofseatsint;
+                }
 
 
                 //     //Add Type info
                 //     myevent.Topics = GetTopicRid(ninjaevent.event_type_key);
                 //     myevent.TopicRIDs = myevent.Topics.Select(x => x.TopicRID).ToList();
 
-                //     //Console.WriteLine("Parsing: " + ninjaevent.begin_date + " " + ninjaevent.begin_time);
-
-                //     //TODO PARSING FAILS IF format of datetime is not exactly as described
-                //     //TODO Resolve this "exception": "String '04/04/2022 9:00' was not recognized as a valid DateTime.",                
 
 
-                //     //Date Info
-                //     //myevent.DateBegin = DateTime.ParseExact(ninjaevent.begin_date + " " + ninjaevent.begin_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-                //     //myevent.DateEnd = DateTime.ParseExact(ninjaevent.end_date + " " + ninjaevent.end_time, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
-
-                //     myevent.Begin = TryParsingToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time);
-                //     myevent.End = TryParsingToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time);
-
-                //     myevent.BeginUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(myevent.Begin);
-                //     myevent.EndUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(myevent.End);
-
-                //     //DateTime.TryParse(ninjaevent.begin_date + " " + ninjaevent.begin_time, CultureInfo.InvariantCulture, out evendatebegin);
-                //     //DateTime.TryParse(ninjaevent.end_date + " " + ninjaevent.end_time, CultureInfo.InvariantCulture, out evendateend);
-
-                //     //CultureInfo myculture = new CultureInfo("en-GB");
-                //     //string begindate = ninjaevent.begin_date + " " + ninjaevent.begin_time + ":00";
-                //     //string enddate = ninjaevent.end_date + " " + ninjaevent.end_time + ":00";
-                //     //myevent.DateBegin = Convert.ToDateTime(begindate, myculture);
-                //     //myevent.DateEnd = Convert.ToDateTime(enddate, myculture);
 
 
-                //     Ticket = ticket,
-                //MaxPersons = !String.IsNullOrEmpty(ninjaevent.number_of_seats) && int.TryParse(ninjaevent.number_of_seats, out var numberofseatsint) ? numberofseatsint : 0
-
-                //myevent.Ticket = ticketstr;
-
-                //     myevent.Shortname = myevent.Detail.FirstOrDefault().Value.Title;
-                //     myevent.LastChange = DateTime.Now;
-                //     myevent._Meta.LastUpdate = myevent.LastChange;
+                
 
                 //     //Gps Info
                 //     GpsInfo eventgpsinfo = new GpsInfo();
