@@ -1531,6 +1531,11 @@ namespace CDB.Parser
                     }
                 }
             }
+            else if (myacco.SmgTags != null)
+            {
+                if (myacco.SmgTags.Contains(tagname))
+                    myacco.SmgTags.Remove(tagname);
+            }
         }
 
         private static void RemoveTagIf(List<string> featurelist, string tagname, Accommodation myacco)
@@ -1555,6 +1560,11 @@ namespace CDB.Parser
                             myacco.SmgTags.Remove(tagname);
                     }
                 }
+            }
+            else if (myacco.SmgTags != null)
+            {
+                if (myacco.SmgTags.Contains(tagname))
+                    myacco.SmgTags.Remove(tagname);
             }
         }
     }

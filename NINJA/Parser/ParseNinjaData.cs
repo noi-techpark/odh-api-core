@@ -380,11 +380,40 @@ namespace NINJA.Parser
             Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "venuev2" };
             venue._Meta = metainfo;
 
-            //Venue Name it/de/en:Name
+            venue.Source = source;
 
-            //Venue Desc it/de/en:Description
+            var languages = place.smetadata.name.Keys;
+
+            //Venue Name it/de/en:Name it/de/en:Description
+            foreach (var language in languages)
+            {
+                Detail mydetail = new Detail();
+                mydetail.Language = language;
+                mydetail.Title = place.smetadata.name != null ? place.smetadata.name.ContainsKey(language) ? place.smetadata.name[language] : "no title" : "no title";
+                mydetail.BaseText = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+
+                venue.Detail.TryAddOrUpdate(language, mydetail);
+            }
 
             //Venue Address it/de/en:Address
+            foreach (var language in languages)
+            {
+                ContactInfos contactinfo = new ContactInfos();
+                contactinfo.Language = language;
+                contactinfo.Address = place.smetadata.name != null ? place.smetadata.name.ContainsKey(language) ? place.smetadata.name[language] : "no title" : "no title";
+                contactinfo.City = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.ZipCode = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.Region = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.RegionCode = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.CountryCode = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.CountryName = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.CompanyName = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+
+                contactinfo.Phonenumber = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.Email = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+
+                venue.ContactInfos.TryAddOrUpdate(language, contactinfo);
+            }
 
             //Venue City it/de/en City
 
@@ -425,7 +454,7 @@ namespace NINJA.Parser
                 Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "eventv2" };
                 myevent._Meta = metainfo;
 
-                //     myevent.Source = source;
+                myevent.Source = source;
 
                 //     LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
                 //     myevent.LicenseInfo = licenseInfo;
