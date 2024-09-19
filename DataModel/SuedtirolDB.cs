@@ -1407,7 +1407,7 @@ namespace DataModel
     #region Articles    
 
     //BaseInfo Article
-    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IHasLanguage
+    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IHasLanguage, IVideoItemsAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1419,6 +1419,7 @@ namespace DataModel
             ArticleLinkInfo = new Dictionary<string, ArticleLinkInfo>();
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
         public string? Id { get; set; }
@@ -1499,6 +1500,10 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
+
+        //Video Items
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
+
     }
 
     #endregion
@@ -2766,6 +2771,7 @@ namespace DataModel
             WebCamProperties = new WebcamProperties();
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
+            VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
         public new ICollection<GpsInfo> GpsInfo { get; set; }
@@ -3486,8 +3492,8 @@ namespace DataModel
         public string? VideoSource { get; set; }
         public string? VideoType { get; set; }
         public string? StreamingSource { get; set; }
-        public string VideoTitle { get; set; }
-        public string VideoDesc { get; set; }
+        public string? VideoTitle { get; set; }
+        public string? VideoDesc { get; set; }
         public bool? Active { get; set; }
         public string? CopyRight { get; set; }
         public string? License { get; set; }
@@ -3499,6 +3505,7 @@ namespace DataModel
         //NEW
         public string? Definition { get; set; }
         public double? Duration { get; set; }
+        //To Remove (at the moment here is stored panomax 360 / 720, this info is already into Definition with SD/HD
         public int? Resolution { get; set; }
         public int? Bitrate { get; set; }
     }
