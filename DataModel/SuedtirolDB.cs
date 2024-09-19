@@ -2247,7 +2247,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware //, IActivateable
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware
     {
         public EventShort()
         {
@@ -2255,6 +2255,7 @@ namespace DataModel
             EventText = new Dictionary<string, string>();
             EventTitle = new Dictionary<string, string>();
             Documents = new Dictionary<string, List<Document>?>();
+            VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
         public LicenseInfo? LicenseInfo { get; set; }
@@ -2537,6 +2538,10 @@ namespace DataModel
 
         //Use Active for filtering out not active events
         public bool? Active { get; set; }
+
+        //Video Items
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
+
     }
 
     public class RoomBooked
