@@ -463,6 +463,15 @@ namespace NINJA.Parser
                 venue.OperationSchedule = new List<OperationSchedule>() { operationschedule };
             }
 
+            //Gps Info
+            GpsInfo eventgpsinfo = new GpsInfo();
+            eventgpsinfo.Latitude = place != null ? place.scoordinate.y : 0;
+            eventgpsinfo.Longitude = place != null ? place.scoordinate.x : 0;
+            eventgpsinfo.Gpstype = "position";
+
+            venue.GpsInfo = new List<GpsInfo>();
+            venue.GpsInfo.Add(eventgpsinfo);
+
             //PublishedOn
             //Check Source
 

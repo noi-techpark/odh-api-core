@@ -38,6 +38,9 @@ namespace OdhApiImporter.Helpers
 
         private async Task<Tuple<NinjaObject<NinjaEvent>,NinjaObject<NinjaPlaceRoom>>> ImportList(CancellationToken cancellationToken)
         {
+            //TODO SPLIT THIS TO  VENUE + Event import
+            //Check gps points?
+
             var responseevents = await GetNinjaData.GetNinjaEvent(settings.NinjaConfig.ServiceUrl);
             var responseplaces = await GetNinjaData.GetNinjaPlaces(settings.NinjaConfig.ServiceUrl);
 
