@@ -261,6 +261,8 @@ namespace DataModel
 
         //We only store the Info which is the Parent
         public bool? IsRoot { get; set; }
+        public string? VenueGroupId { get; set; }
+
 
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
       
@@ -285,6 +287,9 @@ namespace DataModel
         //Tags Categorization is done via Tags ?????
         //TODO Populate on Save the Tags
         public ICollection<Tags> Tags { get; set; }        
+
+        //To check if still needed?
+        public ICollection<string> TagIds { get; set; }
     }
 
     //public class TagV2 : Tags
@@ -305,7 +310,7 @@ namespace DataModel
     public class VenueInfo
     {
         public int? Beds { get; set; }
-        public int? RoomCount { get; set; }
+        public int? Rooms { get; set; }
         public int? SquareMeters { get; set; }
         public bool? Indoor { get; set; }               
     }
@@ -315,11 +320,23 @@ namespace DataModel
     #region Tag
 
     //TODO Tag V2 model which has all it needs 
-    public class TagV2
+    //public class TagV2
+    //{
+
+    //}
+
+
+    #endregion
+
+    #region AdditionalInfos
+
+    //AdditionalInfos Centrotrevi
+    public class AdditionalInfosCentroTrevi
     {
-
+        public double Price { get; set; }
+        public bool Ticket { get; set; }
+        public string TicketInfo { get; set; }
     }
-
 
     #endregion
 

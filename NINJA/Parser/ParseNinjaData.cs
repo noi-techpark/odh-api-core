@@ -370,15 +370,22 @@ namespace NINJA.Parser
         #region EventV2Parsing
 
         //V2 Parsing
-        public static VenueV2 ParseNinjaEventToVenueV2(string id, NinjaData<NinjaPlaceRoom> place, NinjaData<NinjaPlaceRoom> room)
+        public static VenueV2 ParseNinjaEventPlaceToVenueV2(string id, NinjaData<NinjaPlaceRoom> place)
         {
             VenueV2 venue = new VenueV2();
-            venue.Id = "venue_culture_" + place.scode;
+            venue.Id = "venue_culture_" + id.ToUpper();
 
+            venue.IsRoot = true;
+            venue.VenueGroupId = venue.Id;
+            venue.Active = true;
+          
             string source = !String.IsNullOrEmpty(place.sname) ? place.sname.ToLower() : "ninja";
 
             Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "venuev2" };
             venue._Meta = metainfo;
+
+            var ninjaid = new Dictionary<string, string>() { { "id", id } };
+            venue.Mapping.TryAddOrUpdate("culture", ninjaid);
 
             venue.Source = source;
 
@@ -418,21 +425,278 @@ namespace NINJA.Parser
                 venue.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
 
-            //Venue City it/de/en City
+            if(!String.IsNullOrEmpty(place.smetadata.open_time) && !String.IsNullOrEmpty(place.smetadata.closing_time))
+            {
+                //Openingtimes
+                OperationSchedule operationschedule = new OperationSchedule();
+                operationschedule.OperationscheduleName = new Dictionary<string, string>()
+                {
+                    { "de", "Öffnungszeiten" },
+                    { "it", "Orari d'apertura" },
+                    { "en", "Opening time" }
+                };
+                operationschedule.Type = "2";
+                operationschedule.Start = new DateTime(2020, 1, 1);
+                operationschedule.Stop = new DateTime(2020, 12, 31);
 
-            //Zipcode
+                OperationScheduleTime ostime = new OperationScheduleTime();
+                ostime.State = 2;
+                ostime.Timecode = 1;
+                ostime.Start = TimeSpan.Parse(place.smetadata.open_time);
+                ostime.End = TimeSpan.Parse(place.smetadata.closing_time);
 
-            //Province
+                string[] closingdays = Array.Empty<string>();
 
-            //Email
+                if(!String.IsNullOrEmpty(place.smetadata.closing_days))
+                    closingdays = place.smetadata.closing_days.Replace(" ", "").Split(",");
 
-            //Phone
+                ostime.Sunday = !closingdays.Contains("Sunday");
+                ostime.Monday = !closingdays.Contains("Monday");
+                ostime.Tuesday = !closingdays.Contains("Tuesday");
+                ostime.Wednesday = !closingdays.Contains("Wednesday");
+                ostime.Thursday = !closingdays.Contains("Thursday");
+                ostime.Friday = !closingdays.Contains("Friday");
+                ostime.Saturday = !closingdays.Contains("Saturday");
 
-            //Openingtimes
+                operationschedule.OperationScheduleTime = new List<OperationScheduleTime>() { ostime };
 
-            //Rooms add to Place
+                venue.OperationSchedule = new List<OperationSchedule>() { operationschedule };
+            }
+
+            //PublishedOn
+            //Check Source
 
             return venue;
+        }
+
+        public static VenueV2 ParseNinjaEventRoomToVenueV2(string id, NinjaData<NinjaPlaceRoom> room, string rootvenueId)
+        {
+            VenueV2 venue = new VenueV2();
+            venue.Id = "venue_culture_" + id.ToUpper();
+
+            string source = !String.IsNullOrEmpty(room.sname) ? room.sname.ToLower() : "ninja";
+
+            Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "venuev2" };
+            venue._Meta = metainfo;
+
+            venue.Source = source;
+            venue.Active = true;
+            venue.IsRoot = false;
+            venue.VenueGroupId = rootvenueId;
+
+            //Adding Parent as RelatedContent
+            venue.RelatedContent = new List<RelatedContent>() { new RelatedContent() { Id = rootvenueId, Type = "Venue" } };
+
+            var ninjaid = new Dictionary<string, string>() { { "id", id } };
+            var parentid = new Dictionary<string, string>() { { "parentid", rootvenueId } };
+            venue.Mapping.TryAddOrUpdate("culture", ninjaid);
+            venue.Mapping.TryAddOrUpdate("venue", parentid);
+
+
+            LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
+            venue.LicenseInfo = licenseInfo;
+
+            var languages = room.smetadata.name.Keys;
+
+            //Venue Name it/de/en:Name it/de/en:Description
+            foreach (var language in languages)
+            {
+                Detail mydetail = new Detail();
+                mydetail.Language = language;
+                mydetail.Title = room.smetadata.name != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "no title" : "no title";
+                mydetail.BaseText = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+
+                venue.Detail.TryAddOrUpdate(language, mydetail);
+            }
+
+            //Venue Address it/de/en:Address
+            foreach (var language in languages)
+            {
+                ContactInfos contactinfo = new ContactInfos();
+                contactinfo.Language = language;
+                contactinfo.Address = room.smetadata.name != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "no title" : "no title";
+                contactinfo.City = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+                contactinfo.ZipCode = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+                contactinfo.Region = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+                contactinfo.RegionCode = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+                contactinfo.CountryCode = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+                contactinfo.CountryName = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+                contactinfo.CompanyName = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+
+                contactinfo.Phonenumber = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+                contactinfo.Email = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
+
+                venue.ContactInfos.TryAddOrUpdate(language, contactinfo);
+            }
+
+            if (!String.IsNullOrEmpty(room.smetadata.open_time) && !String.IsNullOrEmpty(room.smetadata.closing_time))
+            {
+                //Openingtimes
+                OperationSchedule operationschedule = new OperationSchedule();
+                operationschedule.OperationscheduleName = new Dictionary<string, string>()
+                {
+                    { "de", "Öffnungszeiten" },
+                    { "it", "Orari d'apertura" },
+                    { "en", "Opening time" }
+                };
+                operationschedule.Type = "2";
+                operationschedule.Start = new DateTime(2020, 1, 1);
+                operationschedule.Stop = new DateTime(2020, 12, 31);
+
+                OperationScheduleTime ostime = new OperationScheduleTime();
+                ostime.State = 2;
+                ostime.Timecode = 1;
+                ostime.Start = TimeSpan.Parse(room.smetadata.open_time);
+                ostime.End = TimeSpan.Parse(room.smetadata.closing_time);
+
+                string[] closingdays = Array.Empty<string>();
+
+                if (!String.IsNullOrEmpty(room.smetadata.closing_days))
+                    closingdays = room.smetadata.closing_days.Replace(" ", "").Split(",");
+
+                ostime.Sunday = !closingdays.Contains("Sunday");
+                ostime.Monday = !closingdays.Contains("Monday");
+                ostime.Tuesday = !closingdays.Contains("Tuesday");
+                ostime.Wednesday = !closingdays.Contains("Wednesday");
+                ostime.Thursday = !closingdays.Contains("Thursday");
+                ostime.Friday = !closingdays.Contains("Friday");
+                ostime.Saturday = !closingdays.Contains("Saturday");
+
+                operationschedule.OperationScheduleTime = new List<OperationScheduleTime>() { ostime };
+
+                venue.OperationSchedule = new List<OperationSchedule>() { operationschedule };
+            }
+
+            //Max seats
+
+            if(room.smetadata.max_seats.HasValue)
+            {
+                VenueSetupV2 venuesetup = new VenueSetupV2();
+                venuesetup.Capacity = room.smetadata.max_seats.Value;
+                venuesetup.TagId = "notdefined";
+
+                venuesetup.Tag = new Tags() { Id = "notdefined", Source = "opendatahub" };
+
+                venue.Capacity = new List<VenueSetupV2>() { venuesetup };
+            }
+
+            //PublishedOn
+            //Check Source
+
+            return venue;
+        }
+
+        public static List<Tags> GetTags(string ninjaeventtype)
+        {
+            Tags tag = new Tags();
+            string source = "culture";
+
+            switch (ninjaeventtype)
+            {
+                case "Convegni/conferenze":
+                    tag = new Tags
+                    {
+                        Id = "0D25868CC23242D6AC97AEB2973CB3D6",
+                        Source = source
+                    };
+                    break;
+                case "Sport":
+                    tag = new Tags
+                    {
+                        Id = "162C0067811B477DA725D2F5F2D98398",
+                        Source = source
+                    };
+                    break;
+                case "Enogastronomia/prodotti":
+                    tag = new Tags
+                    {
+                        Id = "252200A028C8449D9A6205369A6D0D36",
+                        Source = source
+                    };
+                    break;
+                case "Artigianato/tradizioni":
+                    tag = new Tags
+                    {
+                        Id = "33BDC54BD39946F4852B3394B00610AE",
+                        Source = source
+                    };
+                    break;
+                case "Fiere/mercati":
+                    tag = new Tags
+                    {
+                        Id = "4C4961D9FC5B48EEB73067BEB9D4402A",
+                        Source = source
+                    };
+                    break;
+                case "Teatro/cinema":
+                    tag = new Tags
+                    {
+                        Id = "6884FE362C88434B9F49725E3328112B",
+                        Source = source
+                    };
+                    break;
+                case "Corsi/lezioni":
+                    tag = new Tags
+                    {
+                        Id = "767F6F43FC394CE9A3C8A9725C6FF134",
+                        Source = source
+                    };
+                    break;
+                case "Musica/danza":
+                    tag = new Tags
+                    {
+                        Id = "7E048074BA004EC58E29E330A9AA476B",
+                        Source = source
+                    };
+                    break;
+                case "Sagre/feste":
+                    tag = new Tags
+                    {
+                        Id = "9C3449EE278C4D94AA5A7C286729DEA0",
+                        Source = source
+                    };
+                    break;
+                case "Gite/escursioni":
+                    tag = new Tags
+                    {
+                        Id = "ACE8B613F2074A7BB59C0B1DD40A43CD",
+                        Source = source
+                    };
+                    break;
+                case "Visite guidate":
+                    tag = new Tags
+                    {
+                        Id = "B5467FEFE5C74FA5AD32B83793A76165",
+                        Source = source
+                    };
+                    break;
+                case "Mostre/arte":
+                    tag = new Tags
+                    {
+                        Id = "C72CE969B98947FABC99CBC7B033F28E",
+                        Source = source
+                    };
+                    break;
+                case "Famiglia":
+                    tag = new Tags
+                    {
+                        Id = "D98B49DF24C342D09A8161836435CF86",
+                        Source = source
+                    };
+                    break;
+                default:
+                    tag = new Tags
+                    {
+                        Id = "C72CE969B98947FABC99CBC7B033F28E",
+                        Source = source
+                    };
+                    break;
+            }
+
+            return new List<Tags>()
+            {
+                tag
+            };
         }
 
         public static EventV2 ParseNinjaEventToODHEventV2(string id, NinjaEvent ninjaevent, string venueId)
@@ -445,7 +709,9 @@ namespace NINJA.Parser
                 EventV2 myevent = new EventV2();
                 myevent.Id = id.ToUpper();
 
-                myevent.LastChange = DateTime.Now;                
+                myevent.LastChange = DateTime.Now;   
+                
+                //We add the room id 
                 myevent.VenueId = venueId;
 
                 //ADD MAPPING
@@ -483,20 +749,7 @@ namespace NINJA.Parser
                     myevent.Detail.TryAddOrUpdate(language, mydetail);
                 }
 
-                bool ticket = false;
-
-                //Ticket and Price Info
-                if (ninjaevent.ticket == "Yes")
-                    ticket = true;
-
-                myevent.AdditionalProperties.Add("ticket", ticket);
-
-                //Try to convert price to double
-                if (Double.TryParse(ninjaevent.price, out var pricedouble))
-                {
-                    myevent.AdditionalProperties.Add("price", pricedouble);
-                }
-
+              
                 //Date Info                
                 myevent.Begin = TryParsingToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time);
                 myevent.End = TryParsingToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time);
@@ -511,103 +764,38 @@ namespace NINJA.Parser
                 }
 
 
-                //     //Add Type info
-                //     myevent.Topics = GetTopicRid(ninjaevent.event_type_key);
-                //     myevent.TopicRIDs = myevent.Topics.Select(x => x.TopicRID).ToList();
+                //Add Type info
+                myevent.Tags = GetTags(ninjaevent.event_type_key);
+                myevent.TagIds = myevent.Tags.Select(x => x.Id).ToList();
 
+                //AdditionalProps                
 
+                AdditionalInfosCentroTrevi additionalinfos = new AdditionalInfosCentroTrevi();
 
+                bool ticket = false;
 
+                //Ticket and Price Info
+                if (ninjaevent.ticket == "Yes")
+                    ticket = true;
 
-                
+                additionalinfos.Ticket = ticket;
 
-                //     //Gps Info
-                //     GpsInfo eventgpsinfo = new GpsInfo();
-                //     eventgpsinfo.Latitude = place != null ? place.scoordinate.y : 0;
-                //     eventgpsinfo.Longitude = place != null ? place.scoordinate.x : 0;
-                //     eventgpsinfo.Gpstype = "position";
+                //Try to convert price to double
+                if (Double.TryParse(ninjaevent.price, out var pricedouble))
+                {
+                    additionalinfos.Price = pricedouble;
+                }
+                if (!String.IsNullOrEmpty(ninjaevent.link_to_ticket_info))
+                {
+                    additionalinfos.TicketInfo = ninjaevent.link_to_ticket_info;
+                }
 
-                //     myevent.GpsInfo = new List<GpsInfo>();
-                //     myevent.GpsInfo.Add(eventgpsinfo);
+                myevent.AdditionalProperties.Add(typeof(AdditionalInfosCentroTrevi).Name, pricedouble);
 
-                //     IDictionary<string, string> floor = new Dictionary<string, string>();
-                //     floor.Add(new KeyValuePair<string, string>("de", "Stock"));
-                //     floor.Add(new KeyValuePair<string, string>("it", "piano"));
-                //     floor.Add(new KeyValuePair<string, string>("en", "floor"));
+                //PublishedOn
+                //Check Source
 
-                //     //Contact Info            
-                //     foreach (var language in languages)
-                //     {
-                //         if (room != null)
-                //         {
-                //             string floorstr = " ";
-                //             if (!String.IsNullOrEmpty(room.smetadata.floor.ToString()) && floor.ContainsKey(language))
-                //                 floorstr = floorstr + room.smetadata.floor + " " + floor[language];
-
-                //             ContactInfos mycontact = new ContactInfos();
-                //             mycontact.Language = language;
-                //             mycontact.Address = room.smetadata.address != null ? room.smetadata.address.ContainsKey(language) ? room.smetadata.address[language] + floorstr : "" : "";
-                //             mycontact.City = room.smetadata.city != null ? room.smetadata.city.ContainsKey(language) ? room.smetadata.city[language] : "" : "";
-                //             mycontact.CompanyName = room.smetadata.name != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "" : "";
-                //             mycontact.Phonenumber = room.smetadata.phone;
-                //             mycontact.Email = room.smetadata.email;
-                //             mycontact.ZipCode = room.smetadata.zipcode;
-                //             mycontact.Email = room.smetadata.email;
-                //             mycontact.CountryCode = "IT";
-                //             myevent.ContactInfos.TryAddOrUpdate(language, mycontact);
-                //         }
-                //     }
-
-                //     //Organizer Info
-                //     foreach (var language in languages)
-                //     {
-                //         if (place != null)
-                //         {
-                //             string floorstr = " ";
-                //             if (!String.IsNullOrEmpty(place.smetadata.floor.ToString()) && floor.ContainsKey(language))
-                //                 floorstr = floorstr + place.smetadata.floor + " " + floor[language];
-
-                //             ContactInfos orgcontact = new ContactInfos();
-                //             orgcontact.Language = language;
-                //             orgcontact.Address = place.smetadata.address != null ? place.smetadata.address.ContainsKey(language) ? place.smetadata.address[language] + floorstr : "" : "";
-                //             orgcontact.City = place.smetadata.city != null ? place.smetadata.city.ContainsKey(language) ? place.smetadata.city[language] : "" : "";
-                //             orgcontact.CompanyName = place.smetadata.name != null ? place.smetadata.name.ContainsKey(language) ? place.smetadata.name[language] : "" : "";
-                //             orgcontact.Phonenumber = place.smetadata.phone;
-                //             orgcontact.Email = place.smetadata.email;
-                //             orgcontact.ZipCode = place.smetadata.zipcode;
-                //             orgcontact.CountryCode = "IT";
-
-                //             myevent.OrganizerInfos.TryAddOrUpdate(language, orgcontact);
-                //         }
-                //     }
-
-                //     myevent.OrgRID = place.sname;
-
-                //     //Event Additional Infos
-                //     foreach (var language in languages)
-                //     {
-                //         EventAdditionalInfos eventadditionalinfo = new EventAdditionalInfos();
-                //         eventadditionalinfo.Language = language;
-                //         eventadditionalinfo.Location = room != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "" : "";
-                //         eventadditionalinfo.Reg = ninjaevent.link_to_ticket_info;
-
-                //         myevent.EventAdditionalInfos.TryAddOrUpdate(language, eventadditionalinfo);
-                //     }
-
-                //     myevent.EventPublisher = new List<EventPublisher>()
-                //{
-                //    new EventPublisher()
-                //    {
-                //        Publish = 1,
-                //        PublisherRID = ninjaevent.place,
-                //        Ranc = 0
-                //    }
-                //};
-
-                //     myevent.HasLanguage = languages;
-
-                //     myevent.ImageGallery = new List<ImageGallery>();
-
+       
                 return myevent;
 
             }

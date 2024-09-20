@@ -432,7 +432,7 @@ namespace Helper.Converters
             venuev2.VenueInfo.Indoor = null;
             venuev2.VenueInfo.SquareMeters = null;
             venuev2.VenueInfo.Beds = venuev1.Beds;
-            venuev2.VenueInfo.RoomCount = venuev1.RoomCount;
+            venuev2.VenueInfo.Rooms = venuev1.RoomCount;
 
             venuev2.Tags = ConvertVenueFeatureToTag(venuev1.VenueCategory, venuecodes).ToList();
 
@@ -471,7 +471,7 @@ namespace Helper.Converters
                 subvenuev2.VenueInfo.Indoor = subvenuev1.Indoor;
                 subvenuev2.VenueInfo.SquareMeters = subvenuev1.SquareMeters;
                 subvenuev2.VenueInfo.Beds = null;
-                subvenuev2.VenueInfo.RoomCount = null;
+                subvenuev2.VenueInfo.Rooms = null;
 
                 subvenuev2.Tags = ConvertVenueFeatureToTag(subvenuev1.VenueFeatures, venuecodes).ToList();
                 subvenuev2.Capacity = ConvertVenueSetupToTag(subvenuev1.VenueSetup).ToList();

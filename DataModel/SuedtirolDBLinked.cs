@@ -189,9 +189,8 @@ namespace DataModel
             }
         }
 
-        public string? Type { get; set; }
+        //public string? Type { get; set; } needed?
     }
-
 
     public class ODHActivityPoiTypesLink
     {
