@@ -589,107 +589,52 @@ namespace NINJA.Parser
         public static List<Tags> GetTags(string ninjaeventtype)
         {
             Tags tag = new Tags();
-            string source = "culture";
+            tag.Source = "culture";
+            tag.Type = "Topic";
 
             switch (ninjaeventtype)
             {
                 case "Convegni/conferenze":
-                    tag = new Tags
-                    {
-                        Id = "0D25868CC23242D6AC97AEB2973CB3D6",
-                        Source = source
-                    };
+                    tag.Id = "0D25868CC23242D6AC97AEB2973CB3D6";
                     break;
                 case "Sport":
-                    tag = new Tags
-                    {
-                        Id = "162C0067811B477DA725D2F5F2D98398",
-                        Source = source
-                    };
+                    tag.Id = "162C0067811B477DA725D2F5F2D98398";
                     break;
                 case "Enogastronomia/prodotti":
-                    tag = new Tags
-                    {
-                        Id = "252200A028C8449D9A6205369A6D0D36",
-                        Source = source
-                    };
+                    tag.Id = "252200A028C8449D9A6205369A6D0D36";
                     break;
                 case "Artigianato/tradizioni":
-                    tag = new Tags
-                    {
-                        Id = "33BDC54BD39946F4852B3394B00610AE",
-                        Source = source
-                    };
+                    tag.Id = "33BDC54BD39946F4852B3394B00610AE";
                     break;
                 case "Fiere/mercati":
-                    tag = new Tags
-                    {
-                        Id = "4C4961D9FC5B48EEB73067BEB9D4402A",
-                        Source = source
-                    };
+                    tag.Id = "4C4961D9FC5B48EEB73067BEB9D4402A";
                     break;
                 case "Teatro/cinema":
-                    tag = new Tags
-                    {
-                        Id = "6884FE362C88434B9F49725E3328112B",
-                        Source = source
-                    };
+                    tag.Id = "6884FE362C88434B9F49725E3328112B";
                     break;
                 case "Corsi/lezioni":
-                    tag = new Tags
-                    {
-                        Id = "767F6F43FC394CE9A3C8A9725C6FF134",
-                        Source = source
-                    };
+                    tag.Id = "767F6F43FC394CE9A3C8A9725C6FF134";
                     break;
                 case "Musica/danza":
-                    tag = new Tags
-                    {
-                        Id = "7E048074BA004EC58E29E330A9AA476B",
-                        Source = source
-                    };
+                    tag.Id = "7E048074BA004EC58E29E330A9AA476B";
                     break;
                 case "Sagre/feste":
-                    tag = new Tags
-                    {
-                        Id = "9C3449EE278C4D94AA5A7C286729DEA0",
-                        Source = source
-                    };
+                    tag.Id = "9C3449EE278C4D94AA5A7C286729DEA0";
                     break;
                 case "Gite/escursioni":
-                    tag = new Tags
-                    {
-                        Id = "ACE8B613F2074A7BB59C0B1DD40A43CD",
-                        Source = source
-                    };
+                    tag.Id = "ACE8B613F2074A7BB59C0B1DD40A43CD";
                     break;
                 case "Visite guidate":
-                    tag = new Tags
-                    {
-                        Id = "B5467FEFE5C74FA5AD32B83793A76165",
-                        Source = source
-                    };
+                    tag.Id = "B5467FEFE5C74FA5AD32B83793A76165";
                     break;
                 case "Mostre/arte":
-                    tag = new Tags
-                    {
-                        Id = "C72CE969B98947FABC99CBC7B033F28E",
-                        Source = source
-                    };
+                    tag.Id = "C72CE969B98947FABC99CBC7B033F28E";
                     break;
                 case "Famiglia":
-                    tag = new Tags
-                    {
-                        Id = "D98B49DF24C342D09A8161836435CF86",
-                        Source = source
-                    };
+                    tag.Id = "D98B49DF24C342D09A8161836435CF86";
                     break;
                 default:
-                    tag = new Tags
-                    {
-                        Id = "C72CE969B98947FABC99CBC7B033F28E",
-                        Source = source
-                    };
+                    tag.Id = "C72CE969B98947FABC99CBC7B033F28E";
                     break;
             }
 

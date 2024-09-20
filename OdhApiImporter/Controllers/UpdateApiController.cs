@@ -244,6 +244,32 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+        //Events Centro Trevi and DRIN
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("NINJA/EventsV2/Update")]
+        public async Task<IActionResult> UpdateAllNinjaEventsV2(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update Ninja EventsV2";
+            string updatetype = GetUpdateType(null);
+            string source = "mobilityapi";
+
+            try
+            {
+                MobilityEventsV2ImportHelper ninjaimporthelper = new MobilityEventsV2ImportHelper(settings, QueryFactory, "eventsv2", UrlGeneratorStatic("NINJA/EventsV2"));
+                updatedetail = await ninjaimporthelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja EventsV2 update succeeded", "", updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja EventsV2 update failed", "", updatedetail, ex, true);
+                return BadRequest(errorResult);
+            }
+        }
+
+
         //EchargingStations
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("NINJA/Echarging/Update")]
