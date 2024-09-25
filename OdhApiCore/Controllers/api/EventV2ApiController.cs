@@ -33,6 +33,7 @@ namespace OdhApiCore.Controllers
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
+    [Route("v2")]
     public class EventV2Controller : OdhController
     {        
         public EventV2Controller(IWebHostEnvironment env, ISettings settings, ILogger<EventV2Controller> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
@@ -81,7 +82,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
         //[Authorize]
-        [HttpGet, Route("EventV2")]
+        [HttpGet, Route("Event")]
         public async Task<IActionResult> GetEventList(
             string? language = null,
             uint pagenumber = 1,
@@ -137,7 +138,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(EventV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("EventV2/{id}", Name = "SingleEventV2")]
+        [HttpGet, Route("Event/{id}", Name = "SingleEventV2")]
         public async Task<IActionResult> GetEventSingle(
             string id,
             string? language,
@@ -156,7 +157,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(EventV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("EventV2/ConvertEventShortToEventV2/{id}")]
+        [HttpGet, Route("Event/ConvertEventShortToEventV2/{id}")]
         public async Task<IActionResult> ConvertEventShortToEventV2(string id, bool savetotable = false)
         {
             var query =
@@ -200,7 +201,7 @@ namespace OdhApiCore.Controllers
             }            
         }
 
-        [HttpGet, Route("EventV2/ConvertEventToEventV2/{id}")]
+        [HttpGet, Route("Event/ConvertEventToEventV2/{id}")]
         public async Task<IActionResult> ConvertEventToEventV2(string id, bool savetotable = false)
         {
             var query =
@@ -253,7 +254,7 @@ namespace OdhApiCore.Controllers
             }
         }
 
-        [HttpGet, Route("EventV2/ConvertEventTypesToTags")]
+        [HttpGet, Route("Event/ConvertEventTypesToTags")]
         public async Task<IActionResult> ConvertEventTopicsToTags(bool savetotable = false)
         {
             var query =
@@ -399,7 +400,7 @@ namespace OdhApiCore.Controllers
         [InvalidateCacheOutput(nameof(GetEventList))]
         [AuthorizeODH(PermissionAction.Create)]
         //[Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
-        [HttpPost, Route("EventV2")]
+        [HttpPost, Route("Event")]
         public Task<IActionResult> Post([FromBody] EventV2 odhevent)
         {
             return DoAsyncReturn(async () =>
@@ -424,7 +425,7 @@ namespace OdhApiCore.Controllers
         [InvalidateCacheOutput(nameof(GetEventList))]
         [AuthorizeODH(PermissionAction.Update)]
         //[Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify,EventUpdate")]
-        [HttpPut, Route("EventV2/{id}")]
+        [HttpPut, Route("Event/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] EventV2 odhevent)
         {
             return DoAsyncReturn(async () =>
@@ -448,7 +449,7 @@ namespace OdhApiCore.Controllers
         [InvalidateCacheOutput(nameof(GetEventList))]
         //[Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
         [AuthorizeODH(PermissionAction.Delete)]
-        [HttpDelete, Route("EventV2/{id}")]
+        [HttpDelete, Route("Event/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>

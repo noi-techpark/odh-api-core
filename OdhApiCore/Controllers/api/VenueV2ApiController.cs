@@ -31,6 +31,7 @@ namespace OdhApiCore.Controllers
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
+    [Route("v2")]
     public class VenueV2Controller : OdhController
     {        
         public VenueV2Controller(IWebHostEnvironment env, ISettings settings, ILogger<VenueController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
@@ -80,7 +81,7 @@ namespace OdhApiCore.Controllers
         //[OdhCacheOutput(ClientTimeSpan = 0, ServerTimeSpan = 3600, CacheKeyGenerator = typeof(CustomCacheKeyGenerator), MustRevalidate = true)]
         //[Authorize(Roles = "DataReader,VenueReader")]
         //[Authorize]
-        [HttpGet, Route("VenueV2")]
+        [HttpGet, Route("Venue")]
         public async Task<IActionResult> GetVenueV2List(
             string? language = null,
             uint pagenumber = 1,
@@ -141,7 +142,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(VenueV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("VenueV2/{id}", Name = "SingleVenueV2")]
+        [HttpGet, Route("Venue/{id}", Name = "SingleVenueV2")]
         public async Task<IActionResult> GetVenueV2Single(
             string id,
             string? language,
@@ -158,7 +159,7 @@ namespace OdhApiCore.Controllers
 
         #region Converters
 
-        [HttpGet, Route("VenueV2/ConvertVenueToVenueV2/{id}")]
+        [HttpGet, Route("Venue/ConvertVenueToVenueV2/{id}")]
         public async Task<IActionResult> ConvertVenueToVenueV2(string id, bool savetotable = false)
         {
             var query =
@@ -199,7 +200,7 @@ namespace OdhApiCore.Controllers
             }            
         }
 
-        [HttpGet, Route("VenueV2/ConvertVenueTypesToTags")]
+        [HttpGet, Route("Venue/ConvertVenueTypesToTags")]
         public async Task<IActionResult> ConvertVenueTypesToTags(bool savetotable = false)
         {
             var query =
@@ -335,7 +336,7 @@ namespace OdhApiCore.Controllers
         //[InvalidateCacheOutput(nameof(GetVenueList))]
         //[Authorize(Roles = "DataWriter,DataCreate,VenueManager,VenueCreate")]
         [AuthorizeODH(PermissionAction.Create)]
-        [HttpPost, Route("VenueV2")]
+        [HttpPost, Route("Venue")]
         public Task<IActionResult> Post([FromBody] VenueV2 venue)
         {
             return DoAsyncReturn(async () =>
@@ -361,7 +362,7 @@ namespace OdhApiCore.Controllers
         //[InvalidateCacheOutput(nameof(GetVenueList))]
         //[Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify,VenueUpdate")]
         [AuthorizeODH(PermissionAction.Update)]
-        [HttpPut, Route("VenueV2/{id}")]
+        [HttpPut, Route("Venue/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] VenueV2 venue)
         {
             return DoAsyncReturn(async () =>
@@ -386,7 +387,7 @@ namespace OdhApiCore.Controllers
         //[InvalidateCacheOutput(nameof(GetVenueList))]
         //[Authorize(Roles = "DataWriter,DataDelete,VenueManager,VenueDelete")]
         [AuthorizeODH(PermissionAction.Delete)]
-        [HttpDelete, Route("VenueV2/{id}")]
+        [HttpDelete, Route("Venue/{id}")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
