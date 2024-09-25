@@ -614,7 +614,7 @@ namespace NINJA.Parser
                     myevent.Detail.TryAddOrUpdate(language, mydetail);
                 }
 
-                venue.HasLanguage = venue.Detail.Keys;
+                myevent.HasLanguage = myevent.Detail.Keys;
 
                 myevent.Shortname = myevent.Detail.FirstOrDefault().Value.Title;
 
