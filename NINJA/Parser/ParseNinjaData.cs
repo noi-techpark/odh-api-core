@@ -372,17 +372,16 @@ namespace NINJA.Parser
         //V2 Parsing
         public static VenueV2 ParseNinjaEventPlaceToVenueV2(string id, NinjaData<NinjaPlaceRoom> place, string? rootvenueid)
         {
-            bool isroom = false;
+            bool isroom = true;
 
             if (String.IsNullOrEmpty(rootvenueid))
-                isroom = true;
+                isroom = false;
 
             VenueV2 venue = new VenueV2();
             venue.Id = "VEN_CULTURE_" + id.ToUpper();
 
-            string source = !String.IsNullOrEmpty(place.smetadata.place) ? place.smetadata.place.ToLower() : "ninja";
-            venue.Source = source;
-
+            string source = !String.IsNullOrEmpty(place.smetadata.id) ? place.smetadata.id.ToLower() : "ninja";
+           
             var ninjaid = new Dictionary<string, string>() { { "id", id } };
             venue.Mapping.TryAddOrUpdate("culture", ninjaid);
             
@@ -396,7 +395,10 @@ namespace NINJA.Parser
                 venue.VenueGroupId = "VEN_CULTURE_" + rootvenueid;
                 var parentid = new Dictionary<string, string>() { { "parentid", "VEN_CULTURE_" + rootvenueid } };
                 venue.Mapping.TryAddOrUpdate("venue", parentid);
+                source = !String.IsNullOrEmpty(place.smetadata.place) ? place.smetadata.place.ToLower() : "ninja";
             }
+
+            venue.Source = source;
 
             Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "venuev2" };
             venue._Meta = metainfo;            
