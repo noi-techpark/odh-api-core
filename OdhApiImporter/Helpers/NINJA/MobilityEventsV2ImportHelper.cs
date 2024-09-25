@@ -72,9 +72,9 @@ namespace OdhApiImporter.Helpers
                             
                             var idtocheck = kvp.Key;
 
-                            //For Event Ids greater 50 characters
-                            if (idtocheck.Length > 50)
-                                idtocheck = idtocheck.Substring(0, 50);
+                            //For Event Ids greater 100 characters
+                            if (idtocheck.Length > 100)
+                                idtocheck = idtocheck.Substring(0, 99);
                             
                             //Insert Event
                             var result = await InsertDataToDB(eventtosave, kvp);

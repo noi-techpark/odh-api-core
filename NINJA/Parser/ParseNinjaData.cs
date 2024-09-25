@@ -398,8 +398,6 @@ namespace NINJA.Parser
                 venue.Mapping.TryAddOrUpdate("venue", parentid);
             }
 
-
-    
             Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "venuev2" };
             venue._Meta = metainfo;            
                      
@@ -418,6 +416,10 @@ namespace NINJA.Parser
 
                 venue.Detail.TryAddOrUpdate(language, mydetail);
             }
+
+            venue.Shortname = venue.Detail.FirstOrDefault().Value.Title;
+
+            venue.HasLanguage = venue.Detail.Keys;
 
             //Venue Address it/de/en:Address
             foreach (var language in languages)
@@ -600,9 +602,7 @@ namespace NINJA.Parser
 
                 //Take only Languages that are defined on title
                 var languages = ninjaevent.title.Keys;
-
-                myevent.Shortname = myevent.Detail.FirstOrDefault().Value.Title;
-
+           
                 //Detail Info
                 foreach (var language in languages)
                 {
@@ -614,7 +614,10 @@ namespace NINJA.Parser
                     myevent.Detail.TryAddOrUpdate(language, mydetail);
                 }
 
-              
+                venue.HasLanguage = venue.Detail.Keys;
+
+                myevent.Shortname = myevent.Detail.FirstOrDefault().Value.Title;
+
                 //Date Info                
                 myevent.Begin = TryParsingToDateTime(ninjaevent.begin_date + " " + ninjaevent.begin_time);
                 myevent.End = TryParsingToDateTime(ninjaevent.end_date + " " + ninjaevent.end_time);
@@ -657,9 +660,7 @@ namespace NINJA.Parser
 
                 myevent.AdditionalProperties.Add(typeof(AdditionalInfosCentroTrevi).Name, pricedouble);
 
-                //PublishedOn
-                //Check Source
-
+                //PublishedOn        
        
                 return myevent;
 
