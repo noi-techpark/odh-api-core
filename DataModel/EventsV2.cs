@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using DataModel.Annotations;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
@@ -290,6 +291,17 @@ namespace DataModel
 
         //To check if still needed?
         public ICollection<string> TagIds { get; set; }
+
+        //GpsPoints
+        [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get
+            {
+                return this.GpsInfo.ToGpsPointsDictionary(true);
+            }
+        }
     }
 
     //public class TagV2 : Tags

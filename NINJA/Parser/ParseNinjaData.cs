@@ -370,25 +370,39 @@ namespace NINJA.Parser
         #region EventV2Parsing
 
         //V2 Parsing
-        public static VenueV2 ParseNinjaEventPlaceToVenueV2(string id, NinjaData<NinjaPlaceRoom> place)
+        public static VenueV2 ParseNinjaEventPlaceToVenueV2(string id, NinjaData<NinjaPlaceRoom> place, string? rootvenueid)
         {
+            bool isroom = false;
+
+            if (String.IsNullOrEmpty(rootvenueid))
+                isroom = true;
+
             VenueV2 venue = new VenueV2();
-            venue.Id = "venue_culture_" + id.ToUpper();
+            venue.Id = "VEN_CULTURE_" + id.ToUpper();
 
-            venue.IsRoot = true;
-            venue.VenueGroupId = venue.Id;
-            venue.Active = true;
-          
-            string source = !String.IsNullOrEmpty(place.sname) ? place.sname.ToLower() : "ninja";
-
-            Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "venuev2" };
-            venue._Meta = metainfo;
+            string source = !String.IsNullOrEmpty(place.smetadata.place) ? place.smetadata.place.ToLower() : "ninja";
+            venue.Source = source;
 
             var ninjaid = new Dictionary<string, string>() { { "id", id } };
             venue.Mapping.TryAddOrUpdate("culture", ninjaid);
+            
+            venue.IsRoot = true;
+            venue.VenueGroupId = venue.Id;
+            venue.Active = true;
 
-            venue.Source = source;
+            if (isroom)
+            {
+                venue.IsRoot = false;
+                venue.VenueGroupId = "VEN_CULTURE_" + rootvenueid;
+                var parentid = new Dictionary<string, string>() { { "parentid", "VEN_CULTURE_" + rootvenueid } };
+                venue.Mapping.TryAddOrUpdate("venue", parentid);
+            }
 
+
+    
+            Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "venuev2" };
+            venue._Meta = metainfo;            
+                     
             LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
             venue.LicenseInfo = licenseInfo;
 
@@ -472,129 +486,26 @@ namespace NINJA.Parser
             venue.GpsInfo = new List<GpsInfo>();
             venue.GpsInfo.Add(eventgpsinfo);
 
-            //PublishedOn
-            //Check Source
-
-            return venue;
-        }
-
-        public static VenueV2 ParseNinjaEventRoomToVenueV2(string id, NinjaData<NinjaPlaceRoom> room, string rootvenueId)
-        {
-            VenueV2 venue = new VenueV2();
-            venue.Id = "venue_culture_" + id.ToUpper();
-
-            string source = !String.IsNullOrEmpty(room.sname) ? room.sname.ToLower() : "ninja";
-
-            Metadata metainfo = new Metadata() { Id = id, LastUpdate = DateTime.Now, Source = source, Type = "venuev2" };
-            venue._Meta = metainfo;
-
-            venue.Source = source;
-            venue.Active = true;
-            venue.IsRoot = false;
-            venue.VenueGroupId = rootvenueId;
-
-            //Adding Parent as RelatedContent
-            venue.RelatedContent = new List<RelatedContent>() { new RelatedContent() { Id = rootvenueId, Type = "Venue" } };
-
-            var ninjaid = new Dictionary<string, string>() { { "id", id } };
-            var parentid = new Dictionary<string, string>() { { "parentid", rootvenueId } };
-            venue.Mapping.TryAddOrUpdate("culture", ninjaid);
-            venue.Mapping.TryAddOrUpdate("venue", parentid);
-
-
-            LicenseInfo licenseInfo = new LicenseInfo() { ClosedData = false, Author = "", License = "CC0", LicenseHolder = source };
-            venue.LicenseInfo = licenseInfo;
-
-            var languages = room.smetadata.name.Keys;
-
-            //Venue Name it/de/en:Name it/de/en:Description
-            foreach (var language in languages)
+            if (isroom)
             {
-                Detail mydetail = new Detail();
-                mydetail.Language = language;
-                mydetail.Title = room.smetadata.name != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "no title" : "no title";
-                mydetail.BaseText = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-
-                venue.Detail.TryAddOrUpdate(language, mydetail);
-            }
-
-            //Venue Address it/de/en:Address
-            foreach (var language in languages)
-            {
-                ContactInfos contactinfo = new ContactInfos();
-                contactinfo.Language = language;
-                contactinfo.Address = room.smetadata.name != null ? room.smetadata.name.ContainsKey(language) ? room.smetadata.name[language] : "no title" : "no title";
-                contactinfo.City = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-                contactinfo.ZipCode = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-                contactinfo.Region = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-                contactinfo.RegionCode = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-                contactinfo.CountryCode = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-                contactinfo.CountryName = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-                contactinfo.CompanyName = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-
-                contactinfo.Phonenumber = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-                contactinfo.Email = room.smetadata.decription != null ? room.smetadata.decription.ContainsKey(language) ? room.smetadata.decription[language] : "" : "";
-
-                venue.ContactInfos.TryAddOrUpdate(language, contactinfo);
-            }
-
-            if (!String.IsNullOrEmpty(room.smetadata.open_time) && !String.IsNullOrEmpty(room.smetadata.closing_time))
-            {
-                //Openingtimes
-                OperationSchedule operationschedule = new OperationSchedule();
-                operationschedule.OperationscheduleName = new Dictionary<string, string>()
+                if (place.smetadata.max_seats.HasValue)
                 {
-                    { "de", "Öffnungszeiten" },
-                    { "it", "Orari d'apertura" },
-                    { "en", "Opening time" }
-                };
-                operationschedule.Type = "2";
-                operationschedule.Start = new DateTime(2020, 1, 1);
-                operationschedule.Stop = new DateTime(2020, 12, 31);
+                    VenueSetupV2 venuesetup = new VenueSetupV2();
+                    venuesetup.Capacity = place.smetadata.max_seats.Value;
+                    venuesetup.TagId = "notdefined";
 
-                OperationScheduleTime ostime = new OperationScheduleTime();
-                ostime.State = 2;
-                ostime.Timecode = 1;
-                ostime.Start = TimeSpan.Parse(room.smetadata.open_time);
-                ostime.End = TimeSpan.Parse(room.smetadata.closing_time);
+                    venuesetup.Tag = new Tags() { Id = "notdefined", Source = "opendatahub" };
 
-                string[] closingdays = Array.Empty<string>();
-
-                if (!String.IsNullOrEmpty(room.smetadata.closing_days))
-                    closingdays = room.smetadata.closing_days.Replace(" ", "").Split(",");
-
-                ostime.Sunday = !closingdays.Contains("Sunday");
-                ostime.Monday = !closingdays.Contains("Monday");
-                ostime.Tuesday = !closingdays.Contains("Tuesday");
-                ostime.Wednesday = !closingdays.Contains("Wednesday");
-                ostime.Thursday = !closingdays.Contains("Thursday");
-                ostime.Friday = !closingdays.Contains("Friday");
-                ostime.Saturday = !closingdays.Contains("Saturday");
-
-                operationschedule.OperationScheduleTime = new List<OperationScheduleTime>() { ostime };
-
-                venue.OperationSchedule = new List<OperationSchedule>() { operationschedule };
-            }
-
-            //Max seats
-
-            if(room.smetadata.max_seats.HasValue)
-            {
-                VenueSetupV2 venuesetup = new VenueSetupV2();
-                venuesetup.Capacity = room.smetadata.max_seats.Value;
-                venuesetup.TagId = "notdefined";
-
-                venuesetup.Tag = new Tags() { Id = "notdefined", Source = "opendatahub" };
-
-                venue.Capacity = new List<VenueSetupV2>() { venuesetup };
+                    venue.Capacity = new List<VenueSetupV2>() { venuesetup };
+                }
             }
 
             //PublishedOn
             //Check Source
 
-            return venue;
+                return venue;
         }
-
+   
         public static List<Tags> GetTags(string ninjaeventtype)
         {
             Tags tag = new Tags();
@@ -661,12 +572,12 @@ namespace NINJA.Parser
                     throw new Exception("incomplete data, no id");
 
                 EventV2 myevent = new EventV2();
-                myevent.Id = id.ToUpper();
+                myevent.Id = "EV_CULTURE_" + id.ToUpper();
 
                 myevent.LastChange = DateTime.Now;   
                 
                 //We add the room id 
-                myevent.VenueId = venueId;
+                myevent.VenueId = "VEN_CULTURE_" + venueId.ToUpper();
 
                 //ADD MAPPING
                 var ninjaid = new Dictionary<string, string>() { { "id", id } };

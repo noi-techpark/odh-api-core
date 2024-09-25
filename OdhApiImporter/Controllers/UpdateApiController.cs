@@ -246,7 +246,7 @@ namespace OdhApiImporter.Controllers
 
         //Events Centro Trevi and DRIN
         [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("NINJA/EventsV2/Update")]
+        [HttpGet, Route("NINJA/EventV2/Update")]
         public async Task<IActionResult> UpdateAllNinjaEventsV2(CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
@@ -265,6 +265,31 @@ namespace OdhApiImporter.Controllers
             catch (Exception ex)
             {
                 var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja EventsV2 update failed", "", updatedetail, ex, true);
+                return BadRequest(errorResult);
+            }
+        }
+
+        //Events Centro Trevi and DRIN
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("NINJA/VenueV2/Update")]
+        public async Task<IActionResult> UpdateAllNinjaVenuesV2(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update Ninja VenuesV2";
+            string updatetype = GetUpdateType(null);
+            string source = "mobilityapi";
+
+            try
+            {
+                MobilityVenuesV2ImportHelper ninjaimporthelper = new MobilityVenuesV2ImportHelper(settings, QueryFactory, "venuesv2", UrlGeneratorStatic("NINJA/VenueV2"));
+                updatedetail = await ninjaimporthelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Ninja VenueV2 update succeeded", "", updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Ninja VenueV2 update failed", "", updatedetail, ex, true);
                 return BadRequest(errorResult);
             }
         }
