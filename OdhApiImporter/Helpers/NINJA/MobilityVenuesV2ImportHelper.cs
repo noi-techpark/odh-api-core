@@ -65,12 +65,12 @@ namespace OdhApiImporter.Helpers
                 //From sheet places
                 if(ninjadata.smetadata.sheetName == "Places")
                 {
-                    venuetosave = ParseNinjaData.ParseNinjaEventPlaceToVenueV2(ninjadata.smetadata.id.Replace(" ",""), ninjadata, null);
+                    venuetosave = ParseNinjaData.ParseNinjaEventPlaceToVenueV2(ninjadata.sname.Replace(" ",""), ninjadata, null);
                 }
                 //From sheet rooms
                 else
                 {
-                    venuetosave = ParseNinjaData.ParseNinjaEventPlaceToVenueV2(ninjadata.smetadata.id.Replace(" ", ""), ninjadata, ninjadata.smetadata.place.Replace(" ", ""));
+                    venuetosave = ParseNinjaData.ParseNinjaEventPlaceToVenueV2(ninjadata.sname.Replace(" ", ""), ninjadata, ninjadata.smetadata.place.Replace(" ", ""));
                 }
 
                 //Save only once
