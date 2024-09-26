@@ -409,7 +409,12 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
                 odhevent.Id = Helper.IdGenerator.GenerateIDFromType(odhevent);
-                //odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //Check all Languages
+                odhevent.CheckMyInsertedLanguages(null);
+
+                //Trim all strings
+                odhevent.TrimStringProperties();
 
                 return await UpsertData<EventV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
@@ -434,7 +439,12 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
                 odhevent.Id = Helper.IdGenerator.CheckIdFromType<EventV2>(id);
-                //odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //Check all Languages
+                odhevent.CheckMyInsertedLanguages(null);
+
+                //Trim all strings
+                odhevent.TrimStringProperties();
 
                 return await UpsertData<EventV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
