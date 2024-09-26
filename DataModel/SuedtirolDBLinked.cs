@@ -2105,6 +2105,10 @@ namespace DataModel
         public ICollection<string>? DataProvider { get; set; }
 
         public LicenseInfo? LicenseInfo { get; set; }
+
+        [SwaggerSchema("Technical Domain of the api, content/timeseries")]
+        public string? ApiDomain { get; set; }
+
     }
 
     #endregion        
