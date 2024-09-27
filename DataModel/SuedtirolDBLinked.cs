@@ -2107,7 +2107,7 @@ namespace DataModel
         public LicenseInfo? LicenseInfo { get; set; }
 
         [SwaggerSchema("Technical Domain of the api, content/timeseries")]
-        public string? ApiDomain { get; set; }
+        public string? ApiType { get; set; }
 
     }
 
