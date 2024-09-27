@@ -2010,34 +2010,9 @@ namespace DataModel
         public TourismMetaData()
         {
             ApiFilter = new List<string>();
-            //Tags = new List<Tags>();
         }
 
-        //not needed
-        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        //public string ApiId { get; set; }
-
-        //using only PathParam
-        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        //public string ApiIdentifier { get; set; }
-
-        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public ICollection<string>? ApiFilter { get; set; }
-
         public string? Id { get; set; }
-
-        [SwaggerDeprecated("Obsolete use Type")]
-        public string? OdhType { get; set; }
-
-        public string? Type { get; set; }
-
-        //private string swaggerUrl = default!;
-        public string? SwaggerUrl { get; set; }
-        //{
-        //    get { return "swagger/index.html#/" + swaggerUrl; }
-        //    set { swaggerUrl = value; }
-        //}
-
         public string? Self
         {
             get
@@ -2046,6 +2021,20 @@ namespace DataModel
             }
         }
 
+        public Metadata? _Meta { get; set; }
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+
+        [SwaggerSchema("Base Url of the Api")]
+        public string? BaseUrl { get; set; }
+
+        [SwaggerSchema("optional Filter for the dataset")]
+        public ICollection<string>? ApiFilter { get; set; }
+        
+        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
+        public ICollection<string> PathParam { get; set; }
+
+        [SwaggerSchema("Full Api Url generated from BaseUrl, PathParam and ApiFilter")]
         public string ApiUrl
         {
             get
@@ -2054,40 +2043,39 @@ namespace DataModel
             }
         }
 
-        [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        public ICollection<string> PathParam { get; set; }
-
-        public string? BaseUrl { get; set; }
-     
-        public bool Deprecated { get; set; }
         
-        public Metadata? _Meta { get; set; }
-        public DateTime? FirstImport { get; set; }
-        public DateTime? LastChange { get; set; }
+        
+        [SwaggerDeprecated("Obsolete use Type")]
+        public string? OdhType { get; set; }
+
+        [SwaggerSchema("Optional _Meta.Type of the dataset (valid for the content domain)")]
+        public string? Type { get; set; }
+
+        [SwaggerSchema("Swagger Url where the api call is described")]
+        public string? SwaggerUrl { get; set; }        
+
+        public bool Deprecated { get; set; }
 
         [Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
         public string Shortname { get; set; }
 
+        [SwaggerSchema("Sources (_Meta.Source) of the data (valid for the content domain)")]
         public ICollection<string>? Sources { get; set; }
 
         public IDictionary<string, int>? RecordCount { get; set; }
 
+        [SwaggerSchema("Content Types the Api returns")]
         public IDictionary<string, string>? Output { get; set; }
 
+        [SwaggerSchema("Description of the dataset and api")]
         public IDictionary<string, string>? ApiDescription { get; set; }
-
-        //using PathParam only
-        //[Newtonsoft.Json.JsonProperty(Required = Newtonsoft.Json.Required.Always)]
-        //public string ApiVersion { get; set; }
-
-
+     
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, string>? ApiAccess { get; set; }
 
         public ICollection<ImageGallery>? ImageGallery { get; set; }
-
-        //New Tagging
+        
         public ICollection<string>? OdhTagIds { get; set; }
 
         public ICollection<ODHTags> ODHTags
@@ -2098,17 +2086,18 @@ namespace DataModel
             }
         }
 
+        [SwaggerSchema("Dataspace, semantic description of the domain the dataset belongs to")]
         public string? Dataspace { get; set; }
 
         public ICollection<string>? Category { get; set; }
 
+        [SwaggerSchema("Data Provider of the dataset")]
         public ICollection<string>? DataProvider { get; set; }
 
         public LicenseInfo? LicenseInfo { get; set; }
 
         [SwaggerSchema("Technical Domain of the api, content/timeseries")]
         public string? ApiType { get; set; }
-
     }
 
     #endregion        
