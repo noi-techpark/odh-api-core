@@ -1338,6 +1338,12 @@ namespace RAVEN
                 data.MappedTagIds = data.MappedTagIds.ConverListToLowerCase().ToList();
             }
 
+            //Lowercase Sources
+            if (data.Source != null && data.Source.Count > 0)
+            {
+                data.Source = data.Source.ConverListToLowerCase().ToList();
+            }
+
             //Lowercase MappedTagIds
             if (data.Mapping != null && data.Mapping.Count > 0)
             {

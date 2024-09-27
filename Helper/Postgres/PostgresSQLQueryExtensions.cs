@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.Auth.AccessControlPolicy;
 using DataModel;
 using Newtonsoft.Json;
 using SqlKata;
@@ -1362,6 +1363,19 @@ namespace Helper
                 }
                 return q;
             });
+
+        public static Query ODHTagSourcesFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> sourcelist) =>
+           query.Where(q =>
+           {
+               foreach (var item in sourcelist)
+               {
+                   q = q.OrWhereRaw(
+                       "gen_sources @> array\\[$$\\]", item.ToLower()
+                   )
+                   .OrWhere("gen_source", "ILIKE", item);
+               }
+               return q;
+           });
 
         //PublishedOn Filter (SyncSourceInterface)
         public static Query PublishedOnFilter_GeneratedColumn(this Query query, IReadOnlyCollection<string> publishedonlist) =>
