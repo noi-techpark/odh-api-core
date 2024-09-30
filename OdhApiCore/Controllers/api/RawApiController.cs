@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers.api
     //[ApiExplorerSettings(IgnoreApi = true)]
     public class RawdataApiController : OdhController
     {
-        public RawdataApiController(IWebHostEnvironment env, ISettings settings, ILogger<TagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+        public RawdataApiController(IWebHostEnvironment env, ISettings settings, ILogger<RawdataApiController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }

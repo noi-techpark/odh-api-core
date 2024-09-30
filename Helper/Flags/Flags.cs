@@ -355,7 +355,9 @@ namespace Helper
         [Description("8025DB5CFCBA4FF281DDDE1F2B1D19A2")]
         Alm = 1 << 18,
         [Description("B916489A77C94D8D92B03184EE587A31")]
-        Skihuette = 1 << 19
+        Skihuette = 1 << 19,
+        [Description("6A1EA69EC83F4E9CBDED5317D18B4BFB")]
+        Weingut = 1 << 20
     }
 
     //Dishcodes für Gastronomy
@@ -474,7 +476,25 @@ namespace Helper
         [Description("B92FFCECB4574BB9BCAE5EAB8917602D")]
         ilgattiMassobrio = 1L << 30,
         [Description("80BA0C6E19524ECA8956BA65294C8E5A")]
-        guidaOsterieItalia = 1L << 31
+        guidaOsterieItalia = 1L << 31,
+        [Description("19A210AEE7C84D539D92A61FE30B2375")]
+        Takeawayvorbestellung = 1L << 32,
+        [Description("B48D00D84F164E12822262183F6B8298")]
+        Takeaway = 1L << 33,
+        [Description("45411D13F45946B3925E74B4DE78AF7B")]
+        Deliveryservicevorbestellung = 1L << 34,
+        [Description("B5DA5FEE25F648A5930FFD36AAF1EE10")]
+        Deliveryservice = 1L << 35,
+        [Description("CFE311C2420142EFB46B71041D9DBA08")]
+        Onlinetischreservierung = 1L << 36,
+        [Description("3BECD8556B474044B8417C942D58C3DB")]
+        Nachhaltigkeitslabelsuedtirol1 = 1L << 37,
+        [Description("BA990D98B89944F0BFB9D318DA6281EC")]
+        Nachhaltigkeitslabelsuedtirol2 = 1L << 38,
+        [Description("B8E1E0E654BE48C988266D94F26CC014")]
+        Nachhaltigkeitslabelsuedtirol3 = 1L << 39,
+        [Description("2A58CAA843B34E7C8696C387B215132C")]
+        Testedstaff = 1L << 40
     }
 
     //Dishcodes für Gastronomy
@@ -534,7 +554,11 @@ namespace Helper
         [Description("AD8426538FCF4D8A81E06BE044088BAA")]
         Kindermenues = 1 << 25,
         [Description("5C84265DA5F84F84A7896808ACCB675A")]
-        Mittagsmenues = 1 << 26
+        Mittagsmenues = 1 << 26,
+        [Description("C84CAC645211448E8C8A8A92A9B1A830")]
+        Brunch = 1 << 27,
+        [Description("0AB2257C7F984065B5132D1DD68D205A")]
+        Glutenfreiepizza = 1 << 28
     }
 
     #endregion
@@ -1541,6 +1565,13 @@ namespace Helper
         Shop = 1L << 21, //2097152,  
         [Description("F6FABAA6C6C3475FBF2157287DAA8A28")]
         Bergbahn = 1L << 22, //4194304,  
+        [Description("1186AFACB68D4AEDA19487ADF62BA1BC")]
+        Restaurant = 1L << 23, //4194304,  
+        [Description("2E067878076C4FB0B0C17F6D731006B8")]
+        Buchvorstellung = 1L << 24, //4194304,  
+        [Description("B7EB85224DA445A080707D9CA2957860")]
+        Startgebuehrparagleiten = 1L << 25, //4194304,  
+
     }
 
     #endregion

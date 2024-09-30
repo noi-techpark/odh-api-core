@@ -23,7 +23,7 @@ namespace OdhApiCore.Controllers
     [NullStringParameterActionFilter]
     public class SearchController : OdhController
     {        
-        public SearchController(IWebHostEnvironment env, ISettings settings, ILogger<ODHTagController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+        public SearchController(IWebHostEnvironment env, ISettings settings, ILogger<SearchController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
             : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
         }

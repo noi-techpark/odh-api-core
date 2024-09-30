@@ -18,7 +18,7 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly IHttpClientFactory _clientFactory;
 
-        public GeoConverterController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory clientFactory) : base(env, settings, logger, queryFactory, odhpushnotifier)
+        public GeoConverterController(IWebHostEnvironment env, ISettings settings, ILogger<GeoConverterController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory clientFactory) : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             _clientFactory = clientFactory;
         }

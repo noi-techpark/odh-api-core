@@ -836,8 +836,9 @@ namespace Helper
 
             return query
                 .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
-                .SourceFilter_GeneratedColumn(sourcelist)
-                .PublishedOnFilter_GeneratedColumn(publishedonlist)   //
+                //.SourceFilter_GeneratedColumn(sourcelist)
+                .ODHTagSourcesFilter_GeneratedColumn(sourcelist)  //Using custom source filter
+                .PublishedOnFilter_GeneratedColumn(publishedonlist)   
                 .ODHTagValidForEntityFilter(mainentitylist)
                 .ODHTagValidForEntityFilter(validforentitylist)
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
