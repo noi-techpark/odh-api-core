@@ -428,17 +428,18 @@ namespace NINJA.Parser
             {
                 ContactInfos contactinfo = new ContactInfos();
                 contactinfo.Language = language;
-                contactinfo.Address = place.smetadata.name != null ? place.smetadata.name.ContainsKey(language) ? place.smetadata.name[language] : "no title" : "no title";
-                contactinfo.City = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
-                contactinfo.ZipCode = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
-                contactinfo.Region = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
-                contactinfo.RegionCode = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
-                contactinfo.CountryCode = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
-                contactinfo.CountryName = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
-                contactinfo.CompanyName = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.Address = place.smetadata.address != null ? place.smetadata.address.ContainsKey(language) ? place.smetadata.address[language] : null : null;
+                contactinfo.City = place.smetadata.city != null ? place.smetadata.city.ContainsKey(language) ? place.smetadata.city[language] : null : null;
+                contactinfo.ZipCode = place.smetadata.zipcode != null ? place.smetadata.zipcode : null;
+                contactinfo.Region = place.smetadata.province != null ? place.smetadata.province : null;
+                contactinfo.RegionCode = place.smetadata.province != null ? place.smetadata.province : null;
+                contactinfo.CountryCode = "IT";
+                contactinfo.CountryName = language == "en" ? "Italy" : language == "it" ? "Italia" : "Italien";
+                
+                contactinfo.CompanyName = place.smetadata.place.ToLower() == "trevilab" ? "Centro Trevi - TreviLab" : place.smetadata.place.ToLower() == "drin" ? "DRIN" : null;
 
-                contactinfo.Phonenumber = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
-                contactinfo.Email = place.smetadata.decription != null ? place.smetadata.decription.ContainsKey(language) ? place.smetadata.decription[language] : "" : "";
+                contactinfo.Phonenumber = place.smetadata.phone != null ? place.smetadata.phone : null;
+                contactinfo.Email = place.smetadata.email != null ? place.smetadata.email : null;
 
                 venue.ContactInfos.TryAddOrUpdate(language, contactinfo);
             }
