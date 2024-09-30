@@ -392,8 +392,8 @@ namespace NINJA.Parser
             if (isroom)
             {
                 venue.IsRoot = false;
-                venue.VenueGroupId = "VEN_CULTURE_" + rootvenueid;
-                var parentid = new Dictionary<string, string>() { { "parentid", "VEN_CULTURE_" + rootvenueid } };
+                venue.VenueGroupId = "VEN_CULTURE_" + rootvenueid.ToUpper();
+                var parentid = new Dictionary<string, string>() { { "parentid", "VEN_CULTURE_" + rootvenueid.ToUpper() } };
                 venue.Mapping.TryAddOrUpdate("venue", parentid);
                 source = !String.IsNullOrEmpty(place.smetadata.place) ? place.smetadata.place.ToLower() : "ninja";
             }
@@ -508,7 +508,7 @@ namespace NINJA.Parser
             //PublishedOn
             //Check Source
 
-                return venue;
+            return venue;
         }
    
         public static List<Tags> GetTags(string ninjaeventtype)
