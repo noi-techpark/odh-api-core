@@ -20,10 +20,10 @@ namespace SIAG
 
         //TODO Make BaseUrl configurable in settings
 
-        public const string serviceurlsiag = @"https://weather.services.siag.it/api/v2/bulletinHD";
-        public const string serviceurlbezirksiag = @"https://weather.services.siag.it/api/v2/district/";
+        public const string serviceurlsiag = @"https://api-weather.services.siag.it/api/v2/bulletinHD";
+        public const string serviceurlbezirksiag = @"https://api-weather.services.siag.it/api/v2/district/";
 
-        public const string serviceurlrealtime = @"http://weather.services.siag.it/api/v2/station";
+        public const string serviceurlrealtime = @"https://api-weather.services.siag.it/api/v2/station";
 
         public const string serviceurl = @"http://daten.buergernetz.bz.it/services/weather/bulletin";
         public const string serviceurlbezirk = @"http://daten.buergernetz.bz.it/services/weather/district/";
