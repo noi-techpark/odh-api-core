@@ -436,7 +436,7 @@ namespace NINJA.Parser
                 contactinfo.CountryCode = "IT";
                 contactinfo.CountryName = language == "en" ? "Italy" : language == "it" ? "Italia" : "Italien";
                 
-                contactinfo.CompanyName = place.smetadata.place.ToLower() == "trevilab" ? "Centro Trevi - TreviLab" : place.smetadata.place.ToLower() == "drin" ? "DRIN" : null;
+                contactinfo.CompanyName = source == "trevilab" ? "Centro Trevi - TreviLab" : source == "drin" ? "DRIN" : null;
 
                 contactinfo.Phonenumber = place.smetadata.phone != null ? place.smetadata.phone : null;
                 contactinfo.Email = place.smetadata.email != null ? place.smetadata.email : null;
