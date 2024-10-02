@@ -123,32 +123,37 @@ namespace OdhApiImporter.Helpers
 
                 //modify domain
 
-                if (correcturls && !host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
-                {
-                    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
-                    if(!String.IsNullOrEmpty(metadata.SwaggerUrl))
-                        metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");                    
-                }
+                //if (correcturls && !host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
+                //{
+                //    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+                //    if(!String.IsNullOrEmpty(metadata.SwaggerUrl))
+                //        metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");                    
+                //}
 
-                if (correcturls && !host.StartsWith("importer.tourism") && metadata.ImageGallery != null && metadata.ImageGallery.Count() > 0)
-                {
-                    foreach (var image in metadata.ImageGallery)
-                    {
-                        if (image.ImageUrl.StartsWith("https://images.tourism.testingmachine.eu"))
-                        {
-                            image.ImageUrl = image.ImageUrl.Replace("https://images.tourism.testingmachine.eu", "https://images.opendatahub.com");
-                        }
-                    }
-                }
+                //if (correcturls && !host.StartsWith("importer.tourism") && metadata.ImageGallery != null && metadata.ImageGallery.Count() > 0)
+                //{
+                //    foreach (var image in metadata.ImageGallery)
+                //    {
+                //        if (image.ImageUrl.StartsWith("https://images.tourism.testingmachine.eu"))
+                //        {
+                //            image.ImageUrl = image.ImageUrl.Replace("https://images.tourism.testingmachine.eu", "https://images.opendatahub.com");
+                //        }
+                //    }
+                //}
 
 
-                metadata.Type = metadata.OdhType;
-                metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
+                //metadata.Type = metadata.OdhType;
+                //metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
 
+                //Adding ApiType
+                if (metadata.ApiUrl.Contains("tourism"))
+                    metadata.ApiType = "content";
+                else if (metadata.ApiUrl.Contains("mobility"))
+                    metadata.ApiType = "timeseries";
 
                 //Save tp DB                 
                 var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
-                    .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
+                .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
 
                 i++;
             }
