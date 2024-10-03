@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace DataModel
 {
@@ -1939,8 +1940,8 @@ namespace DataModel
             }
         }
     }
-
-    public class TagLinked : SmgTags, IMetaData
+  
+    public class TagLinked : SmgTags, IMetaData, ISource
     {
         public Metadata? _Meta { get; set; }
 
@@ -1953,8 +1954,9 @@ namespace DataModel
             }
         }
         public List<string> ODHTagIds { get; set; }
-
-        public ICollection<string> Sources { get; set; }
+                
+        public ICollection<string> Types { get; set; }
+        public new string Source { get; set; }
     }
 
     public class PublisherLinked : Publisher, IMetaData

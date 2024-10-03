@@ -881,7 +881,7 @@ namespace OdhApiImporter.Helpers
                 TagLinked tag = new TagLinked();
 
                 tag.Id = topic.Id;
-                tag.Source = new List<string>() { "lts" };
+                tag.Source = "lts";
                 tag.TagName = topic.TypeDesc;
                 tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
@@ -920,8 +920,8 @@ namespace OdhApiImporter.Helpers
             int i = 0;
 
             foreach (var tag in data)
-            {
-                tag.Sources = tag.Source;
+            {                
+                tag.Source = tag.Types.Contains("LTSCategory") ? "lts" : "idm";
 
                 //Save to DB                 
                 var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)

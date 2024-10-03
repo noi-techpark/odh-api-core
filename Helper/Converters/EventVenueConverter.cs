@@ -353,7 +353,7 @@ namespace Helper.Converters
             tag.MainEntity = "event";
             tag.ValidForEntity = new List<string>() { "event" };
             tag.TagName = eventType.TypeDesc;
-            tag.Source = new List<string>() { "lts" };
+            tag.Source = "lts";
             tag.DisplayAsCategory = true;
             tag.LicenseInfo = null;
             tag.LTSTaggingInfo = new LTSTaggingInfo() { LTSRID = eventType.Id, ParentLTSRID = "" };
@@ -372,7 +372,7 @@ namespace Helper.Converters
             tag.MainEntity = "event";
             tag.ValidForEntity = new List<string>() { "event" };
             tag.TagName = eventType.TypeDesc;
-            tag.Source = new List<string>() { "noi" };
+            tag.Source = "noi";
             tag.DisplayAsCategory = true;
             tag.LicenseInfo = null;         
             
@@ -545,7 +545,7 @@ namespace Helper.Converters
             tag.MainEntity = "venue";
             tag.ValidForEntity = new List<string>() { "venue" };
             tag.TagName = venueType.TypeDesc;
-            tag.Source = new List<string>() { "lts" };
+            tag.Source = "lts";
             tag.DisplayAsCategory = true;
             tag.LicenseInfo = null;
             

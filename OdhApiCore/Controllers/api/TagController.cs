@@ -144,7 +144,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query()
                     .SelectRaw("data")
                     .From("tags")
-                    .ODHTagWhereExpression(
+                    .TagWhereExpression(
                         languagelist: new List<string>(), 
                         mainentitylist: maintypeslist,
                         validforentitylist: validforentitytypeslist,
