@@ -1953,6 +1953,8 @@ namespace DataModel
             }
         }
         public List<string> ODHTagIds { get; set; }
+
+        public ICollection<string> Sources { get; set; }
     }
 
     public class PublisherLinked : Publisher, IMetaData
