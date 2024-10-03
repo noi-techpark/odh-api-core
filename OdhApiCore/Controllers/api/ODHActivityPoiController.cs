@@ -410,7 +410,7 @@ namespace OdhApiCore.Controllers.api
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it","nl","cs","pl","ru","fr" });
 
                 //POPULATE LocationInfo
-                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+                odhactivitypoi.LocationInfo = await odhactivitypoi.UpdateLocationInfoExtension(QueryFactory);
 
                 //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
@@ -457,7 +457,7 @@ namespace OdhApiCore.Controllers.api
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
                 
                 //POPULATE LocationInfo
-                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+                odhactivitypoi.LocationInfo = await odhactivitypoi.UpdateLocationInfoExtension(QueryFactory);
 
                 //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);

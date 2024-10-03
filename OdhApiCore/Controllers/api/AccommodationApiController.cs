@@ -7,6 +7,7 @@ using CDB;
 using DataModel;
 using Helper;
 using Helper.Generic;
+using Helper.Location;
 using Helper.Identity;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -949,7 +950,15 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
                 accommodation.Id = Helper.IdGenerator.GenerateIDFromType(accommodation);
-                //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //GENERATE HasLanguage
+                accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
+                //POPULATE LocationInfo
+                accommodation.LocationInfo = await accommodation.UpdateLocationInfoExtension(QueryFactory);
+                //TODO DISTANCE Calculation
+                //TRIM all strings
+                accommodation.TrimStringProperties();
+
 
                 return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
@@ -974,7 +983,14 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
                 accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
-                //accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //GENERATE HasLanguage
+                accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
+                //POPULATE LocationInfo
+                accommodation.LocationInfo = await accommodation.UpdateLocationInfoExtension(QueryFactory);
+                //TODO DISTANCE Calculation
+                //TRIM all strings
+                accommodation.TrimStringProperties();
 
                 return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });

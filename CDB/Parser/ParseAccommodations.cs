@@ -153,13 +153,14 @@ namespace CDB.Parser
                             myacco.IsCamping = false;
                     }
 
-                    if (definition.Attribute("A0Gst") != null)
-                    {
-                        if (definition.Attribute("A0Gst").Value == "1")
-                            myacco.IsGastronomy = true;
-                        else
-                            myacco.IsGastronomy = false;
-                    }
+                    //not needed anymore
+                    //if (definition.Attribute("A0Gst") != null)
+                    //{
+                    //    if (definition.Attribute("A0Gst").Value == "1")
+                    //        myacco.IsGastronomy = true;
+                    //    else
+                    //        myacco.IsGastronomy = false;
+                    //}
 
                     if (definition.Attribute("A0Acc") != null)
                     {
@@ -188,7 +189,8 @@ namespace CDB.Parser
 
                     myacco.DistrictId = definition.Attribute("S7RID").Value;
 
-                    myacco.MainLanguage = definition.Attribute("LngID").Value;
+                    //not needed anymore
+                    //myacco.MainLanguage = definition.Attribute("LngID").Value;
 
                 }
 
