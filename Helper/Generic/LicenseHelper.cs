@@ -132,6 +132,45 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
+        public static LicenseInfo GetLicenseforEvent(EventV2 data)
+        {
+            var isopendata = false;
+            var licensetype = "Closed";
+            var licenseholder = @"https://www.lts.it";
+
+            if (data.Source.ToLower() == "lts")
+            {
+                if(data.Active && (data.Mapping.ContainsKey("lts") && data.Mapping["lts"].ContainsKey("ClassificationRID") && data.Mapping["lts"]["ClassificationRID"] == "CE212B488FA14954BE91BBCFA47C0F06"))
+
+                {
+                    isopendata = true;
+                    licensetype = "CC0";
+                }                
+            }
+            //Source DRIN and CentroTrevi
+            else if (data.Source.ToLower() == "trevilab")
+            {
+                isopendata = true;
+                licensetype = "CC0";
+                licenseholder = @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
+            }
+            else if (data.Source.ToLower() == "drin")
+            {
+                isopendata = true;
+                licensetype = "CC0";
+                licenseholder = @"https://www.provincia.bz.it/arte-cultura/giovani/drin.asp";
+            }
+            else
+            {
+                isopendata = true;
+                licensetype = "unknown";
+                licenseholder = "unknown";
+            }            
+            
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
+
         public static LicenseInfo GetLicenseforOdhActivityPoi(ODHActivityPoi data)
         {
             var isopendata = false;
@@ -334,6 +373,46 @@ namespace Helper
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
+
+        public static LicenseInfo GetLicenseforVenue(VenueV2 data)
+        {
+            var isopendata = false;
+            var licensetype = "Closed";
+            var licenseholder = @"https://www.lts.it";
+           
+
+            if (data.Source.ToLower() == "lts")
+            {
+                if (data.TagIds is {} && !data.TagIds.Contains("lts/visi_unpublishedOnODH") && data.TagIds.Contains("lts/visi_publishedOnODH"))
+                {
+                    isopendata = true;
+                    licensetype = "CC0";
+                }
+            }
+            //Source DRIN and CentroTrevi
+            else if (data.Source.ToLower() == "trevilab")
+            {
+                isopendata = true;
+                licensetype = "CC0";
+                licenseholder = @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
+            }
+            else if (data.Source.ToLower() == "drin")
+            {
+                isopendata = true;
+                licensetype = "CC0";
+                licenseholder = @"https://www.provincia.bz.it/arte-cultura/giovani/drin.asp";
+            }
+            else
+            {
+                isopendata = true;
+                licensetype = "unknown";
+                licenseholder = "unknown";
+            }
+
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
 
         public static LicenseInfo GetLicenseforEventShort(EventShort data)
         {

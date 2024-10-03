@@ -97,7 +97,7 @@ namespace NINJA
         public string place { get; set; }
         public IDictionary<string, string> address { get; set; }
         public IDictionary<string, string> city { get; set; }
-        public string placeid { get; set; }
+        public string id { get; set; }
         public string email { get; set; }
         public Nullable<int> max_seats { get; set; }
         public string open_time { get; set; }

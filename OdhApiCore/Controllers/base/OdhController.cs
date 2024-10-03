@@ -326,4 +326,12 @@ namespace OdhApiCore.Controllers
             }
         }
     }
+
+    //[ApiController]
+    //[Route("v2")]
+    //[FormatFilter]
+    //public abstract class OdhControllerV2 : OdhController
+    //{
+
+    //}
 }
