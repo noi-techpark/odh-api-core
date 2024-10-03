@@ -416,6 +416,8 @@ namespace OdhApiCore.Controllers
                 //Trim all strings
                 odhevent.TrimStringProperties();
 
+                //TODO populate Tags (Source + Id)
+
                 return await UpsertData<EventV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
@@ -445,6 +447,8 @@ namespace OdhApiCore.Controllers
 
                 //Trim all strings
                 odhevent.TrimStringProperties();
+
+                //TODO populate Tags (Source + Id)
 
                 return await UpsertData<EventV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
