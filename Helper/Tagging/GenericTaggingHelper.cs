@@ -92,12 +92,12 @@ namespace Helper
 
             if (tagen?.Id != null)
             {
-                if (tagen.Source.Contains("ODHCategory"))
+                if (tagen.Types.Contains("ODHCategory") || tagen.Types.Contains("odhcategory"))
                 {
                     returnDict.Add("idm", tagen.Id);
                 }
 
-                if (tagen.Source.Contains("LTSCategory"))
+                if (tagen.Types.Contains("LTSCategory") || tagen.Types.Contains("ltscategory"))
                 {
                     returnDict.Add("lts", tagen.Id);
                 }

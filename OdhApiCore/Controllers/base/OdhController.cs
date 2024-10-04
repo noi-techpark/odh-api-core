@@ -12,15 +12,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using OdhNotifier;
-using Schema.NET;
-using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
-using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
@@ -252,7 +248,16 @@ namespace OdhApiCore.Controllers
             string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";
            
             if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
+            {
                 editsource = HttpContext.Request.Headers["Referer"];
+
+                //Hack if Referer is infrastructure v2 api make an upsert
+                if (HttpContext.Request.Headers["Referer"] == "https://tourism.importer.v2")
+                {
+                    datainfo.ErrorWhendataExists = false;
+                    datainfo.ErrorWhendataIsNew = false;
+                }
+            }                
 
             var result = await QueryFactory.UpsertData<T>(data, datainfo, new EditInfo(editor, editsource), crudconstraints, compareconfig);
 
@@ -330,4 +335,12 @@ namespace OdhApiCore.Controllers
             }
         }
     }
+
+    //[ApiController]
+    //[Route("v2")]
+    //[FormatFilter]
+    //public abstract class OdhControllerV2 : OdhController
+    //{
+
+    //}
 }

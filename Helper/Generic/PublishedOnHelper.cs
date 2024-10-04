@@ -101,31 +101,62 @@ namespace Helper
                         break;
                     //Event Add all Active Events from now
                     case "event":
-                        //EVENTS LTS
-                        if ((mydata as EventLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
+
+                        if(mydata is EventLinked)
                         {
-                            if ((mydata as EventLinked).SmgActive && mydata._Meta.Source == "lts")
-                                publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
-
-                            //Marketplace Events only ClassificationRID 
-                            var validclassificationrids = new List<string>() { "CE212B488FA14954BE91BBCFA47C0F06" };
-                            if (validclassificationrids.Contains((mydata as EventLinked).ClassificationRID) && mydata._Meta.Source == "lts")
-                                publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
-
-                            //Events DRIN CENTROTREVI
-                            if ((mydata as EventLinked).Active && (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin"))
+                            //EVENTS LTS
+                            if ((mydata as EventLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
                             {
-                                if ((mydata as EventLinked).SmgActive)
-                                {
-                                    if (mydata._Meta.Source == "drin")
-                                        publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
-                                    if (mydata._Meta.Source == "trevilab")
-                                        publishedonlist.TryAddOrUpdateOnList("centro-trevi.trevilab");
-                                }
+                                if ((mydata as EventLinked).SmgActive && mydata._Meta.Source == "lts")
+                                    publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
 
+                                //Marketplace Events only ClassificationRID 
+                                var validclassificationrids = new List<string>() { "CE212B488FA14954BE91BBCFA47C0F06" };
+                                if (validclassificationrids.Contains((mydata as EventLinked).ClassificationRID) && mydata._Meta.Source == "lts")
+                                    publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+
+                                //Events DRIN CENTROTREVI
+                                if ((mydata as EventLinked).Active && (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin"))
+                                {
+                                    if ((mydata as EventLinked).SmgActive)
+                                    {
+                                        if (mydata._Meta.Source == "drin")
+                                            publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
+                                        if (mydata._Meta.Source == "trevilab")
+                                            publishedonlist.TryAddOrUpdateOnList("centro-trevi.trevilab");
+                                    }
+
+                                }
                             }
                         }
+                        else if(mydata is EventV2)
+                        {
+                            //EVENTS LTS
+                            if ((mydata as EventV2).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
+                            {                              
+                                //Marketplace Events only ClassificationRID 
+                                var validclassificationrids = new List<string>() { "CE212B488FA14954BE91BBCFA47C0F06" };
 
+                                if((mydata as EventV2).Mapping.ContainsKey("lts"))
+                                {
+                                    if((mydata as EventV2).Mapping["lts"].ContainsKey("ClassificationRID"))
+                                    {
+                                        if (validclassificationrids.Contains((mydata as EventV2).Mapping["lts"]["ClassificationRID"]) && mydata._Meta.Source == "lts")
+                                            publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                                    }
+                                }
+
+
+                                //Events DRIN CENTROTREVI
+                                if ((mydata as EventV2).Active && (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin"))
+                                {                                    
+                                        if (mydata._Meta.Source == "drin")
+                                            publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
+                                        if (mydata._Meta.Source == "trevilab")
+                                            publishedonlist.TryAddOrUpdateOnList("centro-trevi.trevilab");                                 
+                                }
+                            }
+                        }
 
                         break;
 
@@ -215,10 +246,29 @@ namespace Helper
                         break;
 
                     case "venue":
-                        if ((mydata as VenueLinked).Active == true)
+                        if (mydata is VenueLinked)
                         {
-                            publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
-                            publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                            if ((mydata as VenueLinked).Active == true)
+                            {
+                                publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
+                                publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
+                            }
+                        }
+                        else if (mydata is VenueV2)
+                        {
+                            if ((mydata as VenueV2).Active == true)
+                            {
+                                //Venues LTS
+                                //Venues NOI
+                                //Venues DRIN CENTROTREVI
+                                if (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin")
+                                {
+                                    if (mydata._Meta.Source == "drin")
+                                        publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
+                                    if (mydata._Meta.Source == "trevilab")
+                                        publishedonlist.TryAddOrUpdateOnList("centro-trevi.trevilab");
+                                }
+                            }
                         }
                         break;
 

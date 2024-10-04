@@ -8,16 +8,13 @@ using Helper;
 using Helper.Generic;
 using Helper.Identity;
 using Helper.Location;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using OdhNotifier;
-using Schema.NET;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -413,7 +410,7 @@ namespace OdhApiCore.Controllers.api
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it","nl","cs","pl","ru","fr" });
 
                 //POPULATE LocationInfo
-                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+                odhactivitypoi.LocationInfo = await odhactivitypoi.UpdateLocationInfoExtension(QueryFactory);
 
                 //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
@@ -460,7 +457,7 @@ namespace OdhApiCore.Controllers.api
                 odhactivitypoi.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
                 
                 //POPULATE LocationInfo
-                odhactivitypoi.LocationInfo = await odhactivitypoi.LocationInfo.UpdateLocationInfoExtension(QueryFactory);
+                odhactivitypoi.LocationInfo = await odhactivitypoi.UpdateLocationInfoExtension(QueryFactory);
 
                 //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);

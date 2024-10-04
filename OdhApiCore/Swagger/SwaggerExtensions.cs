@@ -2,18 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Amazon.Runtime.Internal;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
-using System.Diagnostics;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Text.Json.Nodes;
 
 namespace OdhApiCore.Swagger
 {

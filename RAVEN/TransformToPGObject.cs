@@ -242,6 +242,7 @@ namespace RAVEN
             }
 
             data.Source = datasource.ToLower();
+            data.Active = true;
 
             data._Meta = MetadataHelper.GetMetadataobject<AccommodationRoomLinked>(data, MetadataHelper.GetMetadataforAccommodationRoom); //GetMetadata(data.Id, "accommodationroom", datasource, data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodationroom", true);
@@ -1336,6 +1337,12 @@ namespace RAVEN
             if (data.MappedTagIds != null && data.MappedTagIds.Count > 0)
             {
                 data.MappedTagIds = data.MappedTagIds.ConverListToLowerCase().ToList();
+            }
+
+            //Lowercase Sources
+            if (data.Source != null && data.Source.Count > 0)
+            {
+                data.Source = data.Source.ConverListToLowerCase().ToList();
             }
 
             //Lowercase MappedTagIds

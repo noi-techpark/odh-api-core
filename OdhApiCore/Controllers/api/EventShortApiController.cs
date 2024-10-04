@@ -4,31 +4,23 @@
 
 using DataModel;
 using DataModel.Annotations;
-using Geo.Geometries;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Npgsql;
 using OdhApiCore.Responses;
 using OdhNotifier;
-using ServiceReferenceLCS;
-using SqlKata;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 

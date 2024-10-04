@@ -7,14 +7,11 @@ using DataModel;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using OdhNotifier;
 using SqlKata.Execution;
@@ -147,7 +144,7 @@ namespace OdhApiCore.Controllers
                     QueryFactory.Query()
                     .SelectRaw("data")
                     .From("tags")
-                    .ODHTagWhereExpression(
+                    .TagWhereExpression(
                         languagelist: new List<string>(), 
                         mainentitylist: maintypeslist,
                         validforentitylist: validforentitytypeslist,

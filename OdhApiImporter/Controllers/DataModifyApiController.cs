@@ -32,10 +32,10 @@ namespace OdhApiImporter.Controllers
     {
         private readonly ISettings settings;
         private readonly QueryFactory QueryFactory;
-        private readonly ILogger<UpdateApiController> logger;
+        private readonly ILogger<DataModifyApiController> logger;
         private readonly IWebHostEnvironment env;
 
-        public DataModifyApiController(IWebHostEnvironment env, ISettings settings, ILogger<UpdateApiController> logger, QueryFactory queryFactory)
+        public DataModifyApiController(IWebHostEnvironment env, ISettings settings, ILogger<DataModifyApiController> logger, QueryFactory queryFactory)
         {
             this.env = env;
             this.settings = settings;
@@ -171,6 +171,28 @@ namespace OdhApiImporter.Controllers
         {
             //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.FillDBWithDummyNews();
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify Articles",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = 0,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("NewsFeedUpdate")]
+        public async Task<IActionResult> NewsFeedUpdate(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.NewsFeedUpdate();
 
             return Ok(new UpdateResult
             {
@@ -472,6 +494,54 @@ namespace OdhApiImporter.Controllers
             });
         }
 
+
+        #endregion
+
+        #region Tag
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("EventTopicsToTags")]
+        public async Task<IActionResult> EventTopicsToTags(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.EventTopicsToTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "EventTopicsToTags",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("TagSourceFix")]
+        public async Task<IActionResult> TagSourceFix(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.TagSourceFix();
+
+            return Ok(new UpdateResult
+            {
+                operation = "TagSourceFix",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
 
         #endregion
     }

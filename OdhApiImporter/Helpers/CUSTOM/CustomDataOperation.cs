@@ -34,6 +34,8 @@ namespace OdhApiImporter.Helpers
             this.settings = settings;
         }
 
+        #region MetaData
+
         public async Task<int> UpdateMetaDataApiRecordCount()
         {
             //Load all data from PG and resave
@@ -61,49 +63,6 @@ namespace OdhApiImporter.Helpers
             return i;            
         }
 
-        //public async Task<Dictionary<string,int>> UpdateMetaDataApiId()
-        //{
-            ////Load all data from PG and resave
-            //var query = QueryFactory.Query()
-            //       .SelectRaw("data")
-            //       .From("metadata");
-
-            //var data = await query.GetObjectListAsync<TourismMetaData>();
-            //int created = 0;
-
-            //foreach (var metadata in data)
-            //{
-            //    if(String.IsNullOrEmpty(metadata.ApiId))
-            //        metadata.ApiId = metadata.Id;
-             
-            //    metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
-            //    metadata._Meta.Id = metadata.Id;
-
-            //    //Save tp DB                 
-            //    var queryresult = await QueryFactory.Query("metadata")
-            //        .InsertAsync(new JsonBData() { id = metadata.Id, data = new JsonRaw(metadata) });
-
-            //    created++;
-            //}
-
-            //int deleted = 0;
-
-            ////Delete old ids
-            //var idlisttodelete = data.Select(x => x.Id).ToList();
-            //foreach(var metadataidtodelete in idlisttodelete)
-            //{
-            //    var deltedresult = await QueryFactory.Query("metadata").Where("id", metadataidtodelete)
-            //            .DeleteAsync();
-            //    deleted++;
-            //}
-
-            //return new Dictionary<string, int>()
-            //{
-            //    { "created", created },
-            //    { "deleted", deleted }
-            //};
-        //}
-
         public async Task<int> ResaveMetaData(string host, bool correcturls)
         {
             //Load all data from PG and resave
@@ -123,32 +82,37 @@ namespace OdhApiImporter.Helpers
 
                 //modify domain
 
-                if (correcturls && !host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
-                {
-                    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
-                    if(!String.IsNullOrEmpty(metadata.SwaggerUrl))
-                        metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");                    
-                }
+                //if (correcturls && !host.StartsWith("importer.tourism") && metadata.BaseUrl.StartsWith("https://api.tourism.testingmachine.eu"))
+                //{
+                //    metadata.BaseUrl = "https://tourism.api.opendatahub.com";
+                //    if(!String.IsNullOrEmpty(metadata.SwaggerUrl))
+                //        metadata.SwaggerUrl = metadata.SwaggerUrl.Replace("https://api.tourism.testingmachine.eu", "https://tourism.api.opendatahub.com");                    
+                //}
 
-                if (correcturls && !host.StartsWith("importer.tourism") && metadata.ImageGallery != null && metadata.ImageGallery.Count() > 0)
-                {
-                    foreach (var image in metadata.ImageGallery)
-                    {
-                        if (image.ImageUrl.StartsWith("https://images.tourism.testingmachine.eu"))
-                        {
-                            image.ImageUrl = image.ImageUrl.Replace("https://images.tourism.testingmachine.eu", "https://images.opendatahub.com");
-                        }
-                    }
-                }
+                //if (correcturls && !host.StartsWith("importer.tourism") && metadata.ImageGallery != null && metadata.ImageGallery.Count() > 0)
+                //{
+                //    foreach (var image in metadata.ImageGallery)
+                //    {
+                //        if (image.ImageUrl.StartsWith("https://images.tourism.testingmachine.eu"))
+                //        {
+                //            image.ImageUrl = image.ImageUrl.Replace("https://images.tourism.testingmachine.eu", "https://images.opendatahub.com");
+                //        }
+                //    }
+                //}
 
 
-                metadata.Type = metadata.OdhType;
-                metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
+                //metadata.Type = metadata.OdhType;
+                //metadata.LicenseInfo = new LicenseInfo() { Author = "https://noi.bz.it", ClosedData = false, License = "CC0", LicenseHolder = "https://noi.bz.it" };
 
+                //Adding ApiType
+                if (metadata.ApiUrl.Contains("tourism"))
+                    metadata.ApiType = "content";
+                else if (metadata.ApiUrl.Contains("mobility"))
+                    metadata.ApiType = "timeseries";
 
                 //Save tp DB                 
                 var queryresult = await QueryFactory.Query("metadata").Where("id", metadata.Id)
-                    .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
+                .UpdateAsync(new JsonBData() { id = metadata.Id?.ToLower() ?? "", data = new JsonRaw(metadata) });
 
                 i++;
             }
@@ -156,29 +120,9 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> ResaveTags()
-        {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("tags");
+        #endregion
 
-            var data = await query.GetObjectListAsync<TagLinked>();
-            int i = 0;
-
-            foreach (var tag in data)
-            {
-                tag._Meta.Type = "tag";
-                
-                //Save to DB                 
-                var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
-                    .UpdateAsync(new JsonBData() { id = tag.Id?.ToLower() ?? "", data = new JsonRaw(tag) });
-
-                i++;
-            }
-
-            return i;
-        }
+        #region Generic
 
         public async Task<int> ResaveSourcesOnType<T>(string odhtype, string sourcetofilter, string sourcetochange) where T : notnull
         {
@@ -193,14 +137,14 @@ namespace OdhApiImporter.Helpers
                    .When(sourcetofilter == "null", x => x.WhereRaw("data->>'Source' is null"));
 
             var data = await query.GetObjectListAsync<T>();
-            
+
             int i = 0;
 
             foreach (var tag in data)
-            {                
+            {
 
                 if (tag is IIdentifiable)
-                {                 
+                {
                     if (tag is ISource)
                         ((ISource)tag).Source = sourcetochange;
 
@@ -215,109 +159,119 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> UpdateAllEventShortstActiveFieldToTrue()
+        #endregion
+
+        #region Articles
+
+        public async Task<int> NewsFeedUpdate()
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("eventeuracnoi");
+                   .From("articles")
+                   .WhereRaw("gen_articletype @> ARRAY['newsfeednoi']");
 
-            var data = await query.GetObjectListAsync<EventShortLinked>();
+            var articles = await query.GetObjectListAsync<ArticlesLinked>();
             int i = 0;
 
-            foreach (var eventshort in data)
+            foreach (var article in articles)
             {
-                eventshort.Active = true;
+                //if (article.Active == null)
+                //{
+                //    article.Active = false;
 
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+                //    //Save tp DB
+                //    var queryresult = await QueryFactory.Query("articles").Where("id", article.Id)
+                //         .UpdateAsync(new JsonBData() { id = article.Id, data = new JsonRaw(article) });
 
-                i++;
+                //    i++;
+                //}
             }
 
             return i;
         }
 
-
-        public async Task<int> UpdateAllEventShortstHasLanguage()
+        public async Task<int> FillDBWithDummyNews()
         {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("eventeuracnoi");
+            int crudcount = 0;
 
-            var data = await query.GetObjectListAsync<EventShortLinked>();
-            int i = 0;
-
-            foreach (var eventshort in data)
+            for (int i = 1; i <= 120; i++)
             {
-                eventshort.CheckMyInsertedLanguages();
+                ArticlesLinked myarticle = new ArticlesLinked();
+                myarticle.Id = Guid.NewGuid().ToString().ToUpper();
+                myarticle.Type = "newsfeednoi";
+                myarticle.Active = true;
+                myarticle.Detail.TryAddOrUpdate("de", new Detail() { Title = "TesttitleDE" + i, BaseText = "testtextDE " + i, Language = "de", AdditionalText = "additionaltextde" + i });
+                myarticle.Detail.TryAddOrUpdate("it", new Detail() { Title = "TesttitleIT" + i, BaseText = "testtextIT " + i, Language = "it", AdditionalText = "additionaltextit" + i });
+                myarticle.Detail.TryAddOrUpdate("en", new Detail() { Title = "TesttitleEN" + i, BaseText = "testtextEN " + i, Language = "en", AdditionalText = "additionaltexten" + i });
 
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+                myarticle.HasLanguage = new List<string>() { "de", "it", "en" };
 
-                i++;
+                myarticle.LicenseInfo = new LicenseInfo() { Author = "", License = "CC0", ClosedData = false, LicenseHolder = "https://noi.bz.it" };
+
+                myarticle.ContactInfos.TryAddOrUpdate("de", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "de", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("it", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "it", CompanyName = "NOI Techpark" });
+                myarticle.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "en", CompanyName = "NOI Techpark" });
+
+                myarticle.ArticleDate = DateTime.Now.Date.AddDays(i);
+
+                if (i % 5 == 0)
+                {
+                    myarticle.ArticleDateTo = DateTime.Now.Date.AddMonths(i);
+                }
+                else
+                    myarticle.ArticleDateTo = DateTime.MaxValue;
+
+                myarticle.SmgActive = true;
+                myarticle.Source = "noi";
+
+                if (i % 3 == 0)
+                {
+                    myarticle.SmgTags = new List<string>() { "important" };
+                }
+
+                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, new DataInfo("articles", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("article.modify", "importer"), new CRUDConstraints(), new CompareConfig(false, false));
+
+                if (pgcrudresult.created != null)
+                    crudcount = crudcount + pgcrudresult.created.Value;
+
             }
 
-            return i;
+            return crudcount;
         }
 
-        public async Task<int> UpdateAllWineHasLanguage()
+        #endregion
+
+        #region Weather
+
+        public async Task<int> UpdateAllWeatherHistoryWithMetainfo()
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("wines");
+                   .From("weatherdatahistory");
 
-            var data = await query.GetObjectListAsync<WineLinked>();
+            var data = await query.GetObjectListAsync<WeatherHistoryLinked>();
             int i = 0;
 
-            foreach (var wine in data)
+            foreach (var weatherhistory in data)
             {
-                wine.CheckMyInsertedLanguages(new List<string>() { "de","it","en" });
+                //Setting ID
+                if (weatherhistory.Id == null)
+                    weatherhistory.Id = weatherhistory.Weather["de"].Id.ToString();
 
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("wines").Where("id", wine.Id)                    
-                    .UpdateAsync(new JsonBData() { id = wine.Id?.ToLower() ?? "", data = new JsonRaw(wine) });
-
-                i++;
-            }
-
-            return i;
-        }
-
-
-        public async Task<int> UpdateAllEventShortstonewDataModel()
-        {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("eventeuracnoi");
-
-            var data = await query.GetObjectListAsync<EventShortLinked>();
-            int i = 0;
-
-            foreach (var eventshort in data)
-            {
-                if (eventshort.LastChange == null)
-                    eventshort.LastChange = eventshort.ChangedOn;
+                //Get MetaInfo
+                weatherhistory._Meta = MetadataHelper.GetMetadataobject<WeatherHistoryLinked>(weatherhistory);
 
                 //Setting MetaInfo
-                eventshort._Meta = MetadataHelper.GetMetadataobject<EventShortLinked>(eventshort, MetadataHelper.GetMetadataforEventShort);
-                eventshort._Meta.LastUpdate = eventshort.LastChange;
+                weatherhistory._Meta.Reduced = false;
+
 
                 //Save tp DB
                 //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                var queryresult = await QueryFactory.Query("weatherdatahistory").Where("id", weatherhistory.Id)
                     //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = weatherhistory.Id, data = new JsonRaw(weatherhistory) });
 
                 i++;
             }
@@ -325,178 +279,36 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> UpdateAllEventShortstonewDataModelV2()
+        #endregion
+
+        #region Accommodation
+
+        public async Task<int> AccommodationRoomModify()
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("eventeuracnoi");
+                   .From("accommodationrooms");
 
-            var data = await query.GetObjectListAsync<EventShortLinked>();
+            var accorooms = await query.GetObjectListAsync<AccommodationRoomLinked>();
             int i = 0;
 
-            foreach (var eventshort in data)
+            foreach (var accoroom in accorooms)
             {
-                if (!String.IsNullOrEmpty(eventshort.EventTextDE))
-                    eventshort.EventText.TryAddOrUpdate("de", eventshort.EventTextDE);
-                //Beschreibung IT
-                if (!String.IsNullOrEmpty(eventshort.EventTextIT))
-                    eventshort.EventText.TryAddOrUpdate("it", eventshort.EventTextIT);
-                //Beschreibung EN
-                if (!String.IsNullOrEmpty(eventshort.EventTextEN))
-                    eventshort.EventText.TryAddOrUpdate("en", eventshort.EventTextEN);
-
-                if (!String.IsNullOrEmpty(eventshort.EventDescriptionDE))
-                    eventshort.EventTitle.TryAddOrUpdate("de", eventshort.EventDescriptionDE);
-                //Beschreibung IT
-                if (!String.IsNullOrEmpty(eventshort.EventDescriptionIT))
-                    eventshort.EventTitle.TryAddOrUpdate("it", eventshort.EventDescriptionIT);
-                //Beschreibung EN
-                if (!String.IsNullOrEmpty(eventshort.EventDescriptionEN))
-                    eventshort.EventTitle.TryAddOrUpdate("en", eventshort.EventDescriptionEN);
-
-
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
-
-                i++;
-            }
-
-            return i;
-        }
-
-        public async Task<int> UpdateAllEventShortstActiveTodayField()
-        {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("eventeuracnoi");
-
-            var data = await query.GetObjectListAsync<EventShortLinked>();
-            int i = 0;
-
-            //foreach (var eventshort in data)
-            //{
-            //    if (eventshort.Display1 == "Y")
-            //        eventshort.ActiveToday = true;
-            //    if (eventshort.Display1 == "N")
-            //        eventshort.ActiveToday = false;
-
-            //    //Save tp DB
-            //    //TODO CHECK IF THIS WORKS     
-            //    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-            //        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-            //        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
-
-            //    i++;
-            //}
-
-            return i;
-        }
-
-        public async Task<int> UpdateAllEventShortstEventDocumentField()
-        {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("eventeuracnoi");
-
-            var data = await query.GetObjectListAsync<EventShortLinked>();
-            int i = 0;
-
-            foreach (var eventshort in data)
-            {
-                var save = false;
-
-                if (eventshort.EventDocument != null && eventshort.EventDocument.Count > 0)
+                if (accoroom.PublishedOn != null && accoroom.PublishedOn.Count == 2 && accoroom.PublishedOn.FirstOrDefault() == "idm-marketplace")
                 {
-                    var eventshortdocsde = eventshort.EventDocument.Where(x => x.Language == "de").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
-                    if(eventshortdocsde != null && eventshortdocsde.Count > 0)
+                    accoroom.PublishedOn = new List<string>()
                     {
-                        save = true;
-                        eventshort.Documents.TryAddOrUpdate("de", eventshortdocsde);
-                    }
-                        
+                        "suedtirol.info",
+                        "idm-marketplace"
+                    };
 
-                    var eventshortdocsit = eventshort.EventDocument.Where(x => x.Language == "it").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
-                    if (eventshortdocsit != null && eventshortdocsit.Count > 0)
-                    {
-                        save = true;
-                        eventshort.Documents.TryAddOrUpdate("it", eventshortdocsit);
-                    }
-                    
-
-                    var eventshortdocsen = eventshort.EventDocument.Where(x => x.Language == "en").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
-                    if (eventshortdocsen != null && eventshortdocsen.Count > 0)
-                    {
-                        save = true;
-                        eventshort.Documents.TryAddOrUpdate("en", eventshortdocsen);
-                    }
-                    
-                }
-
-                if(save)
-                {
                     //Save tp DB
-                    //TODO CHECK IF THIS WORKS     
-                    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+                    var queryresult = await QueryFactory.Query("accommodationrooms").Where("id", accoroom.Id)
+                         .UpdateAsync(new JsonBData() { id = accoroom.Id, data = new JsonRaw(accoroom) });
 
                     i++;
                 }
-                
-            }
-
-            return i;
-        }
-
-        public async Task<int> CleanEventShortstEventDocumentField()
-        {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("eventeuracnoi");
-
-            var data = await query.GetObjectListAsync<EventShortLinked>();
-            int i = 0;
-
-            foreach (var eventshort in data.Where(x => x.Documents != null))
-            {
-                bool resave = false;
-
-                List<string> keystoremove = new List<string>();
-
-                foreach(var kvp in eventshort.Documents)
-                {
-                    if(kvp.Value == null || kvp.Value.Count == 0)
-                    {
-                        keystoremove.Add(kvp.Key);
-                        resave = true;
-
-                    }
-
-                }
-                foreach(string key in keystoremove)
-                {
-                    eventshort.Documents.Remove(key);
-                }
-                
-
-                if (resave)
-                {
-                    //Save tp DB
-                    //TODO CHECK IF THIS WORKS     
-                    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
-                        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
-
-                    i++;
-                }
-                
             }
 
             return i;
@@ -508,7 +320,7 @@ namespace OdhApiImporter.Helpers
             var query = QueryFactory.Query()
                    .SelectRaw("data")
                    .From("accommodations")
-                   .WhereIn("id",idlist);
+                   .WhereIn("id", idlist);
 
             var accos = await query.GetObjectListAsync<AccommodationLinked>();
             int i = 0;
@@ -534,29 +346,44 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> AccommodationRoomModify()
+        #endregion
+
+        #region ODHActivityPoi
+
+        public async Task<int> UpdateAllODHActivityPoiOldTags(string source)
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("accommodationrooms");
+                   .From("smgpois")
+                   .Where("gen_source", source);
 
-            var accorooms = await query.GetObjectListAsync<AccommodationRoomLinked>();
+            var data = await query.GetObjectListAsync<ODHActivityPoiOld>();
             int i = 0;
 
-            foreach (var accoroom in accorooms)
+            foreach (var stapoi in data)
             {
-                if(accoroom.PublishedOn != null && accoroom.PublishedOn.Count == 2 && accoroom.PublishedOn.FirstOrDefault() == "idm-marketplace")
+                if (stapoi.Tags != null)
                 {
-                    accoroom.PublishedOn = new List<string>()
+                    //CopyClassHelper.CopyPropertyValues
+                    var tags = stapoi.Tags;
+
+
+                    stapoi.Tags = null;
+
+                    var stapoiv2 = (ODHActivityPoiLinked)stapoi;
+
+                    stapoiv2.Tags = new List<Tags>();
+                    foreach (var tagdict in tags)
                     {
-                        "suedtirol.info",
-                        "idm-marketplace"
-                    };
+                        stapoiv2.Tags.AddRange(tagdict.Value);
+                    }
+
 
                     //Save tp DB
-                    var queryresult = await QueryFactory.Query("accommodationrooms").Where("id", accoroom.Id)
-                         .UpdateAsync(new JsonBData() { id = accoroom.Id, data = new JsonRaw(accoroom) });
+                    //TODO CHECK IF THIS WORKS     
+                    var queryresult = await QueryFactory.Query("smgpois").Where("id", stapoiv2.Id)
+                        .UpdateAsync(new JsonBData() { id = stapoiv2.Id?.ToLower() ?? "", data = new JsonRaw(stapoiv2) });
 
                     i++;
                 }
@@ -594,127 +421,53 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> FillDBWithDummyNews()
-        {
-            int crudcount = 0;
+        #endregion
 
-            for (int i = 1; i <= 120; i++)
-            {
-                ArticlesLinked myarticle  = new ArticlesLinked();
-                myarticle.Id = Guid.NewGuid().ToString().ToUpper();
-                myarticle.Type = "newsfeednoi";
-                myarticle.Active = true;
-                myarticle.Detail.TryAddOrUpdate("de", new Detail() { Title = "TesttitleDE" + i, BaseText = "testtextDE " + i, Language = "de", AdditionalText = "additionaltextde" + i });
-                myarticle.Detail.TryAddOrUpdate("it", new Detail() { Title = "TesttitleIT" + i, BaseText = "testtextIT " + i, Language = "it", AdditionalText = "additionaltextit" + i });
-                myarticle.Detail.TryAddOrUpdate("en", new Detail() { Title = "TesttitleEN" + i, BaseText = "testtextEN " + i, Language = "en", AdditionalText = "additionaltexten" + i });
+        #region EventShort
 
-                myarticle.HasLanguage = new List<string>() { "de", "it", "en" };
-
-                myarticle.LicenseInfo = new LicenseInfo() { Author = "", License = "CC0", ClosedData = false, LicenseHolder= "https://noi.bz.it" };
-
-                myarticle.ContactInfos.TryAddOrUpdate("de", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "de", CompanyName = "NOI Techpark" });
-                myarticle.ContactInfos.TryAddOrUpdate("it", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "it", CompanyName = "NOI Techpark" });
-                myarticle.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Email = "community@noi.bz.it", LogoUrl = "https://databrowser.opendatahub.com/icons/NOI.png", Language = "en", CompanyName = "NOI Techpark" });
-
-                myarticle.ArticleDate = DateTime.Now.Date.AddDays(i);
-                
-                if (i % 5 == 0)
-                {
-                    myarticle.ArticleDateTo = DateTime.Now.Date.AddMonths(i);
-                }
-                else
-                    myarticle.ArticleDateTo = DateTime.MaxValue;
-
-                myarticle.SmgActive = true;
-                myarticle.Source = "noi";
-
-                if(i % 3 == 0)
-                {
-                    myarticle.SmgTags = new List<string>() { "important" };
-                }
-
-                var pgcrudresult = await QueryFactory.UpsertData<ArticlesLinked>(myarticle, new DataInfo("articles", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("article.modify", "importer"), new CRUDConstraints(), new CompareConfig(false,false));
-
-                if(pgcrudresult.created != null)
-                    crudcount = crudcount + pgcrudresult.created.Value;
-
-            }
-
-            return crudcount;
-        }        
-
-        public async Task<int> UpdateAllWeatherHistoryWithMetainfo()
+        public async Task<int> CleanEventShortstEventDocumentField()
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("weatherdatahistory");
+                   .From("eventeuracnoi");
 
-            var data = await query.GetObjectListAsync<WeatherHistoryLinked>();
+            var data = await query.GetObjectListAsync<EventShortLinked>();
             int i = 0;
 
-            foreach (var weatherhistory in data)
+            foreach (var eventshort in data.Where(x => x.Documents != null))
             {
-                //Setting ID
-                if (weatherhistory.Id == null)
-                    weatherhistory.Id = weatherhistory.Weather["de"].Id.ToString();
+                bool resave = false;
 
-                //Get MetaInfo
-                weatherhistory._Meta = MetadataHelper.GetMetadataobject<WeatherHistoryLinked>(weatherhistory);
+                List<string> keystoremove = new List<string>();
 
-                //Setting MetaInfo
-                weatherhistory._Meta.Reduced = false;
-                
-
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("weatherdatahistory").Where("id", weatherhistory.Id)
-                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
-                    .UpdateAsync(new JsonBData() { id = weatherhistory.Id, data = new JsonRaw(weatherhistory) });
-
-                i++;
-            }
-
-            return i;
-        }
-
-        public async Task<int> UpdateAllODHActivityPoiOldTags(string source)
-        {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("smgpois")
-                   .Where("gen_source", source);
-
-            var data = await query.GetObjectListAsync<ODHActivityPoiOld>();
-            int i = 0;
-
-            foreach (var stapoi in data)
-            {
-                if(stapoi.Tags != null)
-                { 
-                //CopyClassHelper.CopyPropertyValues
-                var tags = stapoi.Tags;
-
-                
-                stapoi.Tags = null;
-
-                var stapoiv2 = (ODHActivityPoiLinked)stapoi;
-
-                stapoiv2.Tags = new List<Tags>();
-                foreach(var tagdict in tags)
+                foreach (var kvp in eventshort.Documents)
                 {
-                    stapoiv2.Tags.AddRange(tagdict.Value);
-                }
-                
+                    if (kvp.Value == null || kvp.Value.Count == 0)
+                    {
+                        keystoremove.Add(kvp.Key);
+                        resave = true;
 
-                //Save tp DB
-                //TODO CHECK IF THIS WORKS     
-                var queryresult = await QueryFactory.Query("smgpois").Where("id", stapoiv2.Id)
-                    .UpdateAsync(new JsonBData() { id = stapoiv2.Id?.ToLower() ?? "", data = new JsonRaw(stapoiv2) });
+                    }
 
-                i++;
                 }
+                foreach (string key in keystoremove)
+                {
+                    eventshort.Documents.Remove(key);
+                }
+
+
+                if (resave)
+                {
+                    //Save tp DB
+                    //TODO CHECK IF THIS WORKS     
+                    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                    i++;
+                }
+
             }
 
             return i;
@@ -811,6 +564,251 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> UpdateAllEventShortstEventDocumentField()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                var save = false;
+
+                if (eventshort.EventDocument != null && eventshort.EventDocument.Count > 0)
+                {
+                    var eventshortdocsde = eventshort.EventDocument.Where(x => x.Language == "de").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
+                    if (eventshortdocsde != null && eventshortdocsde.Count > 0)
+                    {
+                        save = true;
+                        eventshort.Documents.TryAddOrUpdate("de", eventshortdocsde);
+                    }
+
+
+                    var eventshortdocsit = eventshort.EventDocument.Where(x => x.Language == "it").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
+                    if (eventshortdocsit != null && eventshortdocsit.Count > 0)
+                    {
+                        save = true;
+                        eventshort.Documents.TryAddOrUpdate("it", eventshortdocsit);
+                    }
+
+
+                    var eventshortdocsen = eventshort.EventDocument.Where(x => x.Language == "en").Select(x => new Document { Language = x.Language, DocumentName = "", DocumentURL = x.DocumentURL }).ToList();
+                    if (eventshortdocsen != null && eventshortdocsen.Count > 0)
+                    {
+                        save = true;
+                        eventshort.Documents.TryAddOrUpdate("en", eventshortdocsen);
+                    }
+
+                }
+
+                if (save)
+                {
+                    //Save tp DB
+                    //TODO CHECK IF THIS WORKS     
+                    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                    i++;
+                }
+
+            }
+
+            return i;
+        }
+
+        public async Task<int> UpdateAllEventShortstActiveTodayField()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            //foreach (var eventshort in data)
+            //{
+            //    if (eventshort.Display1 == "Y")
+            //        eventshort.ActiveToday = true;
+            //    if (eventshort.Display1 == "N")
+            //        eventshort.ActiveToday = false;
+
+            //    //Save tp DB
+            //    //TODO CHECK IF THIS WORKS     
+            //    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+            //        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+            //        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+            //    i++;
+            //}
+
+            return i;
+        }
+
+        public async Task<int> UpdateAllEventShortstonewDataModelV2()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                if (!String.IsNullOrEmpty(eventshort.EventTextDE))
+                    eventshort.EventText.TryAddOrUpdate("de", eventshort.EventTextDE);
+                //Beschreibung IT
+                if (!String.IsNullOrEmpty(eventshort.EventTextIT))
+                    eventshort.EventText.TryAddOrUpdate("it", eventshort.EventTextIT);
+                //Beschreibung EN
+                if (!String.IsNullOrEmpty(eventshort.EventTextEN))
+                    eventshort.EventText.TryAddOrUpdate("en", eventshort.EventTextEN);
+
+                if (!String.IsNullOrEmpty(eventshort.EventDescriptionDE))
+                    eventshort.EventTitle.TryAddOrUpdate("de", eventshort.EventDescriptionDE);
+                //Beschreibung IT
+                if (!String.IsNullOrEmpty(eventshort.EventDescriptionIT))
+                    eventshort.EventTitle.TryAddOrUpdate("it", eventshort.EventDescriptionIT);
+                //Beschreibung EN
+                if (!String.IsNullOrEmpty(eventshort.EventDescriptionEN))
+                    eventshort.EventTitle.TryAddOrUpdate("en", eventshort.EventDescriptionEN);
+
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> UpdateAllEventShortstonewDataModel()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                if (eventshort.LastChange == null)
+                    eventshort.LastChange = eventshort.ChangedOn;
+
+                //Setting MetaInfo
+                eventshort._Meta = MetadataHelper.GetMetadataobject<EventShortLinked>(eventshort, MetadataHelper.GetMetadataforEventShort);
+                eventshort._Meta.LastUpdate = eventshort.LastChange;
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> UpdateAllEventShortstActiveFieldToTrue()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                eventshort.Active = true;
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> UpdateAllEventShortstHasLanguage()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                eventshort.CheckMyInsertedLanguages();
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        #endregion
+
+        #region Wine
+
+        public async Task<int> UpdateAllWineHasLanguage()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("wines");
+
+            var data = await query.GetObjectListAsync<WineLinked>();
+            int i = 0;
+
+            foreach (var wine in data)
+            {
+                wine.CheckMyInsertedLanguages(new List<string>() { "de", "it", "en" });
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("wines").Where("id", wine.Id)
+                    .UpdateAsync(new JsonBData() { id = wine.Id?.ToLower() ?? "", data = new JsonRaw(wine) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        #endregion
+
+        #region ODHTags
+
         public async Task<int> UpdateAllODHTags()
         {
             //Load all data from PG and resave
@@ -837,6 +835,108 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        #endregion
+
+        #region Tags
+
+        public async Task<int> ResaveTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("tags");
+
+            var data = await query.GetObjectListAsync<TagLinked>();
+            int i = 0;
+
+            foreach (var tag in data)
+            {
+                tag._Meta.Type = "tag";
+
+                //Save to DB                 
+                var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
+                    .UpdateAsync(new JsonBData() { id = tag.Id?.ToLower() ?? "", data = new JsonRaw(tag) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+
+
+        public async Task<int> EventTopicsToTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventtypes");
+
+            var data = await query.GetObjectListAsync<EventTypes>();
+            int i = 0;
+
+            foreach (var topic in data)
+            {
+                TagLinked tag = new TagLinked();
+
+                tag.Id = topic.Id;
+                tag.Source = "lts";
+                tag.TagName = topic.TypeDesc;
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag.DisplayAsCategory = false;
+                tag.ValidForEntity = new List<string>() { "event" };
+                tag.MainEntity = "event";
+                tag.LastChange = DateTime.Now;
+                tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
+                tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
+                tag.FirstImport = DateTime.Now;
+                tag.PublishedOn = null;
+
+
+                tag.PublishDataWithTagOn = null;
+                tag.Mapping = null;
+                tag.IDMCategoryMapping = null;
+                tag.LTSTaggingInfo = null;
+                tag.MappedTagIds = null;
+
+
+                var pgcrudresult = await QueryFactory.UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("tag.modify", "importer"), new CRUDConstraints(), new CompareConfig(false, false));
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> TagSourceFix()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("tags");
+
+            var data = await query.GetObjectListAsync<TagLinked>();
+            int i = 0;
+
+            foreach (var tag in data)
+            {                
+                tag.Source = tag.Types.Contains("LTSCategory") ? "lts" : "idm";
+
+                //Save to DB                 
+                var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
+                    .UpdateAsync(new JsonBData() { id = tag.Id?.ToLower() ?? "", data = new JsonRaw(tag) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        
+
+
+        #endregion
 
     }
 

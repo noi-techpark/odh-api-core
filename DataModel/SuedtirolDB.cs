@@ -53,6 +53,11 @@ namespace DataModel
         DateTime? LastChange { get; set; }
     }
 
+    public interface IDistrictId
+    {
+        string? DistrictId { get; set; }
+    }
+
     public interface IMappingAware
     {
         IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
@@ -749,10 +754,8 @@ namespace DataModel
 
         //If accesstype public, or private_withpublicaccess set to true
         public bool? ChargingStationAccessible { get; set; }
-
-        public int? ChargingPlugCount { get; set;}
-
-        public IDictionary<string, string> AccessTypeInfo { get; set; }
+       
+        public string AccessTypeInfo { get; set; }
 
         public DateTime? SurveyDate { get; set; }
         public string? SurveyType { get; set; }
@@ -818,7 +821,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : TrustYouInfos, IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware
+    public class Accommodation : IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware, IDistrictId
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -846,6 +849,7 @@ namespace DataModel
         public bool HasApartment { get; set; }
         public bool? HasRoom { get; set; }
         public bool? IsCamping { get; set; }
+        
         public bool? IsGastronomy { get; set; }
         public bool IsBookable { get; set; }
         public bool? IsAccommodation { get; set; }
@@ -853,6 +857,8 @@ namespace DataModel
         public bool SmgActive { get; set; }
         public bool? TVMember { get; set; }
         public string? TourismVereinId { get; set; }
+        
+        //not used todo remove
         public string? MainLanguage { get; set; }
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
@@ -863,7 +869,6 @@ namespace DataModel
         public string? AltitudeUnitofMeasure { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
-
 
         public string? AccoCategoryId { get; set; }
         public string? AccoTypeId { get; set; }
@@ -883,6 +888,7 @@ namespace DataModel
 
         public LocationInfo? LocationInfo { get; set; }
 
+        //not used to remove
         public string? GastronomyId { get; set; }
         public ICollection<string>? SmgTags { get; set; }
 
@@ -909,6 +915,21 @@ namespace DataModel
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
         public ICollection<RelatedContent> RelatedContent { get; set; }
+
+        [SwaggerSchema("Accommodation Id on Trust You")]
+        public string? TrustYouID { get; set; }
+
+        [SwaggerSchema("Review Score on Trust You")]
+        public double TrustYouScore { get; set; }
+
+        [SwaggerSchema("Number of Ratings in Trust You")]
+        public int TrustYouResults { get; set; }
+
+        [SwaggerSchema("Active in Trust You")]
+        public bool TrustYouActive { get; set; }
+
+        [SwaggerSchema("Trust You State on LTS")]
+        public int TrustYouState { get; set; }
     }
 
     public class AccommodationRaven : Accommodation
@@ -972,25 +993,7 @@ namespace DataModel
         public string? BookingId { get; set; }
     }
 
-    public abstract class TrustYouInfos
-    {
-        [SwaggerSchema("Accommodation Id on Trust You")]
-        public string? TrustYouID { get; set; }
-
-        [SwaggerSchema("Review Score on Trust You")]
-        public double TrustYouScore { get; set; }
-
-        [SwaggerSchema("Number of Ratings in Trust You")]
-        public int TrustYouResults { get; set; }
-
-        [SwaggerSchema("Active in Trust You")]
-        public bool TrustYouActive { get; set; }
-
-        [SwaggerSchema("Trust You State on LTS")]
-        public int TrustYouState { get; set; }
-    }
-
-    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware
+    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware, IActivateable
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1040,6 +1043,8 @@ namespace DataModel
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
         public ICollection<RelatedContent> RelatedContent { get; set; }
+
+        public bool Active { get; set; }
     }
 
     public class AccoRoomDetail : ILanguage
@@ -1115,7 +1120,7 @@ namespace DataModel
 
     #region Gastronomy
 
-    public abstract class Gastronomy : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn
+    public abstract class Gastronomy : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IDistrictId
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1213,7 +1218,7 @@ namespace DataModel
 
     #region Events
 
-    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware
+    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IDistrictId, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1444,7 +1449,7 @@ namespace DataModel
     #region Articles    
 
     //BaseInfo Article
-    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IHasLanguage, IRelatedContentAware, IAdditionalPropertiesAware
+    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IHasLanguage, IVideoItemsAware, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1456,7 +1461,10 @@ namespace DataModel
             ArticleLinkInfo = new Dictionary<string, ArticleLinkInfo>();
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+
             AdditionalProperties = new Dictionary<string, dynamic>();
+
+            VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
         public string? Id { get; set; }
@@ -1542,6 +1550,10 @@ namespace DataModel
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
         public ICollection<RelatedContent> RelatedContent { get; set; }
+
+        //Video Items
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
+
     }
 
     #endregion
@@ -2296,7 +2308,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IRelatedContentAware, IAdditionalPropertiesAware
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public EventShort()
         {
@@ -2305,6 +2317,7 @@ namespace DataModel
             EventTitle = new Dictionary<string, string>();
             Documents = new Dictionary<string, List<Document>?>();
             AdditionalProperties = new Dictionary<string, dynamic>();
+            VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
         public LicenseInfo? LicenseInfo { get; set; }
@@ -2476,6 +2489,7 @@ namespace DataModel
 
         public List<string>? CustomTagging { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use Documents")]
         public List<DocumentPDF>? EventDocument {
             get
             {
@@ -2564,6 +2578,7 @@ namespace DataModel
 
         public ICollection<GpsInfo>? GpsInfo { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use GpsInfo")]
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
@@ -2592,6 +2607,8 @@ namespace DataModel
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
 
         public ICollection<RelatedContent> RelatedContent { get; set; }
+        //Video Items
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }
 
     public class RoomBooked
@@ -2827,6 +2844,7 @@ namespace DataModel
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
             AdditionalProperties = new Dictionary<string, dynamic>();
+            VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
         public new ICollection<GpsInfo> GpsInfo { get; set; }
@@ -3565,8 +3583,8 @@ namespace DataModel
         public string? VideoSource { get; set; }
         public string? VideoType { get; set; }
         public string? StreamingSource { get; set; }
-        public string VideoTitle { get; set; }
-        public string VideoDesc { get; set; }
+        public string? VideoTitle { get; set; }
+        public string? VideoDesc { get; set; }
         public bool? Active { get; set; }
         public string? CopyRight { get; set; }
         public string? License { get; set; }
@@ -3578,6 +3596,7 @@ namespace DataModel
         //NEW
         public string? Definition { get; set; }
         public double? Duration { get; set; }
+        //To Remove (at the moment here is stored panomax 360 / 720, this info is already into Definition with SD/HD
         public int? Resolution { get; set; }
         public int? Bitrate { get; set; }
     }

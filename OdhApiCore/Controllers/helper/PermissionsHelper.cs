@@ -2,11 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
-using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers.helper
 {

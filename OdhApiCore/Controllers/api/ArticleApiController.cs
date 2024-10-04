@@ -7,7 +7,6 @@ using DataModel;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +18,6 @@ using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
 
