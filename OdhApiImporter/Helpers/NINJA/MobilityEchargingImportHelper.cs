@@ -64,7 +64,7 @@ namespace OdhApiImporter.Helpers
 
             var tagquery = QueryFactory.Query("smgtags")
                     .Select("data")
-                    .Where("id", "e-tankstellen ladestationen");
+                    .Where("id", "e-auto ladestation");
             var echargingtag = await tagquery.GetObjectSingleAsync<ODHTagLinked>();
 
             foreach (var data in ninjadata.data)
