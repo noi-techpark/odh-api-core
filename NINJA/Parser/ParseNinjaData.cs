@@ -762,7 +762,7 @@ namespace NINJA.Parser
                 properties.PaymentInfo = data.pmetadata?.paymentInfo;
 
                 //properties.ChargingPlugCount = 1;
-                properties.ChargingCableType = data.smetadata.outlets.Select(y => y.outletTypeCode).Distinct().ToList();
+                properties.ChargingPistol = data.smetadata.outlets.Select(y => y.outletTypeCode).Distinct().ToList();
 
                 //TODO do not overwrite the old values
                 var additionalpropertieskey = typeof(EchargingDataProperties).Name;
@@ -771,21 +771,22 @@ namespace NINJA.Parser
                 {
                     var propstonotoverwrite = echargingpoi.AdditionalProperties[additionalpropertieskey];
 
-                    properties.HorizontalIdentification = propstonotoverwrite.HorizontalIdentification;
+                    properties.HorizontalFloorRoadSign = propstonotoverwrite.HorizontalFloorRoadSign;
                     properties.SurveyDate = propstonotoverwrite.SurveyDate;
                     properties.Barrierfree = propstonotoverwrite.Barrierfree;
-                    properties.CarparkingAreaInColumns = propstonotoverwrite.CarparkingAreaInColumns;
-                    properties.CarparkingAreaInRows = propstonotoverwrite.CarparkingAreaInRows; 
+                    properties.CarParkingSpaceNextToEachOther = propstonotoverwrite.CarParkingSpaceNextToEachOther;
+                    properties.CarParkingSpaceBehindEachOther = propstonotoverwrite.CarParkingSpaceBehindEachOther; 
                     properties.ChargingCableLength = propstonotoverwrite.ChargingCableLength;
-                    properties.ChargingPistolOperationHeightMax = propstonotoverwrite.ChargingPistolOperationHeightMax;
+                    properties.ChargingPistolOperationHeight = propstonotoverwrite.ChargingPistolOperationHeight;
                     properties.ChargingStationAccessible = propstonotoverwrite.ChargingStationAccessible;
-                    properties.HasRoof = propstonotoverwrite.HasRoof;
-                    properties.MaxOperationHeight = propstonotoverwrite.MaxOperationHeight;
+                    properties.Covered = propstonotoverwrite.Covered;
+                    properties.DisplayOrCardReaderOperationHeight = propstonotoverwrite.DisplayOrCardReaderOperationHeight;
                     properties.SteplessSidewalkConnection = propstonotoverwrite.SteplessSidewalkConnection;
                     properties.SurveyAnnotations = propstonotoverwrite.SurveyAnnotations;
                     properties.SurveyDate = propstonotoverwrite.SurveyDate;
                     properties.SurveyType = propstonotoverwrite.SurveyType;
-                    properties.VerticalIdentification = propstonotoverwrite.VerticalIdentification;
+                    properties.VerticalRoadSign = propstonotoverwrite.VerticalRoadSign;
+                    properties.ShieldingPostInFrontOfStation = propstonotoverwrite.ShieldingPostInFrontOfStation;
                 }
 
                 //if (echargingpoi.AdditionalProperties == null)

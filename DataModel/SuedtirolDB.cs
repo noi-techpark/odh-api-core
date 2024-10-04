@@ -743,8 +743,10 @@ namespace DataModel
         public string? AccessType { get; set; }
 
         //If accesstype public, or private_withpublicaccess set to true
-        public bool? ChargingStationAccessible { get; set; }
-       
+     
+        [SwaggerEnum(new[] { "Typ 1-Stecker", "Typ 2-Stecker", "Combo-Stecker", "CHAdeMO-Stecker", "Tesla Supercharger" })]
+        public List<string>? ChargingPistol { get; set; }
+
         public string AccessTypeInfo { get; set; }
 
         public DateTime? SurveyDate { get; set; }
@@ -752,20 +754,23 @@ namespace DataModel
 
         public IDictionary<string,string> SurveyAnnotations { get; set; }
 
-        public bool? HasRoof { get; set; }
-        public bool? VerticalIdentification { get; set; }
-        public bool? HorizontalIdentification { get; set; }        
+        public bool? Covered { get; set; }
+        public bool? VerticalRoadSign { get; set; }
+        public bool? HorizontalFloorRoadSign { get; set; }
+
+
+
+        public bool? ChargingStationAccessible { get; set; }
 
         [SwaggerSchema("Maximum operation height in cm")]
-        public int? MaxOperationHeight { get; set; }
-
-
-        [SwaggerEnum(new[] { "Typ 1-Stecker", "Typ 2-Stecker", "Combo-Stecker", "CHAdeMO-Stecker", "Tesla Supercharger" })]
-        public List<string>? ChargingCableType { get; set; }
-        public int? ChargingCableLength { get; set; }
+        public int? DisplayOrCardReaderOperationHeight { get; set; }
 
         [SwaggerSchema("Maximum operation height in cm (barrierfree = 90-120 cm)")]
-        public string? ChargingPistolOperationHeightMax { get; set; }
+        public string? ChargingPistolOperationHeight { get; set; }
+
+        public int? ChargingCableLength { get; set; }
+      
+        public bool? ShieldingPostInFrontOfStation { get; set; }
 
         [SwaggerSchema("Stufenlose Gehsteiganbindung: zulässige maximale Steigung <5-8%) bodengleich an den Gehsteig angebunden")]
         public bool? SteplessSidewalkConnection { get; set; }
@@ -776,8 +781,8 @@ namespace DataModel
 
         //public ICollection<CarparkingArea> CarparkingArea { get; set; }
 
-        public EchargingCarparkingArea CarparkingAreaInColumns { get; set; }
-        public EchargingCarparkingArea CarparkingAreaInRows { get; set; }
+        public EchargingCarparkingArea CarParkingSpaceNextToEachOther { get; set; }
+        public EchargingCarparkingArea CarParkingSpaceBehindEachOther { get; set; }
     }
 
     public class EchargingCarparkingArea
@@ -789,13 +794,13 @@ namespace DataModel
         public bool? Flat { get; set; }
 
         [SwaggerSchema("Steigung % (wenn Steigung >5%)")] 
-        public int? Inclination { get; set; }
+        public int? Gradient { get; set; }
 
         [SwaggerSchema("Querneigung % (wenn Querneigung >3%)")] 
-        public int? Crossfall { get; set; }
+        public int? LateralInclination { get; set; }
         
         [SwaggerEnum(new[] { "Barrierefrei", "Bedingt zugänglich", "Nicht zugänglich" })]
-        public string FloorCover { get; set; }
+        public string Pavement { get; set; }
 
         [SwaggerSchema("Width, (on column barrierfree = 350 cm), (on row barrierfree = 250 cm)")] 
         public int? Width { get; set; }
@@ -804,7 +809,7 @@ namespace DataModel
         public int? Length { get; set; }
 
         [SwaggerSchema("Schraffurmarkierung")] 
-        public bool? HatchingMarked { get; set; }
+        public bool? ManeuvringSpaceSignagePresent { get; set; }
     }
 
     #endregion
