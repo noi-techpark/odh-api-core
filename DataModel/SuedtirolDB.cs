@@ -63,6 +63,16 @@ namespace DataModel
         IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
     }
 
+    public interface IRelatedContentAware
+    {
+        ICollection<RelatedContent> RelatedContent { get; set; }
+    }
+
+    public interface IAdditionalPropertiesAware
+    {
+        IDictionary<string, dynamic> AdditionalProperties { get; set; }
+    }
+
     public interface IActivateable
     {
         bool Active { get; set; }
@@ -386,11 +396,11 @@ namespace DataModel
 
     #region District Municipality Region
 
-    public class Region : BaseInfos, IImageGalleryAware, IGpsPolygon, IPublishedOn
+    public class Region : BaseInfos, IImageGalleryAware, IGpsPolygon, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public Region()
         {
-            DetailThemed = new Dictionary<string, DetailThemed>();
+            DetailThemed = new Dictionary<string, DetailThemed>();            
         }
         public IDictionary<string, DetailThemed> DetailThemed { get; set; }
 
@@ -406,11 +416,11 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
    
-    public class MetaRegion : BaseInfos, IImageGalleryAware, IGpsPolygon
+    public class MetaRegion : BaseInfos, IImageGalleryAware, IGpsPolygon, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public MetaRegion()
         {
-            DetailThemed = new Dictionary<string, DetailThemed>();
+            DetailThemed = new Dictionary<string, DetailThemed>();            
         }
 
         public IDictionary<string, DetailThemed> DetailThemed { get; set; }
@@ -425,8 +435,8 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
    
-    public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon
-    {
+    public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon, IRelatedContentAware, IAdditionalPropertiesAware
+    {       
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<string>? TourismvereinIds { get; set; }
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
@@ -434,7 +444,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
     
-    public class Tourismverein : BaseInfos, IImageGalleryAware, IGpsPolygon
+    public class Tourismverein : BaseInfos, IImageGalleryAware, IGpsPolygon, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public string? RegionId { get; set; }
 
@@ -447,8 +457,8 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }        
     }
 
-    public class Municipality : BaseInfos, IImageGalleryAware, IGpsPolygon
-    {
+    public class Municipality : BaseInfos, IImageGalleryAware, IGpsPolygon, IRelatedContentAware, IAdditionalPropertiesAware
+    {        
         public string? Plz { get; set; }
 
         public string? RegionId { get; set; }
@@ -466,7 +476,7 @@ namespace DataModel
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class District : BaseInfos, IImageGalleryAware, IGpsPolygon
+    public class District : BaseInfos, IImageGalleryAware, IGpsPolygon, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public Nullable<bool> IsComune { get; set; }
         public string? RegionId { get; set; }
@@ -511,7 +521,7 @@ namespace DataModel
         public ICollection<string>? PublishedOn { get; set; }
     }
 
-    public class SkiArea : BaseInfos, IImageGalleryAware, IContactInfosAware
+    public class SkiArea : BaseInfos, IImageGalleryAware, IContactInfosAware, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public SkiArea()
         {
@@ -567,7 +577,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
     }
 
-    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware
+    public class SkiRegion : BaseInfos, IImageGalleryAware, IGpsPolygonAware, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
@@ -581,7 +591,7 @@ namespace DataModel
 
     #region Activities & POIs      
 
-    public class ODHActivityPoi : PoiBaseInfos, ILicenseInfo, IGPSPointsAware
+    public class ODHActivityPoi : PoiBaseInfos, ILicenseInfo, IGPSPointsAware, IAdditionalPropertiesAware, IRelatedContentAware
     {
         public ODHActivityPoi()
         {
@@ -811,7 +821,7 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IDistrictId
+    public class Accommodation : IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware, IDistrictId
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -820,6 +830,7 @@ namespace DataModel
             AccoDetail = new Dictionary<string, AccoDetail>();
             MssResponseShort = new List<MssResponseShort>();
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         public string? Id { get; set; }
@@ -900,6 +911,11 @@ namespace DataModel
 
         public AccoOverview? AccoOverview { get; set; }
 
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
+
         [SwaggerSchema("Accommodation Id on Trust You")]
         public string? TrustYouID { get; set; }
 
@@ -977,7 +993,7 @@ namespace DataModel
         public string? BookingId { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable
+    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware, IActivateable
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -985,6 +1001,8 @@ namespace DataModel
         {
             AccoRoomDetail = new Dictionary<string, AccoRoomDetail>();
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         public string Id { get; set; }
@@ -1020,6 +1038,11 @@ namespace DataModel
         public ICollection<string>? PublishedOn { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
 
         public bool Active { get; set; }
     }
@@ -1195,7 +1218,7 @@ namespace DataModel
 
     #region Events
 
-    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IDistrictId
+    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IDistrictId, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1211,6 +1234,7 @@ namespace DataModel
             Hashtag = new Dictionary<string, ICollection<string>>();
             EventDescAdditional = new Dictionary<string, EventDescAdditional>();
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         public string? Id { get; set; }
@@ -1300,6 +1324,11 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
+
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
     }
 
     public class EventRaven : Event
@@ -1342,7 +1371,7 @@ namespace DataModel
 
     #region Venues
 
-    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive
+    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public Venue()
         {
@@ -1350,6 +1379,7 @@ namespace DataModel
             Mapping = new Dictionary<string, IDictionary<string, string>>();
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
              
         public LicenseInfo? LicenseInfo { get; set; }
@@ -1407,6 +1437,11 @@ namespace DataModel
         public int? Beds { get; set; }
 
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
+
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
     }
 
     #endregion
@@ -1414,7 +1449,7 @@ namespace DataModel
     #region Articles    
 
     //BaseInfo Article
-    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IHasLanguage, IVideoItemsAware
+    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IHasLanguage, IVideoItemsAware, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1426,6 +1461,9 @@ namespace DataModel
             ArticleLinkInfo = new Dictionary<string, ArticleLinkInfo>();
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+
+            AdditionalProperties = new Dictionary<string, dynamic>();
+
             VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
@@ -1507,6 +1545,11 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
+
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
 
         //Video Items
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
@@ -1837,6 +1880,7 @@ namespace DataModel
         public string? Shortname { get; set; }
         public string Id { get; set; }
     }
+    
     public class WeatherForecast : IIdentifiable, IImportDateassigneable, ILicenseInfo, IShortName
     {
         public DateTime Date { get; set; }
@@ -1927,13 +1971,11 @@ namespace DataModel
         public int? WindSpeed { get; set; }
     }
 
-
-
     #endregion   
 
     #region Packages
 
-    public class Package : IIdentifiable, IShortName, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
+    public class Package : IIdentifiable, IShortName, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1942,6 +1984,7 @@ namespace DataModel
             PackageDetail = new Dictionary<string, PackageDetail>();
             Inclusive = new Dictionary<string, Inclusive>();
             ChannelInfo = new Dictionary<string, string>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         public string? Id { get; set; }
@@ -2015,6 +2058,11 @@ namespace DataModel
         public ICollection<string>? PublishedOn { get; set; }
 
         public string Source { get; set; }
+
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
     }
 
     public class Season
@@ -2065,11 +2113,12 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IShortName, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Measuringpoint : IIdentifiable, IShortName, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public Measuringpoint()
         {
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         public LicenseInfo? LicenseInfo { get; set; }
@@ -2115,6 +2164,11 @@ namespace DataModel
 
 
         public IEnumerable<string>? SkiAreaIds { get; set; }
+
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
     }
 
     public class MeasuringpointRaven : Measuringpoint
@@ -2254,7 +2308,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public EventShort()
         {
@@ -2262,6 +2316,7 @@ namespace DataModel
             EventText = new Dictionary<string, string>();
             EventTitle = new Dictionary<string, string>();
             Documents = new Dictionary<string, List<Document>?>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
             VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
@@ -2548,9 +2603,12 @@ namespace DataModel
         //Use Active for filtering out not active events
         public bool? Active { get; set; }
 
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
         //Video Items
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
-
     }
 
     public class RoomBooked
@@ -2778,13 +2836,14 @@ namespace DataModel
         //}       
     }
 
-    public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags, IVideoItemsAware
+    public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags, IVideoItemsAware, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public WebcamInfo()
         {
             WebCamProperties = new WebcamProperties();
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
             VideoItems = new Dictionary<string, ICollection<VideoItems>>();
         }
 
@@ -2839,6 +2898,11 @@ namespace DataModel
         public new string? Previewurl { get { return this.WebCamProperties != null ? this.WebCamProperties.PreviewUrl : null; } }
 
         public ICollection<string> HasLanguage { get; set; }
+
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
     }
     
     public class WebcamProperties
@@ -2859,7 +2923,7 @@ namespace DataModel
 
     #region Wine
 
-    public class Wine : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive
+    public class Wine : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive, IRelatedContentAware, IAdditionalPropertiesAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2867,6 +2931,7 @@ namespace DataModel
         {
             Detail = new Dictionary<string, Detail>();
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         public string? Id { get; set; }
@@ -2902,6 +2967,11 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public ICollection<string> PublishedOn { get; set; }
+
+        //AdditionalProperties & RelatedContent
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+        public ICollection<RelatedContent> RelatedContent { get; set; }
     }
 
 
@@ -3010,7 +3080,7 @@ namespace DataModel
 
     #endregion
 
-    #region CommonInfos
+    #region Special Entities
 
     public class Metadata
     {
@@ -3022,14 +3092,7 @@ namespace DataModel
         public bool Reduced { get; set; }
 
         public UpdateInfo? UpdateInfo { get; set; }
-    }
-
-    public class UpdateInfo
-    {
-        public string? UpdatedBy { get; set; }
-
-        public string? UpdateSource { get; set; }
-    }
+    }   
 
     public class LicenseInfo
     {
@@ -3040,6 +3103,17 @@ namespace DataModel
         [SwaggerSchema(Description = "readonly field", ReadOnly = true)]
         public bool ClosedData { get; set; }
     }
+
+    public class UpdateInfo
+    {
+        public string? UpdatedBy { get; set; }
+
+        public string? UpdateSource { get; set; }
+    }
+
+    #endregion
+
+    #region CommonInfos
 
     public class SmgTags : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, IPublishedOn
     {
@@ -3209,7 +3283,7 @@ namespace DataModel
     }
   
     //BaseInfos for Districts / Regions / Municipalities ...
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IAdditionalPropertiesAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -3219,6 +3293,7 @@ namespace DataModel
             ContactInfos = new Dictionary<string, ContactInfos>();
             //Mapping New
             Mapping = new Dictionary<string, IDictionary<string, string>>();
+            AdditionalProperties = new Dictionary<string, dynamic>();
         }
 
         public string? Id { get; set; }
@@ -3256,6 +3331,8 @@ namespace DataModel
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
         public DistanceInfo? DistanceInfo { get; set; }
+
+        public IDictionary<string,dynamic> AdditionalProperties { get; set; }
     }
 
     //BaseInfos for ODHActivityPois / Activities / Pois
