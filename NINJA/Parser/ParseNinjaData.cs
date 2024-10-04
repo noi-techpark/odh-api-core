@@ -699,7 +699,7 @@ namespace NINJA.Parser
                 {
                     new Tags(){ Id = "poi", Source = "lts" },
                     new Tags(){ Id = "mobility", Source = "lts" },
-                    new Tags(){ Id = "electric charging stations", Source = "idm" }
+                    new Tags(){ Id = "electric charging stations", Source = "lts" }
                 };
 
                 //Adding Category 
