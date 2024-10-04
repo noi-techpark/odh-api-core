@@ -745,7 +745,7 @@ namespace DataModel
         //If accesstype public, or private_withpublicaccess set to true
      
         [SwaggerEnum(new[] { "Typ 1-Stecker", "Typ 2-Stecker", "Combo-Stecker", "CHAdeMO-Stecker", "Tesla Supercharger" })]
-        public List<string>? ChargingPistol { get; set; }
+        public List<string>? ChargingPistolTypes { get; set; }
 
         public string AccessTypeInfo { get; set; }
 

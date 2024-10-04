@@ -762,7 +762,7 @@ namespace NINJA.Parser
                 properties.PaymentInfo = data.pmetadata?.paymentInfo;
 
                 //properties.ChargingPlugCount = 1;
-                properties.ChargingPistol = data.smetadata.outlets.Select(y => y.outletTypeCode).Distinct().ToList();
+                properties.ChargingPistolTypes = data.smetadata.outlets.Select(y => y.outletTypeCode).Distinct().ToList();
 
                 //TODO do not overwrite the old values
                 var additionalpropertieskey = typeof(EchargingDataProperties).Name;
