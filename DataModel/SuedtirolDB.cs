@@ -382,6 +382,12 @@ namespace DataModel
         TimeSpan? Entrance { get; set; }
     }
 
+    public interface IHasTagInfo
+    {
+        ICollection<string> TagIds { get; set; }
+        ICollection<Tags> Tags { get; set; }
+    }
+
     #endregion
 
     #region District Municipality Region

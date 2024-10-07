@@ -892,7 +892,7 @@ namespace OdhApiImporter.Helpers
                 tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
                 tag.FirstImport = DateTime.Now;
                 tag.PublishedOn = null;
-
+                tag.Types = new List<string>() { "eventtopic" };
 
                 tag.PublishDataWithTagOn = null;
                 tag.Mapping = null;
@@ -921,7 +921,7 @@ namespace OdhApiImporter.Helpers
 
             foreach (var tag in data)
             {                
-                tag.Source = tag.Types.Contains("LTSCategory") ? "lts" : "idm";
+                tag.Source = tag.Types.Contains("ltscategory") ? "lts" : "idm";
 
                 //Save to DB                 
                 var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
@@ -933,7 +933,34 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        
+        public async Task<int> TagTypesFix()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("tags");
+
+            var data = await query.GetObjectListAsync<TagLinked>();
+            int i = 0;
+
+            foreach (var tag in data)
+            {
+                if(tag.Types != null && tag.Types.Count > 0)
+                {
+                    tag.Types = tag.Types.Select(x => x.ToLower()).ToList();
+
+                    //Save to DB                 
+                    var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
+                        .UpdateAsync(new JsonBData() { id = tag.Id?.ToLower() ?? "", data = new JsonRaw(tag) });
+
+                    i++;
+                }
+
+            }
+
+            return i;
+        }
+
 
 
         #endregion

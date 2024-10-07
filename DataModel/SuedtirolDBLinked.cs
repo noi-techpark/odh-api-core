@@ -181,6 +181,7 @@ namespace DataModel
     {
         public string Id { get; set; }
 
+        //Source of the Tag (from /Tags.Source)
         public string Source { get; set; }
         public string? Self
         {
@@ -190,6 +191,7 @@ namespace DataModel
             }
         }
 
+        //Type of the Tag (from /Tags.Source)
         public string? Type { get; set; }
     }
 
@@ -1956,7 +1958,7 @@ namespace DataModel
         public List<string> ODHTagIds { get; set; }
                 
         public ICollection<string> Types { get; set; }
-        public new string Source { get; set; }
+        public new string Source { get; set; }        
     }
 
     public class PublisherLinked : Publisher, IMetaData
