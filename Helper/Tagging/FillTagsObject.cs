@@ -1,4 +1,8 @@
-﻿using DataModel;
+﻿// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using Helper.Location;
 using SqlKata.Execution;
 using System;
@@ -19,7 +23,7 @@ namespace Helper.Tagging
         /// </summary>
         /// <param name="queryFactory"></param>
         /// <returns></returns>
-        public static async Task<LocationInfoLinked> UpdateTagsExtension<T>(this T data, QueryFactory queryFactory) where T : IHasTagInfo
+        public static async Task UpdateTagsExtension<T>(this T data, QueryFactory queryFactory) where T : IHasTagInfo
         {
             data.Tags = await UpdateTags(data.TagIds, queryFactory);
         }
