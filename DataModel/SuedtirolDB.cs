@@ -3081,9 +3081,9 @@ namespace DataModel
         public Nullable<bool> DisplayAsCategory { get; set; }
 
         [SwaggerDeprecated("Deprecated, use Mapping or MappedIds")]
-        public IDictionary<string, string> IDMCategoryMapping { get; set; }
+        public IDictionary<string, string>? IDMCategoryMapping { get; set; }
         [SwaggerDeprecated("Deprecated, use Mapping")]
-        public LTSTaggingInfo LTSTaggingInfo { get; set; }
+        public LTSTaggingInfo? LTSTaggingInfo { get; set; }
 
         [SwaggerDeprecated("Deprecated, use ValidForEntity")]
         public string? MainEntity { get; set; }
@@ -3091,7 +3091,7 @@ namespace DataModel
         //Generic Mapping Object
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-        public ICollection<string> MappedTagIds { get; set; }
+        public ICollection<string>? MappedTagIds { get; set; }
 
         //obsolete replaced by PublishDataWithTagOn to be more generic
         //public ICollection<string>? AutoPublishOn { get; set; }
