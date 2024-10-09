@@ -1972,7 +1972,7 @@ namespace DataModel
                 
         public ICollection<string> Types { get; set; }
         public new string Source { get; set; }             
-        public bool Active { get; set; }        
+        public bool Active { get; set; } 
     }
 
     public class PublisherLinked : Publisher, IMetaData
@@ -2016,7 +2016,6 @@ namespace DataModel
     //GastronomyTypes
     //VenueTypes
     //Location??
-
 
     public class TourismMetaData : IMetaData, IImportDateassigneable, IIdentifiable, IPublishedOn, ILicenseInfo
     {

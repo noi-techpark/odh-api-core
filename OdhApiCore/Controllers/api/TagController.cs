@@ -38,11 +38,10 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET Tag List
         /// </summary>
-        /// <param name="validforentity">Filter on Tags valid on Entities (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..)</param>
-        /// <param name="mainentity">Filter on Tags with MainEntity set to (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..)</param>
+        /// <param name="validforentity">Filter on Tags valid on Entities (accommodation, activity, poi, odhactivitypoi, package, gastronomy, event, article, common .. etc..),(Separator ',' List of odhtypes) (default:'null')</param>
         /// <param name="displayascategory">true = returns only Tags which are marked as DisplayAsCategory true</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
-        /// <param name="localizationlanguage">here for Compatibility Reasons, replaced by language parameter</param>
+        /// <param name="types">Filter on Tags with this Types (Separator ',' List of types), (default:'null')</param>
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
         /// <param name="source">Source Filter (possible Values: 'lts','idm), (default:'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -64,8 +63,8 @@ namespace OdhApiCore.Controllers
             uint? pagenumber = null,
             PageSize pagesize = null!,
             string? language = null,
-            string? validforentity = null,
-            string? mainentity = null,
+            string? validforentity = null,            
+            string? types = null,
             bool? displayascategory = null,
             string? publishedon = null,
             string? source = null,
@@ -73,17 +72,11 @@ namespace OdhApiCore.Controllers
             string[]? fields = null,
             string? searchfilter = null,
             string? rawfilter = null,
-            string? rawsort = null,
-            string? localizationlanguage = null,  //TODO ignore this in swagger
+            string? rawsort = null,            
             bool removenullvalues = false,
             CancellationToken cancellationToken = default)
         {
-            //Compatibility
-            if (String.IsNullOrEmpty(language) && !String.IsNullOrEmpty(localizationlanguage))
-                language = localizationlanguage;
-
-
-            return await Get(pagenumber, pagesize, language, mainentity, validforentity, displayascategory, source, publishedon, fields: fields ?? Array.Empty<string>(), 
+            return await Get(pagenumber, pagesize, language, validforentity, types, displayascategory, source, publishedon, fields: fields ?? Array.Empty<string>(), 
                   searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues,
                     cancellationToken);           
         }
@@ -125,7 +118,7 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> Get(
             uint? pagenumber, int? pagesize, 
-            string? language, string? maintype, string? validforentity, 
+            string? language, string? validforentity, string? types,
             bool? displayascategory, string? source, string? publishedonfilter,
             string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues,
             CancellationToken cancellationToken)
@@ -136,7 +129,7 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
                 var validforentitytypeslist = (validforentity ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
-                var maintypeslist = (maintype ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
+                var typeslist = (types ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries);
                 var sourcelist = Helper.CommonListCreator.CreateIdList(source);
                 var publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
 
@@ -146,7 +139,7 @@ namespace OdhApiCore.Controllers
                     .From("tags")
                     .TagWhereExpression(
                         languagelist: new List<string>(), 
-                        mainentitylist: maintypeslist,
+                        typelist: typeslist,
                         validforentitylist: validforentitytypeslist,
                         sourcelist: sourcelist,
                         publishedonlist: publishedonlist,

@@ -893,7 +893,7 @@ namespace Helper
 
         //Return Where and Parameters for OdhTag and Tag
         public static Query TagWhereExpression(
-            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> mainentitylist, IReadOnlyCollection<string> validforentitylist,
+            this Query query, IReadOnlyCollection<string> languagelist, IReadOnlyCollection<string> typelist, IReadOnlyCollection<string> validforentitylist,
             IReadOnlyCollection<string> sourcelist, bool? displayascategory, IReadOnlyCollection<string> publishedonlist,
             string? searchfilter, string? language,
             string? additionalfilter,
@@ -903,14 +903,14 @@ namespace Helper
                 System.Reflection.MethodBase.GetCurrentMethod()!,
                  "<query>", // not interested in query
                 searchfilter, language, validforentitylist,
-                mainentitylist, displayascategory
+                typelist, displayascategory
             );
 
             return query
                 .SearchFilter(TagNameFieldsToSearchFor(language), searchfilter)
                 .SourceFilter_GeneratedColumn(sourcelist)                
                 .PublishedOnFilter_GeneratedColumn(publishedonlist)
-                .ODHTagValidForEntityFilter(mainentitylist)
+                .TagTypesFilter(typelist)
                 .ODHTagValidForEntityFilter(validforentitylist)
                 .ODHTagDisplayAsCategoryFilter(displayascategory)
                 .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))

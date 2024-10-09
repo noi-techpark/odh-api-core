@@ -866,49 +866,7 @@ namespace OdhApiImporter.Helpers
 
 
 
-        public async Task<int> EventTopicsToTags()
-        {
-            //Load all data from PG and resave
-            var query = QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("eventtypes");
-
-            var data = await query.GetObjectListAsync<EventTypes>();
-            int i = 0;
-
-            foreach (var topic in data)
-            {
-                TagLinked tag = new TagLinked();
-
-                tag.Id = topic.Id;
-                tag.Source = "lts";
-                tag.TagName = topic.TypeDesc;
-                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
-                tag.DisplayAsCategory = false;
-                tag.ValidForEntity = new List<string>() { "event" };
-                tag.MainEntity = "event";
-                tag.LastChange = DateTime.Now;
-                tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
-                tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
-                tag.FirstImport = DateTime.Now;
-                tag.PublishedOn = null;
-                tag.Types = new List<string>() { "eventtopic" };
-
-                tag.PublishDataWithTagOn = null;
-                tag.Mapping = null;
-                tag.IDMCategoryMapping = null;
-                tag.LTSTaggingInfo = null;
-                tag.MappedTagIds = null;
-
-
-                var pgcrudresult = await QueryFactory.UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("tag.modify", "importer"), new CRUDConstraints(), new CompareConfig(false, false));
-
-                i++;
-            }
-
-            return i;
-        }
-
+      
         public async Task<int> TagSourceFix()
         {
             //Load all data from PG and resave
@@ -961,6 +919,216 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+
+        public async Task<int> EventTopicsToTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventtypes");
+
+            var data = await query.GetObjectListAsync<EventTypes>();
+            int i = 0;
+
+            foreach (var topic in data)
+            {
+                TagLinked tag = new TagLinked();
+
+                tag.Id = topic.Id;
+                tag.Source = "lts";
+                tag.TagName = topic.TypeDesc;
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag.DisplayAsCategory = false;
+                tag.ValidForEntity = new List<string>() { "event" };
+                tag.MainEntity = "event";
+                tag.LastChange = DateTime.Now;
+                tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
+                tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
+                tag.FirstImport = DateTime.Now;
+                tag.PublishedOn = null;
+                tag.Types = new List<string>() { "eventtopic" };
+
+                tag.PublishDataWithTagOn = null;
+                tag.Mapping = null;
+                tag.IDMCategoryMapping = null;
+                tag.LTSTaggingInfo = null;
+                tag.MappedTagIds = null;
+
+                var pgcrudresult = await QueryFactory.UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("tag.modify", "importer"), new CRUDConstraints(), new CompareConfig(false, false));
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> EventShortTypesToTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventshorttypes");
+
+            var data = await query.GetObjectListAsync<SmgPoiTypes>();
+            int i = 0;
+
+            foreach (var topic in data)
+            {
+                TagLinked tag = new TagLinked();
+
+                tag.Id = topic.Id;
+                tag.Source = "noi";
+                tag.TagName = topic.TypeDesc;  
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag.DisplayAsCategory = false;
+                tag.ValidForEntity = new List<string>() { "event" };
+                tag.MainEntity = "event";
+                tag.LastChange = DateTime.Now;
+                tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
+                tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
+                tag.FirstImport = DateTime.Now;
+                tag.PublishedOn = null;
+                tag.Types = new List<string>() { topic.Type.ToLower() };
+
+                tag.PublishDataWithTagOn = null;
+                tag.Mapping = null;
+                tag.IDMCategoryMapping = null;
+                tag.LTSTaggingInfo = null;
+                tag.MappedTagIds = null;
+
+                var pgcrudresult = await QueryFactory.UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("tag.modify", "importer"), new CRUDConstraints(), new CompareConfig(false, false));
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> GastronomyTypesToTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("gastronomytypes");
+
+            var data = await query.GetObjectListAsync<GastronomyTypes>();
+            int i = 0;
+
+            foreach (var topic in data)
+            {
+                TagLinked tag = new TagLinked();
+
+                tag.Id = topic.Id;
+                tag.Source = "lts";
+                tag.TagName = topic.TypeDesc;
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag.DisplayAsCategory = false;
+                tag.ValidForEntity = new List<string>() { "odhactivitypoi" };
+                tag.MainEntity = "odhactivitypoi";
+                tag.LastChange = DateTime.Now;
+                tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
+                tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
+                tag.FirstImport = DateTime.Now;
+                tag.PublishedOn = null;
+                tag.Types = new List<string>() { topic.Type.ToLower() };
+
+                tag.PublishDataWithTagOn = null;
+                tag.Mapping = null;
+                tag.IDMCategoryMapping = null;
+                tag.LTSTaggingInfo = null;
+                tag.MappedTagIds = null;
+
+                var pgcrudresult = await QueryFactory.UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("tag.modify", "importer"), new CRUDConstraints(), new CompareConfig(false, false));
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> VenueTypesToTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("venuetypes");
+
+            var data = await query.GetObjectListAsync<DDVenueCodes>();
+            int i = 0;
+
+            foreach (var topic in data)
+            {
+                TagLinked tag = new TagLinked();
+
+                tag.Id = topic.Id;
+                tag.Source = "lts";
+                tag.TagName = topic.TypeDesc;
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag.DisplayAsCategory = false;
+                tag.ValidForEntity = new List<string>() { "venue" };
+                tag.MainEntity = "venue";
+                tag.LastChange = DateTime.Now;
+                tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
+                tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
+                tag.FirstImport = DateTime.Now;
+                tag.PublishedOn = null;
+                tag.Types = new List<string>() { topic.Type.ToLower() };
+
+                tag.PublishDataWithTagOn = null;
+                tag.Mapping = null;
+                tag.IDMCategoryMapping = null;
+                tag.LTSTaggingInfo = null;
+                tag.MappedTagIds = null;
+
+                var pgcrudresult = await QueryFactory.UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("tag.modify", "importer"), new CRUDConstraints(), new CompareConfig(false, false));
+
+                i++;
+            }
+
+            return i;
+        }
+
+        public async Task<int> ArticleTypesToTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("articletypes");
+
+            var data = await query.GetObjectListAsync<ArticleTypes>();
+            int i = 0;
+
+            foreach (var topic in data)
+            {
+                TagLinked tag = new TagLinked();
+
+                tag.Id = topic.Id;
+                tag.Source = "idm";  //TO CHECK
+                tag.TagName = topic.TypeDesc;  //TO CHECK
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag.DisplayAsCategory = false;
+                tag.ValidForEntity = new List<string>() { "article" };
+                tag.MainEntity = "article";
+                tag.LastChange = DateTime.Now;
+                tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
+                tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
+                tag.FirstImport = DateTime.Now;
+                tag.PublishedOn = null;
+                tag.Types = new List<string>() { topic.Type.ToLower() };
+
+                tag.PublishDataWithTagOn = null;
+                tag.Mapping = null;
+                tag.IDMCategoryMapping = null;
+                tag.LTSTaggingInfo = null;
+                tag.MappedTagIds = null;
+
+                var pgcrudresult = await QueryFactory.UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("tag.modify", "importer"), new CRUDConstraints(), new CompareConfig(false, false));
+
+                i++;
+            }
+
+            return i;
+        }
 
 
         #endregion

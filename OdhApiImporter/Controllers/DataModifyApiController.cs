@@ -522,6 +522,94 @@ namespace OdhApiImporter.Controllers
         }
 
         [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("EventShortTypesToTags")]
+        public async Task<IActionResult> EventShortTypesToTags(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.EventShortTypesToTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "EventShortTypesToTags",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("GastronomyTypesToTags")]
+        public async Task<IActionResult> GastronomyTypesToTags(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.GastronomyTypesToTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "GastronomyTypesToTags",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("VenueTypesToTags")]
+        public async Task<IActionResult> VenueTypesToTags(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.VenueTypesToTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "VenueTypesToTags",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ArticleTypesToTags")]
+        public async Task<IActionResult> ArticleTypesToTags(CancellationToken cancellationToken)
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.ArticleTypesToTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "ArticleTypesToTags",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
+        [Authorize(Roles = "DataPush")]
         [HttpGet, Route("TagSourceFix")]
         public async Task<IActionResult> TagSourceFix(CancellationToken cancellationToken)
         {
