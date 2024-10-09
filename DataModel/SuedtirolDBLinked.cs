@@ -1956,7 +1956,7 @@ namespace DataModel
         }
     }
   
-    public class TagLinked : SmgTags, IMetaData, ISource
+    public class TagLinked : SmgTags, IMetaData, ISource, IActivateable
     {
         public Metadata? _Meta { get; set; }
 
@@ -1971,7 +1971,8 @@ namespace DataModel
         public List<string> ODHTagIds { get; set; }
                 
         public ICollection<string> Types { get; set; }
-        public new string Source { get; set; }        
+        public new string Source { get; set; }             
+        public bool Active { get; set; }        
     }
 
     public class PublisherLinked : Publisher, IMetaData
