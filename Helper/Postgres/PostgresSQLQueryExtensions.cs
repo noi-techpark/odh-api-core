@@ -1370,7 +1370,7 @@ namespace Helper
                foreach (var item in sourcelist)
                {
                    q = q.OrWhereRaw(
-                       "gen_sources @> array\\[$$\\]", item.ToLower()
+                       "gen_sources @> array\\[$$\\]", item
                    )
                    .OrWhere("gen_source", "ILIKE", item);
                }
