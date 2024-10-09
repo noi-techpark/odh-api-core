@@ -74,9 +74,7 @@ namespace DataModel
 
         //Dynamic AdditionalProperties field to store Provider Specific data that does not fit into the fields
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
-
-        //Converting EventTopis to Tags so we have the same structure 
-        //TODO On Save populate Tag Information
+        
         public ICollection<Tags> Tags { get; set; }
 
         public ICollection<string> TagIds { get; set; }

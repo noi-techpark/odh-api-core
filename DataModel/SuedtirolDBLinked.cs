@@ -193,6 +193,8 @@ namespace DataModel
 
         //Type of the Tag (from /Tags.Source)
         public string? Type { get; set; }
+
+        public string? Name { get; set; }
     }
 
     public class ODHActivityPoiTypesLink
@@ -907,7 +909,7 @@ namespace DataModel
         }
     }
 
-    public class ArticlesLinked : Article, IMetaData
+    public class ArticlesLinked : Article, IMetaData, IHasTagInfo
     {
         public Metadata? _Meta { get; set; }
 
@@ -966,6 +968,10 @@ namespace DataModel
                 return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = "ODHTag/" + x }).ToList() : new List<ODHTags>();
             }
         }
+
+        public ICollection<Tags> Tags { get; set; }
+
+        public ICollection<string> TagIds { get; set; }
     }
 
     public class DistrictLinked : District, IMetaData, IGPSPointsAware, IGPSInfoAware
@@ -1852,7 +1858,7 @@ namespace DataModel
         }
     }
 
-    public class EventShortLinked : EventShort, IMetaData
+    public class EventShortLinked : EventShort, IMetaData, IHasTagInfo
     {
         public Metadata? _Meta { get; set; }
 
@@ -1864,6 +1870,13 @@ namespace DataModel
                 return this.Id != null ? "EventShort/" + Uri.EscapeDataString(this.Id) : null;                
             }
         }
+
+        //Adding Tags also to EventShort
+        //TODO move all Technologyfields + CustomTagging to Tags
+        //TODO make Technologyfields & CustomTagging readonly
+        public ICollection<Tags> Tags { get; set; }
+
+        public ICollection<string> TagIds { get; set; }
     }
 
     public class WeatherLinked : Weather, IMetaData

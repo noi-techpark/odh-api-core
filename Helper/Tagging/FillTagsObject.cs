@@ -45,7 +45,7 @@ namespace Helper.Tagging
                 //Create Tags object
                 foreach (var tag in assignedtags)
                 {
-                    tags.Add(new Tags() { Id = tag.Id, Source = tag.Source, Type = GetTypeFromTagTypes(tag.Types) });
+                    tags.Add(new Tags() { Id = tag.Id, Source = tag.Source, Type = GetTypeFromTagTypes(tag.Types), Name = GetTagName(tag.TagName) });
                 }
             }
 
@@ -69,6 +69,23 @@ namespace Helper.Tagging
                         return "ltscategory";
                     else
                         return tagtypes.FirstOrDefault();
+                }
+            }
+        }
+
+        public static string? GetTagName(IDictionary<string,string> tagnames)
+        {
+            if (tagnames == null || tagnames.Count == 0)
+                return null;
+            else
+            {
+                if (tagnames.ContainsKey("en"))
+                {
+                    return tagnames["en"];
+                }
+                else
+                {
+                    return tagnames.Values.Where(x => x != null).FirstOrDefault();
                 }
             }
         }

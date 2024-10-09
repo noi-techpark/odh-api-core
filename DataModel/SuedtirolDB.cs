@@ -1447,6 +1447,8 @@ namespace DataModel
 
         //Activity SubType
         public string? Type { get; set; }
+
+        [SwaggerDeprecated("Obsolete, use Tags")]
         public string? SubType { get; set; }
         //für BaseArticle
         //public string SubType2 { get; set; }
@@ -1482,11 +1484,11 @@ namespace DataModel
         //NEW Link Info
         public IDictionary<string, ArticleLinkInfo> ArticleLinkInfo { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use Tags")]
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
-
-        //public string CustomId { get; set; }
+        
 
         //New Article Expiration date
         public DateTime? ExpirationDate { get; set; }
