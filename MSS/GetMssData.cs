@@ -34,8 +34,8 @@ namespace MSS
             try
             {
 
-                List<Room> myroompersons = (from x in myroomdata
-                                            select new Room { RoomSeq = x.Item1, RoomType = x.Item2, Person = x.Item3 }).ToList();
+                List<MssRoom> myroompersons = (from x in myroomdata
+                                            select new MssRoom { RoomSeq = x.Item1, RoomType = x.Item2, Person = x.Item3 }).ToList();
 
                 var myroomlist = MssRequest.BuildRoomData(myroompersons);
 

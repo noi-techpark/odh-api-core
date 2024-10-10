@@ -36,7 +36,7 @@ namespace MSS
 
         }
 
-        public static MssResult ParsemyMssSpecialResponse(string lang, string servicecode, XElement mssresponse, List<Room> myroompersons)
+        public static MssResult ParsemyMssSpecialResponse(string lang, string servicecode, XElement mssresponse, List<MssRoom> myroompersons)
         {
             try
             {
@@ -231,7 +231,7 @@ namespace MSS
             }
         }
 
-        public static MssResult ResponseSpecialParser(IEnumerable<XElement> myresult, string servicecode, List<Room> roompersons, string resultid, string lang)
+        public static MssResult ResponseSpecialParser(IEnumerable<XElement> myresult, string servicecode, List<MssRoom> roompersons, string resultid, string lang)
         {
             try
             {

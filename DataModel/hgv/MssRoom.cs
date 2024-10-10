@@ -6,9 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MSS
+namespace DataModel
 {
-    public class Room
+    public class MssRoom
     {
         private string roomSeq;
         public string RoomSeq
