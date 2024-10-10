@@ -5,6 +5,10 @@
     <Nullable>annotations</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	<NoWarn>CS1591</NoWarn>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageId>opendatahub-datamodel-tourism</PackageId>
+	<Title>Open Data Hub Datamodel Tourism</Title>
+	<Description>Open Data Hub Datamodel for Tourism Nuget Package to reuse it</Description>
   </PropertyGroup>
 
   <ItemGroup>
