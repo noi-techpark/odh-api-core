@@ -8,7 +8,7 @@
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	<PackageId>opendatahub-datamodel-tourism</PackageId>
 	<Title>Open Data Hub Datamodel Tourism</Title>
-	<Description>Open Data Hub Datamodel for Tourism Nuget Package to reuse it</Description>
+	<Description>Open Data Hub Datamodel for Tourism Nuget Package</Description>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<RepositoryUrl>https://github.com/noi-techpark/odh-api-core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
