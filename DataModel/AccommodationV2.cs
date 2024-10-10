@@ -63,6 +63,9 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.TVMember")]
         public new bool? TVMember { get { return this.AccoProperties.TVMember; } }
+
+        //Tags
+
     }
 
     public class AccommodationRoomV2 : AccommodationRoomLinked

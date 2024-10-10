@@ -326,14 +326,8 @@ namespace DataModel
     }
 
     #endregion
-
+   
     #region Tag
-
-    //TODO Tag V2 model which has all it needs 
-    //public class TagV2
-    //{
-
-    //}
 
 
     #endregion
