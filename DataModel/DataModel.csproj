@@ -13,9 +13,10 @@
 	<RepositoryUrl>https://github.com/noi-techpark/odh-api-core</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<Company>NOI</Company>
-	<Authors>Rudi Thoeni</Authors>
-	<Version>$(VersionPrefix)</Version>
+	<Company>NOI AG</Company>
+	<Authors>r.thoeni</Authors>
+	<Version>1.0.2</Version>
+	<PackageTags>tourism, opendatahub, datamodel</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

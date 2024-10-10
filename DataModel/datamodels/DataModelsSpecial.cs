@@ -119,26 +119,6 @@ namespace DataModel
         public string? BaseText { get; set; }
     }
 
-    public class AppMessageLocalized
-    {
-        public string? Id { get; set; }
-        public List<AppMessageImage>? Images { get; set; }
-        public string? VideoUrl { get; set; }
-        public string? Title { get; set; }
-        public string? Text { get; set; }
-        public string? Language { get; set; }
-        public DateTime ValidFrom { get; set; }
-        public DateTime ValidTo { get; set; }
-        public string? Type { get; set; }
-    }
-
-    public class AppSuggestionReduced
-    {
-        public string? Id { get; set; }
-        public string? Name { get; set; }
-        public string? Platform { get; set; }
-    }
-
     public class AreaLocationInfo
     {
         public string? Id { get; set; }

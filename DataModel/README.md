@@ -8,6 +8,8 @@ SPDX-License-Identifier: CC0-1.0
 
 Class Library that contains the complete Datamodel used in the Open Data Hub Content Api withhin the domain Tourism data.
 
+Various Interfaces and Datamodels of the Tourism Domains are 
+
 This packages uses this dependencies
 
 * swashbuckle.aspnetcore.annotations  https://licenses.nuget.org/MIT
