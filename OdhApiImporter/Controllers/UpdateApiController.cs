@@ -580,7 +580,9 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+
+
+                LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);                
                 var qs = new LTSQueryStrings() { page_size = 1, fields = "cinCode" };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 

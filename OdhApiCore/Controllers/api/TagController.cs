@@ -225,8 +225,9 @@ namespace OdhApiCore.Controllers
             {
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
+     
+                tag.Id = Helper.IdGenerator.GenerateIDFromType(tag);
 
-                tag.Id = !String.IsNullOrEmpty(tag.Id) ? tag.Id.ToUpper() : "noId";
                 return await UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
@@ -249,7 +250,8 @@ namespace OdhApiCore.Controllers
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
-                tag.Id = id.ToUpper();
+                tag.Id = Helper.IdGenerator.CheckIdFromType<TagLinked>(id);
+
                 return await UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }

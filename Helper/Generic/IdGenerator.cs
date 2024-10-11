@@ -89,7 +89,7 @@ namespace Helper
                 SmgTags or ODHTagLinked => IDStyle.lowercase,
                 Publisher or PublisherLinked => IDStyle.lowercase,
                 Source or SourceLinked => IDStyle.lowercase,
-                TourismMetaData => IDStyle.lowercase,
+                TourismMetaData => IDStyle.lowercase,                
                 _ => throw new Exception("not known odh type")
             };
         }
