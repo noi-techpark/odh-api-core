@@ -131,7 +131,7 @@ namespace OdhApiCore
             }
 
             var ltsapi = this.configuration.GetSection("LTSApiIDM");
-            this.ltsCredentials = new LTSCredentials(ltsapi.GetValue<string>("serviceurl", ""), ltsapi.GetValue<string>("username", ""), ltsapi.GetValue<string>("password", ""), ltsapi.GetValue<string>("xltsclientid", ""), ltsapi.GetValue<bool>("opendata", false));
+            this.ltsCredentials = new LTSCredentials(ltsapi.GetValue<string>("ServiceUrl", ""), ltsapi.GetValue<string>("Username", ""), ltsapi.GetValue<string>("Password", ""), ltsapi.GetValue<string>("XLSClientid", ""), ltsapi.GetValue<bool>("Opendata", false));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;

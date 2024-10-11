@@ -144,7 +144,12 @@ jobs:
           X_NOICOMMUNITY_SERVERKEY: ""
           X_NOICOMMUNITY_SENDERID: ""
           X_NOICOMMUNITY_PROJECTNAME: ""
-          X_NOICOMMUNITY_FCMSERVICEACCOUNT: ""          
+          X_NOICOMMUNITY_FCMSERVICEACCOUNT: ""
+          X_LTSAPI_IDM_XLTSCLIENTID: ${{ secrets.LTSAPI_IDM_XLTSCLIENTID }}
+          X_LTSAPI_IDM_SERVICEURL: "https://go.lts.it/api/v1"
+          X_LTSAPI_IDM_USERNAME: ${{ secrets.LTSAPI_IDM_USERNAME }}
+          X_LTSAPI_IDM_PASSWORD: ${{ secrets.LTSAPI_IDM_PASSWORD }}
+          X_LTSAPI_IDM_OPENDATA: false
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
@@ -264,7 +269,13 @@ jobs:
           X_NOICOMMUNITY_SERVERKEY: ""
           X_NOICOMMUNITY_SENDERID: ""
           X_NOICOMMUNITY_PROJECTNAME: ""
-          X_NOICOMMUNITY_FCMSERVICEACCOUNT: ""             
+          X_NOICOMMUNITY_FCMSERVICEACCOUNT: ""
+          
+          X_LTSAPI_IDM_XLTSCLIENTID: ${{ secrets.LTSAPI_IDM_XLTSCLIENTID }}
+          X_LTSAPI_IDM_SERVICEURL: "https://go.lts.it/api/v1"
+          X_LTSAPI_IDM_USERNAME: ${{ secrets.LTSAPI_IDM_USERNAME }}
+          X_LTSAPI_IDM_PASSWORD: ${{ secrets.LTSAPI_IDM_PASSWORD }}
+          X_LTSAPI_IDM_OPENDATA: false          
 
       - name: Build and push 
         uses: noi-techpark/github-actions/docker-build-and-push@v2
