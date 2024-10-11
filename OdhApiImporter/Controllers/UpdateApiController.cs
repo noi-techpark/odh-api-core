@@ -36,6 +36,8 @@ using System.Collections;
 using LTSAPI;
 using Newtonsoft.Json.Linq;
 using SqlKata;
+using MongoDB.Driver;
+using Helper.Generic;
 
 namespace OdhApiImporter.Controllers
 {
@@ -590,7 +592,7 @@ namespace OdhApiImporter.Controllers
                 //Load Accommodation and add Cincode to Mapping
                 var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("accommodation")
+                   .From("accommodations")
                    .Where("id", id.ToUpper());
 
                 var accommodation = await query.GetObjectSingleAsync<AccommodationLinked>();
@@ -605,6 +607,20 @@ namespace OdhApiImporter.Controllers
                     ltsdict.TryAddOrUpdate("cincode", cincode);
 
                     accommodation.Mapping.TryAddOrUpdate("lts", ltsdict);
+
+                    //Save the Accommodation                         
+                    var result = await QueryFactory.UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("lts.push.import", "odh.importer"), new CRUDConstraints(), new CompareConfig(true, false));
+                    
+                    //Check if the Object has Changed and Push all infos to the channels
+                    if (result.objectchanged != null && result.objectchanged > 0 && result.pushchannels != null && result.pushchannels.Count > 0)
+                    {
+                        
+                        var additionalpushinfo = new Dictionary<string, bool>() { { "imageschanged", false } };
+
+                        result.pushed = await OdhPushnotifier.PushToPublishedOnServices(id, "accommodation", "lts.push", additionalpushinfo, false, "api", result.pushchannels.ToList());
+                    }
+
+                    updatedetail = new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, pushchannels = result.pushchannels, changes = result.changes };
                 }
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Accommodation CinCode data succeeded", otherinfo, updatedetail, true);
