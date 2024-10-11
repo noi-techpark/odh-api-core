@@ -1968,7 +1968,7 @@ namespace DataModel
                 return "Tag/" + this.Id;
             }
         }
-        public List<string> ODHTagIds { get; set; }
+        public List<string>? ODHTagIds { get; set; }
                 
         public ICollection<string> Types { get; set; }
         public new string Source { get; set; }             
