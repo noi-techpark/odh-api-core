@@ -620,7 +620,7 @@ namespace OdhApiImporter.Controllers
                         result.pushed = await OdhPushnotifier.PushToPublishedOnServices(id, "accommodation", "lts.push", additionalpushinfo, false, "api", result.pushchannels.ToList());
                     }
 
-                    updatedetail = new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, pushchannels = result.pushchannels, changes = result.changes };
+                    updatedetail = new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, pushchannels = result.pushchannels, changes = result.changes, pushed = result.pushed };
                 }
 
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Accommodation CinCode data succeeded", otherinfo, updatedetail, true);
