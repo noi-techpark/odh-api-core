@@ -2557,7 +2557,7 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-        public int Bitmask { get; set; }
+        public long Bitmask { get; set; }
 
         public string? Type { get; set; }
 

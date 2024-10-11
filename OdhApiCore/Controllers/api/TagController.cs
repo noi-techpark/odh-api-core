@@ -60,7 +60,7 @@ namespace OdhApiCore.Controllers
         [HttpGet, Route("Tag")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetTagAsync(
-            uint? pagenumber = null,
+            uint? pagenumber = 1,
             PageSize pagesize = null!,
             string? language = null,
             string? validforentity = null,            

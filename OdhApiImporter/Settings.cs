@@ -38,6 +38,8 @@ namespace OdhApiImporter
         private readonly List<NotifierConfig> notifierConfig;
         private readonly IDictionary<string, S3Config> s3Config;
 
+        private readonly LTSCredentials ltsCredentials;
+
         public Settings(IConfiguration configuration)
         {
             this.configuration = configuration;
@@ -104,6 +106,9 @@ namespace OdhApiImporter
                     this.s3Config.TryAddOrUpdate(s3cfg.Key, new S3Config(s3cfg.GetValue<string>("AccessKey", ""), s3cfg.GetValue<string>("AccessSecretKey", ""), s3cfg.Key, s3cfg.GetValue<string>("Filename", "")));
                 }
             }
+
+            var ltsapi = this.configuration.GetSection("LTSApiIDM");
+            this.ltsCredentials = new LTSCredentials(ltsapi.GetValue<string>("serviceurl", ""), ltsapi.GetValue<string>("username", ""), ltsapi.GetValue<string>("password", ""), ltsapi.GetValue<string>("xltsclientid", ""), ltsapi.GetValue<bool>("opendata", false));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -138,5 +143,6 @@ namespace OdhApiImporter
         public List<FCMConfig> FCMConfig => throw new NotImplementedException();
         public PushServerConfig PushServerConfig => throw new NotImplementedException();
         public IDictionary<string, S3Config> S3Config => this.s3Config;
+        public LTSCredentials LtsCredentials => this.ltsCredentials;
     }
 }
