@@ -122,6 +122,11 @@ jobs:
           X_MARKETPLACE_PUSH_URL: ""
           X_MARKETPLACE_PUSH_USER: ""
           X_MARKETPLACE_PUSH_PSWD: ""
+          X_LTSAPI_IDM_XLTSCLIENTID: ""
+          X_LTSAPI_IDM_SERVICEURL: ""
+          X_LTSAPI_IDM_USERNAME: ""
+          X_LTSAPI_IDM_PASSWORD: ""
+          X_LTSAPI_IDM_OPENDATA: false
 
       - name: Setup config
         run: |
@@ -247,6 +252,11 @@ jobs:
           X_MARKETPLACE_PUSH_URL: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_URL }}
           X_MARKETPLACE_PUSH_USER: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_USERNAME }}
           X_MARKETPLACE_PUSH_PSWD: ${{ secrets.IDM_MARKETPLACE_PUSH_PROD_PASSWORD }}
+          X_LTSAPI_IDM_XLTSCLIENTID: ""
+          X_LTSAPI_IDM_SERVICEURL: ""
+          X_LTSAPI_IDM_USERNAME: ""
+          X_LTSAPI_IDM_PASSWORD: ""
+          X_LTSAPI_IDM_OPENDATA: false
           
       - name: Setup config
         run: |

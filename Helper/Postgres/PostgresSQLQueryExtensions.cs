@@ -836,6 +836,12 @@ namespace Helper
                validforentity => new { ValidForEntity = new[] { validforentity.ToLower() } }
            );
 
+        public static Query TagTypesFilter(this Query query, IReadOnlyCollection<string> tagtypeslist) =>
+           query.WhereInJsonb(
+               tagtypeslist,
+               tagtype => new { Types = new[] { tagtype.ToLower() } }
+           );
+
         public static Query ODHTagDisplayAsCategoryFilter(this Query query, bool? displayascategory) =>
            query.When(
                 displayascategory != null,
@@ -1370,7 +1376,7 @@ namespace Helper
                foreach (var item in sourcelist)
                {
                    q = q.OrWhereRaw(
-                       "gen_sources @> array\\[$$\\]", item.ToLower()
+                       "gen_sources @> array\\[$$\\]", item
                    )
                    .OrWhere("gen_source", "ILIKE", item);
                }

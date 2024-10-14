@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using DataModel;
 
-namespace NINJA
+namespace DataModel
 {
 
     #region Ninja classes

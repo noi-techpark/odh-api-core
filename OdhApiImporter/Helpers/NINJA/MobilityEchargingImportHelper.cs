@@ -4,6 +4,7 @@
 
 using DataModel;
 using Helper;
+using Helper.Location;
 using Microsoft.FSharp.Control;
 using Newtonsoft.Json;
 using NINJA;
@@ -63,7 +64,7 @@ namespace OdhApiImporter.Helpers
 
             var tagquery = QueryFactory.Query("smgtags")
                     .Select("data")
-                    .Where("id", "e-tankstellen ladestationen");
+                    .Where("id", "e-auto ladestation");
             var echargingtag = await tagquery.GetObjectSingleAsync<ODHTagLinked>();
 
             foreach (var data in ninjadata.data)
@@ -235,11 +236,11 @@ namespace OdhApiImporter.Helpers
 
             if(gpspoint != null)
             {
-                var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, gpspoint.Latitude, gpspoint.Longitude, 30000);
+                var district = await LocationInfoHelper.GetNearestDistrictbyGPS(QueryFactory, gpspoint.Latitude, gpspoint.Longitude, 30000);
                 if (district == null)
                     return;                
 
-                var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+                var locinfo = await LocationInfoHelper.GetTheLocationInfoDistrict(QueryFactory, district.Id);
                 if (locinfo != null)
                 {
                     LocationInfoLinked locinfolinked = new LocationInfoLinked

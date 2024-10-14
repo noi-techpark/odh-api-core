@@ -44,6 +44,7 @@ namespace Helper
         MusportConfig MusportConfig { get; }
         SuedtirolWeinConfig SuedtirolWeinConfig { get; }
         LoopTecConfig LoopTecConfig { get; }
+        LTSCredentials LtsCredentials { get; }
     }
 
     //Classes for Settings shared between Projects
@@ -426,6 +427,24 @@ namespace Helper
         public string AccessSecretKey { get; private set; }
         public string Bucket { get; private set; }
         public string Filename { get; private set; }
+    }
+
+    public class LTSCredentials
+    {
+        public LTSCredentials(string serviceurl, string username, string password, string ltsclientid, bool opendata)
+        {
+            this.serviceurl = serviceurl;
+            this.ltsclientid = ltsclientid;
+            this.username = username;
+            this.password = password;
+            this.opendata = opendata;
+        }
+
+        public string serviceurl { get; set; }
+        public string ltsclientid { get; set; }
+        public string username { get; set; }
+        public string password { get; set; }
+        public bool opendata { get; set; }
     }
 
     #endregion

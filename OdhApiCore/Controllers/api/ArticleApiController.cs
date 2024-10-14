@@ -7,6 +7,7 @@ using DataModel;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
+using Helper.Tagging;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -346,14 +347,20 @@ namespace OdhApiCore.Controllers.api
                 if (String.IsNullOrEmpty(article.Source))
                     article.Source = "noi";
 
-                article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                //Check all Languages
+                article.CheckMyInsertedLanguages(null);
 
+                //TODO move somewhere else
                 if(article.ArticleDateTo == null)
                     article.ArticleDateTo = DateTime.MaxValue;
 
                 if (article.LicenseInfo == null)
                     article.LicenseInfo = new LicenseInfo() { ClosedData = false };
+                                                
+                //Populate Tags (Id/Source/Type)
+                await article.UpdateTagsExtension(QueryFactory);
 
+                //Trim all strings
                 article.TrimStringProperties();
 
                 return await UpsertData<ArticlesLinked>(article, new DataInfo("articles", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -387,11 +394,16 @@ namespace OdhApiCore.Controllers.api
                 if (String.IsNullOrEmpty(article.Source))
                     article.Source = "noi";
 
-                article.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                //Check all Languages
+                article.CheckMyInsertedLanguages(null);
 
                 if (article.ArticleDateTo == null)
                     article.ArticleDateTo = DateTime.MaxValue;
 
+                //Populate Tags (Id/Source/Type)
+                await article.UpdateTagsExtension(QueryFactory);
+
+                //Trim all strings
                 article.TrimStringProperties();
 
                 return await UpsertData<ArticlesLinked>(article, new DataInfo("articles", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));

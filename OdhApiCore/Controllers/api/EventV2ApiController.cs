@@ -8,6 +8,7 @@ using Helper;
 using Helper.Converters;
 using Helper.Generic;
 using Helper.Identity;
+using Helper.Tagging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -416,7 +417,8 @@ namespace OdhApiCore.Controllers
                 //Trim all strings
                 odhevent.TrimStringProperties();
 
-                //TODO populate Tags (Source + Id)
+                //Populate Tags (Id/Source/Type)
+                await odhevent.UpdateTagsExtension(QueryFactory);
 
                 return await UpsertData<EventV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
@@ -448,7 +450,8 @@ namespace OdhApiCore.Controllers
                 //Trim all strings
                 odhevent.TrimStringProperties();
 
-                //TODO populate Tags (Source + Id)
+                //Populate Tags (Id/Source/Type)
+                await odhevent.UpdateTagsExtension(QueryFactory);
 
                 return await UpsertData<EventV2>(odhevent, new DataInfo("eventsv2", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });

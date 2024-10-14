@@ -4,6 +4,7 @@
 
 using DataModel;
 using Helper;
+using Helper.Location;
 using MSS;
 using Newtonsoft.Json;
 using NINJA;
@@ -223,12 +224,12 @@ namespace OdhApiImporter.Helpers
         {
             if (venue.GpsPoints != null && venue.GpsPoints.ContainsKey("position") && venue.GpsPoints["position"].Latitude > 0 && venue.GpsPoints["position"].Longitude > 0)
             {
-                var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, venue.GpsPoints["position"].Latitude, venue.GpsPoints["position"].Longitude, 30000);
+                var district = await LocationInfoHelper.GetNearestDistrictbyGPS(QueryFactory, venue.GpsPoints["position"].Latitude, venue.GpsPoints["position"].Longitude, 30000);
 
                 if (district == null)
                     return;
                 
-                var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+                var locinfo = await LocationInfoHelper.GetTheLocationInfoDistrict(QueryFactory, district.Id);
                 if (locinfo != null)
                 {
                     LocationInfoLinked locinfolinked = new LocationInfoLinked

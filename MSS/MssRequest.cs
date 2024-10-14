@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using DataModel;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -481,7 +482,7 @@ namespace MSS
         }
 
 
-        public static XElement BuildRoomData(List<Room> myroompropertys)
+        public static XElement BuildRoomData(List<MssRoom> myroompropertys)
         {
             XElement myroomlist = new XElement("roomlist");
 

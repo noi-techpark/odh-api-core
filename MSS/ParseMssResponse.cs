@@ -15,7 +15,7 @@ namespace MSS
 {
     public class ParseMssResponse
     {
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<Room> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<MssRoom> myroompersons, string requestsource, string version)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace MSS
 
         }
 
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<string> A0Rids, List<Room> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<string> A0Rids, List<MssRoom> myroompersons, string requestsource, string version)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace MSS
 
         }
 
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XElement mssresponse, List<string> A0Rids, List<Room> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XElement mssresponse, List<string> A0Rids, List<MssRoom> myroompersons, string requestsource, string version)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace MSS
 
         }
 
-        public static MssResult ResponseParser(IEnumerable<XElement> myresult, string servicecode, List<Room> roompersons, string resultid, string requestsource, string lang, string version)
+        public static MssResult ResponseParser(IEnumerable<XElement> myresult, string servicecode, List<MssRoom> roompersons, string resultid, string requestsource, string lang, string version)
         {
             try
             {

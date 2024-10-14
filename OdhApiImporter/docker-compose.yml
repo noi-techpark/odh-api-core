@@ -72,5 +72,10 @@ services:
       ASPNETCORE_S3Config__dc-meteorology-province-forecast__Filename: ${S3_WEATHERFORECAST_FILENAME}
       ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessKey: ${S3_WEATHERFORECAST_ACCESSKEY}
       ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessSecretKey: ${S3_WEATHERFORECAST_SECRET}
+      ASPNETCORE_LTSApiIDM__ServiceUrl: ${LTSAPI_IDM_SERVICEURL}
+      ASPNETCORE_LTSApiIDM__Username: ${LTSAPI_IDM_USERNAME}      
+      ASPNETCORE_LTSApiIDM__Password: ${LTSAPI_IDM_PASSWORD}
+      ASPNETCORE_LTSApiIDM__XLSClientid: ${LTSAPI_IDM_XLTSCLIENTID}
+      ASPNETCORE_LTSApiIDM__Opendata: ${LTSAPI_IDM_OPENDATA}
     ports:
       - "8002:80"

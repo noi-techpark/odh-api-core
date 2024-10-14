@@ -34,6 +34,7 @@ namespace OdhApiCore
         private readonly List<NotifierConfig> notifierConfig;
         private readonly IDictionary<string, S3Config> s3Config;
 
+        private readonly LTSCredentials ltsCredentials;
 
         public Settings(IConfiguration configuration)
         {
@@ -128,6 +129,9 @@ namespace OdhApiCore
                     this.s3Config.TryAddOrUpdate(s3cfg.Key, new S3Config(s3cfg.GetValue<string>("AccessKey", ""), s3cfg.GetValue<string>("AccessSecretKey", ""), s3cfg.Key, s3cfg.GetValue<string>("Filename", "")));
                 }
             }
+
+            var ltsapi = this.configuration.GetSection("LTSApiIDM");
+            this.ltsCredentials = new LTSCredentials(ltsapi.GetValue<string>("ServiceUrl", ""), ltsapi.GetValue<string>("Username", ""), ltsapi.GetValue<string>("Password", ""), ltsapi.GetValue<string>("XLSClientid", ""), ltsapi.GetValue<bool>("Opendata", false));
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -160,5 +164,7 @@ namespace OdhApiCore
         public RavenConfig RavenConfig => this.ravenConfig;
         public List<NotifierConfig> NotifierConfig => this.notifierConfig;
         public IDictionary<string, S3Config> S3Config => this.s3Config;
+
+        public LTSCredentials LtsCredentials => this.ltsCredentials;
     }
 }

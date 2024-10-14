@@ -18,6 +18,7 @@ using System.Xml.Linq;
 using ServiceReferenceLCS;
 using System.Collections;
 using Helper.Generic;
+using Helper.Location;
 
 namespace OdhApiImporter.Helpers.DSS
 {
@@ -171,11 +172,11 @@ namespace OdhApiImporter.Helpers.DSS
                     {
                         if (parsedobject.GpsInfo.FirstOrDefault()?.Latitude != 0 && parsedobject.GpsInfo.FirstOrDefault()?.Longitude != 0)
                         {
-                            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault()!.Latitude, parsedobject.GpsInfo.FirstOrDefault()!.Longitude, 10000);
+                            var district = await LocationInfoHelper.GetNearestDistrictbyGPS(QueryFactory, parsedobject.GpsInfo.FirstOrDefault()!.Latitude, parsedobject.GpsInfo.FirstOrDefault()!.Longitude, 10000);
 
                             if (district != null)
                             {
-                                var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+                                var locinfo = await LocationInfoHelper.GetTheLocationInfoDistrict(QueryFactory, district.Id);
 
                                 parsedobject.LocationInfo = locinfo;
                                 parsedobject.TourismorganizationId = locinfo.TvInfo?.Id;

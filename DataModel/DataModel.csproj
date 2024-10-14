@@ -5,14 +5,32 @@
     <Nullable>annotations</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	<NoWarn>CS1591</NoWarn>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<PackageId>opendatahub-datamodel-tourism</PackageId>
+	<Title>Open Data Hub Datamodel Tourism</Title>
+	<Description>Open Data Hub Datamodel for Tourism Nuget Package</Description>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/noi-techpark/odh-api-core</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<Company>NOI AG</Company>
+	<Authors>r.thoeni</Authors>
+	<Version>1.0.2</Version>
+	<PackageTags>tourism, opendatahub, datamodel</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.38" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Npgsql" Version="7.0.4" />
+    <PackageReference Include="Npgsql" Version="8.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

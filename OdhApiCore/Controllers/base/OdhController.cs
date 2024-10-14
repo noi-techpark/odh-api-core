@@ -248,7 +248,16 @@ namespace OdhApiCore.Controllers
             string editor = this.User != null && this.User.Identity != null && this.User.Identity.Name != null ? this.User.Identity.Name : "anonymous";
            
             if (HttpContext.Request.Headers.ContainsKey("Referer") && !String.IsNullOrEmpty(HttpContext.Request.Headers["Referer"]))
+            {
                 editsource = HttpContext.Request.Headers["Referer"];
+
+                //Hack if Referer is infrastructure v2 api make an upsert
+                if (HttpContext.Request.Headers["Referer"] == "https://tourism.importer.v2")
+                {
+                    datainfo.ErrorWhendataExists = false;
+                    datainfo.ErrorWhendataIsNew = false;
+                }
+            }                
 
             var result = await QueryFactory.UpsertData<T>(data, datainfo, new EditInfo(editor, editsource), crudconstraints, compareconfig);
 

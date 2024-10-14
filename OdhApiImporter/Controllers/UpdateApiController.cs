@@ -33,6 +33,11 @@ using OdhNotifier;
 using ServiceReferenceLCS;
 using OdhApiImporter.Helpers.LTSLCS;
 using System.Collections;
+using LTSAPI;
+using Newtonsoft.Json.Linq;
+using SqlKata;
+using MongoDB.Driver;
+using Helper.Generic;
 
 namespace OdhApiImporter.Controllers
 {
@@ -560,6 +565,76 @@ namespace OdhApiImporter.Controllers
         #endregion
 
         #region LTS ACCOMMODATION DATA SYNC
+
+        //Adds the Cincode to the Accommodation
+        [HttpGet, Route("LTS/Accommodation/Update/CinCode/{id}")]
+        public async Task<IActionResult> ImportLTSAccommodationCinCode(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Accommodation Cincode";
+            string updatetype = GetUpdateType(new List<string>() { id });
+            string source = "lts";
+            string otherinfo = "accommodation.cin";
+
+            try
+            {
+                //LtsApi ltsapi = new LtsApi(settings.LtsCredentials);
+
+                LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);                
+                var qs = new LTSQueryStrings() { page_size = 1, fields = "cinCode" };
+                var dict = ltsapi.GetLTSQSDictionary(qs);
+
+                var ltsdata = await ltsapi.AccommodationDetailRequest(id, dict);
+
+                //Todo parse response
+                var cincode = ltsdata.FirstOrDefault()["data"] != null ? ltsdata.FirstOrDefault()["data"].Value<string?>("cinCode") : null;
+
+                //Load Accommodation and add Cincode to Mapping
+                var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("accommodations")
+                   .Where("id", id.ToUpper());
+
+                var accommodation = await query.GetObjectSingleAsync<AccommodationLinked>();
+
+                if(accommodation != null)
+                {
+                    var ltsdict = accommodation.Mapping["lts"];
+                    if(ltsdict == null)
+                    {
+                        ltsdict = new Dictionary<string, string>();
+                    }
+                    ltsdict.TryAddOrUpdate("cincode", cincode);
+
+                    accommodation.Mapping.TryAddOrUpdate("lts", ltsdict);
+
+                    //Save the Accommodation                         
+                    var result = await QueryFactory.UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Update) { ErrorWhendataIsNew = false }, new EditInfo("lts.push.import", "odh.importer"), new CRUDConstraints(), new CompareConfig(true, false));
+                    
+                    //Check if the Object has Changed and Push all infos to the channels
+                    if (result.objectchanged != null && result.objectchanged > 0 && result.pushchannels != null && result.pushchannels.Count > 0)
+                    {
+                        
+                        var additionalpushinfo = new Dictionary<string, bool>() { { "imageschanged", false } };
+
+                        result.pushed = await OdhPushnotifier.PushToPublishedOnServices(id, "accommodation", "lts.push", additionalpushinfo, false, "api", result.pushchannels.ToList());
+                    }
+
+                    updatedetail = new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, pushchannels = result.pushchannels, changes = result.changes, pushed = result.pushed };
+                }
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Accommodation CinCode data succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Accommodation CinCode data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
 
         #endregion
 

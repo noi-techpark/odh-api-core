@@ -4,6 +4,7 @@
 
 using DataModel;
 using Helper;
+using Helper.Location;
 using Newtonsoft.Json;
 using NINJA;
 using NINJA.Parser;
@@ -216,7 +217,7 @@ namespace OdhApiImporter.Helpers
 
         private async Task SetLocationInfo(EventLinked myevent)
         {
-            var district = await GetLocationInfo.GetNearestDistrictbyGPS(QueryFactory, myevent.Latitude, myevent.Longitude, 30000);
+            var district = await LocationInfoHelper.GetNearestDistrictbyGPS(QueryFactory, myevent.Latitude, myevent.Longitude, 30000);
 
             if (district == null)
                 return;
@@ -224,7 +225,7 @@ namespace OdhApiImporter.Helpers
             myevent.DistrictId = district.Id;
             myevent.DistrictIds = new List<string>() { district.Id };
 
-            var locinfo = await GetLocationInfo.GetTheLocationInfoDistrict(QueryFactory, district.Id);
+            var locinfo = await LocationInfoHelper.GetTheLocationInfoDistrict(QueryFactory, district.Id);
             if (locinfo != null)
             {
                 LocationInfoLinked locinfolinked = new LocationInfoLinked
