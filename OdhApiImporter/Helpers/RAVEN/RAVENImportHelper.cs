@@ -847,6 +847,28 @@ namespace OdhApiImporter.Helpers
                 ltsdict.TryAddOrUpdate("cincode", cincode);
 
                 accommodation.Mapping.TryAddOrUpdate("lts", ltsdict);
+
+                GenericResultsHelper.GetSuccessUpdateResult(
+                    accommodation.Id,
+                    "api",
+                    "Update CinCode",
+                    "single",
+                    "Update CinCode success",
+                    "accommodation",
+                    new UpdateDetail()
+                    {
+                        updated = 1,
+                        changes = null,
+                        comparedobjects = null,
+                        created = 0,
+                        deleted = 0,
+                        error = 1,
+                        objectchanged = 0,
+                        objectimagechanged = 0,
+                        pushed = null,
+                        pushchannels = null
+                    },                    
+                    true);
             }
             catch(Exception ex)
             {
