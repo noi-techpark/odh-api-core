@@ -862,7 +862,7 @@ namespace OdhApiImporter.Helpers
                         comparedobjects = null,
                         created = 0,
                         deleted = 0,
-                        error = 1,
+                        error = 0,
                         objectchanged = 0,
                         objectimagechanged = 0,
                         pushed = null,
