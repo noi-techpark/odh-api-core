@@ -969,9 +969,9 @@ namespace DataModel
             }
         }
 
-        public ICollection<Tags> Tags { get; set; }
+        public ICollection<Tags>? Tags { get; set; }
 
-        public ICollection<string> TagIds { get; set; }
+        public ICollection<string>? TagIds { get; set; }
     }
 
     public class DistrictLinked : District, IMetaData, IGPSPointsAware, IGPSInfoAware
