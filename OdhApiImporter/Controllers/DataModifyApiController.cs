@@ -107,6 +107,31 @@ namespace OdhApiImporter.Controllers
             });
         }
 
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("FillEventShortTags")]
+        public async Task<IActionResult> FillEventShortTags(CancellationToken cancellationToken)
+        {
+            var objectscount = 0;
+
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+
+            objectscount = await customdataoperation.FillEventShortTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "FillEventShortTags EventShort",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
         #endregion
 
         #region Accommodations

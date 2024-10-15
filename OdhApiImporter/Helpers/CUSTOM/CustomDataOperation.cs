@@ -12,6 +12,7 @@ using Helper;
 using Microsoft.FSharp.Control;
 using System.Diagnostics;
 using Helper.Generic;
+using Helper.Tagging;
 using Helper.JsonHelpers;
 using Newtonsoft.Json;
 using SqlKata;
@@ -775,6 +776,49 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        public async Task<int> FillEventShortTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {
+                if((eventshort.CustomTagging != null  && eventshort.CustomTagging.Count > 0) || (eventshort.TechnologyFields != null && eventshort.TechnologyFields.Count > 0))
+                {
+                    if (eventshort.TagIds == null)
+                        eventshort.TagIds = new List<string>();
+
+                    //Add CustomTagging + Technologyfields to Tags
+                    foreach (var tag in eventshort.CustomTagging ?? new List<string>())
+                    {
+                        eventshort.TagIds.Add(tag);
+                    }
+                    foreach (var technofields in eventshort.TechnologyFields ?? new List<string>())
+                    {
+                        eventshort.TagIds.Add(technofields);
+                    }
+
+                    //Populate Tags (Id/Source/Type)
+                    await eventshort.UpdateTagsExtension(QueryFactory);
+
+                    //Save tp DB
+                    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                    i++;
+                }
+                
+            }
+
+            return i;
+        }        
 
         #endregion
 
