@@ -1874,9 +1874,9 @@ namespace DataModel
         //Adding Tags also to EventShort
         //TODO move all Technologyfields + CustomTagging to Tags
         //TODO make Technologyfields & CustomTagging readonly
-        public ICollection<Tags> Tags { get; set; }
+        public ICollection<Tags>? Tags { get; set; }
 
-        public ICollection<string> TagIds { get; set; }
+        public ICollection<string>? TagIds { get; set; }
     }
 
     public class WeatherLinked : Weather, IMetaData
