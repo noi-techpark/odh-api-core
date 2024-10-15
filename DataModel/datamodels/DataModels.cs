@@ -1075,7 +1075,7 @@ namespace DataModel
         //Activity SubType
         public string? Type { get; set; }
 
-        [SwaggerDeprecated("Obsolete, use Tags")]
+        //[SwaggerDeprecated("Obsolete, use Tags")]
         public string? SubType { get; set; }
         //für BaseArticle
         //public string SubType2 { get; set; }
