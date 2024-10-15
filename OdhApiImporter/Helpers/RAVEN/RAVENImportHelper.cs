@@ -839,11 +839,18 @@ namespace OdhApiImporter.Helpers
                 //Todo parse response
                 var cincode = ltsdata.FirstOrDefault()["data"] != null ? ltsdata.FirstOrDefault()["data"].Value<string?>("cinCode") : null;
 
-                var ltsdict = accommodation.Mapping["lts"];
+                //If no lts mapping is there
+                if(accommodation.Mapping == null)
+                    accommodation.Mapping = new Dictionary<string, IDictionary<string,string>>();
+
+                var ltsdict = default(IDictionary<string, string>);
+                 
+                if(accommodation.Mapping.ContainsKey("lts"))
+                    ltsdict = accommodation.Mapping["lts"];
+
                 if (ltsdict == null)
-                {
                     ltsdict = new Dictionary<string, string>();
-                }
+                
                 ltsdict.TryAddOrUpdate("cincode", cincode);
 
                 accommodation.Mapping.TryAddOrUpdate("lts", ltsdict);
