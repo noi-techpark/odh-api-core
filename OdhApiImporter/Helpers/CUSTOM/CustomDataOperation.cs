@@ -797,11 +797,11 @@ namespace OdhApiImporter.Helpers
                     //Add CustomTagging + Technologyfields to Tags
                     foreach (var tag in eventshort.CustomTagging ?? new List<string>())
                     {
-                        eventshort.TagIds.Add(tag);
+                        eventshort.TagIds.Add(tag.ToLower());
                     }
                     foreach (var technofields in eventshort.TechnologyFields ?? new List<string>())
                     {
-                        eventshort.TagIds.Add(technofields);
+                        eventshort.TagIds.Add(technofields.ToLower());
                     }
 
                     //Populate Tags (Id/Source/Type)
