@@ -45,6 +45,7 @@ namespace OdhApiImporter.Controllers
 
         #region EventShort
 
+
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ModifyEventShort")]
         public async Task<IActionResult> ModifyEventShort(CancellationToken cancellationToken)
@@ -131,6 +132,32 @@ namespace OdhApiImporter.Controllers
                 success = true
             });
         }
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ResaveEventShortWithTags")]
+        public async Task<IActionResult> ResaveEventShortWithTags(CancellationToken cancellationToken)
+        {
+            var objectscount = 0;
+
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+
+            objectscount = await customdataoperation.ResaveEventShortWithTags();
+
+            return Ok(new UpdateResult
+            {
+                operation = "ResaveEventShortWithTags EventShort",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
 
         #endregion
 

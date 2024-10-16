@@ -1878,33 +1878,33 @@ namespace DataModel
 
         public ICollection<string>? TagIds { get; set; }
 
-        ////Setting old TechnologyFields to readonly
-        //public new List<string>? TechnologyFields
-        //{
-        //    get
-        //    {
-        //        if (this.Tags != null)
-        //        {
-        //            return this.Tags.Where(x => x.Type == "technologyfields").Count() > 0 ? this.Tags.Where(x => x.Type == "technologyfields").Select(x => CompatibilityHelper.GetOldEventShortTagnames(x.Id)).ToList() : null;
-        //        }
-        //        else
-        //            return null;
-        //    }
-        //}
+        //Setting old TechnologyFields to readonly
+        public new List<string>? TechnologyFields
+        {
+            get
+            {
+                if (this.Tags != null)
+                {
+                    return this.Tags.Where(x => x.Type == "technologyfields").Count() > 0 ? this.Tags.Where(x => x.Type == "technologyfields").Select(x => CompatibilityHelper.GetOldEventShortTagnames(x.Id)).ToList() : null;
+                }
+                else
+                    return null;
+            }
+        }
 
-        ////Setting old CustomTagging to readonly
-        //public new List<string>? CustomTagging
-        //{
-        //    get
-        //    {
-        //        if (this.Tags != null)
-        //        {
-        //            return this.Tags.Where(x => x.Type == "customtagging").Count() > 0 ? this.Tags.Where(x => x.Type == "customtagging").Select(x => CompatibilityHelper.GetOldEventShortTagnames(x.Id)).ToList() : null;
-        //        }
-        //        else
-        //            return null;
-        //    }
-        //}
+        //Setting old CustomTagging to readonly
+        public new List<string>? CustomTagging
+        {
+            get
+            {
+                if (this.Tags != null)
+                {
+                    return this.Tags.Where(x => x.Type == "customtagging").Count() > 0 ? this.Tags.Where(x => x.Type == "customtagging").Select(x => CompatibilityHelper.GetOldEventShortTagnames(x.Id)).ToList() : null;
+                }
+                else
+                    return null;
+            }
+        }
     }
 
     public class WeatherLinked : Weather, IMetaData

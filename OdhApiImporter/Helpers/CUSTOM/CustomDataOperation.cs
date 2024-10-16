@@ -797,11 +797,19 @@ namespace OdhApiImporter.Helpers
                     //Add CustomTagging + Technologyfields to Tags
                     foreach (var tag in eventshort.CustomTagging ?? new List<string>())
                     {
-                        eventshort.TagIds.Add(tag.ToLower());
+                        if(!String.IsNullOrEmpty(tag))
+                        {
+                            if(!eventshort.TagIds.Contains(tag.ToLower()))
+                                eventshort.TagIds.Add(tag.ToLower());
+                        }                        
                     }
                     foreach (var technofields in eventshort.TechnologyFields ?? new List<string>())
                     {
-                        eventshort.TagIds.Add(technofields.ToLower());
+                        if (!String.IsNullOrEmpty(technofields))
+                        {
+                            if (!eventshort.TagIds.Contains(technofields.ToLower()))
+                                eventshort.TagIds.Add(technofields.ToLower());
+                        }
                     }
 
                     //Populate Tags (Id/Source/Type)
@@ -818,7 +826,36 @@ namespace OdhApiImporter.Helpers
             }
 
             return i;
-        }        
+        }
+
+        public async Task<int> ResaveEventShortWithTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {                
+                if (eventshort.TagIds != null && eventshort.TagIds.Count != eventshort.TagIds.Distinct().Count())
+                {
+                    eventshort.TagIds = eventshort.TagIds.Distinct().ToList();
+                }
+
+                //Save tp DB
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
 
         #endregion
 
