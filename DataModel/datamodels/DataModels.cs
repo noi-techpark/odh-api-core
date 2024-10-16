@@ -2070,11 +2070,13 @@ namespace DataModel
 
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public string? VideoUrl { get; set; }
-        public List<string>? TechnologyFields { get; set; }
 
+        //[SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public List<string>? TechnologyFields { get; set; }
+        //[SwaggerDeprecated("Deprecated, use GpsInfo")]
         public List<string>? CustomTagging { get; set; }
 
-        [SwaggerDeprecated("Deprecated, use Documents")]
+         [SwaggerDeprecated("Deprecated, use Documents")]
         public List<DocumentPDF>? EventDocument {
             get
             {
