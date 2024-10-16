@@ -151,8 +151,8 @@ namespace OdhApiImporter.Helpers
                     eventshort.PublishedOn = publishedon;
 
                     eventshort.VideoUrl = videourl;
-                    //eventshort.TechnologyFields = technologyfields;
-                    //eventshort.CustomTagging = customtagging;
+                    eventshort.TechnologyFields = technologyfields;
+                    eventshort.CustomTagging = customtagging;
 
                     eventshort.TagIds = tagids;
 
@@ -174,6 +174,7 @@ namespace OdhApiImporter.Helpers
 
                         //MODIFIED
                         eventshort.TagIds = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
+                        eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 
                     //Set ActiveToday / PublishedOn in base of Display1

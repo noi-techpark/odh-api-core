@@ -795,9 +795,6 @@ namespace OdhApiImporter.Helpers
 
             var eventshorttypes = await queryeventshorttypes.GetObjectListAsync<SmgPoiTypes>();
 
-
-
-
             foreach (var eventshort in data)
             {
                 if((eventshort.CustomTagging != null  && eventshort.CustomTagging.Count > 0) || (eventshort.TechnologyFields != null && eventshort.TechnologyFields.Count > 0))
@@ -812,28 +809,31 @@ namespace OdhApiImporter.Helpers
                     //Add CustomTagging + Technologyfields to Tags
                     foreach (var tag in eventshort.CustomTagging ?? new List<string>())
                     {
-                        if(!String.IsNullOrEmpty(tag))
+                        if (!String.IsNullOrEmpty(tag))
                         {
-                            if(!eventshort.TagIds.Contains(tag.ToLower()))
+                            //Search by KEy
+                            var toadd = eventshorttypes.Where(x => x.Key == tag).FirstOrDefault();
+                            if (toadd != null)
                             {
-                                //Search by KEy
-                                var toadd = eventshorttypes.Where(x => x.Key == tag).FirstOrDefault();
-                                if(toadd != null)
+                                if (!eventshort.TagIds.Contains(toadd.Id))
+                                {
                                     eventshort.TagIds.Add(toadd.Id);
+                                }
                             }
-                                
-                        }                        
+                        }                 
                     }
                     foreach (var technofields in eventshort.TechnologyFields ?? new List<string>())
                     {
                         if (!String.IsNullOrEmpty(technofields))
                         {
-                            if (!eventshort.TagIds.Contains(technofields.ToLower()))
+                            //Search by KEy
+                            var toadd = eventshorttypes.Where(x => x.Key == technofields).FirstOrDefault();
+                            if (toadd != null)
                             {
-                                //Search by KEy
-                                var toadd = eventshorttypes.Where(x => x.Key == technofields).FirstOrDefault();
-                                if (toadd != null)
-                                    eventshort.TagIds.Add(toadd.Id);                                
+                                if (!eventshort.TagIds.Contains(toadd.Id))
+                                {
+                                    eventshort.TagIds.Add(toadd.Id);
+                                }
                             }
                         }
                     }
