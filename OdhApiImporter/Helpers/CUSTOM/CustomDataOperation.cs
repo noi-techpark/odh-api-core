@@ -787,6 +787,17 @@ namespace OdhApiImporter.Helpers
             var data = await query.GetObjectListAsync<EventShortLinked>();
             int i = 0;
 
+
+            //Load all eventshortdata from PG
+            var queryeventshorttypes = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventshorttypes");
+
+            var eventshorttypes = await queryeventshorttypes.GetObjectListAsync<SmgPoiTypes>();
+
+
+
+
             foreach (var eventshort in data)
             {
                 if((eventshort.CustomTagging != null  && eventshort.CustomTagging.Count > 0) || (eventshort.TechnologyFields != null && eventshort.TechnologyFields.Count > 0))
@@ -794,13 +805,23 @@ namespace OdhApiImporter.Helpers
                     if (eventshort.TagIds == null)
                         eventshort.TagIds = new List<string>();
 
+
+                    //TODO TRANSFORM KEYS used in CustomTagging and TechnologyFields to IDs!
+
+
                     //Add CustomTagging + Technologyfields to Tags
                     foreach (var tag in eventshort.CustomTagging ?? new List<string>())
                     {
                         if(!String.IsNullOrEmpty(tag))
                         {
                             if(!eventshort.TagIds.Contains(tag.ToLower()))
-                                eventshort.TagIds.Add(tag.ToLower());
+                            {
+                                //Search by KEy
+                                var toadd = eventshorttypes.Where(x => x.Key == tag).FirstOrDefault();
+                                if(toadd != null)
+                                    eventshort.TagIds.Add(toadd.Id);
+                            }
+                                
                         }                        
                     }
                     foreach (var technofields in eventshort.TechnologyFields ?? new List<string>())
@@ -808,7 +829,12 @@ namespace OdhApiImporter.Helpers
                         if (!String.IsNullOrEmpty(technofields))
                         {
                             if (!eventshort.TagIds.Contains(technofields.ToLower()))
-                                eventshort.TagIds.Add(technofields.ToLower());
+                            {
+                                //Search by KEy
+                                var toadd = eventshorttypes.Where(x => x.Key == technofields).FirstOrDefault();
+                                if (toadd != null)
+                                    eventshort.TagIds.Add(toadd.Id);                                
+                            }
                         }
                     }
 
@@ -1062,7 +1088,7 @@ namespace OdhApiImporter.Helpers
                 tag.TagName = topic.TypeDesc;  
                 tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
-                tag.ValidForEntity = new List<string>() { "event" };
+                tag.ValidForEntity = new List<string>() { "event", "eventshort" };
                 tag.MainEntity = "event";
                 tag.LastChange = DateTime.Now;
                 tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };

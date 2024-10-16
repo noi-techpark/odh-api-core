@@ -36,7 +36,7 @@ namespace DataModel
             "startupincubator " => "Start-up Incubator",
             "startups" => "Startups",
             "summeratnoi" => "Summer at NOI",
-            "techtransfer" => "Tech Transfer",
+            "techtransfer" => "Tech Transfer",            
             "automotiveautomation" => "Automotive/Automation",
             "digital" => "Digital",
             "food" => "Food",
