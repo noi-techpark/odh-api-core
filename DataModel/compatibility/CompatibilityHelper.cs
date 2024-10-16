@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataModel.compatibility
+namespace DataModel
 {
     //This class contains static helpers to map some outdated deprecated keys to the new keys
     public static class CompatibilityHelper
@@ -46,5 +46,58 @@ namespace DataModel.compatibility
         };
 
 
+        public static string ConvertArticleTypesToTags(string type) => type switch
+        {
+            "contentartikel" => "contentarticle",
+            "rezeptartikel" => "recipearticle",
+            "buchtippartikel" => "bookarticle",
+            "basisartikel" => "basearticle",
+            "reiseveranstalter" => "touroperatorarticle",
+            "katalog" => "catalog",
+            "idmartikel" => "idmarticle",
+            "veranstaltungsartikel" => "eventarticle",
+            "presseartikel" => "pressarticle",
+            "b2bartikel" => "b2barticle",            
+            "newsfeednoi" => "newsfeednoi",
+            "specialannouncement" => "specialannouncement",
+            _ => type
+        };
+
+        public static string ConvertArticleSubTypesToTags(string subtype) => subtype switch
+        {
+            "allgemeinepresseartikel" => "",
+            "Site Content" => "",
+            "Trekking-guides" => "",
+            "News" => "news",
+            "Kultur" => "culture",
+            "B2BVeranstaltung" => "",
+            "Ausstellungen/Kunst" => "",
+            "Gastronomy" => "",
+            "Kinder/Familie" => "",
+            "Tip" => "",
+            "Volksfest" => "",
+            "B2BNeuigkeiten" => "",
+            "Suggestion" => "",
+            "Gastronomie" => "",
+            "Geführte Touren" => "",
+            "Tradition" => "",
+            "Hotel" => "",
+            "genussbotschafter" => "",
+            "B2BProgrammTipp" => "",
+            "General" => "",
+            "Detail" => "",
+            "pressemitteilungen" => "",
+            "Kunsthandwerk" => "",
+            "Treffen" => "",
+            "Musik" => "music",
+            "pressethemenserviceartikel" => "pressthemeservice",
+            "Sport" => "sport",
+            "pressemeetings" => "pressmeeting",
+            "Culture-History" => "",
+            "hersteller" => "",
+            "B2BDetail" => "",
+            "Unterhaltung" => "",
+            _ => subtype
+        };
     }
 }

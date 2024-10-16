@@ -1885,7 +1885,7 @@ namespace DataModel
         //    {
         //        if (this.Tags != null)
         //        {
-        //            return this.Tags.Where(x => x.Type == "technologyfields").Count() > 0 ? this.Tags.Where(x => x.Type == "technologyfields").Select(x => x.Id).ToList() : null;
+        //            return this.Tags.Where(x => x.Type == "technologyfields").Count() > 0 ? this.Tags.Where(x => x.Type == "technologyfields").Select(x => CompatibilityHelper.GetOldEventShortTagnames(x.Id)).ToList() : null;
         //        }
         //        else
         //            return null;
@@ -1899,7 +1899,7 @@ namespace DataModel
         //    {
         //        if (this.Tags != null)
         //        {
-        //            return this.Tags.Where(x => x.Type == "customtagging").Count() > 0 ? this.Tags.Where(x => x.Type == "customtagging").Select(x => x.Id).ToList() : null;
+        //            return this.Tags.Where(x => x.Type == "customtagging").Count() > 0 ? this.Tags.Where(x => x.Type == "customtagging").Select(x => CompatibilityHelper.GetOldEventShortTagnames(x.Id)).ToList() : null;
         //        }
         //        else
         //            return null;
