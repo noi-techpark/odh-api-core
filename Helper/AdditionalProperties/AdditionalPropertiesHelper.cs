@@ -4,6 +4,8 @@
 
 using DataModel;
 using Helper.Location;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -22,35 +24,45 @@ namespace Helper.AdditionalProperties
         /// <param name="oldlocationinfo"></param>
         /// <param name="queryFactory"></param>
         /// <returns></returns>
-        public static async Task<IDictionary<string,string>> CheckAdditionalProperties<T>(this T data, QueryFactory queryFactory) where T : IHasAdditionalProperties
+        public static async Task<IDictionary<string,string>> CheckAdditionalProperties<T>(this T data) where T : IHasAdditionalProperties
         {
             Dictionary<string, string> errorlist = new Dictionary<string, string>();
 
+            bool success = false;
+
             foreach(var kvp in data.AdditionalProperties)
             {
-                Type mytype = Type.GetType(kvp.Key);
-                if(mytype != null)
+                switch (kvp.Key)
                 {
-                    switch (kvp.Key)
-                    {
-                        case "EchargingProperties" :
-                            if (kvp.Value is EchargingDataProperties)
-                                return errorlist;
-                            else
-                                return errorlist.TryAddOrUpdate("typecast failed", "type cannot be casted to EchargingProperties");
-                        default:
-                            return errorlist;
-                    }                    
-                }
-                else
-                {
-                    errorlist.Add("unknown type", "The Type " + kvp.Key + " is not known");
+                    case "EchargingDataProperties":
+
+                        var result = CastAs<EchargingDataProperties>(kvp.Value);
+                        success = result.Item1;
+                        if (!success)
+                            errorlist.TryAddOrUpdate("error", (string)result.Item2);
+                      
+                        break;
+                    default:
+                        errorlist.Add("unknown error", "The Type " + kvp.Key + " is not known");
+                        break;
                 }
             }
 
             return errorlist;
         }
         
+        public static (bool, string) CastAs<T>(dynamic data)
+        {
+            try
+            {
+                T info = ((JObject)data).ToObject<T>();
 
+                return (true,"");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
     }
 }

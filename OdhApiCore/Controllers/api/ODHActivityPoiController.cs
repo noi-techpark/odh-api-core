@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.AdditionalProperties;
 using Helper.Generic;
 using Helper.Identity;
 using Helper.Location;
@@ -421,6 +422,12 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
 
+                //CHECK AdditionalProperties Schema
+                var errordict = await AdditionalPropertiesHelper.CheckAdditionalProperties(odhactivitypoi);
+                //Return Badrequest if Type is not matching
+                if (errordict != null && errordict.Count > 0)
+                    return BadRequest(String.Join(",", errordict.Values));
+
                 //TODO DISTANCE Calculation
 
                 //TODO check for Reduced Data                
@@ -467,6 +474,12 @@ namespace OdhApiCore.Controllers.api
 
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //CHECK AdditionalProperties Schema
+                var errordict = await AdditionalPropertiesHelper.CheckAdditionalProperties(odhactivitypoi);
+                //Return Badrequest if Type is not matching
+                if (errordict != null && errordict.Count > 0)
+                    return BadRequest(String.Join(",", errordict.Values));
 
                 //TODO DISTANCE Calculation
 

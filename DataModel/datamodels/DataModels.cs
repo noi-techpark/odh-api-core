@@ -417,8 +417,8 @@ namespace DataModel
 
         //public ICollection<CarparkingArea> CarparkingArea { get; set; }
 
-        public EchargingCarparkingArea CarParkingSpaceNextToEachOther { get; set; }
-        public EchargingCarparkingArea CarParkingSpaceBehindEachOther { get; set; }
+        public EchargingCarparkingArea? CarParkingSpaceNextToEachOther { get; set; }
+        public EchargingCarparkingArea? CarParkingSpaceBehindEachOther { get; set; }
     }
 
     public class EchargingCarparkingArea
