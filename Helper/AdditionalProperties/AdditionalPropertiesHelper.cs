@@ -31,11 +31,16 @@ namespace Helper.AdditionalProperties
                 Type mytype = Type.GetType(kvp.Key);
                 if(mytype != null)
                 {
-
-                    //if(kvp.Value)
-                    //{
-
-                    //}
+                    switch (kvp.Key)
+                    {
+                        case "EchargingProperties" :
+                            if (kvp.Value is EchargingDataProperties)
+                                return errorlist;
+                            else
+                                return errorlist.TryAddOrUpdate("typecast failed", "type cannot be casted to EchargingProperties");
+                        default:
+                            return errorlist;
+                    }                    
                 }
                 else
                 {
