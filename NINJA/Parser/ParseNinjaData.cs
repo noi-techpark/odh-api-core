@@ -699,8 +699,8 @@ namespace NINJA.Parser
                 echargingpoi.Tags = new List<Tags>()
                 {
                     new Tags(){ Id = "poi", Source = "lts" },
-                    new Tags(){ Id = "mobility", Source = "lts" },
-                    new Tags(){ Id = "electric charging stations", Source = "lts" }
+                    new Tags(){ Id = "mobility", Source = "lts", Type = "categorytag" },
+                    new Tags(){ Id = "electric charging stations", Source = "lts", Type = "tag" }
                 };
 
                 //Adding Category 
@@ -721,22 +721,25 @@ namespace NINJA.Parser
                 //Detail
                 var detail = default(Detail);
 
-                if(echargingpoi.Detail != null && echargingpoi.Detail.ContainsKey("en"))
+                string chargingstationname = data.sname;
+                
+                //If data is from static spreadsheet use scode
+                if (data.porigin.ToLower() == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
+                    chargingstationname = data.scode;
+
+
+                if (echargingpoi.Detail != null && echargingpoi.Detail.ContainsKey("en"))
                 {
                     //sname
-                    echargingpoi.Detail["en"].Title = data.sname;
-
-                    //If data is from static spreadsheet use scode
-                    if (data.porigin.ToLower() == "1uccqzavgmvyrpeq-lipffalqawcg4lfpakc2mjt79fy")
-                        echargingpoi.Detail["en"].Title = data.scode;
-
+                    echargingpoi.Detail["en"].Title = chargingstationname;
+                  
                     echargingpoi.Detail["en"].AdditionalText = data.pname;
                     echargingpoi.Detail.TryAddOrUpdate("en", echargingpoi.Detail["en"]);
                 }
                 else
-                    echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = data.sname, AdditionalText = data.pname, Language = "en" });
+                    echargingpoi.Detail.TryAddOrUpdate("en", new Detail() { Title = chargingstationname, AdditionalText = data.pname, Language = "en" });
 
-                //ContactInfo
+                //ContactInfo TO CHECK!! if Contactinfo is modified by Independent?
                 echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.pmetadata.address, City = data.pmetadata.city, Language = "en" });
 
                 //GpsInfo

@@ -5,6 +5,7 @@
 using AspNetCore.CacheOutput;
 using DataModel;
 using Helper;
+using Helper.AdditionalProperties;
 using Helper.Generic;
 using Helper.Identity;
 using Helper.Location;
@@ -421,6 +422,9 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
 
+                //CHECK AdditionalProperties Schema
+                await AdditionalPropertiesHelper.CheckAdditionalProperties(odhactivitypoi);
+
                 //TODO DISTANCE Calculation
 
                 //TODO check for Reduced Data                
@@ -467,6 +471,10 @@ namespace OdhApiCore.Controllers.api
 
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
+
+                //CHECK AdditionalProperties Schema
+                await AdditionalPropertiesHelper.CheckAdditionalProperties(odhactivitypoi);
+
 
                 //TODO DISTANCE Calculation
 

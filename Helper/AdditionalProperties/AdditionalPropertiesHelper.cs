@@ -22,31 +22,36 @@ namespace Helper.AdditionalProperties
         /// <param name="oldlocationinfo"></param>
         /// <param name="queryFactory"></param>
         /// <returns></returns>
-        public static async Task<IDictionary<string,string>> CheckAdditionalProperties<T>(this T data, QueryFactory queryFactory) where T : IHasAdditionalProperties
+        public static async Task<IDictionary<string,string>> CheckAdditionalProperties<T>(this T data) where T : IHasAdditionalProperties
         {
             Dictionary<string, string> errorlist = new Dictionary<string, string>();
 
+            bool success = false;
+
             foreach(var kvp in data.AdditionalProperties)
             {
-                Type mytype = Type.GetType(kvp.Key);
-                if(mytype != null)
+                switch (kvp.Key)
                 {
-                    switch (kvp.Key)
-                    {
-                        case "EchargingProperties" :
-                            if (kvp.Value is EchargingDataProperties)
-                                return errorlist;
-                            else
-                                return errorlist.TryAddOrUpdate("typecast failed", "type cannot be casted to EchargingProperties");
-                        default:
-                            return errorlist;
-                    }                    
-                }
-                else
-                {
-                    errorlist.Add("unknown type", "The Type " + kvp.Key + " is not known");
+                    case "EchargingProperties":
+                        if (kvp.Value is EchargingDataProperties)
+                            success = true;
+                        else
+                        {
+                            success = false;
+                            errorlist.TryAddOrUpdate("typecast failed", "type cannot be casted to EchargingProperties");
+                        }
+                            
+                        break;
+                    default:
+                        errorlist.Add("unknown type", "The Type " + kvp.Key + " is not known");
+                        break;
+
                 }
             }
+
+            if(!success && errorlist.Count == 0)
+                errorlist.Add("unknown error", "Some Type is not known or does not match");
+
 
             return errorlist;
         }
