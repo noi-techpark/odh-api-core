@@ -367,19 +367,23 @@ namespace DataModel
         //outlets [ id, maxPower, maxCurrent, minCurrent, outletTypeCode (Type2Mennekes, CHAdeMO, CCS, 700 bar small vehicles, )  ]
         
         public int? Capacity { get; set; }
+
+        [SwaggerSchema(Description = "State of the E-chargingstation", ReadOnly = true)]
         [SwaggerEnum(new[] { "UNAVAILABLE", "ACTIVE", "TEMPORARYUNAVAILABLE", "AVAILABLE", "UNKNOWN","FAULT", "PLANNED" })]
         public string? State { get; set; }
 
+        [SwaggerSchema(Description = "Information about Payment", ReadOnly = true)]
         public string? PaymentInfo { get; set; }
 
+        [SwaggerSchema(Description = "Public or private access", ReadOnly = true)]
         [SwaggerEnum(new[] { "PUBLIC", "PRIVATE", "PRIVATE_WITHPUBLICACCESS" })]
         public string? AccessType { get; set; }
-
-        //If accesstype public, or private_withpublicaccess set to true
-     
+        
+        [SwaggerSchema(Description = "Types of the Charging Pistols", ReadOnly = true)]
         [SwaggerEnum(new[] { "Typ 1-Stecker", "Typ 2-Stecker", "Combo-Stecker", "CHAdeMO-Stecker", "Tesla Supercharger" })]
         public List<string>? ChargingPistolTypes { get; set; }
 
+        [SwaggerSchema(Description = "AccessType Information", ReadOnly = true)]
         public string AccessTypeInfo { get; set; }
 
         public DateTime? SurveyDate { get; set; }
@@ -392,14 +396,14 @@ namespace DataModel
         public bool? HorizontalFloorRoadSign { get; set; }
 
 
-
+        [SwaggerSchema(Description = "Charging Station Accessible", ReadOnly = true)]
         public bool? ChargingStationAccessible { get; set; }
 
         [SwaggerSchema("Maximum operation height in cm")]
         public int? DisplayOrCardReaderOperationHeight { get; set; }
 
         [SwaggerSchema("Maximum operation height in cm (barrierfree = 90-120 cm)")]
-        public string? ChargingPistolOperationHeight { get; set; }
+        public int? ChargingPistolOperationHeight { get; set; }
 
         public int? ChargingCableLength { get; set; }
       
@@ -2070,11 +2074,13 @@ namespace DataModel
 
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public string? VideoUrl { get; set; }
-        public List<string>? TechnologyFields { get; set; }
 
+        //[SwaggerDeprecated("Deprecated, use GpsInfo")]
+        public List<string>? TechnologyFields { get; set; }
+        //[SwaggerDeprecated("Deprecated, use GpsInfo")]
         public List<string>? CustomTagging { get; set; }
 
-        [SwaggerDeprecated("Deprecated, use Documents")]
+         [SwaggerDeprecated("Deprecated, use Documents")]
         public List<DocumentPDF>? EventDocument {
             get
             {

@@ -100,6 +100,8 @@ namespace OdhApiImporter.Helpers
                 IDictionary<string, string> eventText = new Dictionary<string,string>();
                 ICollection<string>? publishedon = new List<string>();
 
+                ICollection<string>? tagids = null;
+
                 if (eventindb == null)
                 {                    
                     eventshort.FirstImport = DateTime.Now;
@@ -130,6 +132,8 @@ namespace OdhApiImporter.Helpers
                     soldout = eventindb.SoldOut;
 
                     publishedon = eventindb.PublishedOn;
+
+                    tagids = eventindb.TagIds;
                 }
 
                 if (changedonDB != eventshort.ChangedOn)
@@ -149,6 +153,9 @@ namespace OdhApiImporter.Helpers
                     eventshort.VideoUrl = videourl;
                     eventshort.TechnologyFields = technologyfields;
                     eventshort.CustomTagging = customtagging;
+
+                    eventshort.TagIds = tagids;
+
                     if (!String.IsNullOrEmpty(webadress))
                         eventshort.WebAddress = webadress;
 
@@ -165,6 +172,8 @@ namespace OdhApiImporter.Helpers
                         if (String.IsNullOrEmpty(eventshort.Display5))
                             eventshort.Display5 = "NOI";
 
+                        //MODIFIED
+                        eventshort.TagIds = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                         eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 

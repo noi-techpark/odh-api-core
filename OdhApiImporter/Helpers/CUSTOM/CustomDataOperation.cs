@@ -12,6 +12,7 @@ using Helper;
 using Microsoft.FSharp.Control;
 using System.Diagnostics;
 using Helper.Generic;
+using Helper.Tagging;
 using Helper.JsonHelpers;
 using Newtonsoft.Json;
 using SqlKata;
@@ -776,6 +777,112 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> FillEventShortTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+
+            //Load all eventshortdata from PG
+            var queryeventshorttypes = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventshorttypes");
+
+            var eventshorttypes = await queryeventshorttypes.GetObjectListAsync<SmgPoiTypes>();
+
+            foreach (var eventshort in data)
+            {
+                if((eventshort.CustomTagging != null  && eventshort.CustomTagging.Count > 0) || (eventshort.TechnologyFields != null && eventshort.TechnologyFields.Count > 0))
+                {
+                    if (eventshort.TagIds == null)
+                        eventshort.TagIds = new List<string>();
+
+
+                    //TODO TRANSFORM KEYS used in CustomTagging and TechnologyFields to IDs!
+
+
+                    //Add CustomTagging + Technologyfields to Tags
+                    foreach (var tag in eventshort.CustomTagging ?? new List<string>())
+                    {
+                        if (!String.IsNullOrEmpty(tag))
+                        {
+                            //Search by KEy
+                            var toadd = eventshorttypes.Where(x => x.Key == tag).FirstOrDefault();
+                            if (toadd != null)
+                            {
+                                if (!eventshort.TagIds.Contains(toadd.Id))
+                                {
+                                    eventshort.TagIds.Add(toadd.Id);
+                                }
+                            }
+                        }                 
+                    }
+                    foreach (var technofields in eventshort.TechnologyFields ?? new List<string>())
+                    {
+                        if (!String.IsNullOrEmpty(technofields))
+                        {
+                            //Search by KEy
+                            var toadd = eventshorttypes.Where(x => x.Key == technofields).FirstOrDefault();
+                            if (toadd != null)
+                            {
+                                if (!eventshort.TagIds.Contains(toadd.Id))
+                                {
+                                    eventshort.TagIds.Add(toadd.Id);
+                                }
+                            }
+                        }
+                    }
+
+                    //Populate Tags (Id/Source/Type)
+                    await eventshort.UpdateTagsExtension(QueryFactory);
+
+                    //Save tp DB
+                    var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                        //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                        .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                    i++;
+                }
+                
+            }
+
+            return i;
+        }
+
+        public async Task<int> ResaveEventShortWithTags()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("eventeuracnoi");
+
+            var data = await query.GetObjectListAsync<EventShortLinked>();
+            int i = 0;
+
+            foreach (var eventshort in data)
+            {                
+                if (eventshort.TagIds != null && eventshort.TagIds.Count != eventshort.TagIds.Distinct().Count())
+                {
+                    eventshort.TagIds = eventshort.TagIds.Distinct().ToList();
+                }
+
+                //Save tp DB
+                var queryresult = await QueryFactory.Query("eventeuracnoi").Where("id", eventshort.Id)
+                    //.UpdateAsync(new JsonBData() { id = eventshort.Id.ToLower(), data = new JsonRaw(eventshort) });
+                    .UpdateAsync(new JsonBData() { id = eventshort.Id?.ToLower() ?? "", data = new JsonRaw(eventshort) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+
         #endregion
 
         #region Wine
@@ -981,7 +1088,7 @@ namespace OdhApiImporter.Helpers
                 tag.TagName = topic.TypeDesc;  
                 tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
-                tag.ValidForEntity = new List<string>() { "event" };
+                tag.ValidForEntity = new List<string>() { "event", "eventshort" };
                 tag.MainEntity = "event";
                 tag.LastChange = DateTime.Now;
                 tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
