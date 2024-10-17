@@ -4,6 +4,8 @@
 
 using DataModel;
 using Helper.Location;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -32,30 +34,35 @@ namespace Helper.AdditionalProperties
             {
                 switch (kvp.Key)
                 {
-                    case "EchargingProperties":
-                        if (kvp.Value is EchargingDataProperties)
-                            success = true;
-                        else
-                        {
-                            success = false;
-                            errorlist.TryAddOrUpdate("typecast failed", "type cannot be casted to EchargingProperties");
-                        }
-                            
+                    case "EchargingDataProperties":
+
+                        var result = CastAs<EchargingDataProperties>(kvp.Value);
+                        success = result.Item1;
+                        if (!success)
+                            errorlist.TryAddOrUpdate("error", (string)result.Item2);
+                      
                         break;
                     default:
-                        errorlist.Add("unknown type", "The Type " + kvp.Key + " is not known");
+                        errorlist.Add("unknown error", "The Type " + kvp.Key + " is not known");
                         break;
-
                 }
             }
-
-            if(!success && errorlist.Count == 0)
-                errorlist.Add("unknown error", "Some Type is not known or does not match");
-
 
             return errorlist;
         }
         
+        public static (bool, string) CastAs<T>(dynamic data)
+        {
+            try
+            {
+                T info = ((JObject)data).ToObject<T>();
 
+                return (true,"");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
     }
 }

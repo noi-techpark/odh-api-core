@@ -716,8 +716,7 @@ namespace NINJA.Parser
 
                 echargingpoi.Id = id;
 
-                echargingpoi.Shortname = data.sname;
-
+              
                 //Detail
                 var detail = default(Detail);
 
@@ -741,6 +740,9 @@ namespace NINJA.Parser
 
                 //ContactInfo TO CHECK!! if Contactinfo is modified by Independent?
                 echargingpoi.ContactInfos.TryAddOrUpdate("en", new ContactInfos() { Address = data.pmetadata.address, City = data.pmetadata.city, Language = "en" });
+
+                echargingpoi.Shortname = echargingpoi.Detail != null ? echargingpoi.Detail.FirstOrDefault().Value.Title : data.sname;
+
 
                 //GpsInfo
                 //"pcoordinate": {

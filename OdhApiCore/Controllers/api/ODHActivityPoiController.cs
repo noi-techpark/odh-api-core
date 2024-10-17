@@ -423,7 +423,10 @@ namespace OdhApiCore.Controllers.api
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
 
                 //CHECK AdditionalProperties Schema
-                await AdditionalPropertiesHelper.CheckAdditionalProperties(odhactivitypoi);
+                var errordict = await AdditionalPropertiesHelper.CheckAdditionalProperties(odhactivitypoi);
+                //Return Badrequest if Type is not matching
+                if (errordict != null && errordict.Count > 0)
+                    return BadRequest(String.Join(",", errordict.Values));
 
                 //TODO DISTANCE Calculation
 
@@ -473,8 +476,10 @@ namespace OdhApiCore.Controllers.api
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
 
                 //CHECK AdditionalProperties Schema
-                await AdditionalPropertiesHelper.CheckAdditionalProperties(odhactivitypoi);
-
+                var errordict = await AdditionalPropertiesHelper.CheckAdditionalProperties(odhactivitypoi);
+                //Return Badrequest if Type is not matching
+                if (errordict != null && errordict.Count > 0)
+                    return BadRequest(String.Join(",", errordict.Values));
 
                 //TODO DISTANCE Calculation
 
