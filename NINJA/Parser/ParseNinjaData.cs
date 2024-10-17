@@ -11,6 +11,7 @@ using System.Text;
 using Amazon.Auth.AccessControlPolicy;
 using DataModel;
 using Helper;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.FSharp.Control;
 
 namespace NINJA.Parser
@@ -769,7 +770,7 @@ namespace NINJA.Parser
 
                 if(echargingpoi.AdditionalProperties != null && echargingpoi.AdditionalProperties.ContainsKey(additionalpropertieskey))
                 {
-                    var propstonotoverwrite = echargingpoi.AdditionalProperties[additionalpropertieskey];
+                    var propstonotoverwrite = (EchargingDataProperties)echargingpoi.AdditionalProperties[additionalpropertieskey];
 
                     properties.HorizontalFloorRoadSign = propstonotoverwrite.HorizontalFloorRoadSign;
                     properties.SurveyDate = propstonotoverwrite.SurveyDate;
@@ -792,6 +793,11 @@ namespace NINJA.Parser
                 //if (echargingpoi.AdditionalProperties == null)
                 //    echargingpoi.AdditionalProperties = new Dictionary<string, dynamic>();
 
+                //if (echargingpoi.AdditionalProperties.ContainsKey(additionalpropertieskey))
+                //    echargingpoi.AdditionalProperties[additionalpropertieskey] = (IAdditionalProperties)properties;
+                //else
+                //    echargingpoi.AdditionalProperties.Add(additionalpropertieskey, (IAdditionalProperties)properties);
+                
                 echargingpoi.AdditionalProperties.TryAddOrUpdate(additionalpropertieskey, properties);
 
                 //Mapping Object
