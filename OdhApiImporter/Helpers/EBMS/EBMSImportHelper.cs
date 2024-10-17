@@ -6,6 +6,7 @@ using DataModel;
 using EBMS;
 using Helper;
 using Helper.Extensions;
+using Helper.Tagging;
 using Newtonsoft.Json;
 using SqlKata.Execution;
 using System;
@@ -182,6 +183,13 @@ namespace OdhApiImporter.Helpers
                         publishedon.TryAddOrUpdateOnList("today.noi.bz.it");
                     if (eventshort.Display1 == "N")
                         publishedon.TryRemoveOnList("today.noi.bz.it");
+
+                    //Fix when TagIds are set lets update the Tags Object
+                    if(eventshort.TagIds != null && eventshort.TagIds.Count > 0)
+                    {
+                        //Populate Tags (Id/Source/Type)
+                        await eventshort.UpdateTagsExtension(QueryFactory);
+                    }
 
                     var queryresult = await InsertDataToDB(eventshort, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
 
