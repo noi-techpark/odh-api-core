@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Helper.Tagging;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -819,6 +820,10 @@ namespace OdhApiCore.Controllers.api
                     //To Test Trim all Data
                     eventshort.TrimStringProperties();
 
+                    //Populate Tags (Id/Source/Type)
+                    await eventshort.UpdateTagsExtension(QueryFactory);
+
+
                     return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter)); ;
                 }
                 else
@@ -918,6 +923,9 @@ namespace OdhApiCore.Controllers.api
                     //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
 
                     eventshort.TrimStringProperties();
+
+                    //Populate Tags (Id/Source/Type)
+                    await eventshort.UpdateTagsExtension(QueryFactory);
 
                     return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
                 }
