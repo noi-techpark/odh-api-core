@@ -382,6 +382,11 @@ namespace DataModel
         ICollection<Tags> Tags { get; set; }
     }
 
+    public interface IHasAdditionalProperties
+    {
+        IDictionary<string, dynamic> AdditionalProperties { get; set; }
+    }
+
     #endregion
 
 }

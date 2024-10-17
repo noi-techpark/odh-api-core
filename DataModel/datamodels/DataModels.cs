@@ -214,7 +214,7 @@ namespace DataModel
 
     #region Activities & POIs      
 
-    public class ODHActivityPoi : PoiBaseInfos, ILicenseInfo, IGPSPointsAware
+    public class ODHActivityPoi : PoiBaseInfos, ILicenseInfo, IGPSPointsAware, IHasAdditionalProperties
     {
         public ODHActivityPoi()
         {
@@ -263,19 +263,18 @@ namespace DataModel
             }
         }
 
+        //Check if here we can define what classes this Additionalproperties can be
+        //[SwaggerSchema()]
         public IDictionary<string, dynamic>? AdditionalProperties { get; set; }
     }
 
-    //public class AdditionalProperties
-    //{
-    //    public IDictionary<string, dynamic>? Data { get; set; }
+    public interface IAdditionalProperties
+    {
 
-    //    //public string Schema { get; set; }
-    //    //public dynamic Data { get; set; }
-    //}
+    }
 
     //TODO Move all properties to this section
-    public class ODHActivityPoiProperties
+    public class ODHActivityPoiProperties : IAdditionalProperties
     {
         public int? AgeFrom { get; set; }
         public int? AgeTo { get; set; }
