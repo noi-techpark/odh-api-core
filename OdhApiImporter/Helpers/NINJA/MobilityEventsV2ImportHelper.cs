@@ -189,7 +189,7 @@ namespace OdhApiImporter.Helpers
 
                         //Publishedon? no push needed here
                      
-                        updateresult = await QueryFactory.Query("events").Where("id", eventid)
+                        updateresult = await QueryFactory.Query("eventsv2").Where("id", eventid)
                                         .UpdateAsync(new JsonBData() { id = eventid, data = new JsonRaw(data) });                        
                     }
                 }

@@ -40,6 +40,14 @@ namespace Helper.AdditionalProperties
                         success = result.Item1;
                         if (!success)
                             errorlist.TryAddOrUpdate("error", (string)result.Item2);
+                        else
+                        {
+                            //Assign the Casted model
+                            if(result.Item3 != null)
+                            {
+                                data.AdditionalProperties.TryAddOrUpdate("EchargingDataProperties", (EchargingDataProperties)result.Item3);
+                            }
+                        }
                       
                         break;
                     default:
@@ -51,17 +59,17 @@ namespace Helper.AdditionalProperties
             return errorlist;
         }
         
-        public static (bool, string) CastAs<T>(dynamic data)
+        public static (bool, string, T) CastAs<T>(dynamic data)
         {
             try
             {
                 T info = ((JObject)data).ToObject<T>();
 
-                return (true,"");
+                return (true,"", info);
             }
             catch (Exception ex)
             {
-                return (false, ex.Message);
+                return (false, ex.Message, default(T));
             }
         }
     }
