@@ -68,10 +68,10 @@ namespace Helper
                 {
                     var listtoadd = new List<Tags>();
 
-                    //if (returnDict.ContainsKey(kvp.Key))
-                    //    listtoadd = returnDict[kvp.Key];
+                    string type = kvp.Key == "lts" ? "ltscategory" : "odhcategory";
+                    string name = kvp.Value.TagName != null ? kvp.Value.TagName.ContainsKey("en") ? kvp.Value.TagName["en"] : kvp.Value.TagName.FirstOrDefault().Value : "";
 
-                    var tagtoadd = new Tags() { Id = kvp.Value, Source = kvp.Key };
+                    var tagtoadd = new Tags() { Id = kvp.Value.Id, Source = kvp.Key, Type = type, Name = name };
 
                     if (!listtoadd.Select(x => x.Id).Contains(tagtoadd.Id))
                         listtoadd.Add(tagtoadd);
@@ -84,22 +84,22 @@ namespace Helper
             return returnDict;
         }
 
-        private static IDictionary<string, string> TranslateMappingKey(string germankey, List<TagLinked> alltaglist)
+        private static IDictionary<string, TagLinked> TranslateMappingKey(string germankey, List<TagLinked> alltaglist)
         {
-            var returnDict = new Dictionary<string, string>();
+            var returnDict = new Dictionary<string, TagLinked>();
 
-            var tagen = alltaglist.Where(x => x.ODHTagIds.Any(y => y == germankey)).FirstOrDefault();
+            var tagen = alltaglist.Where(x => x.ODHTagIds != null && x.ODHTagIds.Any(y => y == germankey)).FirstOrDefault();
 
             if (tagen?.Id != null)
             {
                 if (tagen.Types.Contains("ODHCategory") || tagen.Types.Contains("odhcategory"))
                 {
-                    returnDict.Add("idm", tagen.Id);
+                    returnDict.Add("idm", tagen);
                 }
 
                 if (tagen.Types.Contains("LTSCategory") || tagen.Types.Contains("ltscategory"))
                 {
-                    returnDict.Add("lts", tagen.Id);
+                    returnDict.Add("lts", tagen);
                 }
             }
 
