@@ -430,10 +430,10 @@ namespace DataModel
         public bool? Flat { get; set; }
 
         [SwaggerSchema("Steigung % (wenn Steigung >5%)")] 
-        public int? Gradient { get; set; }
+        public double? Gradient { get; set; }
 
         [SwaggerSchema("Querneigung % (wenn Querneigung >3%)")] 
-        public int? LateralInclination { get; set; }
+        public double? LateralInclination { get; set; }
         
         [SwaggerEnum(new[] { "Barrierefrei", "Bedingt zugänglich", "Nicht zugänglich" })]
         public string Pavement { get; set; }
