@@ -29,9 +29,12 @@ Port of ODH Tourim Api to .Net Core.
 
 ## Project Structure
 
+Test Server on https://api.tourism.testingmachine.eu  
+Production Server on https://tourism.api.opendatahub.com
+
 ### DataModel
 
-Definition of all ODH Tourism Models
+Definition of all ODH Tourism Models. Available as Nuget package (https://www.nuget.org/packages/opendatahub-datamodel-tourism)
 
 ### OdhApiCore
 
@@ -45,19 +48,46 @@ Workerservice which is importing the Data with help of the Data Collectors
 
 Class Library with Extension Methods and other ODH Helper Methods
 
-### CDB, DSS, EBMS, LCS, MSS, NINJA, RAVEN, SIAG, STA, SuedtirolWein
+### CDB, DSS, EBMS, LCS, MSS, NINJA, RAVEN, SIAG, STA, SuedtirolWein, A22, FERATEL, LOOPTEC, PANOMAX, PANOCLOUD
 
 Data Collectors used by Api and Importer, usually containing classes that retrieve Data, and classes that parse the data to ODH Objects (defined in DataModel)
 
+### GeoConverter
+
+Helper Library which allows converting  
+kml to GeoJson  
+gpx to GeoJson
+
+### JsonLDTransformer
+
+Helper Library which converts Open Data Hub Content Api Objects to schema.org Models in ld+json format.
+
+### OdhNotifier
+
+Component which notifies pre configured Consumers about Data Changes
+
+### PushServer
+
+Component which generateds Push Messages (Firebase Cloud Messaging)
+
+### RawQueryParser
+
+Helper Library where the rawfilter/rawsort functionality is implemented.
+
 ## Database
 
-Postgres 12 
+Postgres 15. The data is stored as Json Datatype in a single Column.
+
+### Extensions
+
 Extensions active on DB
 
 * extension earthdistance;
 * extension cube;
 * extension pg_trgm;
 * extension postgis
+
+### Custom Functions
 
 Custom Functions on DB
 
@@ -76,8 +106,20 @@ Custom Functions on DB
 
 These custom functions are used for the generated Columns
 
-Test Server on https://api.tourism.testingmachine.eu  
-Production Server on https://tourism.api.opendatahub.com
+### Generated Columns
+
+To speed up certain filters this project uses generated Columns where certain fields of the json data
+is modelled as columns where indices can be set.
+
+### Indices
+
+Different Indices used
+- btree indices (Single column indices)
+- gin indices (Index for the Json Column)
+- gist indices (Indices to speed up distance search)
+- trigram indices (Indices to speed up Title search)
+
+
 
 ## Getting started:
 
