@@ -81,6 +81,11 @@ let transfomerTests =
                 let actual = transformFilter "isnotnull(Detail.ru.Title)"
                 Expect.equal actual expected ""
             }
+            test "NOT NULL with kebab case field" {
+                let expected = """data#>>'\{PublishDataWithTagOn,idm-marketplace\}' IS NOT NULL"""
+                let actual = transformFilter "isnotnull(PublishDataWithTagOn.idm-marketplace)"
+                Expect.equal actual expected ""
+            }
             test "IN with simple field" {
                 let expected = """(data @> '\{"HasLanguage":"de"\}')"""
                 let actual = transformFilter "in(HasLanguage,'de')"
