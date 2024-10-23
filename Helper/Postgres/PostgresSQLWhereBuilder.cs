@@ -15,9 +15,6 @@ namespace Helper
         private static readonly string[] _languagesToSearchFor =
             new[] { "de", "it", "en", "nl", "cs", "pl", "fr", "pl" };
 
-
-
-
         /// <summary>
         /// Provide title fields as JsonPath
         /// </summary>
@@ -30,67 +27,67 @@ namespace Helper
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"Detail.{lang}.Title"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] TitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true &&
-                haslanguage != null ? haslanguage.Contains(lang) : true
+                haslanguage != null && haslanguage.Count > 0 ? haslanguage.Contains(lang) : true
             ).Select(lang =>
                 $"Detail.{lang}.Title"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] AccoTitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"AccoDetail.{lang}.Name"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] AccoTitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true &&
-                haslanguage != null ? haslanguage.Contains(lang) : true
+                haslanguage != null && haslanguage.Count > 0 ? haslanguage.Contains(lang) : true
             ).Select(lang =>
                 $"AccoDetail.{lang}.Name"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] AccoRoomNameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"AccoRoomDetail.{lang}.Name"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] AccoRoomNameFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
         _languagesToSearchFor.Where(lang =>
             language != null ? lang == language : true &&
-                haslanguage != null ? haslanguage.Contains(lang) : true
+                haslanguage != null && haslanguage.Count > 0 ? haslanguage.Contains(lang) : true
         ).Select(lang =>
             $"AccoRoomDetail.{lang}.Name"
-        ).ToArray();
+        ).ToArray().AddToStringArray("Id");
 
         public static string[] EventShortTitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"EventTitle.{lang}"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] EventShortTitleFieldsToSearchFor(string? language, IReadOnlyCollection<string>? haslanguage) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true &&
-                haslanguage != null ? haslanguage.Contains(lang) : true
+                haslanguage != null && haslanguage.Count > 0 ? haslanguage.Contains(lang) : true
             ).Select(lang =>
                 $"EventTitle.{lang}"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] TourismMetaDataTitleFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"ApiDescription.{lang}"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         //TODO TRANSFORM LANGUAGE to deu,eng,ita
         //public static string[] VenueTitleFieldsToSearchFor(string? language) =>
@@ -128,21 +125,21 @@ namespace Helper
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"TypeDesc.{lang}"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] TagNameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"TagName.{lang}"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] NameFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
                 language != null ? lang == language : true
             ).Select(lang =>
                 $"Name.{lang}"
-            ).ToArray();
+            ).ToArray().AddToStringArray("Id");
 
         public static string[] WeatherHistoryFieldsToSearchFor(string? language) =>
             _languagesToSearchFor.Where(lang =>
