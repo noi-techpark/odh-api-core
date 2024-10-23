@@ -10,7 +10,7 @@ open FParsec
 type Parser<'a> = Parser<'a, unit>
 
 let field =
-    let lettersDigitsAndUnderscore c = isAsciiLetter c || isDigit c || c = '_' || c = '@'
+    let lettersDigitsAndUnderscore c = isAsciiLetter c || isDigit c || c = '_' || c = '-' || c = '@'
     let options = IdentifierOptions(isAsciiIdStart = lettersDigitsAndUnderscore,
                                     isAsciiIdContinue = lettersDigitsAndUnderscore)
     let fieldArraySegment =

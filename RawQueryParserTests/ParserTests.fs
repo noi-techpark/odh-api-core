@@ -21,6 +21,16 @@ let parserTests =
                 let actual = run field "Detail.de.Title"
                 Expect.equal actual expected ""
             }
+            test "Field with snake case" {
+                let expected = Ok (Field [IdentifierSegment "Detail_Field"])
+                let actual = run field "Detail_Field"
+                Expect.equal actual expected ""
+            }
+            test "Field with kebab case" {
+                let expected = Ok (Field [IdentifierSegment "Detail-Field"])
+                let actual = run field "Detail-Field"
+                Expect.equal actual expected ""
+            }
             test "Field with .[] array syntax" {
                 let expected = Ok (Field [IdentifierSegment "Features"; ArraySegment; IdentifierSegment "Id"])
                 let actual = run field "Features.[].Id"
