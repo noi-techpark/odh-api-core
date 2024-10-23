@@ -59,9 +59,6 @@ namespace OdhApiCore.Controllers.api
             return Ok(JsonConvert.SerializeObject(settings.NoRateLimitConfig));
         }
 
-        
-
-
         [HttpGet, Route("UrlHelper", Name = "UrlHelperTest")]
         public object GetUrl(CancellationToken cancellationToken)
         {

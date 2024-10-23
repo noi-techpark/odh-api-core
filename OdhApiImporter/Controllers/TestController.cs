@@ -4,6 +4,7 @@
 
 using Helper;
 using Helper.Factories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -48,13 +49,19 @@ namespace OdhApiImporter.Controllers
             return Ok("importer alive");
         }
 
-       
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("TestAuthorized")]
+        public IActionResult GetAuthorized()
+        {
+            return Ok("importer alive");
+        }
+
 
         //[HttpGet, Route("TestMongoDB")]
         //public async Task<IActionResult> TestMongoDB()
         //{
         //    var test = MongoDBFactory.GetDocumentById<BsonDocument>("TestDB", "TestDB", "63cfa30278b2fc0eda271a28");
-            
+
         //    return Ok(test.ToString());
         //}
     }

@@ -662,7 +662,7 @@ namespace NINJA.Parser
                     additionalinfos.TicketInfo = ninjaevent.link_to_ticket_info;
                 }
 
-                myevent.AdditionalProperties.Add(typeof(AdditionalInfosCentroTrevi).Name, pricedouble);
+                myevent.AdditionalProperties.Add(typeof(AdditionalInfosCentroTrevi).Name, additionalinfos);
 
                 //PublishedOn        
        

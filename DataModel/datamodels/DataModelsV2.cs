@@ -141,39 +141,6 @@ namespace DataModel
         public string? Self { get; set; }
     }
 
-
-    //NOT USED anymore
-    //public class EventInfo
-    //{       
-    //    //Begin and Enddate in UTC (could be created automatically)
-    //    public double BeginUTC { get; set; }
-    //    public double EndUTC { get; set; }
-
-    //    //Assigned Venue
-    //    public List<string> VenueIds { get; set; }
-
-    //    [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-    //    public ICollection<VenueLink> Venues
-    //    {
-    //        get
-    //        {
-    //            return this.VenueIds != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "VenueV2/" + x }).ToList() : new List<VenueLink>();
-    //        }
-    //    }
-
-    //    //Dynamic Additional Properties field
-    //    public IDictionary<string, dynamic> AdditionalProperties { get; set; }
-
-    //    //Detail Information
-    //    public IDictionary<string, Detail> Detail { get; set; }
-
-    //    //Documents
-    //    public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }        
-
-    //    //Capacity of the Event Venue Combination (not always the same as the Venue Capacity)
-    //    public int? Capacity { get; set; }
-    //}
-
     public class DocumentDetailed : Document
     {
         public string Description { get; set; }
@@ -216,7 +183,7 @@ namespace DataModel
 
     #region VenueV2 Datamodel
 
-    public class VenueV2: IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IPublishedOn, IVideoItemsAware, IImportDateassigneable, ISource
+    public class VenueV2: IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IPublishedOn, IVideoItemsAware, IImportDateassigneable, ISource, IHasTagInfo
     {
         public VenueV2()
         {
@@ -299,11 +266,6 @@ namespace DataModel
         }
     }
 
-    //public class TagV2 : Tags
-    //{
-    //    public string Code { get; set; }
-    //}
-
     public class VenueSetupV2
     {
         public int Capacity { get; set; }
@@ -326,7 +288,7 @@ namespace DataModel
 
     #region AccommodationV2 Datamodel
 
-    public class AccommodationV2 : AccommodationLinked
+    public class AccommodationV2 : AccommodationLinked, IHasTagInfo
     {
         //New, holds all Infos of Trust You
         public IDictionary<string, Review>? Review { get; set; }
@@ -475,11 +437,6 @@ namespace DataModel
 
     #endregion
 
-    #region Tag
-
-
-    #endregion
-
     #region AdditionalInfos
 
     //AdditionalInfos Centrotrevi
@@ -491,5 +448,38 @@ namespace DataModel
     }
 
     #endregion
+
+
+    //NOT USED anymore
+    //public class EventInfo
+    //{       
+    //    //Begin and Enddate in UTC (could be created automatically)
+    //    public double BeginUTC { get; set; }
+    //    public double EndUTC { get; set; }
+
+    //    //Assigned Venue
+    //    public List<string> VenueIds { get; set; }
+
+    //    [SwaggerSchema(Description = "generated field", ReadOnly = true)]
+    //    public ICollection<VenueLink> Venues
+    //    {
+    //        get
+    //        {
+    //            return this.VenueIds != null ? this.VenueIds.Select(x => new VenueLink() { Id = x, Self = "VenueV2/" + x }).ToList() : new List<VenueLink>();
+    //        }
+    //    }
+
+    //    //Dynamic Additional Properties field
+    //    public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+
+    //    //Detail Information
+    //    public IDictionary<string, Detail> Detail { get; set; }
+
+    //    //Documents
+    //    public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }        
+
+    //    //Capacity of the Event Venue Combination (not always the same as the Venue Capacity)
+    //    public int? Capacity { get; set; }
+    //}
 
 }

@@ -8,6 +8,7 @@ using Helper;
 using Helper.Converters;
 using Helper.Generic;
 using Helper.Identity;
+using Helper.Tagging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -345,9 +346,16 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
                 venue.Id = Helper.IdGenerator.GenerateIDFromType(venue);
-                //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
 
-                //TODO UPDATE/INSERT ALSO in Destinationdata Column
+                //Check all Languages
+                venue.CheckMyInsertedLanguages(null);
+                //Trim all strings
+                venue.TrimStringProperties();
+
+                //Populate Tags (Id/Source/Type)
+                await venue.UpdateTagsExtension(QueryFactory);
+
+                //TODO UPDATE/INSERT ALSO in Destinationdata Column Or lets not support Destinationdata anymore?
                 return await UpsertData<VenueV2>(venue, new DataInfo("venuesv2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
@@ -371,7 +379,15 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
                 venue.Id = Helper.IdGenerator.CheckIdFromType<VenueV2>(id);
-                //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //Check all Languages
+                venue.CheckMyInsertedLanguages(null);
+
+                //Trim all strings
+                venue.TrimStringProperties();
+
+                //Populate Tags (Id/Source/Type)
+                await venue.UpdateTagsExtension(QueryFactory);
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
                 return await UpsertData<VenueV2>(venue, new DataInfo("venuesv2", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
