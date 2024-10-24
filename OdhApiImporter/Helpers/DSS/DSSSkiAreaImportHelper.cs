@@ -86,7 +86,7 @@ namespace OdhApiImporter.Helpers.DSS
                 //Get the ODH Item
                 var mydssquery = QueryFactory.Query(table)
                   .Select("data")
-                  .WhereRaw("data#>'{Mapping,dss,rid}' like $$", skiarearid);
+                  .WhereRaw("data#>>'\\{Mapping,dss,rid\\}' like $$", skiarearid);
 
                 var skiareas = await mydssquery.GetObjectListAsync<SkiAreaLinked>();
 
@@ -103,7 +103,7 @@ namespace OdhApiImporter.Helpers.DSS
 
                         OperationSchedule operationSchedule = new OperationSchedule();
                         operationSchedule.Start = Helper.DateTimeHelper.UnixTimeStampToDateTime(seasonwinterstartdb);
-                        operationSchedule.Start = Helper.DateTimeHelper.UnixTimeStampToDateTime(seasonwinterenddb);
+                        operationSchedule.Stop = Helper.DateTimeHelper.UnixTimeStampToDateTime(seasonwinterenddb);
                         operationSchedule.OperationscheduleName = new Dictionary<string, string>()
                         {
                             { "de","Wintersaison" },
