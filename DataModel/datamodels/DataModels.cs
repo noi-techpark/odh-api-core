@@ -102,6 +102,8 @@ namespace DataModel
     public class District : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public Nullable<bool> IsComune { get; set; }
+
+        [SwaggerReference(typeof(MunicipalityLinked), "TESTRegionID")]
         public string? RegionId { get; set; }
         public string? TourismvereinId { get; set; }
         public string? MunicipalityId { get; set; }
@@ -129,7 +131,7 @@ namespace DataModel
         public string? Shortname { get; set; }
         public string? CustomId { get; set; }
         public string? RegionId { get; set; }
-        public string? TourismvereinId { get; set; }
+        public string? TourismvereinId { get; set; }        
         public string? MunicipalityId { get; set; }
         public string? SkiAreaID { get; set; }
         public string? GID { get; set; }
