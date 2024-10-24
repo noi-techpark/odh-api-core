@@ -726,6 +726,37 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("DSS/SkiArea/Update")]
+        public async Task<IActionResult> UpdateDSSSkiAreas(CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update DSS skiarea";
+            string updatetype = GetUpdateType(null);
+            string source = "dss";
+            string otherinfo = "actual";
+
+            try
+            {
+
+                DSSSkiAreaImportHelper dssimporthelper = new DSSSkiAreaImportHelper(settings, QueryFactory, "skiareas", UrlGeneratorStatic("DSS/SkiArea"));                
+
+                updatedetail = await dssimporthelper.SaveDataToODH(null, null, cancellationToken);                        
+                
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "DSS skiarea update succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+
+            }
+            catch (Exception ex)
+            {
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "DSS skiarea update failed", "", updatedetail, ex, true);
+
+                return BadRequest(errorResult);
+            }
+        }
+
+
         #endregion
 
         #region EJOBS DATA SYNC
