@@ -126,6 +126,94 @@ namespace RAVEN
             return acco;
         }
 
+        public static AccommodationV2 GetAccommodationPGObjectV2(AccommodationRaven data)
+        {
+            AccommodationV2 acco = new AccommodationV2();
+
+            acco.Id = data.Id.ToUpper();
+
+            if (data.SmgTags != null && data.SmgTags.Count > 0)
+                acco.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+
+            //Shortdesc Longdesc fix
+            foreach (var detail in data.AccoDetail)
+            {
+                var shortdesc = detail.Value.Longdesc;
+                var longdesc = detail.Value.Shortdesc;
+
+                detail.Value.Shortdesc = shortdesc;
+                detail.Value.Longdesc = longdesc;
+            }
+
+
+            acco.AccoBookingChannel = data.AccoBookingChannel;
+            acco.AccoDetail = data.AccoDetail;
+            acco.AccoCategoryId = data.AccoCategoryId;
+            acco.AccoRoomInfo = data.AccoRoomInfo;
+            acco.AccoTypeId = data.AccoTypeId;
+            acco.Active = data.Active;
+
+            acco.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+            acco.BadgeIds = data.BadgeIds;
+            acco.BoardIds = data.BoardIds;
+            acco.DistanceInfo = data.DistanceInfo;
+            acco.DistrictId = data.DistrictId;
+            acco.Features = data.Features;
+            acco.FirstImport = data.FirstImport;
+            acco.GastronomyId = data.GastronomyId;
+
+            acco.AccoProperties = new AccoProperties();
+            acco.AccoProperties.HasApartment = data.HasApartment;
+            acco.AccoProperties.HasRoom = data.HasRoom;
+            acco.AccoProperties.IsAccommodation = data.IsAccommodation;
+            acco.AccoProperties.IsBookable = data.IsBookable;
+            acco.AccoProperties.IsCamping = data.IsCamping;
+            acco.AccoProperties.IsGastronomy = data.IsGastronomy;
+            acco.AccoProperties.TVMember = data.TVMember;
+
+            acco.HasLanguage = data.HasLanguage;
+            
+            acco.HgvId = data.HgvId;
+            acco.ImageGallery = data.ImageGallery;
+            acco.IndependentData = data.IndependentData;
+            acco.LastChange = data.LastChange;
+            acco.LicenseInfo = data.LicenseInfo;
+            acco.LocationInfo = data.LocationInfo;
+            acco.MainLanguage = data.MainLanguage;
+            acco.Mapping = data.Mapping;
+            acco.MarketingGroupIds = data.MarketingGroupIds;
+            acco.MssResponseShort = data.MssResponseShort;
+            acco.Representation = data.Representation;
+            acco.Shortname = data.Shortname;
+            acco.SmgActive = data.SmgActive;
+            acco.SmgTags = data.SmgTags;
+            acco.SpecialFeaturesIds = data.SpecialFeaturesIds;
+            acco.Source = String.IsNullOrEmpty(data.Source) ? "lts" : data.Source.ToLower();
+            acco.ThemeIds = data.ThemeIds;
+            acco.TourismVereinId = data.TourismVereinId;
+
+            Review review = new Review();
+            review.ReviewId = data.TrustYouID;
+            review.Results = data.TrustYouResults;
+            review.Provider = "trustyou";
+            review.Active = data.TrustYouActive;
+            review.Score = data.TrustYouScore;
+            review.StateInteger = data.TrustYouState;
+
+            if (acco.Review == null)
+                acco.Review = new Dictionary<string, DataModel.Review>();
+
+            acco.Review.TryAddOrUpdate("trustyou", review);
+
+            acco.AccoHGVInfo = data.AccoHGVInfo;
+            acco.AccoOverview = data.AccoOverview;
+
+            acco._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(acco, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
+            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
+
+            return acco;
+        }
+
         public static ODHActivityPoiLinked GetODHActivityPoiPGObject(ODHActivityPoiLinked data)
         {
             data.Id = data.Id.ToLower();

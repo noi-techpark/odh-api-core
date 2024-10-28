@@ -1508,7 +1508,8 @@ namespace CDB.Parser
                     }
                 }
             }
-        }
+        }        
+
 
         private static void RemoveTagIf(string featureId, string tagname, Accommodation myacco)
         {

@@ -826,75 +826,7 @@ namespace OdhApiImporter.Helpers
             return pushresults;
         }
 
-        private async Task GetCinCodeFromNewLtsApi(AccommodationLinked accommodation)
-        {
-            try
-            {
-                LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);
-                var qs = new LTSQueryStrings() { page_size = 1, fields = "cinCode" };
-                var dict = ltsapi.GetLTSQSDictionary(qs);
-
-                var ltsdata = await ltsapi.AccommodationDetailRequest(accommodation.Id, dict);
-
-                //Todo parse response
-                var cincode = ltsdata.FirstOrDefault()["data"] != null ? ltsdata.FirstOrDefault()["data"].Value<string?>("cinCode") : null;
-
-                //If no lts mapping is there
-                if(accommodation.Mapping == null)
-                    accommodation.Mapping = new Dictionary<string, IDictionary<string,string>>();
-
-                var ltsdict = default(IDictionary<string, string>);
-                 
-                if(accommodation.Mapping.ContainsKey("lts"))
-                    ltsdict = accommodation.Mapping["lts"];
-
-                if (ltsdict == null)
-                    ltsdict = new Dictionary<string, string>();
-                
-                ltsdict.TryAddOrUpdate("cincode", cincode);
-
-                accommodation.Mapping.TryAddOrUpdate("lts", ltsdict);
-
-                GenericResultsHelper.GetSuccessUpdateResult(
-                    accommodation.Id,
-                    "api",
-                    "Update CinCode",
-                    "single",
-                    "Update CinCode success",
-                    "accommodation",
-                    new UpdateDetail()
-                    {
-                        updated = 1,
-                        changes = null,
-                        comparedobjects = null,
-                        created = 0,
-                        deleted = 0,
-                        error = 0,
-                        objectchanged = 0,
-                        objectimagechanged = 0,
-                        pushed = null,
-                        pushchannels = null
-                    },                    
-                    true);
-            }
-            catch(Exception ex)
-            {
-                GenericResultsHelper.GetErrorUpdateResult(
-                    accommodation.Id, 
-                    "api", 
-                    "Update CinCode", 
-                    "single", 
-                    "Update CinCode failed", 
-                    "accommodation", 
-                    new UpdateDetail()
-                    {
-                        updated = 0, changes = null, comparedobjects = null, created = 0, deleted = 0, error = 1, objectchanged = 0, objectimagechanged = 0, pushed = null, pushchannels = null
-                    }, 
-                    ex, 
-                    true);
-            }
-        }
-
+     
         #endregion
     }
 }
