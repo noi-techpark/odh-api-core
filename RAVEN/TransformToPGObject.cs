@@ -162,14 +162,17 @@ namespace RAVEN
             acco.FirstImport = data.FirstImport;
             acco.GastronomyId = data.GastronomyId;
 
-            acco.AccoProperties = new AccoProperties();
-            acco.AccoProperties.HasApartment = data.HasApartment;
-            acco.AccoProperties.HasRoom = data.HasRoom;
-            acco.AccoProperties.IsAccommodation = data.IsAccommodation;
-            acco.AccoProperties.IsBookable = data.IsBookable;
-            acco.AccoProperties.IsCamping = data.IsCamping;
-            acco.AccoProperties.IsGastronomy = data.IsGastronomy;
-            acco.AccoProperties.TVMember = data.TVMember;
+            var accoproperties = new AccoProperties();
+            accoproperties.HasApartment = data.HasApartment;
+            accoproperties.HasRoom = data.HasRoom;
+            accoproperties.IsAccommodation = data.IsAccommodation;
+            accoproperties.IsBookable = data.IsBookable;
+            accoproperties.IsCamping = data.IsCamping;
+            accoproperties.IsGastronomy = data.IsGastronomy;
+            accoproperties.TVMember = data.TVMember;
+
+            acco.AccoProperties = accoproperties;
+
 
             acco.HasLanguage = data.HasLanguage;
             

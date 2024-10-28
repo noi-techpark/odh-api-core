@@ -38,6 +38,7 @@ using Newtonsoft.Json.Linq;
 using SqlKata;
 using MongoDB.Driver;
 using Helper.Generic;
+using OdhApiImporter.Helpers.LTSCDB;
 
 namespace OdhApiImporter.Controllers
 {
@@ -923,6 +924,39 @@ namespace OdhApiImporter.Controllers
             catch (Exception ex)
             {
                 var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import A22 " + a22entity + " failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        #endregion
+
+        #region LTSSUEDTIROLGUESTPASS SYNC
+
+        //Adds the Cincode to the Accommodation
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/SuedtirolGuestpass/Update/Cardtypes")]
+        public async Task<IActionResult> ImportLTSSuedtirolGuestPassCardTypes(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS SuedtirolGuestpass Cardtypes";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "accommodation.suedtirolguestpass.cardtypes";
+
+            try
+            {
+                LTSApiGuestCardImportHelper guestcardimporthelper = new LTSApiGuestCardImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/SuedtirolGuestpass/Cardtypes"));
+
+                updatedetail = await guestcardimporthelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS SuedtirolGuestpass Cardtypes succeeded", otherinfo, updatedetail, true);
+                
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS SuedtirolGuestpass Cardtypes data failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }

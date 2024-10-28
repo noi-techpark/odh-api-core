@@ -9,6 +9,7 @@ using Helper.Generic;
 using LTSAPI;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver.Core.Operations;
+using OdhApiImporter.Helpers.RAVEN;
 using OdhNotifier;
 using RAVEN;
 using SqlKata;
@@ -57,17 +58,17 @@ namespace OdhApiImporter.Helpers
                     
                     mydata = await GetDataFromRaven.GetRavenData<AccommodationRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<AccommodationRaven, AccommodationLinked>((AccommodationRaven)mydata, TransformToPGObject.GetAccommodationPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<AccommodationRaven, AccommodationV2>((AccommodationRaven)mydata, TransformToPGObject.GetAccommodationPGObjectV2);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
-                    ((AccommodationLinked)mypgdata).CreatePublishedOnList();
+                    ((AccommodationV2)mypgdata).CreatePublishedOnList();
 
                     //Update LTS CIN Code
-                    await GetCinCodeFromNewLtsApi((AccommodationLinked)mypgdata);
+                    await LtsApiv2Operations.UpdateAccommodationWithLTSV2Data((AccommodationV2)mypgdata, QueryFactory, settings, true, true);
 
-                    var myupdateresultacco = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations", true, true, true);
+                    var myupdateresultacco = await SaveRavenObjectToPG<AccommodationV2>((AccommodationV2)mypgdata, "accommodations", true, true, true);
                     updateresultstomerge.Add(myupdateresultacco);
 
                     //Check if data has to be reduced and save it

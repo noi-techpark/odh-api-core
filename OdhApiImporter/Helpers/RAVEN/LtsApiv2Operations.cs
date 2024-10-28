@@ -1,4 +1,8 @@
-﻿using DataModel;
+﻿// SPDX-FileCopyrightText: NOI Techpark <digital@noi.bz.it>
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using DataModel;
 using LTSAPI;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,23 +17,25 @@ namespace OdhApiImporter.Helpers.RAVEN
 {
     public class LtsApiv2Operations
     {
-        private async Task UpdateAccommodationWithLTSV2Data(AccommodationV2 accommodation, QueryFactory queryFactory, Helper.ISettings settings)
+        public static async Task UpdateAccommodationWithLTSV2Data(AccommodationV2 accommodation, QueryFactory queryFactory, Helper.ISettings settings, bool updatecincode, bool updateguestcards)
         {
             var ltsdata = await GetAccommodationFromLTSV2(accommodation, settings);
 
             //Assign the CinCode
-            await AssignCinCodeFromNewLtsApi(accommodation, ltsdata);
+            if(updatecincode)
+                await AssignCinCodeFromNewLtsApi(accommodation, ltsdata);
 
             //Guestcard Tag
-            await AssignGuestcardDataFromNewLtsApi(accommodation, ltsdata, queryFactory);
+            if(updateguestcards)
+                await AssignGuestcardDataFromNewLtsApi(accommodation, ltsdata, queryFactory);
         }
 
-        private async Task<JObject> GetAccommodationFromLTSV2(AccommodationV2 accommodation, Helper.ISettings settings)
+        private static async Task<JObject> GetAccommodationFromLTSV2(AccommodationV2 accommodation, Helper.ISettings settings)
         {
             try
             {
                 LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);
-                var qs = new LTSQueryStrings() { page_size = 1, fields = "cinCode" };
+                var qs = new LTSQueryStrings() { page_size = 1, fields = "cinCode,amenities,suedtirolGuestPass" };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 
                 var ltsdata = await ltsapi.AccommodationDetailRequest(accommodation.Id, dict);
@@ -42,7 +48,7 @@ namespace OdhApiImporter.Helpers.RAVEN
             }
         }
        
-        private async Task AssignCinCodeFromNewLtsApi(AccommodationV2 accommodation, JObject ltsdata)
+        private static async Task AssignCinCodeFromNewLtsApi(AccommodationV2 accommodation, JObject ltsdata)
         {
             try
             {               
@@ -114,41 +120,46 @@ namespace OdhApiImporter.Helpers.RAVEN
             }
         }
 
-        private async Task AssignGuestcardDataFromNewLtsApi(AccommodationV2 accommodation, JObject ltsdata, QueryFactory queryFactory)
+        private static async Task AssignGuestcardDataFromNewLtsApi(AccommodationV2 accommodation, JObject ltsdata, QueryFactory queryFactory)
         {
             try
             {
                 //Todo parse response
-                var guestcardactive = ltsdata["suedtirolGuestPass"] != null ? ltsdata["suedtirolGuestPass"].Value<bool?>("isActive") : null;
+                var guestcardactive = ltsdata["data"] != null ? ltsdata["data"]["suedtirolGuestPass"] != null ? ltsdata["data"]["suedtirolGuestPass"].Value<bool?>("isActive") : null : null;
+
+                if(accommodation.TagIds == null)
+                    accommodation.TagIds =  new HashSet<string>();
 
                 //IF guestcard active Add Tag "guestcard"
-                if(guestcardactive == null || guestcardactive == false)
+                if (guestcardactive == null || guestcardactive == false)
                 {
                     accommodation.SmgTags.TryRemoveOnList("guestcard");
+                    accommodation.TagIds.TryRemoveOnList("guestcard");
                 }
                 else
                 {
                     accommodation.SmgTags.TryAddOrUpdateOnList("guestcard");
+                    accommodation.TagIds.TryAddOrUpdateOnList("guestcard");
                 }
 
                 //Compatiblity features to Tags
-                var amenities = ltsdata["amenities"] != null ? ltsdata.Value<IDictionary<string, string>?>("amenities") : null;
+                var amenities = ltsdata["data"] != null ?  ltsdata["data"]["amenities"] != null ? ltsdata["data"]["amenities"].ToObject<IList<LtsRidList>>() : null :null;
 
                 //Check if cardtypes should be assigned
                 foreach (var guestcard in GuestCardIdMapping())
                 {
-                    if (amenities != null && amenities.Values.Contains(guestcard.Key))
+                    if (amenities != null && amenities.Select(x => x.rid).Contains(guestcard.Key))
                         accommodation.SmgTags.TryAddOrUpdateOnList(guestcard.Value);
                     else
                         accommodation.SmgTags.TryRemoveOnList(guestcard.Value);
                 }
 
                 //Add to Tags
-                var cardtypes = ltsdata["suedtirolGuestPass"] != null ? ltsdata["suedtirolGuestPass"].Value<IDictionary<string, string>?>("cardTypes") : null;
+                var cardtypes = ltsdata["data"] != null ? ltsdata["data"]["suedtirolGuestPass"] != null ? ltsdata["data"]["suedtirolGuestPass"]["cardTypes"].ToObject<IList<LtsRidList>>() : null : null;
 
                 foreach(var card in cardtypes)
                 {
-                    accommodation.TagIds.Add(card.Value);
+                    accommodation.TagIds.Add(card.rid);
                 }
                 //Populate Tags (Id/Source/Type)
                 await accommodation.UpdateTagsExtension(queryFactory);
@@ -181,7 +192,7 @@ namespace OdhApiImporter.Helpers.RAVEN
             }
         }
 
-        private IDictionary<string,string> GuestCardIdMapping()
+        private static IDictionary<string,string> GuestCardIdMapping()
         {
             return new Dictionary<string, string>()
             {
@@ -216,5 +227,10 @@ namespace OdhApiImporter.Helpers.RAVEN
             };
         }
 
+    }
+
+    public class LtsRidList
+    {
+        public string rid { get; set; }
     }
 }

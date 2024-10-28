@@ -294,7 +294,7 @@ namespace DataModel
         public IDictionary<string, Review>? Review { get; set; }
 
         //New, holds all Infos of Is/Has etc.. Properties
-        public AccoProperties? AccoProperties { get; set; }
+        public AccoProperties AccoProperties { get; set; }
 
         //New, operationschedules also available on Accommodation
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
