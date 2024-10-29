@@ -1988,6 +1988,11 @@ namespace DataModel
   
     public class TagLinked : SmgTags, IMetaData, ISource, IActivateable
     {
+        public TagLinked()
+        {
+            Description = new Dictionary<string, string>();
+        }
+
         public Metadata? _Meta { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
@@ -2003,6 +2008,8 @@ namespace DataModel
         public ICollection<string> Types { get; set; }
         public new string Source { get; set; }             
         public bool Active { get; set; } 
+
+        public IDictionary<string, string> Description { get; set; }
     }
 
     public class PublisherLinked : Publisher, IMetaData

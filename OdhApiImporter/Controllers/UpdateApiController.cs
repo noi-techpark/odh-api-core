@@ -39,6 +39,7 @@ using SqlKata;
 using MongoDB.Driver;
 using Helper.Generic;
 using OdhApiImporter.Helpers.LTSCDB;
+using OdhApiImporter.Helpers.LTSAPI;
 
 namespace OdhApiImporter.Controllers
 {
@@ -930,9 +931,9 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
-        #region LTSSUEDTIROLGUESTPASS SYNC
+        #region LTS NEW API SYNC
 
-        //Adds the Cincode to the Accommodation
+        //Imports all Guestcards        
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("LTS/SuedtirolGuestpass/Update/Cardtypes")]
         public async Task<IActionResult> ImportLTSSuedtirolGuestPassCardTypes(
@@ -957,6 +958,35 @@ namespace OdhApiImporter.Controllers
             catch (Exception ex)
             {
                 var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS SuedtirolGuestpass Cardtypes data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Guestcards        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Events/Update/Tags")]
+        public async Task<IActionResult> ImportLTSEventTags(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Events Tags";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "events.tags";
+
+            try
+            {
+                LTSApiEventTagImportHelper guestcardimporthelper = new LTSApiEventTagImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Events/Tags"));
+
+                updatedetail = await guestcardimporthelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags data failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }
