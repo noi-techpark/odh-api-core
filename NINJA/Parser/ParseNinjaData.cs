@@ -13,6 +13,7 @@ using DataModel;
 using Helper;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.FSharp.Control;
+using Newtonsoft.Json.Linq;
 
 namespace NINJA.Parser
 {
@@ -775,7 +776,7 @@ namespace NINJA.Parser
 
                 if(echargingpoi.AdditionalProperties != null && echargingpoi.AdditionalProperties.ContainsKey(additionalpropertieskey))
                 {
-                    var propstonotoverwrite = (EchargingDataProperties)echargingpoi.AdditionalProperties[additionalpropertieskey];
+                    var propstonotoverwrite = ((JObject)echargingpoi.AdditionalProperties[additionalpropertieskey]).ToObject<EchargingDataProperties>();
 
                     properties.HorizontalFloorRoadSign = propstonotoverwrite.HorizontalFloorRoadSign;
                     properties.SurveyDate = propstonotoverwrite.SurveyDate;
