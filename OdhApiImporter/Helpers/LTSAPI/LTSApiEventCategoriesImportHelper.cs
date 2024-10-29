@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
-    public class LTSApiGuestCardImportHelper : ImportHelper, IImportHelper
+    public class LTSApiEventCategoriesImportHelper : ImportHelper, IImportHelper
     {
-        public LTSApiGuestCardImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public LTSApiEventCategoriesImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
 
-        private async Task<List<JObject>> GetGuestcardsFromLTSV2()
+        private async Task<List<JObject>> GetEventCategoriesFromLTSV2()
         {
             try
             {
@@ -33,7 +33,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 var qs = new LTSQueryStrings() { page_size = 100 };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 
-                var ltsdata = await ltsapi.SuedtirolGuestPassCardTypesRequest(dict, true);
+                var ltsdata = await ltsapi.EventCategoriesRequest(dict, true);
 
                 return ltsdata;
             }
@@ -46,14 +46,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //Import the List
-            var guestcards = await GetGuestcardsFromLTSV2();
+            var eventtags = await GetEventCategoriesFromLTSV2();
             //Import Single Data & Deactivate Data
-            var result = await SaveSuedtirolGuestPassCardTypesToPG(guestcards);            
+            var result = await SaveEventCategoriesToPG(eventtags);            
 
             return result;
         }
 
-        private async Task<UpdateDetail> SaveSuedtirolGuestPassCardTypesToPG(List<JObject> ltsdata)
+        private async Task<UpdateDetail> SaveEventCategoriesToPG(List<JObject> ltsdata)
         {
             var newimportcounter = 0;
             var updateimportcounter = 0;
@@ -62,14 +62,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
             List<string> idlistlts = new List<string>();
 
-            List<LTSGuestcard> guestcardata = new List<LTSGuestcard>();
+            List<LTSEventCategory> eventtagdata = new List<LTSEventCategory>();
 
             foreach (var ltsdatasingle in ltsdata)
             {
-                guestcardata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSGuestcard>>());
+                eventtagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSEventCategory>>());
             }
             
-            foreach (var data in guestcardata)
+            foreach (var data in eventtagdata)
             {
                 string id = data.rid;
 
@@ -84,21 +84,23 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave = new TagLinked();
 
                 objecttosave.Id = data.rid;
-                objecttosave.Active = data.isActive;
+                objecttosave.Active = true;
                 objecttosave.DisplayAsCategory = false;
                 objecttosave.FirstImport = objecttosave.FirstImport == null ? DateTime.Now : objecttosave.FirstImport;
                 objecttosave.LastChange = data.lastUpdate;
                 
                 objecttosave.Source = "lts";
                 objecttosave.TagName = data.name;
-                objecttosave.MainEntity = "accommodation";
-                objecttosave.ValidForEntity = new List<string>() { "accommodation" };
+                objecttosave.Description = data.description;
+
+                objecttosave.MainEntity = "event";
+                objecttosave.ValidForEntity = new List<string>() { "event" };
                 objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
-                objecttosave.Types = new List<string>() { "cardtype" };
+                objecttosave.Types = new List<string>() { "eventcategory","eventtopic" };
 
                 objecttosave.IDMCategoryMapping = null;
                 objecttosave.PublishDataWithTagOn = null;
-                objecttosave.Mapping = null;
+                objecttosave.Mapping = new Dictionary<string,IDictionary<string,string>>() { { "lts", new Dictionary<string, string>() { { "code", data.code }, { "classificationrid", data.classification.rid } } } };
                 objecttosave.LTSTaggingInfo = null;
                 objecttosave.PublishedOn = null;
                 objecttosave.MappedTagIds = null;
@@ -112,11 +114,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 idlistlts.Add(id);
 
-                WriteLog.LogToConsole(id, "dataimport", "single.suedtirolguestpass.cardtypes", new ImportLog() { sourceid = id, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
+                WriteLog.LogToConsole(id, "dataimport", "single.events.categories", new ImportLog() { sourceid = id, sourceinterface = "lts.events.categories", success = true, error = "" });
             }
 
             //Begin SetDataNotinListToInactive
-            var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "cardtype" });
+            var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "eventcategory" });
 
             var idstodelete = idlistdb.Where(p => !idlistlts.Any(p2 => p2 == p));
 
@@ -125,9 +127,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
 
                 if (deletedisableresult.Item1 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.suedtirolguestpass.cardtypes.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.categories.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.categories", success = true, error = "" });
                 else if (deletedisableresult.Item2 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.suedtirolguestpass.cardtypes.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
+                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.categories.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.categories", success = true, error = "" });
 
 
                 deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -136,7 +138,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSGuestcard guestcard)
+        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSEventCategory eventcategory)
         {
             try
             {                
@@ -149,9 +151,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 //Set PublishedOn
                 objecttosave.CreatePublishedOnList();
 
-                var rawdataid = await InsertInRawDataDB(guestcard);
+                var rawdataid = await InsertInRawDataDB(eventcategory);
 
-                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.suedtirolguestpass.cardtypes.import", importerURL);
+                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.events.categories.import", importerURL);
             }
             catch (Exception ex)
             {
@@ -159,30 +161,39 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
         }
 
-        private async Task<int> InsertInRawDataDB(LTSGuestcard guestcard)
+        private async Task<int> InsertInRawDataDB(LTSEventCategory eventcategory)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
                             datasource = "lts",
                             importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(guestcard),
-                            sourceinterface = "suedtirolguestpass",
-                            sourceid = guestcard.rid,
-                            sourceurl = "https://go.lts.it/api/v1/suedtirolguestpass/cardtypes",
-                            type = "suedtirolguestpass.cardtypes",
+                            raw = JsonConvert.SerializeObject(eventcategory),
+                            sourceinterface = "events",
+                            sourceid = eventcategory.rid,
+                            sourceurl = "https://go.lts.it/api/v1/events/categories",
+                            type = "events.categories",
                             license = "open",
                             rawformat = "json"
                         });
         }        
     }
 
-    public class LTSGuestcard
+    public class LTSEventCategory
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
         public IDictionary<string,string> name { get; set; }
-        public bool isActive { get; set; }
+        public IDictionary<string, string> description { get; set; }
+        //public bool isActive { get; set; }
+        public string code { get; set; }
+
+        public LTSClassification classification { get; set; }
+    }
+
+    public class LTSClassification
+    {
+        public string rid { get; set; }
     }
     
 

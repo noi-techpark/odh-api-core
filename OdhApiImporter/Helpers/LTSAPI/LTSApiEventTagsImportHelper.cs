@@ -94,7 +94,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 objecttosave.Description = data.description;
 
                 objecttosave.MainEntity = "event";
-                objecttosave.ValidForEntity = new List<string>() { "accommodation" };
+                objecttosave.ValidForEntity = new List<string>() { "event" };
                 objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
                 objecttosave.Types = new List<string>() { "eventtag" };
 
@@ -124,7 +124,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
             foreach (var idtodelete in idstodelete)
             {
-                var deletedisableresult = await DeleteOrDisableData(idtodelete, false);
+                var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
 
                 if (deletedisableresult.Item1 > 0)
                     WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.tags.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.tags", success = true, error = "" });
@@ -153,7 +153,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 var rawdataid = await InsertInRawDataDB(eventtag);
 
-                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.eventstags.import", importerURL);
+                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.events.tags.import", importerURL);
             }
             catch (Exception ex)
             {
@@ -176,54 +176,6 @@ namespace OdhApiImporter.Helpers.LTSAPI
                             license = "open",
                             rawformat = "json"
                         });
-        }
-
-        private async Task<Tuple<int, int>> DeleteOrDisableData(string id, bool delete)
-        {
-            var deleteresult = 0;
-            var updateresult = 0;
-
-            if (delete)
-            {
-                deleteresult = await QueryFactory.Query("tags").Where("id", id)
-                    .DeleteAsync();
-            }
-            else
-            {
-                var query =
-               QueryFactory.Query("tags")
-                   .Select("data")
-                   .Where("id", id);
-
-                var data = await query.GetObjectSingleAsync<TagLinked>();
-
-                if (data != null)
-                {
-                    if (data.Active != false)
-                    {
-                        data.Active = false;
-                        
-                        updateresult = await QueryFactory.Query("tags").Where("id", id)
-                                        .UpdateAsync(new JsonBData() { id = id, data = new JsonRaw(data) });
-                    }
-                }
-            }
-
-            return Tuple.Create(updateresult, deleteresult);
-        }
-
-        private async Task<List<string>> GetAllDataBySourceAndType(List<string> sourcelist, List<string> typelist)
-        {
-
-            var query =
-               QueryFactory.Query("tags")
-                   .Select("id")
-                   .SourceFilter_GeneratedColumn(sourcelist)
-                   .WhereRaw("gen_types @> array\\[$$\\]", String.Join(",", typelist));
-
-            var eventids = await query.GetAsync<string>();
-
-            return eventids.ToList();
         }
     }
 

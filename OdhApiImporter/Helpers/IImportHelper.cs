@@ -19,7 +19,7 @@ namespace OdhApiImporter.Helpers
     {
         Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null,  CancellationToken cancellationToken = default);
 
-        Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete) where T : IActivateable,ISmgActive;
+        Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete) where T : IActivateable;
 
         //Task<UpdateDetail> ImportData(ImportObject importobject, CancellationToken cancellationToken);
     }
@@ -39,7 +39,7 @@ namespace OdhApiImporter.Helpers
             this.importerURL = importerURL;
         }
 
-        public async Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete) where T: IActivateable, ISmgActive
+        public async Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete) where T: IActivateable
         {
             var deleteresult = 0;
             var updateresult = 0;
@@ -60,10 +60,11 @@ namespace OdhApiImporter.Helpers
 
                 if (data != null)
                 {
-                    if (data.Active != false || data.SmgActive != false)
+                    if (data.Active != false || (data is ISmgActive &&  ((ISmgActive)data).SmgActive != false))
                     {
                         data.Active = false;
-                        data.SmgActive = false;
+                        if(data is ISmgActive)
+                            ((ISmgActive)data).SmgActive = false;
 
                         updateresult = await QueryFactory.Query(table).Where("id", id)
                                         .UpdateAsync(new JsonBData() { id = id, data = new JsonRaw(data) });
@@ -74,6 +75,7 @@ namespace OdhApiImporter.Helpers
             return Tuple.Create(updateresult, deleteresult);
         }
 
+   
         //Helper get all data from source
         public async Task<List<string>> GetAllDataBySource(List<string> syncsourcelist, List<string>? syncsourceinterfacelist = null)
         {
@@ -86,6 +88,20 @@ namespace OdhApiImporter.Helpers
             var idlist = await query.GetAsync<string>();
 
             return idlist.ToList();
+        }
+
+        public async Task<List<string>> GetAllDataBySourceAndType(List<string> sourcelist, List<string> typelist)
+        {
+
+            var query =
+               QueryFactory.Query(table)
+                   .Select("id")
+                   .SourceFilter_GeneratedColumn(sourcelist)
+                   .WhereRaw("gen_types @> array\\[$$\\]", String.Join(",", typelist));
+
+            var ids = await query.GetAsync<string>();
+
+            return ids.ToList();
         }
     }
 
