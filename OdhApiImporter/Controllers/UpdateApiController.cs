@@ -948,9 +948,9 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                LTSApiGuestCardImportHelper guestcardimporthelper = new LTSApiGuestCardImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/SuedtirolGuestpass/Cardtypes"));
+                LTSApiGuestCardImportHelper importhelper = new LTSApiGuestCardImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/SuedtirolGuestpass/Cardtypes"));
 
-                updatedetail = await guestcardimporthelper.SaveDataToODH(null, null, cancellationToken);
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS SuedtirolGuestpass Cardtypes succeeded", otherinfo, updatedetail, true);
                 
                 return Ok(updateResult);
@@ -962,7 +962,7 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-        //Imports all Guestcards        
+        //Imports all Event Tags        
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("LTS/Events/Update/Tags")]
         public async Task<IActionResult> ImportLTSEventTags(
@@ -977,9 +977,9 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                LTSApiEventTagImportHelper guestcardimporthelper = new LTSApiEventTagImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Events/Tags"));
+                LTSApiEventTagImportHelper importhelper = new LTSApiEventTagImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Events/Tags"));
 
-                updatedetail = await guestcardimporthelper.SaveDataToODH(null, null, cancellationToken);
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);
@@ -987,6 +987,64 @@ namespace OdhApiImporter.Controllers
             catch (Exception ex)
             {
                 var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Event Categories        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Events/Update/Categories")]
+        public async Task<IActionResult> ImportLTSEventCategories(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Events Categories";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "events.categories";
+
+            try
+            {
+                LTSApiEventCategoriesImportHelper importhelper = new LTSApiEventCategoriesImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Events/Categories"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Categories succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Events Categories data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Event Classifications        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Events/Update/Classifications")]
+        public async Task<IActionResult> ImportLTSEventClassifications(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Events Classifications";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "events.classifications";
+
+            try
+            {
+                LTSApiEventClassificationsImportHelper importhelper = new LTSApiEventClassificationsImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Events/Categories"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Classifications succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Events Classifications data failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
         }
