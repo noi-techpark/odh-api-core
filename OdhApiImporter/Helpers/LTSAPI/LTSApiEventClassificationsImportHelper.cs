@@ -151,8 +151,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 //Set PublishedOn
                 objecttosave.CreatePublishedOnList();
 
-                var rawdataid = await InsertInRawDataDB(eventclassification);
-                var rawdataid = await InsertInRawDataDB(eventclassification);
+                var rawdataid = await InsertInRawDataDB(eventclassification);                
 
                 return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.events.classifications.import", importerURL);
             }
