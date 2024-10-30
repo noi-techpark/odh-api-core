@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
-    public class LTSApiEventTagImportHelper : ImportHelper, IImportHelper
+    public class LTSApiGastronomyCategoriesImportHelper : ImportHelper, IImportHelper
     {
-        public LTSApiEventTagImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public LTSApiGastronomyCategoriesImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
 
-        private async Task<List<JObject>> GetEventTagsFromLTSV2()
+        private async Task<List<JObject>> GetGastronomyCategoriesFromLTSV2()
         {
             try
             {
@@ -33,13 +33,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 var qs = new LTSQueryStrings() { page_size = 100 };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 
-                var ltsdata = await ltsapi.EventTagsRequest(dict, true);
+                var ltsdata = await ltsapi.GastronomyCategoriesRequest(dict, true);
 
                 return ltsdata;
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "single.events.tags", new ImportLog() { sourceid = "", sourceinterface = "lts.events.tags", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "single.gastronomies.categories", new ImportLog() { sourceid = "", sourceinterface = "lts.gastronomies.categories", success = false, error = ex.Message });
+
                 return null;
             }
         }
@@ -47,14 +48,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //Import the List
-            var eventtags = await GetEventTagsFromLTSV2();
+            var eventtags = await GetGastronomyCategoriesFromLTSV2();
             //Import Single Data & Deactivate Data
-            var result = await SaveEventTagsToPG(eventtags);            
+            var result = await SaveGastronomyCategoriesToPG(eventtags);            
 
             return result;
         }
 
-        private async Task<UpdateDetail> SaveEventTagsToPG(List<JObject> ltsdata)
+        private async Task<UpdateDetail> SaveGastronomyCategoriesToPG(List<JObject> ltsdata)
         {
             var newimportcounter = 0;
             var updateimportcounter = 0;
@@ -63,13 +64,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
             if (ltsdata != null)
             {
+
                 List<string> idlistlts = new List<string>();
 
-                List<LTSEventTag> eventtagdata = new List<LTSEventTag>();
+                List<LTSEventCategory> eventtagdata = new List<LTSEventCategory>();
 
                 foreach (var ltsdatasingle in ltsdata)
                 {
-                    eventtagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSEventTag>>());
+                    eventtagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSEventCategory>>());
                 }
 
                 foreach (var data in eventtagdata)
@@ -87,7 +89,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                         objecttosave = new TagLinked();
 
                     objecttosave.Id = data.rid;
-                    objecttosave.Active = data.isActive;
+                    objecttosave.Active = true;
                     objecttosave.DisplayAsCategory = false;
                     objecttosave.FirstImport = objecttosave.FirstImport == null ? DateTime.Now : objecttosave.FirstImport;
                     objecttosave.LastChange = data.lastUpdate;
@@ -97,13 +99,13 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.Description = data.description;
 
                     objecttosave.MainEntity = "event";
-                    objecttosave.ValidForEntity = new List<string>() { "event" };
+                    objecttosave.ValidForEntity = new List<string>() { "gastronomy" };
                     objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
-                    objecttosave.Types = new List<string>() { "eventtag" };
+                    objecttosave.Types = new List<string>() { "gastronomycategory", "eventtopic" };
 
                     objecttosave.IDMCategoryMapping = null;
                     objecttosave.PublishDataWithTagOn = null;
-                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code } } } };
+                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code }, { "classificationrid", data.classification.rid } } } };
                     objecttosave.LTSTaggingInfo = null;
                     objecttosave.PublishedOn = null;
                     objecttosave.MappedTagIds = null;
@@ -117,13 +119,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     idlistlts.Add(id);
 
-                    WriteLog.LogToConsole(id, "dataimport", "single.events.tags", new ImportLog() { sourceid = id, sourceinterface = "lts.events.tags", success = true, error = "" });
+                    WriteLog.LogToConsole(id, "dataimport", "single.gastronomies.categories", new ImportLog() { sourceid = id, sourceinterface = "lts.gastronomies.categories", success = true, error = "" });
                 }
+
 
                 if (idlistlts.Count > 0)
                 {
                     //Begin SetDataNotinListToInactive
-                    var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "eventtag" });
+                    var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "gastronomycategory" });
 
                     var idstodelete = idlistdb.Where(p => !idlistlts.Any(p2 => p2 == p));
 
@@ -132,9 +135,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                         var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
 
                         if (deletedisableresult.Item1 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.tags.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.tags", success = true, error = "" });
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.gastronomies.categories.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.gastronomies.categories", success = true, error = "" });
                         else if (deletedisableresult.Item2 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.tags.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.tags", success = true, error = "" });
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.gastronomies.categories.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.gastronomies.categories", success = true, error = "" });
 
 
                         deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -147,7 +150,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSEventTag eventtag)
+        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSEventCategory eventcategory)
         {
             try
             {                
@@ -160,9 +163,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 //Set PublishedOn
                 objecttosave.CreatePublishedOnList();
 
-                var rawdataid = await InsertInRawDataDB(eventtag);
+                var rawdataid = await InsertInRawDataDB(eventcategory);
 
-                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.events.tags.import", importerURL);
+                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.gastronomies.categories.import", importerURL);
             }
             catch (Exception ex)
             {
@@ -170,33 +173,31 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
         }
 
-        private async Task<int> InsertInRawDataDB(LTSEventTag eventtag)
+        private async Task<int> InsertInRawDataDB(LTSEventCategory eventcategory)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
                             datasource = "lts",
                             importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(eventtag),
-                            sourceinterface = "events",
-                            sourceid = eventtag.rid,
-                            sourceurl = "https://go.lts.it/api/v1/events/tags",
-                            type = "events.tags",
+                            raw = JsonConvert.SerializeObject(eventcategory),
+                            sourceinterface = "gastronomies",
+                            sourceid = eventcategory.rid,
+                            sourceurl = "https://go.lts.it/api/v1/gastronomies/categories",
+                            type = "gastronomies.categories",
                             license = "open",
                             rawformat = "json"
                         });
-        }
+        }        
     }
 
-    public class LTSEventTag
+    public class LTSGastronomyCategory
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
         public IDictionary<string,string> name { get; set; }
         public IDictionary<string, string> description { get; set; }
-        public bool isActive { get; set; }
-        public string code { get; set; }
-    }
-    
-
+        //public bool isActive { get; set; }
+        public string code { get; set; }        
+    }    
 }

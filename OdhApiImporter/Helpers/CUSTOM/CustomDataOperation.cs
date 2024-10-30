@@ -1130,7 +1130,7 @@ namespace OdhApiImporter.Helpers
                 tag.TagName = topic.TypeDesc;
                 tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
-                tag.ValidForEntity = new List<string>() { "odhactivitypoi" };
+                tag.ValidForEntity = new List<string>() { "odhactivitypoi","gastronomy" };
                 tag.MainEntity = "odhactivitypoi";
                 tag.LastChange = DateTime.Now;
                 tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };

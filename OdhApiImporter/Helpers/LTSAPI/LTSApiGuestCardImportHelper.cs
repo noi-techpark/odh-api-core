@@ -24,6 +24,16 @@ namespace OdhApiImporter.Helpers.LTSAPI
         {
 
         }
+     
+        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
+        {
+            //Import the List
+            var guestcards = await GetGuestcardsFromLTSV2();
+            //Import Single Data & Deactivate Data
+            var result = await SaveSuedtirolGuestPassCardTypesToPG(guestcards);            
+
+            return result;
+        }
 
         private async Task<List<JObject>> GetGuestcardsFromLTSV2()
         {
@@ -39,19 +49,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
             catch (Exception ex)
             {
+                WriteLog.LogToConsole("", "dataimport", "single.suedtirolguestpass.cardtypes", new ImportLog() { sourceid = "", sourceinterface = "lts.suedtirolguestpass.cardtypes", success = false, error = ex.Message });
                 return null;
             }
         }
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
-        {
-            //Import the List
-            var guestcards = await GetGuestcardsFromLTSV2();
-            //Import Single Data & Deactivate Data
-            var result = await SaveSuedtirolGuestPassCardTypesToPG(guestcards);            
-
-            return result;
-        }
 
         private async Task<UpdateDetail> SaveSuedtirolGuestPassCardTypesToPG(List<JObject> ltsdata)
         {
@@ -60,81 +62,91 @@ namespace OdhApiImporter.Helpers.LTSAPI
             var errorimportcounter = 0;
             var deleteimportcounter = 0;
 
-            List<string> idlistlts = new List<string>();
-
-            List<LTSGuestcard> guestcardata = new List<LTSGuestcard>();
-
-            foreach (var ltsdatasingle in ltsdata)
+            if (ltsdata != null)
             {
-                guestcardata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSGuestcard>>());
+
+                List<string> idlistlts = new List<string>();
+
+                List<LTSGuestcard> guestcardata = new List<LTSGuestcard>();
+
+                foreach (var ltsdatasingle in ltsdata)
+                {
+                    guestcardata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSGuestcard>>());
+                }
+
+                foreach (var data in guestcardata)
+                {
+                    string id = data.rid;
+
+                    //See if data exists
+                    var query = QueryFactory.Query("tags")
+                        .Select("data")
+                        .Where("id", id);
+
+                    var objecttosave = await query.GetObjectSingleAsync<TagLinked>();
+
+                    if (objecttosave == null)
+                        objecttosave = new TagLinked();
+
+                    objecttosave.Id = data.rid;
+                    objecttosave.Active = data.isActive;
+                    objecttosave.DisplayAsCategory = false;
+                    objecttosave.FirstImport = objecttosave.FirstImport == null ? DateTime.Now : objecttosave.FirstImport;
+                    objecttosave.LastChange = data.lastUpdate;
+
+                    objecttosave.Source = "lts";
+                    objecttosave.TagName = data.name;
+                    objecttosave.MainEntity = "accommodation";
+                    objecttosave.ValidForEntity = new List<string>() { "accommodation" };
+                    objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
+                    objecttosave.Types = new List<string>() { "cardtype" };
+
+                    objecttosave.IDMCategoryMapping = null;
+                    objecttosave.PublishDataWithTagOn = null;
+                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid } } } }; ;
+                    objecttosave.LTSTaggingInfo = null;
+                    objecttosave.PublishedOn = null;
+                    objecttosave.MappedTagIds = null;
+
+
+                    var result = await InsertDataToDB(objecttosave, data);
+
+                    newimportcounter = newimportcounter + result.created ?? 0;
+                    updateimportcounter = updateimportcounter + result.updated ?? 0;
+                    errorimportcounter = errorimportcounter + result.error ?? 0;
+
+                    idlistlts.Add(id);
+
+                    WriteLog.LogToConsole(id, "dataimport", "single.suedtirolguestpass.cardtypes", new ImportLog() { sourceid = id, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
+                }
+
+                //Deactivate only if there is data updated
+                if (idlistlts.Count > 0)
+                {
+                    //Begin SetDataNotinListToInactive
+                    var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "cardtype" });
+
+                    var idstodelete = idlistdb.Where(p => !idlistlts.Any(p2 => p2 == p));
+
+                    foreach (var idtodelete in idstodelete)
+                    {
+                        var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
+
+                        if (deletedisableresult.Item1 > 0)
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.suedtirolguestpass.cardtypes.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
+                        else if (deletedisableresult.Item2 > 0)
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.suedtirolguestpass.cardtypes.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
+
+
+                        deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
+                    }
+                }
             }
-            
-            foreach (var data in guestcardata)
-            {
-                string id = data.rid;
-
-                //See if data exists
-                var query = QueryFactory.Query("tags")
-                    .Select("data")
-                    .Where("id", id);
-
-                var objecttosave = await query.GetObjectSingleAsync<TagLinked>();
-
-                if (objecttosave == null)
-                    objecttosave = new TagLinked();
-
-                objecttosave.Id = data.rid;
-                objecttosave.Active = data.isActive;
-                objecttosave.DisplayAsCategory = false;
-                objecttosave.FirstImport = objecttosave.FirstImport == null ? DateTime.Now : objecttosave.FirstImport;
-                objecttosave.LastChange = data.lastUpdate;
-                
-                objecttosave.Source = "lts";
-                objecttosave.TagName = data.name;
-                objecttosave.MainEntity = "accommodation";
-                objecttosave.ValidForEntity = new List<string>() { "accommodation" };
-                objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
-                objecttosave.Types = new List<string>() { "cardtype" };
-
-                objecttosave.IDMCategoryMapping = null;
-                objecttosave.PublishDataWithTagOn = null;
-                objecttosave.Mapping = null;
-                objecttosave.LTSTaggingInfo = null;
-                objecttosave.PublishedOn = null;
-                objecttosave.MappedTagIds = null;
-
-             
-                var result = await InsertDataToDB(objecttosave, data);
-
-                newimportcounter = newimportcounter + result.created ?? 0;
-                updateimportcounter = updateimportcounter + result.updated ?? 0;
-                errorimportcounter = errorimportcounter + result.error ?? 0;
-
-                idlistlts.Add(id);
-
-                WriteLog.LogToConsole(id, "dataimport", "single.suedtirolguestpass.cardtypes", new ImportLog() { sourceid = id, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
-            }
-
-            //Begin SetDataNotinListToInactive
-            var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "cardtype" });
-
-            var idstodelete = idlistdb.Where(p => !idlistlts.Any(p2 => p2 == p));
-
-            foreach (var idtodelete in idstodelete)
-            {
-                var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
-
-                if (deletedisableresult.Item1 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.suedtirolguestpass.cardtypes.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
-                else if (deletedisableresult.Item2 > 0)
-                    WriteLog.LogToConsole(idtodelete, "dataimport", "single.suedtirolguestpass.cardtypes.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
-
-
-                deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
-            }
+            else
+                errorimportcounter = 1;
 
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
-        }
+        }        
 
         private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSGuestcard guestcard)
         {
