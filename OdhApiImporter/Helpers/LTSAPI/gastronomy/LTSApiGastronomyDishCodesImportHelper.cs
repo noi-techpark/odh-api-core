@@ -101,7 +101,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.MainEntity = "odhactivitypoi";
                     objecttosave.ValidForEntity = new List<string>() { "odhactivitypoi", "gastronomy" };
                     objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
-                    objecttosave.Types = new List<string>() { "dishcodes" };
+                    objecttosave.Types = new List<string>() { "dishcodes", "gastronomydishcodes" };
 
                     objecttosave.IDMCategoryMapping = null;
                     objecttosave.PublishDataWithTagOn = null;

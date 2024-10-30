@@ -104,11 +104,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     string matchedtype = GetTypeFromFacilityGroup(data.group);
 
-                    objecttosave.Types = new List<string>() { matchedtype };
+                    objecttosave.Types = new List<string>() { matchedtype, "gastronomyfacilities" };
 
                     objecttosave.IDMCategoryMapping = null;
                     objecttosave.PublishDataWithTagOn = null;
-                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code } } } };
+                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code }, { "group", data.group } } } };
                     objecttosave.LTSTaggingInfo = null;
                     objecttosave.PublishedOn = null;
 
