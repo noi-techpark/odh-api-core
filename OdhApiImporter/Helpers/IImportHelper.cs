@@ -97,7 +97,7 @@ namespace OdhApiImporter.Helpers
                QueryFactory.Query(table)
                    .Select("id")
                    .SourceFilter_GeneratedColumn(sourcelist)
-                   .WhereRaw("gen_types @> array\\[$$\\]", String.Join(",", typelist));
+                   .WhereArrayInListOr(typelist, "gen_types");
 
             var ids = await query.GetAsync<string>();
 

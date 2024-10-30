@@ -52,6 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Helpers\LTSAPI\accommodation\" />
     <Folder Include="Models\" />
     <Folder Include="json\" />
   </ItemGroup>

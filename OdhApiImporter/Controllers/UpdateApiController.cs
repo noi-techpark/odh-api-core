@@ -964,7 +964,7 @@ namespace OdhApiImporter.Controllers
 
         //Imports all Event Tags        
         [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("LTS/Events/Update/Tags")]
+        [HttpGet, Route("LTS/Event/Update/Tags")]
         public async Task<IActionResult> ImportLTSEventTags(
             string id = null,
             CancellationToken cancellationToken = default)
@@ -993,7 +993,7 @@ namespace OdhApiImporter.Controllers
 
         //Imports all Event Categories        
         [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("LTS/Events/Update/Categories")]
+        [HttpGet, Route("LTS/Event/Update/Categories")]
         public async Task<IActionResult> ImportLTSEventCategories(
             string id = null,
             CancellationToken cancellationToken = default)
@@ -1020,9 +1020,9 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-        //Imports all Event Classifications        
+        //Imports all Event Categories        
         [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("LTS/Events/Update/Classifications")]
+        [HttpGet, Route("LTS/Event/Update/Classifications")]
         public async Task<IActionResult> ImportLTSEventClassifications(
             string id = null,
             CancellationToken cancellationToken = default)
@@ -1035,7 +1035,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                LTSApiEventClassificationsImportHelper importhelper = new LTSApiEventClassificationsImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Events/Categories"));
+                LTSApiEventClassificationsImportHelper importhelper = new LTSApiEventClassificationsImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Events/Classifications"));
 
                 updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Classifications succeeded", otherinfo, updatedetail, true);
@@ -1048,6 +1048,122 @@ namespace OdhApiImporter.Controllers
                 return BadRequest(updateResult);
             }
         }
+
+        //Imports all Gastronomy Categories        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Gastronomy/Update/Categories")]
+        public async Task<IActionResult> ImportLTSGastronomyCategories(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Gastronomies Categories";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "gastronomies.categories";
+
+            try
+            {
+                LTSApiGastronomyCategoriesImportHelper importhelper = new LTSApiGastronomyCategoriesImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Gastronomies/Categories"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies Categories succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies Categories data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Gastronomy Facilities        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Gastronomy/Update/Facilities")]
+        public async Task<IActionResult> ImportLTSGastronomyFacilities(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Gastronomies Facilities";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "gastronomies.facilities";
+
+            try
+            {
+                LTSApiGastronomyFacilitiesImportHelper importhelper = new LTSApiGastronomyFacilitiesImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Gastronomies/Facilities"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies Facilities succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies Facilities data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Gastronomy CeremonyCodes        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Gastronomy/Update/CeremonyCodes")]
+        public async Task<IActionResult> ImportLTSGastronomyCeremonyCodes(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Gastronomies CeremonyCodes";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "gastronomies.ceremonycodes";
+
+            try
+            {
+                LTSApiEventClassificationsImportHelper importhelper = new LTSApiEventClassificationsImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Gastronomies/CeremonyCodes"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies CeremonyCodes succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies CeremonyCodes data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Gastronomy DishCodes        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Gastronomy/Update/DishCodes")]
+        public async Task<IActionResult> ImportLTSGastronomyDishCodes(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Gastronomies DishCodes";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "gastronomies.dishcodes";
+
+            try
+            {
+                LTSApiGastronomyDishCodesImportHelper importhelper = new LTSApiGastronomyDishCodesImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Gastronomies/DishCodes"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies DishCodes succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies DishCodes data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }        
 
         #endregion
 
