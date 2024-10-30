@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
-    public class LTSApiGastronomyFacilitiesImportHelper : ImportHelper, IImportHelper
+    public class LTSApiVenueCategoriesImportHelper : ImportHelper, IImportHelper
     {
-        public LTSApiGastronomyFacilitiesImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public LTSApiVenueCategoriesImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
 
-        private async Task<List<JObject>> GetDataFromLTSV2()
+        private async Task<List<JObject>> GetVenueCategoriesFromLTSV2()
         {
             try
             {
@@ -33,13 +33,13 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 var qs = new LTSQueryStrings() { page_size = 100 };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 
-                var ltsdata = await ltsapi.GastronomyFacilityRequest(dict, true);
+                var ltsdata = await ltsapi.VenueCategoryRequest(dict, true);
 
                 return ltsdata;
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "single.gastronomies.facilities", new ImportLog() { sourceid = "", sourceinterface = "lts.gastronomies.facilities", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "single.venues.categories", new ImportLog() { sourceid = "", sourceinterface = "lts.venues.categories", success = false, error = ex.Message });
 
                 return null;
             }
@@ -48,14 +48,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //Import the List
-            var eventtags = await GetDataFromLTSV2();
+            var eventtags = await GetVenueCategoriesFromLTSV2();
             //Import Single Data & Deactivate Data
-            var result = await SaveDataToPG(eventtags);            
+            var result = await SaveGastronomyCategoriesToPG(eventtags);            
 
             return result;
         }
 
-        private async Task<UpdateDetail> SaveDataToPG(List<JObject> ltsdata)
+        private async Task<UpdateDetail> SaveGastronomyCategoriesToPG(List<JObject> ltsdata)
         {
             var newimportcounter = 0;
             var updateimportcounter = 0;
@@ -67,14 +67,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 List<string> idlistlts = new List<string>();
 
-                List<LTSGastronomyFacilities> tagdata = new List<LTSGastronomyFacilities>();
+                List<LTSVenueCategory> eventtagdata = new List<LTSVenueCategory>();
 
                 foreach (var ltsdatasingle in ltsdata)
                 {
-                    tagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSGastronomyFacilities>>());
+                    eventtagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSVenueCategory>>());
                 }
 
-                foreach (var data in tagdata)
+                foreach (var data in eventtagdata)
                 {
                     string id = data.rid;
 
@@ -101,19 +101,16 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.MainEntity = "odhactivitypoi";
                     objecttosave.ValidForEntity = new List<string>() { "odhactivitypoi", "gastronomy" };
                     objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
+                    objecttosave.Types = new List<string>() { "venuecategory" }; //TODO Clean venue categories
 
-                    string matchedtype = GetTypeFromFacilityGroup(data.group);
-
-                    objecttosave.Types = new List<string>() { matchedtype, "gastronomyfacilities" };
-
-                    objecttosave.IDMCategoryMapping = null;
+                    //objecttosave.IDMCategoryMapping = null;
                     objecttosave.PublishDataWithTagOn = null;
-                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code }, { "group", data.group } } } };
+                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code } } } };
                     objecttosave.LTSTaggingInfo = null;
                     objecttosave.PublishedOn = null;
 
                     //Do not set this because we have mapped tag ids assigned
-                    objecttosave.MappedTagIds = null;
+                    //objecttosave.MappedTagIds = null;
 
 
                     var result = await InsertDataToDB(objecttosave, data);
@@ -124,13 +121,13 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     idlistlts.Add(id);
 
-                    WriteLog.LogToConsole(id, "dataimport", "single.gastronomies.facilities", new ImportLog() { sourceid = id, sourceinterface = "lts.gastronomies.facilities", success = true, error = "" });
+                    WriteLog.LogToConsole(id, "dataimport", "single.venues.categories", new ImportLog() { sourceid = id, sourceinterface = "lts.venues.categories", success = true, error = "" });
                 }
 
                 if (idlistlts.Count > 0)
                 {
                     //Begin SetDataNotinListToInactive
-                    var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "gastronomyfacilities", "facilitycodes_cuisinecodes", "facilitycodes_creditcard", "facilitycodes_qualityseals", "facilitycodes_equipment" });
+                    var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "venuecategory" });
 
                     var idstodelete = idlistdb.Where(p => !idlistlts.Any(p2 => p2 == p));
 
@@ -139,9 +136,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                         var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
 
                         if (deletedisableresult.Item1 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.gastronomies.facilities.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.gastronomies.facilities", success = true, error = "" });
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.venues.categories.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.venues.categories", success = true, error = "" });
                         else if (deletedisableresult.Item2 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.gastronomies.facilities.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.gastronomies.facilities", success = true, error = "" });
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.venues.categories.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.venues.categories", success = true, error = "" });
 
 
                         deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -154,7 +151,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSGastronomyFacilities data)
+        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSVenueCategory data)
         {
             try
             {                
@@ -169,7 +166,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 var rawdataid = await InsertInRawDataDB(data);
 
-                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.gastronomies.facilities.import", importerURL);
+                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.venues.categories.import", importerURL);
             }
             catch (Exception ex)
             {
@@ -177,7 +174,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
         }
 
-        private async Task<int> InsertInRawDataDB(LTSGastronomyFacilities data)
+        private async Task<int> InsertInRawDataDB(LTSVenueCategory data)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
@@ -185,37 +182,28 @@ namespace OdhApiImporter.Helpers.LTSAPI
                             datasource = "lts",
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(data),
-                            sourceinterface = "gastronomies",
+                            sourceinterface = "venues",
                             sourceid = data.rid,
-                            sourceurl = "https://go.lts.it/api/v1/gastronomies/facilities",
-                            type = "gastronomies.facilities",
+                            sourceurl = "https://go.lts.it/api/v1/venues/categories",
+                            type = "venues.categories",
                             license = "open",
                             rawformat = "json"
                         });
-        }
-
-        public static string GetTypeFromFacilityGroup(string group)
-        {
-            return group switch
-            {
-                "RS_Cuisine" => "facilitycodes_cuisinecodes",
-                "RS_Equipment" => "facilitycodes_equipment",
-                "RS_QualitySeals" => "facilitycodes_qualityseals",
-                "RS_CreditCard" => "facilitycodes_creditcard",
-                _ => "gastronomyfacilities"
-            };
-        }
+        }        
     }
 
-    public class LTSGastronomyFacilities
+    public class LTSVenueCategory
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
+
+        public bool? isHotel { get; set; }
+        public int? minimalHallNumber { get; set; }
+        public int? minimalSurfaceInSquareMeters { get; set; }
+
         public IDictionary<string,string> name { get; set; }
         public IDictionary<string, string> description { get; set; }
         //public bool isActive { get; set; }
-        public string code { get; set; }
-        public string group { get; set; }
-    }                   
-
+        public string code { get; set; }        
+    }    
 }
