@@ -1179,7 +1179,7 @@ namespace OdhApiImporter.Helpers
                 tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
                 tag.FirstImport = DateTime.Now;
                 tag.PublishedOn = null;
-                tag.Types = new List<string>() { topic.Type.ToLower() };
+                tag.Types = new List<string>() { "venue" + topic.Type.ToLower() };
 
                 tag.PublishDataWithTagOn = null;
                 tag.Mapping = null;

@@ -33,7 +33,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 var qs = new LTSQueryStrings() { page_size = 100 };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 
-                var ltsdata = await ltsapi.GastronomyCategoriesRequest(dict, true);
+                var ltsdata = await ltsapi.GastronomyCategoryRequest(dict, true);
 
                 return ltsdata;
             }
@@ -67,11 +67,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 List<string> idlistlts = new List<string>();
 
-                List<LTSEventCategory> eventtagdata = new List<LTSEventCategory>();
+                List<LTSGastronomyCategory> eventtagdata = new List<LTSGastronomyCategory>();
 
                 foreach (var ltsdatasingle in ltsdata)
                 {
-                    eventtagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSEventCategory>>());
+                    eventtagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSGastronomyCategory>>());
                 }
 
                 foreach (var data in eventtagdata)
@@ -98,17 +98,19 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.TagName = data.name;
                     objecttosave.Description = data.description;
 
-                    objecttosave.MainEntity = "event";
-                    objecttosave.ValidForEntity = new List<string>() { "gastronomy" };
+                    objecttosave.MainEntity = "odhactivitypoi";
+                    objecttosave.ValidForEntity = new List<string>() { "odhactivitypoi", "gastronomy" };
                     objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
-                    objecttosave.Types = new List<string>() { "gastronomycategory", "eventtopic" };
+                    objecttosave.Types = new List<string>() { "gastronomycategory", "categorycodes" };
 
-                    objecttosave.IDMCategoryMapping = null;
+                    //objecttosave.IDMCategoryMapping = null;
                     objecttosave.PublishDataWithTagOn = null;
-                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code }, { "classificationrid", data.classification.rid } } } };
+                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code } } } };
                     objecttosave.LTSTaggingInfo = null;
                     objecttosave.PublishedOn = null;
-                    objecttosave.MappedTagIds = null;
+
+                    //Do not set this because we have mapped tag ids assigned
+                    //objecttosave.MappedTagIds = null;
 
 
                     var result = await InsertDataToDB(objecttosave, data);
@@ -121,7 +123,6 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     WriteLog.LogToConsole(id, "dataimport", "single.gastronomies.categories", new ImportLog() { sourceid = id, sourceinterface = "lts.gastronomies.categories", success = true, error = "" });
                 }
-
 
                 if (idlistlts.Count > 0)
                 {
@@ -150,7 +151,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSEventCategory eventcategory)
+        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSGastronomyCategory gastronomycategory)
         {
             try
             {                
@@ -163,7 +164,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 //Set PublishedOn
                 objecttosave.CreatePublishedOnList();
 
-                var rawdataid = await InsertInRawDataDB(eventcategory);
+                var rawdataid = await InsertInRawDataDB(gastronomycategory);
 
                 return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.gastronomies.categories.import", importerURL);
             }
@@ -173,16 +174,16 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
         }
 
-        private async Task<int> InsertInRawDataDB(LTSEventCategory eventcategory)
+        private async Task<int> InsertInRawDataDB(LTSGastronomyCategory gastronomycategory)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
                         {
                             datasource = "lts",
                             importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(eventcategory),
+                            raw = JsonConvert.SerializeObject(gastronomycategory),
                             sourceinterface = "gastronomies",
-                            sourceid = eventcategory.rid,
+                            sourceid = gastronomycategory.rid,
                             sourceurl = "https://go.lts.it/api/v1/gastronomies/categories",
                             type = "gastronomies.categories",
                             license = "open",

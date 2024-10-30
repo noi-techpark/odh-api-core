@@ -33,7 +33,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 var qs = new LTSQueryStrings() { page_size = 100 };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 
-                var ltsdata = await ltsapi.EventTagsRequest(dict, true);
+                var ltsdata = await ltsapi.EventTagRequest(dict, true);
 
                 return ltsdata;
             }
