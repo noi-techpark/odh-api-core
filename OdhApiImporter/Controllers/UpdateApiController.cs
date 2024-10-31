@@ -944,7 +944,7 @@ namespace OdhApiImporter.Controllers
             string operation = "Import LTS SuedtirolGuestpass Cardtypes";
             string updatetype = GetUpdateType(null);
             string source = "lts";
-            string otherinfo = "accommodation.suedtirolguestpass.cardtypes";
+            string otherinfo = "accommodations.suedtirolguestpass.cardtypes";
 
             try
             {
@@ -1163,7 +1163,181 @@ namespace OdhApiImporter.Controllers
                 var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Gastronomies DishCodes data failed", otherinfo, updatedetail, ex, true);
                 return BadRequest(updateResult);
             }
-        }        
+        }
+
+        //Imports all Accommodation Categories        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Accommodation/Update/Categories")]
+        public async Task<IActionResult> ImportLTSAccommodationCategories(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Accommodations Categories";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "accommodations.categories";
+
+            try
+            {
+                LTSApiAccommodationCategoriesImportHelper importhelper = new LTSApiAccommodationCategoriesImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Accommodations/Categories"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Accommodations Categories succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Accommodations Categories data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Accommodation Mealplans        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Accommodation/Update/Mealplans")]
+        public async Task<IActionResult> ImportLTSAccommodationMealplans(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Accommodations Mealplans";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "accommodations.mealplans";
+
+            try
+            {
+                LTSApiAccommodationMealplansImportHelper importhelper = new LTSApiAccommodationMealplansImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Accommodations/Mealplans"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Accommodations Mealplans succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Accommodations Mealplans data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Accommodation Types        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Accommodation/Update/Types")]
+        public async Task<IActionResult> ImportLTSAccommodationTypes(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Accommodation Types";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "accommodation.types";
+
+            try
+            {
+                LTSApiAccommodationTypesImportHelper importhelper = new LTSApiAccommodationTypesImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Accommodation/Types"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Accommodation Types succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Accommodation Types data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Accommodation Amenities        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Accommodation/Update/Amenities")]
+        public async Task<IActionResult> ImportLTSAccommodationAmenities(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Accommodations Amenities";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "accommodations.amenities";
+
+            try
+            {
+                LTSApiAmenitiesImportHelper importhelper = new LTSApiAmenitiesImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Accommodations/Amenities"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Accommodations Amenities succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Accommodations Amenities data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all Venues Categories        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Venue/Update/Categories")]
+        public async Task<IActionResult> ImportLTSVenueCategories(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Venues Categories";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "venues.categories";
+
+            try
+            {
+                LTSApiVenueCategoriesImportHelper importhelper = new LTSApiVenueCategoriesImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/Venues/Categories"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Venues Categories succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Venues Categories data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
+        //Imports all ODHActivityPois Tags        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/ODHActivityPoi/Update/Tags")]
+        public async Task<IActionResult> ImportLTSODHActivityPoiTag(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS ODHActivityPois Tags";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "odhactivitypoi.tags";
+
+            try
+            {
+                LTSApiTagImportHelper importhelper = new LTSApiTagImportHelper(settings, QueryFactory, "tags", UrlGeneratorStatic("LTS/ODHActivityPois/Tags"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS ODHActivityPois Tags succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS ODHActivityPois Tags data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
 
         #endregion
 
