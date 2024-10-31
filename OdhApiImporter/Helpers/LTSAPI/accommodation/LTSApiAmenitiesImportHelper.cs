@@ -88,6 +88,10 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     if (objecttosave == null)
                         objecttosave = new TagLinked();
+                    else
+                        Console.WriteLine("Amenities here");
+
+                    //TODO Some Accommodation Amenities are also Gastronomy facilitycodes_equipment facilitycodes_cuisinecodes
 
                     objecttosave.Id = data.rid;
                     objecttosave.Active = true;
@@ -100,16 +104,42 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.Description = data.description;
 
                     objecttosave.MainEntity = "accommodation";
-                    objecttosave.ValidForEntity = new List<string>() { "accommodation" };
+
+                    if(objecttosave.ValidForEntity == null)
+                        objecttosave.ValidForEntity = new List<string>() { "accommodation" };
+                    else
+                    {
+                        if(!objecttosave.ValidForEntity.Contains("accommodation"))
+                            objecttosave.ValidForEntity.Add("accommodation");
+                    }
+                        
+                    
+                    
                     objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
-                    objecttosave.Types = new List<string>() { "accommodation" + data.type };
+
+                    if (objecttosave.Types == null)
+                        objecttosave.Types = new List<string>() { "accommodation" + data.type };
+                    else
+                    {
+                        if (!objecttosave.Types.Contains("accommodation" + data.type))
+                            objecttosave.Types.Add("accommodation" + data.type);
+                    }
+                        
 
                     if (!typelistlts.Contains("accommodation" + data.type))
                         typelistlts.Add("accommodation" + data.type);
 
                     //objecttosave.IDMCategoryMapping = null;
                     objecttosave.PublishDataWithTagOn = null;
-                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code }, { "type", data.type } } } };
+                    if(objecttosave.Mapping == null || !objecttosave.Mapping.ContainsKey("lts"))
+                        objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code }, { "type", data.type } } } };
+                    else
+                    {
+                        objecttosave.Mapping["lts"].TryAddOrUpdate("rid", data.rid);
+                        objecttosave.Mapping["lts"].TryAddOrUpdate("code", data.code);
+                        objecttosave.Mapping["lts"].TryAddOrUpdate("type", data.type);
+                    }                        
+
                     objecttosave.LTSTaggingInfo = null;
                     objecttosave.PublishedOn = null;
 
