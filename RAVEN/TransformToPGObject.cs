@@ -206,7 +206,7 @@ namespace RAVEN
             if (acco.Review == null)
                 acco.Review = new Dictionary<string, DataModel.Review>();
 
-            if (!String.IsNullOrEmpty(acco.TrustYouID))
+            if (!String.IsNullOrEmpty(data.TrustYouID))
                 acco.Review.TryAddOrUpdate("trustyou", review);
 
             acco.AccoHGVInfo = data.AccoHGVInfo;

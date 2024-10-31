@@ -74,6 +74,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     guestcardata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSGuestcard>>());
                 }
 
+                //Add manually the Guestcard Tag from idm
+                guestcardata.Add(new LTSGuestcard() { rid = "guestcard", isActive = true, lastUpdate = DateTime.Now, name = new Dictionary<string, string>() { { "de", "Guestcard" }, { "it", "Guestcard" }, { "en", "Guestcard" } } });
+
                 foreach (var data in guestcardata)
                 {
                     string id = data.rid;
@@ -94,7 +97,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.FirstImport = objecttosave.FirstImport == null ? DateTime.Now : objecttosave.FirstImport;
                     objecttosave.LastChange = data.lastUpdate;
 
-                    objecttosave.Source = "lts";
+                    objecttosave.Source = data.rid == "guestcard" ? "idm" : "lts";
                     objecttosave.TagName = data.name;
                     objecttosave.MainEntity = "accommodation";
                     objecttosave.ValidForEntity = new List<string>() { "accommodation" };
@@ -115,10 +118,13 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     updateimportcounter = updateimportcounter + result.updated ?? 0;
                     errorimportcounter = errorimportcounter + result.error ?? 0;
 
-                    idlistlts.Add(id);
+                    if(data.rid != "guestcard")
+                        idlistlts.Add(id);
 
                     WriteLog.LogToConsole(id, "dataimport", "single.suedtirolguestpass.cardtypes", new ImportLog() { sourceid = id, sourceinterface = "lts.suedtirolguestpass.cardtypes", success = true, error = "" });
                 }
+
+             
 
                 //Deactivate only if there is data updated
                 if (idlistlts.Count > 0)
