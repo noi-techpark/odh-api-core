@@ -213,6 +213,31 @@ namespace OdhApiImporter.Controllers
             });
         }
 
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ModifyAccommodationsToV2/{id}")]
+        public async Task<IActionResult> ModifyAccommodationsToV2(string id)
+        {
+            var objectscount = 0;
+
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+
+            objectscount = await customdataoperation.AccommodationModifyToV2(id.Split(',').ToList());
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify Accommodation V2",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
         #endregion
 
         #region Articles

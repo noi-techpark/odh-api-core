@@ -347,6 +347,115 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> AccommodationModifyToV2(List<string> idlist)
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("accommodations")
+                   .WhereIn("id", idlist);
+
+            var accos = await query.GetObjectListAsync<AccommodationLinked>();
+            int i = 0;
+
+            foreach (var acco in accos)
+            {
+                var accov2 = new AccommodationV2();
+
+                accov2.AccoBookingChannel = acco.AccoBookingChannel;
+                accov2.AccoCategoryId = acco.AccoCategoryId;
+                accov2.AccoDetail = acco.AccoDetail;
+                accov2.AccoHGVInfo = acco.AccoHGVInfo;
+                accov2.AccoOverview = acco.AccoOverview;
+
+                var accoproperties = new AccoProperties();
+                accoproperties.HasApartment = acco.HasApartment;
+                accoproperties.HasRoom = acco.HasRoom;
+                accoproperties.IsAccommodation = acco.IsAccommodation;
+                accoproperties.IsBookable = acco.IsBookable;
+                accoproperties.IsCamping = acco.IsCamping;
+                accoproperties.IsGastronomy = acco.IsGastronomy;
+                accoproperties.TVMember = acco.TVMember;
+
+                accov2.AccoProperties = accoproperties;
+                accov2.AccoRoomInfo = acco.AccoRoomInfo;
+                accov2.AccoTypeId = acco.AccoTypeId;
+                accov2.Active = acco.Active;
+                accov2.BadgeIds = acco.BadgeIds;
+                accov2.BoardIds = acco.BoardIds;
+                
+                //Todo fill tagids and tags?
+                //accov2.TagIds =
+
+                accov2.DistanceInfo = acco.DistanceInfo;
+                accov2.DistrictId = acco.DistrictId;
+                accov2.Features = acco.Features;
+                accov2.FirstImport = acco.FirstImport;
+                //todo hide this
+                accov2.GastronomyId = acco.GastronomyId;
+                accov2.GpsInfo = acco.GpsInfo;
+                accov2.HasLanguage = acco.HasLanguage;
+
+                //TODO Hide this
+                accov2.HgvId = acco.HgvId;
+                accov2.Id = acco.Id;
+                accov2.ImageGallery = acco.ImageGallery;
+                accov2.IndependentData = acco.IndependentData;
+                accov2.LastChange = acco.LastChange;
+                accov2.LicenseInfo = acco.LicenseInfo;
+                accov2.LocationInfo = acco.LocationInfo;
+                
+                //TODO Hide this
+                accov2.MainLanguage = acco.MainLanguage;
+
+                accov2.Mapping = acco.Mapping;
+                accov2.MarketingGroupIds = acco.MarketingGroupIds;
+                accov2.MssResponseShort = accov2.MssResponseShort;
+
+                //TODO Hide this                
+                accov2.PublishedOn = acco.PublishedOn;
+
+                accov2.Representation = acco.Representation;
+
+                Review review = new Review();
+                review.ReviewId = acco.TrustYouID;
+                review.Results = acco.TrustYouResults;
+                review.Provider = "trustyou";
+                review.Active = acco.TrustYouActive;
+                review.Score = acco.TrustYouScore;
+                review.StateInteger = acco.TrustYouState;
+
+                if (accov2.Review == null)
+                    accov2.Review = new Dictionary<string, DataModel.Review>();
+
+                accov2.Review.TryAddOrUpdate("trustyou", review);
+
+                accov2.Shortname = acco.Shortname;
+                accov2.SmgActive = acco.SmgActive;
+                accov2.SmgTags = acco.SmgTags;
+                accov2.Source = acco.Source;
+                accov2.SpecialFeaturesIds = acco.SpecialFeaturesIds;
+                accov2.ThemeIds = acco.ThemeIds;
+                accov2.TourismVereinId = acco.TourismVereinId;
+                accov2._Meta = acco._Meta;
+
+                //TODO Fill
+                //accov2.OperationSchedule;
+                //accov2.TagIds;
+                //accov2.Tags;
+                //accov2.RatePlan;                
+
+                //Save tp DB
+                var queryresult = await QueryFactory.Query("accommodations").Where("id", accov2.Id)
+                     .UpdateAsync(new JsonBData() { id = accov2.Id, data = new JsonRaw(accov2) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+
         #endregion
 
         #region ODHActivityPoi
@@ -1053,7 +1162,7 @@ namespace OdhApiImporter.Helpers
                 tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
                 tag.FirstImport = DateTime.Now;
                 tag.PublishedOn = null;
-                tag.Types = new List<string>() { "eventtopic" };
+                tag.Types = new List<string>() { "eventtopic","eventcategory" };
 
                 tag.PublishDataWithTagOn = null;
                 tag.Mapping = null;

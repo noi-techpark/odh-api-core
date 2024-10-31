@@ -62,7 +62,7 @@ namespace Helper
         {
             return odhtype switch
             {
-                Accommodation or AccommodationLinked => IDStyle.uppercase,
+                Accommodation or AccommodationLinked or AccommodationV2 => IDStyle.uppercase,
                 AccoRoom or AccommodationRoomLinked => IDStyle.uppercase,
                 LTSActivityLinked => IDStyle.uppercase,
                 LTSPoiLinked => IDStyle.uppercase,
@@ -98,7 +98,7 @@ namespace Helper
         {
             return odhtype switch
             {
-                Type _ when odhtype == typeof(Accommodation) || odhtype == typeof(AccommodationLinked) => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Accommodation) || odhtype == typeof(AccommodationLinked) || odhtype == typeof(AccommodationV2) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(AccoRoom) || odhtype == typeof(AccommodationRoomLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(LTSActivityLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(LTSPoiLinked) => IDStyle.uppercase,

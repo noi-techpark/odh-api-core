@@ -21,110 +21,110 @@ namespace RAVEN
             return pgmodelgenerator(myobject);
         }
 
-        public static AccommodationLinked GetAccommodationPGObject(AccommodationLinked data)
-        {
-            data.Id = data.Id.ToUpper();
+        //public static AccommodationV2 GetAccommodationPGObject(AccommodationV2 data)
+        //{
+        //    data.Id = data.Id.ToUpper();
 
-            if (data.SmgTags != null && data.SmgTags.Count > 0)
-                data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+        //    if (data.SmgTags != null && data.SmgTags.Count > 0)
+        //        data.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
 
-            //Shortdesc Longdesc fix TODO
-            foreach (var detail in data.AccoDetail)
-            {
-                var shortdesc = detail.Value.Longdesc;
-                var longdesc = detail.Value.Shortdesc;
+        //    //Shortdesc Longdesc fix TODO
+        //    foreach (var detail in data.AccoDetail)
+        //    {
+        //        var shortdesc = detail.Value.Longdesc;
+        //        var longdesc = detail.Value.Shortdesc;
 
-                detail.Value.Shortdesc = shortdesc;
-                detail.Value.Longdesc = longdesc;
-            }
+        //        detail.Value.Shortdesc = shortdesc;
+        //        detail.Value.Longdesc = longdesc;
+        //    }
 
-            if (String.IsNullOrEmpty(data.Source))
-                data.Source = "lts";
+        //    if (String.IsNullOrEmpty(data.Source))
+        //        data.Source = "lts";
 
-            data.Source = data.Source.ToLower();
+        //    data.Source = data.Source.ToLower();
 
-            data._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(data, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
-            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
+        //    data._Meta = MetadataHelper.GetMetadataobject<AccommodationV2>(data, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
+        //    //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
 
 
-            return data;
-        }
+        //    return data;
+        //}
 
-        public static AccommodationLinked GetAccommodationPGObject(AccommodationRaven data)
-        {
-            AccommodationLinked acco = new AccommodationLinked();
+        //public static AccommodationLinked GetAccommodationPGObject(AccommodationRaven data)
+        //{
+        //    AccommodationLinked acco = new AccommodationLinked();
 
-            acco.Id = data.Id.ToUpper();
+        //    acco.Id = data.Id.ToUpper();
 
-            if (data.SmgTags != null && data.SmgTags.Count > 0)
-                acco.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
+        //    if (data.SmgTags != null && data.SmgTags.Count > 0)
+        //        acco.SmgTags = data.SmgTags.Select(x => x.ToLower()).ToList();
 
-            //Shortdesc Longdesc fix
-            foreach (var detail in data.AccoDetail)
-            {
-                var shortdesc = detail.Value.Longdesc;
-                var longdesc = detail.Value.Shortdesc;
+        //    //Shortdesc Longdesc fix
+        //    foreach (var detail in data.AccoDetail)
+        //    {
+        //        var shortdesc = detail.Value.Longdesc;
+        //        var longdesc = detail.Value.Shortdesc;
 
-                detail.Value.Shortdesc = shortdesc;
-                detail.Value.Longdesc = longdesc;
-            }
+        //        detail.Value.Shortdesc = shortdesc;
+        //        detail.Value.Longdesc = longdesc;
+        //    }
 
        
-            acco.AccoBookingChannel = data.AccoBookingChannel;
-            acco.AccoDetail = data.AccoDetail;
-            acco.AccoCategoryId = data.AccoCategoryId;
-            acco.AccoRoomInfo = data.AccoRoomInfo;
-            acco.AccoTypeId = data.AccoTypeId;
-            acco.Active = data.Active;
+        //    acco.AccoBookingChannel = data.AccoBookingChannel;
+        //    acco.AccoDetail = data.AccoDetail;
+        //    acco.AccoCategoryId = data.AccoCategoryId;
+        //    acco.AccoRoomInfo = data.AccoRoomInfo;
+        //    acco.AccoTypeId = data.AccoTypeId;
+        //    acco.Active = data.Active;
 
-            acco.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
-            acco.BadgeIds = data.BadgeIds;
-            acco.BoardIds = data.BoardIds;
-            acco.DistanceInfo = data.DistanceInfo;
-            acco.DistrictId = data.DistrictId;
-            acco.Features = data.Features;
-            acco.FirstImport = data.FirstImport;
-            acco.GastronomyId = data.GastronomyId;
-            acco.HasApartment = data.HasApartment;
-            acco.HasLanguage = data.HasLanguage;
-            acco.HasRoom      = data.HasRoom;
-            acco.HgvId = data.HgvId;
-            acco.ImageGallery = data.ImageGallery;
-            acco.IndependentData = data.IndependentData;
-            acco.IsAccommodation = data.IsAccommodation;
-            acco.IsBookable = data.IsBookable;
-            acco.IsCamping = data.IsCamping;
-            acco.IsGastronomy = data.IsGastronomy;
-            acco.LastChange = data.LastChange;
-            acco.LicenseInfo = data.LicenseInfo;
-            acco.LocationInfo = data.LocationInfo;
-            acco.MainLanguage = data.MainLanguage;
-            acco.Mapping = data.Mapping;
-            acco.MarketingGroupIds = data.MarketingGroupIds;
-            acco.MssResponseShort = data.MssResponseShort;
-            acco.Representation = data.Representation;
-            acco.Shortname = data.Shortname;
-            acco.SmgActive = data.SmgActive;
-            acco.SmgTags = data.SmgTags;
-            acco.SpecialFeaturesIds = data.SpecialFeaturesIds;
-            acco.Source = String.IsNullOrEmpty(data.Source) ? "lts" : data.Source.ToLower();
-            acco.ThemeIds = data.ThemeIds;
-            acco.TourismVereinId = data.TourismVereinId;
-            acco.TrustYouActive = data.TrustYouActive;  
-            acco.TrustYouID = data.TrustYouID;
-            acco.TrustYouResults = data.TrustYouResults;
-            acco.TrustYouScore = data.TrustYouScore;
-            acco.TrustYouState = data.TrustYouState;
-            acco.TVMember = data.TVMember;
+        //    acco.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
+        //    acco.BadgeIds = data.BadgeIds;
+        //    acco.BoardIds = data.BoardIds;
+        //    acco.DistanceInfo = data.DistanceInfo;
+        //    acco.DistrictId = data.DistrictId;
+        //    acco.Features = data.Features;
+        //    acco.FirstImport = data.FirstImport;
+        //    acco.GastronomyId = data.GastronomyId;
+        //    acco.HasApartment = data.HasApartment;
+        //    acco.HasLanguage = data.HasLanguage;
+        //    acco.HasRoom      = data.HasRoom;
+        //    acco.HgvId = data.HgvId;
+        //    acco.ImageGallery = data.ImageGallery;
+        //    acco.IndependentData = data.IndependentData;
+        //    acco.IsAccommodation = data.IsAccommodation;
+        //    acco.IsBookable = data.IsBookable;
+        //    acco.IsCamping = data.IsCamping;
+        //    acco.IsGastronomy = data.IsGastronomy;
+        //    acco.LastChange = data.LastChange;
+        //    acco.LicenseInfo = data.LicenseInfo;
+        //    acco.LocationInfo = data.LocationInfo;
+        //    acco.MainLanguage = data.MainLanguage;
+        //    acco.Mapping = data.Mapping;
+        //    acco.MarketingGroupIds = data.MarketingGroupIds;
+        //    acco.MssResponseShort = data.MssResponseShort;
+        //    acco.Representation = data.Representation;
+        //    acco.Shortname = data.Shortname;
+        //    acco.SmgActive = data.SmgActive;
+        //    acco.SmgTags = data.SmgTags;
+        //    acco.SpecialFeaturesIds = data.SpecialFeaturesIds;
+        //    acco.Source = String.IsNullOrEmpty(data.Source) ? "lts" : data.Source.ToLower();
+        //    acco.ThemeIds = data.ThemeIds;
+        //    acco.TourismVereinId = data.TourismVereinId;
+        //    acco.TrustYouActive = data.TrustYouActive;  
+        //    acco.TrustYouID = data.TrustYouID;
+        //    acco.TrustYouResults = data.TrustYouResults;
+        //    acco.TrustYouScore = data.TrustYouScore;
+        //    acco.TrustYouState = data.TrustYouState;
+        //    acco.TVMember = data.TVMember;
 
-            acco.AccoHGVInfo = data.AccoHGVInfo;
-            acco.AccoOverview = data.AccoOverview;
+        //    acco.AccoHGVInfo = data.AccoHGVInfo;
+        //    acco.AccoOverview = data.AccoOverview;
 
-            acco._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(acco, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
-            //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
+        //    acco._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(acco, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
+        //    //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
 
-            return acco;
-        }
+        //    return acco;
+        //}
 
         public static AccommodationV2 GetAccommodationPGObjectV2(AccommodationRaven data)
         {
@@ -211,7 +211,7 @@ namespace RAVEN
             acco.AccoHGVInfo = data.AccoHGVInfo;
             acco.AccoOverview = data.AccoOverview;
 
-            acco._Meta = MetadataHelper.GetMetadataobject<AccommodationLinked>(acco, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
+            acco._Meta = MetadataHelper.GetMetadataobject<AccommodationV2>(acco, MetadataHelper.GetMetadataforAccommodation);  //GetMetadata(data.Id, "accommodation", "lts", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("accommodation", data.SmgActive);
 
             return acco;

@@ -72,11 +72,11 @@ namespace OdhApiImporter.Helpers
                     updateresultstomerge.Add(myupdateresultacco);
 
                     //Check if data has to be reduced and save it
-                    if (ReduceDataTransformer.ReduceDataCheck<AccommodationLinked>((AccommodationLinked)mypgdata) == true)
+                    if (ReduceDataTransformer.ReduceDataCheck<AccommodationV2>((AccommodationV2)mypgdata) == true)
                     {
-                        var reducedobject = ReduceDataTransformer.GetReducedObject((AccommodationLinked)mypgdata, ReduceDataTransformer.CopyLTSAccommodationToReducedObject);
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((AccommodationV2)mypgdata, ReduceDataTransformer.CopyLTSAccommodationToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations", false, false, false);
+                        updateresultreduced = await SaveRavenObjectToPG<AccommodationV2>((AccommodationV2)reducedobject, "accommodations", false, false, false);
                     }
 
                     bool roomschanged = false;
@@ -114,7 +114,7 @@ namespace OdhApiImporter.Helpers
                     if (myroomdatalist != null)
                     {
                         Tuple<string, bool>? roomsourcecheck = null;
-                        if (((AccommodationLinked)mypgdata).AccoRoomInfo != null && ((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
+                        if (((AccommodationV2)mypgdata).AccoRoomInfo != null && ((AccommodationV2)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
                             roomsourcecheck = Tuple.Create("hgv", true);
 
                   
