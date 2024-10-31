@@ -347,13 +347,13 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> AccommodationModifyToV2(List<string> idlist)
+        public async Task<int> AccommodationModifyToV2(List<string>? idlist)
         {
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
                    .From("accommodations")
-                   .WhereIn("id", idlist);
+                   .When(idlist != null, x => x.WhereIn("id", idlist));
 
             var accos = await query.GetObjectListAsync<AccommodationLinked>();
             int i = 0;

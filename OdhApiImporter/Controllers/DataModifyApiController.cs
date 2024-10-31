@@ -215,13 +215,13 @@ namespace OdhApiImporter.Controllers
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ModifyAccommodationsToV2/{id}")]
-        public async Task<IActionResult> ModifyAccommodationsToV2(string id)
+        public async Task<IActionResult> ModifyAccommodationsToV2(string? id)
         {
             var objectscount = 0;
 
             CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
 
-            objectscount = await customdataoperation.AccommodationModifyToV2(id.Split(',').ToList());
+            objectscount = await customdataoperation.AccommodationModifyToV2(id != null ? id.Split(',').ToList() : null);
 
             return Ok(new UpdateResult
             {
