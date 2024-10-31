@@ -624,6 +624,12 @@ namespace DataModel
                 return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
+
+        //New Tags
+        public ICollection<Tags> Tags { get; set; }
+
+        public ICollection<string> TagIds { get; set; }
+
     }
 
     public class VenueLinked : Venue, IMetaData, IHasLocationInfoLinked

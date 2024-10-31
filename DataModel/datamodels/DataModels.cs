@@ -922,6 +922,8 @@ namespace DataModel
         public bool? GrpEvent { get; set; }
         public bool? EventBenefit { get; set; }
         public EventBooking? EventBooking { get; set; }
+
+        [Obsolete("Deprecated use Tags")]
         public ICollection<LTSTags>? LTSTags { get; set; }
 
         public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }

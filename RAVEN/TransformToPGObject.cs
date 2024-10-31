@@ -560,7 +560,64 @@ namespace RAVEN
             eventlinked.TopicRIDs = data.TopicRIDs;
             eventlinked.Topics = data.Topics;
             eventlinked.Type = data.Type;
-            
+
+            if(eventlinked.TagIds == null)
+                eventlinked.TagIds = new List<string>();
+
+            if (eventlinked.Tags == null)
+                eventlinked.Tags = new List<Tags>();
+
+            //New Add Topics to Tags
+            foreach (var topic in data.Topics)
+            {
+                eventlinked.TagIds.Add(topic.TopicRID);
+
+                Tags tag = new Tags();
+                tag.Source = "lts";
+                tag.Id = topic.TopicRID;
+                tag.Type = "eventcategory";
+                tag.Name = topic.TopicInfo;
+
+                eventlinked.Tags.Add(tag);
+            }
+
+            //New Add Tags to Tags
+            foreach (var ltstag in data.LTSTags)
+            {
+                eventlinked.TagIds.Add(ltstag.LTSRID);
+
+                Tags tag = new Tags();
+                tag.Source = "lts";
+                tag.Id = ltstag.LTSRID;
+                tag.Type = "eventtag";
+                tag.Name = ltstag.TagName.ContainsKey("en") ? ltstag.TagName["en"] : ltstag.TagName.FirstOrDefault().Value;                
+
+                eventlinked.Tags.Add(tag);
+            }
+
+            //New Add Classification to Tags
+            if(data.ClassificationRID == null)
+            {
+                eventlinked.TagIds.Add(data.ClassificationRID);
+
+                Tags tag = new Tags();
+                tag.Source = "lts";
+                tag.Id = data.ClassificationRID;
+                tag.Type = "eventclassification";
+                if (data.ClassificationRID == "4650BDEF28D545CE8AB37138E3C45B80")
+                    tag.Name = "Service";
+                else if (data.ClassificationRID == "CE212B488FA14954BE91BBCFA47C0F06")
+                    tag.Name = "Event";
+                else if (data.ClassificationRID == "D8F5FF743D5741D1BF1F5D61671F552B")
+                    tag.Name = "Approval";
+                else if (data.ClassificationRID == "E9F80CE8CB3F481ABC7E548CF34A8C1C")
+                    tag.Name = "Reservation";
+                else
+                    tag.Name = "";
+
+                eventlinked.Tags.Add(tag);
+            }
+
             //TODO make some props obsolete
 
             eventlinked._Meta = MetadataHelper.GetMetadataobject<EventLinked>(eventlinked, MetadataHelper.GetMetadataforEvent); //GetMetadata(data.Id, "event", "lts", data.LastChange);
