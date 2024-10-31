@@ -92,6 +92,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                         Console.WriteLine("Amenities here");
 
                     //TODO Some Accommodation Amenities are also Gastronomy facilitycodes_equipment facilitycodes_cuisinecodes
+                    //TODO this on all tag imports
 
                     objecttosave.Id = data.rid;
                     objecttosave.Active = true;
