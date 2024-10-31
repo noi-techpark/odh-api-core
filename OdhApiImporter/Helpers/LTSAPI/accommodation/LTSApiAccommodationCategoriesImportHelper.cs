@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
-    public class LTSApiAmenitiesImportHelper : ImportHelper, IImportHelper
+    public class LTSApiAccommodationcategoriesImportHelper : ImportHelper, IImportHelper
     {
-        public LTSApiAmenitiesImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public LTSApiAccommodationcategoriesImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
 
-        private async Task<List<JObject>> GetAccommodationAmenitiesFromLTSV2()
+        private async Task<List<JObject>> GetAccommodationcategoriesFromLTSV2()
         {
             try
             {
@@ -33,13 +33,13 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 var qs = new LTSQueryStrings() { page_size = 100 };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 
-                var ltsdata = await ltsapi.AmenityListRequest(dict, true);
+                var ltsdata = await ltsapi.AccommodationCategoryRequest(dict, true);
 
                 return ltsdata;
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "single.accommodations.amenities", new ImportLog() { sourceid = "", sourceinterface = "lts.accommodation.amenities", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "single.accommodations.categories", new ImportLog() { sourceid = "", sourceinterface = "lts.accommodation.categories", success = false, error = ex.Message });
 
                 return null;
             }
@@ -48,14 +48,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //Import the List
-            var eventtags = await GetAccommodationAmenitiesFromLTSV2();
+            var eventtags = await GetAccommodationcategoriesFromLTSV2();
             //Import Single Data & Deactivate Data
-            var result = await SaveAccommodationAmenitiesToPG(eventtags);            
+            var result = await SaveAccommodationcategoriesToPG(eventtags);            
 
             return result;
         }
 
-        private async Task<UpdateDetail> SaveAccommodationAmenitiesToPG(List<JObject> ltsdata)
+        private async Task<UpdateDetail> SaveAccommodationcategoriesToPG(List<JObject> ltsdata)
         {
             var newimportcounter = 0;
             var updateimportcounter = 0;
@@ -68,11 +68,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 List<string> idlistlts = new List<string>();
                 List<string> typelistlts = new List<string>();
 
-                List<LTSAmenity> tagdata = new List<LTSAmenity>();
+                List<LTSAccommodationCategory> tagdata = new List<LTSAccommodationCategory>();
 
                 foreach (var ltsdatasingle in ltsdata)
                 {
-                    tagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSAmenity>>());
+                    tagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSAccommodationCategory>>());
                 }
 
                 foreach (var data in tagdata)
@@ -102,14 +102,21 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.MainEntity = "accommodation";
                     objecttosave.ValidForEntity = new List<string>() { "accommodation" };
                     objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
-                    objecttosave.Types = new List<string>() { "accommodation" + data.type };
+                    objecttosave.Types = new List<string>() { "accommodationcategory" };
 
-                    if (!typelistlts.Contains("accommodation" + data.type))
-                        typelistlts.Add("accommodation" + data.type);
+                    if (!typelistlts.Contains("accommodationcategory"))
+                        typelistlts.Add("accommodationcategory");
 
                     //objecttosave.IDMCategoryMapping = null;
                     objecttosave.PublishDataWithTagOn = null;
-                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code }, { "type", data.type } } } };
+                    objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { 
+                        { "lts", new Dictionary<string, string>() { 
+                            { "rid", data.rid }, 
+                            { "code", data.code }, 
+                            { "order", data.order.ToString() } 
+                        } 
+                        } 
+                    };
                     objecttosave.LTSTaggingInfo = null;
                     objecttosave.PublishedOn = null;
 
@@ -125,7 +132,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     idlistlts.Add(id);
 
-                    WriteLog.LogToConsole(id, "dataimport", "single.accommodations.amenities", new ImportLog() { sourceid = id, sourceinterface = "lts.accommodation.amenities", success = true, error = "" });
+                    WriteLog.LogToConsole(id, "dataimport", "single.accommodations.categories", new ImportLog() { sourceid = id, sourceinterface = "lts.accommodations.categories", success = true, error = "" });
                 }
 
                 if (idlistlts.Count > 0)
@@ -140,9 +147,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                         var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
 
                         if (deletedisableresult.Item1 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.accommodations.amenities.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.accommodations.amenities", success = true, error = "" });
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.accommodations.categories.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.accommodations.categories", success = true, error = "" });
                         else if (deletedisableresult.Item2 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.accommodations.amenities.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.accommodations.amenities", success = true, error = "" });
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.accommodations.categories.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.accommodations.categories", success = true, error = "" });
 
 
                         deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -155,7 +162,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSAmenity data)
+        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSAccommodationCategory data)
         {
             try
             {                
@@ -170,7 +177,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 var rawdataid = await InsertInRawDataDB(data);
 
-                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.accommodations.amenities.import", importerURL);
+                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.accommodations.categories.import", importerURL);
             }
             catch (Exception ex)
             {
@@ -178,7 +185,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
         }
 
-        private async Task<int> InsertInRawDataDB(LTSAmenity data)
+        private async Task<int> InsertInRawDataDB(LTSAccommodationCategory data)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
                         new RawDataStore()
@@ -186,17 +193,17 @@ namespace OdhApiImporter.Helpers.LTSAPI
                             datasource = "lts",
                             importdate = DateTime.Now,
                             raw = JsonConvert.SerializeObject(data),
-                            sourceinterface = "amenities",
+                            sourceinterface = "categories",
                             sourceid = data.rid,
-                            sourceurl = "https://go.lts.it/api/v1/amenities",
-                            type = "accommodations.amenities",
+                            sourceurl = "https://go.lts.it/api/v1/accommodations/categories",
+                            type = "accommodations.categories",
                             license = "open",
                             rawformat = "json"
                         });
         }        
     }
 
-    public class LTSAmenity
+    public class LTSAccommodationCategory
     {
         public string rid { get; set; }
         public DateTime lastUpdate { get; set; }
@@ -205,6 +212,6 @@ namespace OdhApiImporter.Helpers.LTSAPI
         public IDictionary<string, string> description { get; set; }
         //public bool isActive { get; set; }
         public string code { get; set; }
-        public string type { get; set; }
+        public int order { get; set; }
     }    
 }
