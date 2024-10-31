@@ -410,7 +410,7 @@ namespace OdhApiImporter.Helpers
 
                 accov2.Mapping = acco.Mapping;
                 accov2.MarketingGroupIds = acco.MarketingGroupIds;
-                accov2.MssResponseShort = accov2.MssResponseShort;
+                accov2.MssResponseShort = acco.MssResponseShort;
 
                 //TODO Hide this                
                 accov2.PublishedOn = acco.PublishedOn;
@@ -428,7 +428,8 @@ namespace OdhApiImporter.Helpers
                 if (accov2.Review == null)
                     accov2.Review = new Dictionary<string, DataModel.Review>();
 
-                accov2.Review.TryAddOrUpdate("trustyou", review);
+                if(!String.IsNullOrEmpty(acco.TrustYouID))
+                    accov2.Review.TryAddOrUpdate("trustyou", review);
 
                 accov2.Shortname = acco.Shortname;
                 accov2.SmgActive = acco.SmgActive;
