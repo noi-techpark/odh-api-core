@@ -547,16 +547,16 @@ namespace DataModel
         public string? TrustYouID { get; set; }
 
         [SwaggerSchema("Review Score on Trust You")]
-        public double TrustYouScore { get; set; }
+        public double? TrustYouScore { get; set; }
 
         [SwaggerSchema("Number of Ratings in Trust You")]
-        public int TrustYouResults { get; set; }
+        public int? TrustYouResults { get; set; }
 
         [SwaggerSchema("Active in Trust You")]
-        public bool TrustYouActive { get; set; }
+        public bool? TrustYouActive { get; set; }
 
         [SwaggerSchema("Trust You State on LTS")]
-        public int TrustYouState { get; set; }
+        public int? TrustYouState { get; set; }
     }
 
     public class AccommodationRaven : Accommodation
