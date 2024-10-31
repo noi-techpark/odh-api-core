@@ -52,7 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\LTSAPI\tag\" />
     <Folder Include="Models\" />
     <Folder Include="json\" />
   </ItemGroup>
