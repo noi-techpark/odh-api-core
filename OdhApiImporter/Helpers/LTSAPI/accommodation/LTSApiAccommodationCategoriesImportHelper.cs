@@ -18,14 +18,14 @@ using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
-    public class LTSApiAccommodationcategoriesImportHelper : ImportHelper, IImportHelper
+    public class LTSApiAccommodationCategoriesImportHelper : ImportHelper, IImportHelper
     {
-        public LTSApiAccommodationcategoriesImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public LTSApiAccommodationCategoriesImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
 
-        private async Task<List<JObject>> GetAccommodationcategoriesFromLTSV2()
+        private async Task<List<JObject>> GetAccommodationCategoriesFromLTSV2()
         {
             try
             {
@@ -48,14 +48,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //Import the List
-            var eventtags = await GetAccommodationcategoriesFromLTSV2();
+            var eventtags = await GetAccommodationCategoriesFromLTSV2();
             //Import Single Data & Deactivate Data
-            var result = await SaveAccommodationcategoriesToPG(eventtags);            
+            var result = await SaveAccommodationCategoriesToPG(eventtags);            
 
             return result;
         }
 
-        private async Task<UpdateDetail> SaveAccommodationcategoriesToPG(List<JObject> ltsdata)
+        private async Task<UpdateDetail> SaveAccommodationCategoriesToPG(List<JObject> ltsdata)
         {
             var newimportcounter = 0;
             var updateimportcounter = 0;
