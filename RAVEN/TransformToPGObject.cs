@@ -597,7 +597,7 @@ namespace RAVEN
             }
 
             //New Add Classification to Tags
-            if(data.ClassificationRID == null)
+            if(data.ClassificationRID != null)
             {
                 eventlinked.TagIds.Add(data.ClassificationRID);
 
