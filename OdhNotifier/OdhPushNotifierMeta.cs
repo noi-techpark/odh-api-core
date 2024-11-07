@@ -292,7 +292,7 @@ namespace OdhNotifier
             try
             {
                 //TODO Switch between response service types
-                return JsonSerializer.Serialize(await response.Content.ReadFromJsonAsync<IdmMarketPlacePushResponse>());
+                return await response.Content.ReadFromJsonAsync<IdmMarketPlacePushResponse>();
             }
             catch
             {
