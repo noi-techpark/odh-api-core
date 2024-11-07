@@ -6,7 +6,7 @@ using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Server.IIS.Core;
-using MongoDB.Driver;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OdhNotifier;
 using SqlKata;
@@ -21,6 +21,7 @@ using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace OdhNotifier
 {
@@ -111,15 +112,11 @@ namespace OdhNotifier
 
                     NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, additionalpushinfo, isdelete, updatemode, origin, referer);
 
-                    NotifierResponse notifierresponse = new NotifierResponse();
-
+                 
                     var response = await SendNotify(meta);
-                    notifierresponse.HttpStatusCode = response.Item1;
-                    notifierresponse.Response = response.Item2 ;
-                    notifierresponse.Service = notifyconfig.ServiceName;
-                    notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
 
-                    notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
+
+                    notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, response.Item2);
                 }                
             }
 
@@ -135,7 +132,7 @@ namespace OdhNotifier
                 default: return false;
             }
         }
-        private async Task<Tuple<HttpStatusCode, object?>> SendNotify(NotifyMeta notify, NotifierFailureQueue? failurequeuedata = null)
+        private async Task<Tuple<HttpStatusCode, NotifierResponse>> SendNotify(NotifyMeta notify, NotifierFailureQueue? failurequeuedata = null)
         {
             var requesturl = notify.Url;
             
@@ -185,7 +182,7 @@ namespace OdhNotifier
                         }
                         else if (notify.Mode.ToLower() == "post")
                         {
-                            var data = new StringContent(JsonSerializer.Serialize(new
+                            var data = new StringContent(System.Text.Json.JsonSerializer.Serialize(new
                             {
                                 id = notify.Id,
                                 entity = notify.NotifyType,
@@ -195,7 +192,7 @@ namespace OdhNotifier
 
                             //If datatype is accommodation add the skiprooms 
                             if(notify.Type == "accommodation")
-                                data = new StringContent(JsonSerializer.Serialize(new
+                                data = new StringContent(System.Text.Json.JsonSerializer.Serialize(new
                                 {
                                     id = notify.Id,
                                     entity = notify.NotifyType,
@@ -261,7 +258,7 @@ namespace OdhNotifier
             }
         }
 
-        private async Task<Tuple<HttpStatusCode, object?>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, bool roomsupdate, string error)
+        private async Task<Tuple<HttpStatusCode, NotifierResponse>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, bool roomsupdate, string error)
         {
             var responsecontent = await ReadResponse(response, notify.Destination);
 
@@ -279,13 +276,23 @@ namespace OdhNotifier
             return Tuple.Create(response.StatusCode, responsecontent);
         }
 
-        private async Task<object?> ReadResponse(HttpResponseMessage response, string service)
+        private async Task<NotifierResponse> ReadResponse(HttpResponseMessage response, string service)
+        {
+            NotifierResponse notifierresponse = new NotifierResponse();
+            notifierresponse.HttpStatusCode = response.StatusCode;
+            notifierresponse.Response = await TryReadingResponse(response, service);
+            notifierresponse.Service = service;
+            notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
+
+            return notifierresponse;
+        }
+
+        private async Task<object?> TryReadingResponse(HttpResponseMessage response, string service)
         {
             try
             {
                 //TODO Switch between response service types
-
-               return await response.Content.ReadFromJsonAsync<IdmMarketPlacePushResponse>();
+                return JsonSerializer.Serialize(await response.Content.ReadFromJsonAsync<IdmMarketPlacePushResponse>());
             }
             catch
             {
@@ -294,18 +301,11 @@ namespace OdhNotifier
         }
 
 
-        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, bool? roomsupdate, object? response, string? exception, bool success)
-        {
-            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, roomsupdate = roomsupdate, updatemode = updatemode, response = JsonSerializer.Serialize(response), exception = exception, success = success };
-            
-            Console.WriteLine(JsonSerializer.Serialize(log));
-        }
-
-        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, bool? roomsupdate, string? response, string? exception, bool success)
+        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, bool? roomsupdate, NotifierResponse response, string? exception, bool success)
         {
             NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, roomsupdate = roomsupdate, updatemode = updatemode, response = response, exception = exception, success = success };
-
-            Console.WriteLine(JsonSerializer.Serialize(log));
+            
+            Console.WriteLine(JsonConvert.SerializeObject(log));
         }
 
         private async Task WriteToFailureQueue(NotifyMeta notify, string exmessage)
