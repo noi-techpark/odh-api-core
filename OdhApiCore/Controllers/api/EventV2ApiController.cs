@@ -155,9 +155,10 @@ namespace OdhApiCore.Controllers
 
         #region Converters
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [ProducesResponseType(typeof(EventV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
         [HttpGet, Route("Event/ConvertEventShortToEventV2/{id}")]
         public async Task<IActionResult> ConvertEventShortToEventV2(string id, bool savetotable = false)
         {
@@ -202,6 +203,7 @@ namespace OdhApiCore.Controllers
             }            
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("Event/ConvertEventToEventV2/{id}")]
         public async Task<IActionResult> ConvertEventToEventV2(string id, bool savetotable = false)
         {
@@ -255,6 +257,7 @@ namespace OdhApiCore.Controllers
             }
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("Event/ConvertEventTypesToTags")]
         public async Task<IActionResult> ConvertEventTopicsToTags(bool savetotable = false)
         {
