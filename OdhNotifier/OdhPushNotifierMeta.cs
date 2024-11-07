@@ -303,7 +303,7 @@ namespace OdhNotifier
 
         private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, bool? roomsupdate, NotifierResponse response, string? exception, bool success)
         {
-            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, roomsupdate = roomsupdate, updatemode = updatemode, response = response, exception = exception, success = success };
+            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, roomsupdate = roomsupdate, updatemode = updatemode, response = response.Response, exception = exception, success = success };
             
             Console.WriteLine(JsonConvert.SerializeObject(log));
         }
