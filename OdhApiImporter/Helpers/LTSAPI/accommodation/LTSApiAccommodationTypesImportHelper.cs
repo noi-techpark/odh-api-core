@@ -39,7 +39,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "single.accommodation.types", new ImportLog() { sourceid = "", sourceinterface = "lts.accommodation.types", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "list.accommodations.types", new ImportLog() { sourceid = "", sourceinterface = "lts.accommodations.types", success = false, error = ex.Message });
 
                 return null;
             }
@@ -132,7 +132,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     idlistlts.Add(id);
 
-                    WriteLog.LogToConsole(id, "dataimport", "single.accommodation.types", new ImportLog() { sourceid = id, sourceinterface = "lts.accommodation.types", success = true, error = "" });
+                    WriteLog.LogToConsole(id, "dataimport", "single.accommodations.types", new ImportLog() { sourceid = id, sourceinterface = "lts.accommodations.types", success = true, error = "" });
                 }
 
                 if (idlistlts.Count > 0)
@@ -147,9 +147,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                         var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
 
                         if (deletedisableresult.Item1 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.accommodation.types.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.accommodation.types", success = true, error = "" });
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.accommodations.types.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.accommodations.types", success = true, error = "" });
                         else if (deletedisableresult.Item2 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.accommodation.types.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.accommodation.types", success = true, error = "" });
+                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.accommodations.types.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.accommodations.types", success = true, error = "" });
 
 
                         deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
@@ -177,7 +177,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 var rawdataid = await InsertInRawDataDB(data);
 
-                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.accommodation.types.import", importerURL);
+                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.accommodations.types.import", importerURL);
             }
             catch (Exception ex)
             {

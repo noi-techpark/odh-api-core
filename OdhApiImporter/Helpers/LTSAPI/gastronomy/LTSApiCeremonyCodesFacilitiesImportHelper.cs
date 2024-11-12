@@ -39,7 +39,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "single.gastronomies.ceremonycodes", new ImportLog() { sourceid = "", sourceinterface = "lts.gastronomies.ceremonycodes", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "list.gastronomies.ceremonycodes", new ImportLog() { sourceid = "", sourceinterface = "lts.gastronomies.ceremonycodes", success = false, error = ex.Message });
 
                 return null;
             }

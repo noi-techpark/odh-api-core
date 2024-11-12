@@ -39,7 +39,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "single.accommodations.amenities", new ImportLog() { sourceid = "", sourceinterface = "lts.accommodation.amenities", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "list.accommodations.amenities", new ImportLog() { sourceid = "", sourceinterface = "lts.accommodations.amenities", success = false, error = ex.Message });
 
                 return null;
             }
@@ -156,7 +156,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     idlistlts.Add(id);
 
-                    WriteLog.LogToConsole(id, "dataimport", "single.accommodations.amenities", new ImportLog() { sourceid = id, sourceinterface = "lts.accommodation.amenities", success = true, error = "" });
+                    WriteLog.LogToConsole(id, "dataimport", "single.accommodations.amenities", new ImportLog() { sourceid = id, sourceinterface = "lts.accommodations.amenities", success = true, error = "" });
                 }
 
                 if (idlistlts.Count > 0)

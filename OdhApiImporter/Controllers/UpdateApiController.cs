@@ -1339,6 +1339,37 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+
+        //Imports Accommodations
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Accommodation/Update")]
+        public async Task<IActionResult> ImportLTSAccommodation(
+            string id = null,
+            string lastchange = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Accommodation";
+            string updatetype = GetUpdateType(id != null ? new List<string>() { id } : null);
+            string source = "lts";
+            string otherinfo = "accommodation";
+
+            try
+            {
+                LTSApiAccommodationImportHelper importhelper = new LTSApiAccommodationImportHelper(settings, QueryFactory, "accommodations", UrlGeneratorStatic("LTS/Accommodations"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
         #endregion
 
 
@@ -1354,10 +1385,12 @@ namespace OdhApiImporter.Controllers
             }
         }
 
-        private static string GetUpdateType(List<string>? idlist)
+        private static string GetUpdateType(List<string>? idlist, string lastchange = null)
         {
-            if (idlist == null)
+            if (idlist == null && lastchange == null)
                 return "all";
+            else if (idlist == null && lastchange != null)
+                return "lastchanged";
             else if (idlist.Count == 1)
                 return "single";
             else

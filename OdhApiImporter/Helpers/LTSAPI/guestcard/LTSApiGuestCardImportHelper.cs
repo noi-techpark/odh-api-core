@@ -49,7 +49,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "single.suedtirolguestpass.cardtypes", new ImportLog() { sourceid = "", sourceinterface = "lts.suedtirolguestpass.cardtypes", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", "list.suedtirolguestpass.cardtypes", new ImportLog() { sourceid = "", sourceinterface = "lts.suedtirolguestpass.cardtypes", success = false, error = ex.Message });
                 return null;
             }
         }
