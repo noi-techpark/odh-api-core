@@ -1346,6 +1346,7 @@ namespace OdhApiImporter.Controllers
         public async Task<IActionResult> ImportLTSAccommodation(
             string id = null,
             string lastchange = null,
+            string updatemode = null,
             CancellationToken cancellationToken = default)
         {
             List<string>? idlist = null;
@@ -1369,6 +1370,10 @@ namespace OdhApiImporter.Controllers
                     lastchangeddt = DateTime.Parse(lastchange);
 
                 importhelper.requestType = LTSApiAccommodationImportHelper.RequestType.listdetail;
+                if(updatemode != null && updatemode == "detail")
+                    importhelper.requestType = LTSApiAccommodationImportHelper.RequestType.detail;
+                if (updatemode != null && updatemode == "list")
+                    importhelper.requestType = LTSApiAccommodationImportHelper.RequestType.list;
 
                 updatedetail = await importhelper.SaveDataToODH(lastchangeddt, idlist, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags succeeded", otherinfo, updatedetail, true);

@@ -144,11 +144,19 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 foreach (var ltsdatapage in ltsdata)
                 {
-                    foreach (var ltsdatasingle in ltsdatapage["data"].ToArray())
+                    //If we have a single detail request add directly
+                    if (requestType == RequestType.detail)
                     {
-                        var accoparsedsingle = ltsdatasingle.FirstOrDefault().ToObject<LTSAccoData>();
-                        //To check if this works also for the paginated
-                        ltsaccos.Add(accoparsedsingle);
+                        ltsaccos.Add(ltsdatapage["data"].ToObject<LTSAccoData>());
+                    }
+                    else
+                    {
+                        //Else add it sequentially
+                        foreach (var ltsdatasingle in ltsdatapage["data"].ToArray())
+                        {
+                            //To check if this works also for the paginated
+                            ltsaccos.Add(ltsdatasingle.ToObject<LTSAccoData>());
+                        }
                     }
                 }
 
@@ -158,11 +166,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     var accodetail = data;
 
                     //If requesttype detail get the data first
-                    if (requestType != RequestType.listdetail)
+                    if (requestType == RequestType.list)
                     {
                         var accodetailresult = await GetAccommodationListFromLTSV2(null, new List<string>() { id }, RequestType.detail);
 
-                        accodetail = accodetailresult.FirstOrDefault().Value<LTSAccoData>();
+                        accodetail = accodetailresult.FirstOrDefault()["data"].ToObject<LTSAccoData>();                        
                     }
 
  
@@ -173,7 +181,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     var objecttosave = await query.GetObjectSingleAsync<AccommodationV2>();
 
-                    //Parse Accommodation 
+                    //Parse Accommodation TOCHECK!
                     AccommodationV2 accommodationV2 = AccommodationParser.ParseLTSAccommodation(accodetail, false, xmlfiles, jsonfiles);
 
                     //TODO Take everything from Loaded Accommodation that should remain as it is
@@ -181,6 +189,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     {
 
                     }
+
+                    //TODO Update All ROOMS
+
+                    //TODO Update HGV INFO
+
+                    //TODO Update HGV ROOMS
+
+                    //FINALLY UPDATE ACCOMMODATION ROOT OBJECT
 
                     var result = await InsertDataToDB(accommodationV2, accodetail);
 
