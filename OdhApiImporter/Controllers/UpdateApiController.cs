@@ -1348,9 +1348,15 @@ namespace OdhApiImporter.Controllers
             string lastchange = null,
             CancellationToken cancellationToken = default)
         {
+            List<string>? idlist = null;
+            if(id != null)
+            {
+                idlist = id.Split(',').ToList();
+            }
+            
             UpdateDetail updatedetail = default(UpdateDetail);
             string operation = "Import LTS Accommodation";
-            string updatetype = GetUpdateType(id != null ? new List<string>() { id } : null);
+            string updatetype = GetUpdateType(idlist);
             string source = "lts";
             string otherinfo = "accommodation";
 
@@ -1358,7 +1364,13 @@ namespace OdhApiImporter.Controllers
             {
                 LTSApiAccommodationImportHelper importhelper = new LTSApiAccommodationImportHelper(settings, QueryFactory, "accommodations", UrlGeneratorStatic("LTS/Accommodations"));
 
-                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                DateTime? lastchangeddt = null; 
+                if(lastchange != null)
+                    lastchangeddt = DateTime.Parse(lastchange);
+
+                importhelper.requestType = LTSApiAccommodationImportHelper.RequestType.listdetail;
+
+                updatedetail = await importhelper.SaveDataToODH(lastchangeddt, idlist, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags succeeded", otherinfo, updatedetail, true);
 
                 return Ok(updateResult);

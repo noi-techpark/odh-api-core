@@ -8,10 +8,13 @@ using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace OdhApiImporter.Helpers
 {
@@ -105,9 +108,62 @@ namespace OdhApiImporter.Helpers
         }
     }
 
-    //public class ImportObject
-    //{
-    //    public XDocument XdocumentList { get; set; }
-    //    public Dictionary<string, XDocument> XdocumentDictionary { get; set; }
-    //}
+    public class ImportUtils
+    {
+        public static void SaveDataAsJson<T>(T data, string filename, string path)
+        {
+            //Save to to xml folder Features
+            var serializer = new JsonSerializer();
+            //Save json
+            string fileName = Path.Combine(path, filename + ".json");
+            using (var writer = File.CreateText(fileName))
+            {
+                serializer.Serialize(writer, data);
+            }
+        }
+
+        public static async Task<T> LoadFromJsonAndDeSerialize<T>(string filename, string path)
+        {
+            using (StreamReader r = new StreamReader(Path.Combine(path, filename + ".json")))
+            {
+                string json = await r.ReadToEndAsync();
+
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+        }
+
+        public static async Task<JArray> LoadFromJsonAndDeSerialize(string filename, string path)
+        {
+            using (StreamReader r = new StreamReader(Path.Combine(path, filename + ".json")))
+            {
+                string json = await r.ReadToEndAsync();
+
+                return JArray.Parse(json) ?? new JArray();
+            }
+        }
+
+        public static async Task<IDictionary<string, JArray>> LoadJsonFiles(string directory, List<string> filenames)
+        {
+            IDictionary<string, JArray> myjsonfiles = new Dictionary<string, JArray>();
+            foreach (string filename in filenames)
+                myjsonfiles.Add(filename, await LoadFromJsonAndDeSerialize(filename, directory));
+
+            return myjsonfiles;
+        }
+
+        public static IDictionary<string, XDocument> LoadXmlFiles(string directory, List<string> filenames)
+        {
+            //TODO move this files to Database
+
+            IDictionary<string, XDocument> myxmlfiles = new Dictionary<string, XDocument>();
+
+            foreach(var filename in filenames)
+            {
+                myxmlfiles.Add(filename, XDocument.Load(directory + filename + ".xml"));
+
+            }            
+
+            return myxmlfiles;
+        }
+    }
 }

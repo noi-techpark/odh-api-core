@@ -7,11 +7,10 @@ using Helper;
 using LTSAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NINJA.Parser;
-using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,6 +73,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 {
                     tagdata.AddRange(ltsdatasingle["data"].ToObject<IList<LTSAmenity>>());
                 }
+
+                //Saving the data into the folder
+                ImportUtils.SaveDataAsJson<List<LTSAmenity>>(tagdata, "Amenities", "json/");
 
                 foreach (var data in tagdata)
                 {
@@ -224,7 +226,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                             license = "open",
                             rawformat = "json"
                         });
-        }        
+        }                
     }
 
     public class LTSAmenity

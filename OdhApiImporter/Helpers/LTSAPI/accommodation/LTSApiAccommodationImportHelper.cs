@@ -17,37 +17,82 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Helper.Tagging;
+using Amazon.Util.Internal;
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
     public class LTSApiAccommodationImportHelper : ImportHelper, IImportHelper
     {
+        public enum RequestType
+        {
+            detail,
+            list,
+            listdetail
+        }
+
+        public RequestType requestType = RequestType.listdetail;
+
         public LTSApiAccommodationImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
 
-        private async Task<List<JObject>> GetAccommodationListFromLTSV2(DateTime? lastchanged, List<string>? idlist)
+        private async Task<List<JObject>> GetAccommodationListFromLTSV2(DateTime? lastchanged, List<string>? idlist, RequestType requestTypeToUse)
         {
             try
             {
-                LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);
-                var qs = new LTSQueryStrings() { page_size = 20 };
+                if (requestTypeToUse == RequestType.listdetail)
+                {
+                    LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);
+                    var qs = new LTSQueryStrings() { page_size = 20, filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF" };
 
-                if(lastchanged != null)
-                    qs.filter_lastUpdate = lastchanged;
+                    if (lastchanged != null)
+                        qs.filter_lastUpdate = lastchanged;
 
-                if (idlist != null && idlist.Count > 0)
-                    qs.filter_rids = String.Join(",", idlist);
+                    if (idlist != null && idlist.Count > 0)
+                        qs.filter_rids = String.Join(",", idlist);
 
-                var dict = ltsapi.GetLTSQSDictionary(qs);
-                var ltsdata = await ltsapi.AccommodationListRequest(dict, true);
+                    var dict = ltsapi.GetLTSQSDictionary(qs);
+                    var ltsdata = await ltsapi.AccommodationListRequest(dict, true);
 
-                return ltsdata;
+                    return ltsdata;
+                }
+                else if (requestTypeToUse == RequestType.list)
+                {
+                    LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);
+                    var qs = new LTSQueryStrings() { 
+                        page_size = 100, 
+                        filter_marketingGroupRids = "9E72B78AC5B14A9DB6BED6C2592483BF", 
+                        fields = "rid" 
+                    };
+
+                    if (lastchanged != null)
+                        qs.filter_lastUpdate = lastchanged;
+
+                    if (idlist != null && idlist.Count > 0)
+                        qs.filter_rids = String.Join(",", idlist);
+
+                    var dict = ltsapi.GetLTSQSDictionary(qs);
+                    var ltsdata = await ltsapi.AccommodationListRequest(dict, true);
+
+                    return ltsdata;
+                }
+                else if (requestTypeToUse == RequestType.detail)
+                {
+                    LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);
+                    var qs = new LTSQueryStrings() { page_size = 1 };
+
+                    var dict = ltsapi.GetLTSQSDictionary(qs);
+                    var ltsdata = await ltsapi.AccommodationDetailRequest(idlist.FirstOrDefault(), dict);
+
+                    return ltsdata;
+                }
+                else
+                    return null;
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "list.accommodations", new ImportLog() { sourceid = "", sourceinterface = "lts.accommodations", success = false, error = ex.Message });
+                WriteLog.LogToConsole("", "dataimport", requestType.ToString() + ".accommodations", new ImportLog() { sourceid = "", sourceinterface = "lts.accommodations", success = false, error = ex.Message });
 
                 return null;
             }
@@ -56,7 +101,8 @@ namespace OdhApiImporter.Helpers.LTSAPI
         public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
             //Import the List & Data
-            var accommodationids = await GetAccommodationListFromLTSV2(lastchanged, idlist);
+            var accommodationids = await GetAccommodationListFromLTSV2(lastchanged, idlist, requestType);            
+
             //Import Single Data & Deactivate Data
             var result = await SaveAccommodationsToPG(accommodationids);            
 
@@ -74,8 +120,27 @@ namespace OdhApiImporter.Helpers.LTSAPI
             {
                 List<string> idlistlts = new List<string>();                
                 List<LTSAccoData> ltsaccos = new List<LTSAccoData>();
+                
+                var xmlfiles = ImportUtils.LoadXmlFiles(Path.Combine(".\\xml\\"), new List<string>()
+                {
+                    "AccoCategories",
+                    "AccoTypes",
+                    "Alpine",
+                    "Boards",
+                    "City",
+                    "Dolomites",
+                    "Mediterranean",
+                    "NearSkiArea",
+                    "RoomAmenities",
+                    "Vinum",
+                    "Wine"
+                });
 
-                var xmlfiles = LoadXmlFiles(Path.Combine(".\\xml\\"));
+                var jsonfiles = await ImportUtils.LoadJsonFiles(Path.Combine(".\\json\\"), new List<string>()
+                {
+                    "Features"                    
+                });
+
 
                 foreach (var ltsdatasingle in ltsdata)
                 {
@@ -86,7 +151,17 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 foreach (var data in ltsaccos)
                 {
                     string id = data.rid;
+                    var accodetail = data;
 
+                    //If requesttype detail get the data first
+                    if (requestType != RequestType.listdetail)
+                    {
+                        var accodetailresult = await GetAccommodationListFromLTSV2(null, new List<string>() { id }, RequestType.detail);
+
+                        accodetail = accodetailresult.FirstOrDefault().Value<LTSAccoData>();
+                    }
+
+ 
                     //See if data exists
                     var query = QueryFactory.Query("accommodations")
                         .Select("data")
@@ -95,7 +170,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     var objecttosave = await query.GetObjectSingleAsync<AccommodationV2>();
 
                     //Parse Accommodation 
-                    AccommodationV2 accommodationV2 = AccommodationParser.ParseLTSAccommodation(data, false, xmlfiles);
+                    AccommodationV2 accommodationV2 = AccommodationParser.ParseLTSAccommodation(accodetail, false, xmlfiles, jsonfiles);
 
                     //TODO Take everything from Loaded Accommodation that should remain as it is
                     if(objecttosave != null)
@@ -103,7 +178,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     }
 
-                    var result = await InsertDataToDB(accommodationV2, data);
+                    var result = await InsertDataToDB(accommodationV2, accodetail);
 
                     newimportcounter = newimportcounter + result.created ?? 0;
                     updateimportcounter = updateimportcounter + result.updated ?? 0;
@@ -118,28 +193,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 errorimportcounter = 1;
 
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
-        }
-
-        public IDictionary<string, XDocument> LoadXmlFiles(string directory)
-        {
-            //TODO move this files to Database
-
-            IDictionary<string, XDocument> myxmlfiles = new Dictionary<string, XDocument>();
-            myxmlfiles.Add("AccoCategories", XDocument.Load(directory + "AccoCategories.xml"));
-            myxmlfiles.Add("AccoTypes", XDocument.Load(directory + "AccoTypes.xml"));
-            myxmlfiles.Add("Alpine", XDocument.Load(directory + "Alpine.xml"));
-            myxmlfiles.Add("Boards", XDocument.Load(directory + "Boards.xml"));
-            myxmlfiles.Add("City", XDocument.Load(directory + "City.xml"));
-            myxmlfiles.Add("Dolomites", XDocument.Load(directory + "Dolomites.xml"));
-            myxmlfiles.Add("Features", XDocument.Load(directory + "Features.xml"));
-            myxmlfiles.Add("Mediterranean", XDocument.Load(directory + "Mediterranean.xml"));
-            myxmlfiles.Add("NearSkiArea", XDocument.Load(directory + "NearSkiArea.xml"));
-            myxmlfiles.Add("RoomAmenities", XDocument.Load(directory + "RoomAmenities.xml"));
-            myxmlfiles.Add("Vinum", XDocument.Load(directory + "Vinum.xml"));
-            myxmlfiles.Add("Wine", XDocument.Load(directory + "Wine.xml"));
-
-            return myxmlfiles;
-        }
+        }        
 
         private async Task<PGCRUDResult> InsertDataToDB(AccommodationV2 objecttosave, LTSAccoData data)
         {
@@ -183,5 +237,10 @@ namespace OdhApiImporter.Helpers.LTSAPI
                             rawformat = "json"
                         });
         }        
-    }    
+    }
+    
+    public class GenericRidList
+    {
+        public string rid { get; set; }
+    }
 }
