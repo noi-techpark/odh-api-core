@@ -408,14 +408,16 @@ namespace DataModel
         public RatePlan()
         {
             Name = new Dictionary<string, string>();
-            Description = new Dictionary<string, string>();
+            ShortDescription = new Dictionary<string, string>();
+            LongDescription = new Dictionary<string, string>();
         }
 
         public string ChargeType { get; set; }
         public string RatePlanId { get; set; }
         public string Code { get; set; }
         public IDictionary<string, string>? Name { get; set; }
-        public IDictionary<string, string>? Description { get; set; }
+        public IDictionary<string, string>? ShortDescription { get; set; }
+        public IDictionary<string, string>? LongDescription { get; set; }
         public DateTime LastUpdate { get; set; }
         public string? Visibility { get; set; }
     }

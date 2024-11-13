@@ -1351,7 +1351,7 @@ namespace OdhApiImporter.Controllers
             List<string>? idlist = null;
             if(id != null)
             {
-                idlist = id.Split(',').ToList();
+                idlist = id.Split(',').Select(x => x.ToUpper()).ToList();
             }
             
             UpdateDetail updatedetail = default(UpdateDetail);

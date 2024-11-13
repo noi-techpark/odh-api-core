@@ -138,14 +138,18 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 var jsonfiles = await ImportUtils.LoadJsonFiles(Path.Combine(".\\json\\"), new List<string>()
                 {
-                    "Features"                    
+                    "Features"
                 });
 
 
-                foreach (var ltsdatasingle in ltsdata)
+                foreach (var ltsdatapage in ltsdata)
                 {
-                    //To check if this works also for the paginated
-                    ltsaccos.AddRange(ltsdatasingle["data"].ToObject<IList<LTSAccoData>>());
+                    foreach (var ltsdatasingle in ltsdatapage["data"].ToArray())
+                    {
+                        var accoparsedsingle = ltsdatasingle.FirstOrDefault().ToObject<LTSAccoData>();
+                        //To check if this works also for the paginated
+                        ltsaccos.Add(accoparsedsingle);
+                    }
                 }
 
                 foreach (var data in ltsaccos)

@@ -75,7 +75,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 }
 
                 //Saving the data into the folder
-                ImportUtils.SaveDataAsJson<List<LTSAmenity>>(tagdata, "Amenities", "json/");
+                ImportUtils.SaveDataAsJson<List<LTSAmenity>>(tagdata, "Features", "json/");
 
                 foreach (var data in tagdata)
                 {
