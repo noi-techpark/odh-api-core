@@ -23,10 +23,41 @@ namespace Helper
                 //Special get all Taglist and traduce it on import
                 var myalltaglist = await GetAllGenericTagsfromJson(jsondir);
                 if (myalltaglist != null && ((ODHActivityPoiLinked)mypgdata).SmgTags != null)
+                {
                     ((ODHActivityPoiLinked)mypgdata).Tags = GenerateNewTags(((ODHActivityPoiLinked)mypgdata).SmgTags ?? new List<string>(), myalltaglist);
+                }                    
             }
             catch(Exception ex)
             {                
+                Console.WriteLine(JsonConvert.SerializeObject(new UpdateResult
+                {
+                    operation = "Tagging object creation",
+                    updatetype = "single",
+                    otherinfo = "",
+                    id = mypgdata.Id,
+                    message = "Tagging conversion failed: " + ex.Message,
+                    recordsmodified = 0,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    success = false
+                }));
+            }
+        }
+
+        public static async Task AddTagIdsToODHActivityPoi(IIdentifiable mypgdata, string jsondir)
+        {
+            try
+            {
+                //Special get all Taglist and traduce it on import
+                var myalltaglist = await GetAllGenericTagsfromJson(jsondir);
+                if (myalltaglist != null && ((ODHActivityPoiLinked)mypgdata).SmgTags != null)
+                {
+                    ((ODHActivityPoiLinked)mypgdata).TagIds = GenerateNewTagIds(((ODHActivityPoiLinked)mypgdata).SmgTags ?? new List<string>(), myalltaglist);
+                }
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine(JsonConvert.SerializeObject(new UpdateResult
                 {
                     operation = "Tagging object creation",
@@ -84,6 +115,26 @@ namespace Helper
             return returnDict;
         }
 
+        //Translates OLD Tags with german keys to new English Tags
+        public static ICollection<string> GenerateNewTagIds(ICollection<string> currenttags, List<TagLinked> alltaglist)
+        {
+            var returnList = new HashSet<string>();
+
+            foreach (var tag in currenttags)
+            {
+                var tagstranslated = alltaglist.Where(x => x.ODHTagIds != null && x.Source == "" && x.ODHTagIds.Any(y => y == tag)).ToList();
+
+                if(tagstranslated != null)
+                {
+                    foreach (var tagtranslated in tagstranslated)
+                        returnList.Add(tagtranslated.Id);
+                }
+            }
+
+            return returnList;
+        }
+
+
         private static IDictionary<string, TagLinked> TranslateMappingKey(string germankey, List<TagLinked> alltaglist)
         {
             var returnDict = new Dictionary<string, TagLinked>();
@@ -104,7 +155,7 @@ namespace Helper
             }
 
             return returnDict;
-        }
+        }        
 
         //Removes all special chars for the tag id
         private static string RemoveSpecialCharsRegex(string id)

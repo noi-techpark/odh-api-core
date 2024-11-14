@@ -3019,7 +3019,7 @@ namespace DataModel
 
         public DistanceInfo? DistanceInfo { get; set; }
 
-        public List<Tags> Tags { get; set; }
+        public ICollection<Tags> Tags { get; set; }
 
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }

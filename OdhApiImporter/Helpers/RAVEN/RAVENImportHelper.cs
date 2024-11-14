@@ -2,13 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Amazon.Auth.AccessControlPolicy;
 using DataModel;
 using Helper;
 using Helper.Generic;
-using LTSAPI;
-using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver.Core.Operations;
+using Helper.Tagging;
 using OdhApiImporter.Helpers.RAVEN;
 using OdhNotifier;
 using RAVEN;
@@ -218,8 +215,12 @@ namespace OdhApiImporter.Helpers
                     
                     //Special Operations
 
-                    //Special get all Taglist and traduce it on import
-                    await GenericTaggingHelper.AddTagsToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+                    //Traduce all Tags with Source IDM to english tags
+                    await GenericTaggingHelper.AddTagIdsToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+
+                    //Create Tag Info
+                    //Populate Tags (Id/Source/Type) TO TEST
+                    await (mypgdata as IHasTagInfo).UpdateTagsExtension(QueryFactory);
 
                     //TODO Recreate LocationInfo
                     //TODO Recreate Categories

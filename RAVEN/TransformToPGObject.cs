@@ -285,11 +285,16 @@ namespace RAVEN
 
             if (data.LTSTags != null)
             {
+                if(data.TagIds == null)
+                    data.TagIds = new List<string>();
+
                 foreach (var myltstag in data.LTSTags)
                 {
                     myltstag.Id = myltstag.Id.ToLower();
+                    //Check populate TagIDs
+                    data.TagIds.Add(myltstag.Id);
                 }
-            }
+            }        
 
             //Remove empty dictionary keys
             data.PoiProperty = data.PoiProperty == null ? new Dictionary<string, List<PoiProperty>>() : data.PoiProperty.Where(f => f.Value.Count > 0).ToDictionary(x => x.Key, x => x.Value);            

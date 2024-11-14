@@ -46,7 +46,7 @@ namespace Helper.Tagging
                 foreach (var tag in assignedtags)
                 {
                     tags.Add(new Tags() { Id = tag.Id, Source = tag.Source, Type = GetTypeFromTagTypes(tag.Types), Name = GetTagName(tag.TagName) });
-                }
+                }                
             }
 
             return tags;

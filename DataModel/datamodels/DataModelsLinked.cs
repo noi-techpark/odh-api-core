@@ -512,7 +512,7 @@ namespace DataModel
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
     }
 
-    public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
+    public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked, IHasTagInfo
     {
         public Metadata? _Meta { get; set; }
 
@@ -698,7 +698,7 @@ namespace DataModel
         }
     }
 
-    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
+    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked, IHasTagInfo
     {
         public Metadata? _Meta { get; set; }
 
@@ -767,6 +767,7 @@ namespace DataModel
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
+        public ICollection<string> TagIds { get; set; }
     }
 
     public class LTSPoiLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
