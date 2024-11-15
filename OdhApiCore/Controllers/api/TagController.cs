@@ -196,7 +196,7 @@ namespace OdhApiCore.Controllers
 
                 var data = await QueryFactory.Query("tags")
                     .Select("data")
-                    .Where("id", id.ToLower())
+                    .Where("id", id)
                     .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                     .FilterDataByAccessRoles(UserRolesToFilter)
                     .FirstOrDefaultAsync<JsonRaw>();
@@ -226,6 +226,7 @@ namespace OdhApiCore.Controllers
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
      
+                //Allowing mixed id styles
                 tag.Id = Helper.IdGenerator.GenerateIDFromType(tag);
 
                 return await UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -250,6 +251,7 @@ namespace OdhApiCore.Controllers
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
+                //Allowing mixed id styles
                 tag.Id = Helper.IdGenerator.CheckIdFromType<TagLinked>(id);
 
                 return await UpsertData<TagLinked>(tag, new DataInfo("tags", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));

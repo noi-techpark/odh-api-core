@@ -41,7 +41,7 @@ namespace Helper
         {
             return myobject switch
             {
-                AccommodationLinked al => GetMetadataforAccommodation(al),
+                AccommodationV2 al => GetMetadataforAccommodation(al),                 
                 AccommodationRoomLinked al => GetMetadataforAccommodationRoom(al),
                 LTSActivityLinked ltsal => GetMetadataforActivity(ltsal),
                 LTSPoiLinked ltspl => GetMetadataforPoi(ltspl),
@@ -82,14 +82,14 @@ namespace Helper
             };            
         }
 
-        public static Metadata GetMetadataforAccommodation(AccommodationLinked data)
+        public static Metadata GetMetadataforAccommodation(AccommodationV2 data)
         {
             bool reduced = false;
             if (data._Meta != null)
                 reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, "lts", data.LastChange, reduced);
-        }
+        }        
 
         public static Metadata GetMetadataforAccommodationRoom(AccommodationRoomLinked data)
         {

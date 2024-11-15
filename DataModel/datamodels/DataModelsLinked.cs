@@ -512,7 +512,7 @@ namespace DataModel
         public new ICollection<AccoFeatureLinked>? Features { get; set; }
     }
 
-    public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
+    public class EventLinked : Event, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked, IHasTagInfo
     {
         public Metadata? _Meta { get; set; }
 
@@ -624,6 +624,12 @@ namespace DataModel
                 return this.GpsInfo.ToGpsPointsDictionary();
             }
         }
+
+        //New Tags
+        public ICollection<Tags> Tags { get; set; }
+
+        public ICollection<string> TagIds { get; set; }
+
     }
 
     public class VenueLinked : Venue, IMetaData, IHasLocationInfoLinked
@@ -692,7 +698,7 @@ namespace DataModel
         }
     }
 
-    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
+    public class ODHActivityPoiLinked : ODHActivityPoi, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked, IHasTagInfo
     {
         public Metadata? _Meta { get; set; }
 
@@ -761,6 +767,7 @@ namespace DataModel
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
+        public ICollection<string> TagIds { get; set; }
     }
 
     public class LTSPoiLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
@@ -1988,6 +1995,11 @@ namespace DataModel
   
     public class TagLinked : SmgTags, IMetaData, ISource, IActivateable
     {
+        public TagLinked()
+        {
+            Description = new Dictionary<string, string>();
+        }
+
         public Metadata? _Meta { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
@@ -2003,6 +2015,8 @@ namespace DataModel
         public ICollection<string> Types { get; set; }
         public new string Source { get; set; }             
         public bool Active { get; set; } 
+
+        public IDictionary<string, string> Description { get; set; }
     }
 
     public class PublisherLinked : Publisher, IMetaData

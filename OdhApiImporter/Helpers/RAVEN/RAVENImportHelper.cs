@@ -2,13 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Amazon.Auth.AccessControlPolicy;
 using DataModel;
 using Helper;
 using Helper.Generic;
-using LTSAPI;
-using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver.Core.Operations;
+using Helper.Tagging;
+using OdhApiImporter.Helpers.RAVEN;
 using OdhNotifier;
 using RAVEN;
 using SqlKata;
@@ -57,25 +55,25 @@ namespace OdhApiImporter.Helpers
                     
                     mydata = await GetDataFromRaven.GetRavenData<AccommodationRaven>(datatype, id, settings.RavenConfig.ServiceUrl, settings.RavenConfig.User, settings.RavenConfig.Password, cancellationToken);
                     if (mydata != null)
-                        mypgdata = TransformToPGObject.GetPGObject<AccommodationRaven, AccommodationLinked>((AccommodationRaven)mydata, TransformToPGObject.GetAccommodationPGObject);
+                        mypgdata = TransformToPGObject.GetPGObject<AccommodationRaven, AccommodationV2>((AccommodationRaven)mydata, TransformToPGObject.GetAccommodationPGObjectV2);
                     else
                         throw new Exception("No data found!");
 
                     //Add the PublishedOn Logic
-                    ((AccommodationLinked)mypgdata).CreatePublishedOnList();
+                    ((AccommodationV2)mypgdata).CreatePublishedOnList();
 
                     //Update LTS CIN Code
-                    await GetCinCodeFromNewLtsApi((AccommodationLinked)mypgdata);
+                    await LtsApiv2Operations.UpdateAccommodationWithLTSV2Data((AccommodationV2)mypgdata, QueryFactory, settings, true, true);
 
-                    var myupdateresultacco = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinked)mypgdata, "accommodations", true, true, true);
+                    var myupdateresultacco = await SaveRavenObjectToPG<AccommodationV2>((AccommodationV2)mypgdata, "accommodations", true, true, true);
                     updateresultstomerge.Add(myupdateresultacco);
 
                     //Check if data has to be reduced and save it
-                    if (ReduceDataTransformer.ReduceDataCheck<AccommodationLinked>((AccommodationLinked)mypgdata) == true)
+                    if (ReduceDataTransformer.ReduceDataCheck<AccommodationV2>((AccommodationV2)mypgdata) == true)
                     {
-                        var reducedobject = ReduceDataTransformer.GetReducedObject((AccommodationLinked)mypgdata, ReduceDataTransformer.CopyLTSAccommodationToReducedObject);
+                        var reducedobject = ReduceDataTransformer.GetReducedObject((AccommodationV2)mypgdata, ReduceDataTransformer.CopyLTSAccommodationToReducedObject);
 
-                        updateresultreduced = await SaveRavenObjectToPG<AccommodationLinked>((AccommodationLinkedReduced)reducedobject, "accommodations", false, false, false);
+                        updateresultreduced = await SaveRavenObjectToPG<AccommodationV2>((AccommodationV2)reducedobject, "accommodations", false, false, false);
                     }
 
                     bool roomschanged = false;
@@ -113,7 +111,7 @@ namespace OdhApiImporter.Helpers
                     if (myroomdatalist != null)
                     {
                         Tuple<string, bool>? roomsourcecheck = null;
-                        if (((AccommodationLinked)mypgdata).AccoRoomInfo != null && ((AccommodationLinked)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
+                        if (((AccommodationV2)mypgdata).AccoRoomInfo != null && ((AccommodationV2)mypgdata).AccoRoomInfo.Select(x => x.Source).Distinct().Count() > 1)
                             roomsourcecheck = Tuple.Create("hgv", true);
 
                   
@@ -217,8 +215,12 @@ namespace OdhApiImporter.Helpers
                     
                     //Special Operations
 
-                    //Special get all Taglist and traduce it on import
-                    await GenericTaggingHelper.AddTagsToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+                    //Traduce all Tags with Source IDM to english tags
+                    await GenericTaggingHelper.AddTagIdsToODHActivityPoi(mypgdata, settings.JsonConfig.Jsondir);
+
+                    //Create Tag Info
+                    //Populate Tags (Id/Source/Type) TO TEST
+                    await (mypgdata as IHasTagInfo).UpdateTagsExtension(QueryFactory);
 
                     //TODO Recreate LocationInfo
                     //TODO Recreate Categories
@@ -826,75 +828,7 @@ namespace OdhApiImporter.Helpers
             return pushresults;
         }
 
-        private async Task GetCinCodeFromNewLtsApi(AccommodationLinked accommodation)
-        {
-            try
-            {
-                LtsApi ltsapi = new LtsApi(settings.LtsCredentials.serviceurl, settings.LtsCredentials.username, settings.LtsCredentials.password, settings.LtsCredentials.ltsclientid, false);
-                var qs = new LTSQueryStrings() { page_size = 1, fields = "cinCode" };
-                var dict = ltsapi.GetLTSQSDictionary(qs);
-
-                var ltsdata = await ltsapi.AccommodationDetailRequest(accommodation.Id, dict);
-
-                //Todo parse response
-                var cincode = ltsdata.FirstOrDefault()["data"] != null ? ltsdata.FirstOrDefault()["data"].Value<string?>("cinCode") : null;
-
-                //If no lts mapping is there
-                if(accommodation.Mapping == null)
-                    accommodation.Mapping = new Dictionary<string, IDictionary<string,string>>();
-
-                var ltsdict = default(IDictionary<string, string>);
-                 
-                if(accommodation.Mapping.ContainsKey("lts"))
-                    ltsdict = accommodation.Mapping["lts"];
-
-                if (ltsdict == null)
-                    ltsdict = new Dictionary<string, string>();
-                
-                ltsdict.TryAddOrUpdate("cincode", cincode);
-
-                accommodation.Mapping.TryAddOrUpdate("lts", ltsdict);
-
-                GenericResultsHelper.GetSuccessUpdateResult(
-                    accommodation.Id,
-                    "api",
-                    "Update CinCode",
-                    "single",
-                    "Update CinCode success",
-                    "accommodation",
-                    new UpdateDetail()
-                    {
-                        updated = 1,
-                        changes = null,
-                        comparedobjects = null,
-                        created = 0,
-                        deleted = 0,
-                        error = 0,
-                        objectchanged = 0,
-                        objectimagechanged = 0,
-                        pushed = null,
-                        pushchannels = null
-                    },                    
-                    true);
-            }
-            catch(Exception ex)
-            {
-                GenericResultsHelper.GetErrorUpdateResult(
-                    accommodation.Id, 
-                    "api", 
-                    "Update CinCode", 
-                    "single", 
-                    "Update CinCode failed", 
-                    "accommodation", 
-                    new UpdateDetail()
-                    {
-                        updated = 0, changes = null, comparedobjects = null, created = 0, deleted = 0, error = 1, objectchanged = 0, objectimagechanged = 0, pushed = null, pushchannels = null
-                    }, 
-                    ex, 
-                    true);
-            }
-        }
-
+     
         #endregion
     }
 }

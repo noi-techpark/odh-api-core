@@ -294,7 +294,7 @@ namespace DataModel
         public IDictionary<string, Review>? Review { get; set; }
 
         //New, holds all Infos of Is/Has etc.. Properties
-        public AccoProperties? AccoProperties { get; set; }
+        public AccoProperties AccoProperties { get; set; }
 
         //New, operationschedules also available on Accommodation
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
@@ -321,30 +321,30 @@ namespace DataModel
         //Accommodation Properties
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.HasApartment")]
-        public new bool? HasApartment { get { return this.AccoProperties.HasApartment; } }
+        public new bool? HasApartment { get { return this.AccoProperties != null ? this.AccoProperties.HasApartment : null; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.HasRoom")]
-        public new bool? HasRoom { get { return this.AccoProperties.HasRoom; } }
+        public new bool? HasRoom { get { return this.AccoProperties != null ? this.AccoProperties.HasRoom : null; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsCamping")]
-        public new bool? IsCamping { get { return this.AccoProperties.IsCamping; } }
+        public new bool? IsCamping { get { return this.AccoProperties != null ? this.AccoProperties.IsCamping : null; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsGastronomy")]
-        public bool? IsGastronomy { get { return this.AccoProperties.IsGastronomy; } }
+        public bool? IsGastronomy { get { return this.AccoProperties != null ? this.AccoProperties.IsGastronomy : null; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsBookable")]
-        public new bool? IsBookable { get { return this.AccoProperties.IsBookable; } }
+        public new bool? IsBookable { get { return this.AccoProperties != null ? this.AccoProperties.IsBookable : null; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsAccommodation")]
-        public new bool? IsAccommodation { get { return this.AccoProperties.IsAccommodation; } }
+        public new bool? IsAccommodation { get { return this.AccoProperties != null ? this.AccoProperties.IsAccommodation : null; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.TVMember")]
-        public new bool? TVMember { get { return this.AccoProperties.TVMember; } }
+        public new bool? TVMember { get { return this.AccoProperties != null ? this.AccoProperties.TVMember : null; } }
 
         //Tags
         //All Categorization is done via Tags
-        public ICollection<Tags> Tags { get; set; }
-        public ICollection<string> TagIds { get; set; }
+        public ICollection<Tags>? Tags { get; set; }
+        public ICollection<string>? TagIds { get; set; }
     }
 
     public class AccommodationRoomV2 : AccommodationRoomLinked
@@ -408,14 +408,16 @@ namespace DataModel
         public RatePlan()
         {
             Name = new Dictionary<string, string>();
-            Description = new Dictionary<string, string>();
+            ShortDescription = new Dictionary<string, string>();
+            LongDescription = new Dictionary<string, string>();
         }
 
         public string ChargeType { get; set; }
         public string RatePlanId { get; set; }
         public string Code { get; set; }
         public IDictionary<string, string>? Name { get; set; }
-        public IDictionary<string, string>? Description { get; set; }
+        public IDictionary<string, string>? ShortDescription { get; set; }
+        public IDictionary<string, string>? LongDescription { get; set; }
         public DateTime LastUpdate { get; set; }
         public string? Visibility { get; set; }
     }

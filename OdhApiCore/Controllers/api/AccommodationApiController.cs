@@ -104,7 +104,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<AccommodationLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<AccommodationV2>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
@@ -221,7 +221,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(AccommodationLinked), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccommodationV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
@@ -477,7 +477,7 @@ namespace OdhApiCore.Controllers
         /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
         /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
-        [ProducesResponseType(typeof(JsonResultWithBookingInfo<AccommodationLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResultWithBookingInfo<AccommodationV2>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -942,7 +942,7 @@ namespace OdhApiCore.Controllers
         //[Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationWriter,AccommodationManager,AccommodationCreate")]
         [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Accommodation")]
-        public Task<IActionResult> Post([FromBody] AccommodationLinked accommodation)
+        public Task<IActionResult> Post([FromBody] AccommodationV2 accommodation)
         {
             return DoAsyncReturn(async () =>
             {
@@ -960,7 +960,7 @@ namespace OdhApiCore.Controllers
                 accommodation.TrimStringProperties();
 
 
-                return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await UpsertData<AccommodationV2>(accommodation, new DataInfo("accommodations", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -975,14 +975,14 @@ namespace OdhApiCore.Controllers
         [AuthorizeODH(PermissionAction.Update)]
         //[Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationWriter,AccommodationManager,AccommodationModify,AccommodationUpdate")]
         [HttpPut, Route("Accommodation/{id}")]
-        public Task<IActionResult> Put(string id, [FromBody] AccommodationLinked accommodation)
+        public Task<IActionResult> Put(string id, [FromBody] AccommodationV2 accommodation)
         {
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
-                accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
+                accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationV2>(id);
 
                 //GENERATE HasLanguage
                 accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
@@ -992,7 +992,7 @@ namespace OdhApiCore.Controllers
                 //TRIM all strings
                 accommodation.TrimStringProperties();
 
-                return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await UpsertData<AccommodationV2>(accommodation, new DataInfo("accommodations", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1013,9 +1013,9 @@ namespace OdhApiCore.Controllers
                 //Additional Filters on the Action Delete
                 AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
 
-                id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
+                id = Helper.IdGenerator.CheckIdFromType<AccommodationV2>(id);
 
-                return await DeleteData<AccommodationLinked>(id, new DataInfo("accommodations", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await DeleteData<AccommodationV2>(id, new DataInfo("accommodations", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 

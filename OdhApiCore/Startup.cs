@@ -398,6 +398,7 @@ namespace OdhApiCore
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
                 c.SchemaFilter<DeprecatedAttributeSchemaFilter>();
                 c.SchemaFilter<EnumAttributeSchemaFilter>();
+                c.SchemaFilter<ReferencedAttributeSchemaFilter>();
                 c.EnableAnnotations();
                 //c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 //{
