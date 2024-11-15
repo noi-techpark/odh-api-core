@@ -53,7 +53,14 @@ namespace Helper
                 var myalltaglist = await GetAllGenericTagsfromJson(jsondir);
                 if (myalltaglist != null && ((ODHActivityPoiLinked)mypgdata).SmgTags != null)
                 {
-                    ((ODHActivityPoiLinked)mypgdata).TagIds = GenerateNewTagIds(((ODHActivityPoiLinked)mypgdata).SmgTags ?? new List<string>(), myalltaglist);
+                    if(((ODHActivityPoiLinked)mypgdata).TagIds == null)
+                        ((ODHActivityPoiLinked)mypgdata).TagIds = new List<string>();
+
+                    foreach(var translatedtag in GenerateNewTagIds(((ODHActivityPoiLinked)mypgdata).SmgTags ?? new List<string>(), myalltaglist))
+                    {
+                        ((ODHActivityPoiLinked)mypgdata).TagIds.Add(translatedtag);
+                    }
+                    
                 }
             }
             catch (Exception ex)
