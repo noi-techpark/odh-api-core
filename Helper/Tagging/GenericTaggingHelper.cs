@@ -122,7 +122,7 @@ namespace Helper
 
             foreach (var tag in currenttags)
             {
-                var tagstranslated = alltaglist.Where(x => x.ODHTagIds != null && x.Source == "" && x.ODHTagIds.Any(y => y == tag)).ToList();
+                var tagstranslated = alltaglist.Where(x => x.ODHTagIds != null && x.Source == "idm" && x.ODHTagIds.Any(y => y == tag)).ToList();
 
                 if(tagstranslated != null)
                 {
