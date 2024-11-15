@@ -292,7 +292,7 @@ namespace RAVEN
                 {
                     myltstag.Id = myltstag.Id.ToLower();
                     //Check populate TagIDs
-                    data.TagIds.Add(myltstag.Id);
+                    data.TagIds.Add(myltstag.LTSRID);
                 }
             }        
 
