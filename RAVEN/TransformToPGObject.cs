@@ -588,17 +588,20 @@ namespace RAVEN
             }
 
             //New Add Tags to Tags
-            foreach (var ltstag in data.LTSTags)
+            if (data.LTSTags != null)
             {
-                eventlinked.TagIds.Add(ltstag.LTSRID);
+                foreach (var ltstag in data.LTSTags)
+                {
+                    eventlinked.TagIds.Add(ltstag.LTSRID);
 
-                Tags tag = new Tags();
-                tag.Source = "lts";
-                tag.Id = ltstag.LTSRID;
-                tag.Type = "eventtag";
-                tag.Name = ltstag.TagName.ContainsKey("en") ? ltstag.TagName["en"] : ltstag.TagName.FirstOrDefault().Value;                
+                    Tags tag = new Tags();
+                    tag.Source = "lts";
+                    tag.Id = ltstag.LTSRID;
+                    tag.Type = "eventtag";
+                    tag.Name = ltstag.TagName.ContainsKey("en") ? ltstag.TagName["en"] : ltstag.TagName.FirstOrDefault().Value;
 
-                eventlinked.Tags.Add(tag);
+                    eventlinked.Tags.Add(tag);
+                }
             }
 
             //New Add Classification to Tags
