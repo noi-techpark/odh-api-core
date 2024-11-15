@@ -487,7 +487,11 @@ namespace OdhApiImporter.Helpers
                     stapoiv2.Tags = new List<Tags>();
                     foreach (var tagdict in tags)
                     {
-                        stapoiv2.Tags.AddRange(tagdict.Value);
+                        foreach(var tagvalue in tagdict.Value)
+                        {
+                            stapoiv2.Tags.Add(tagvalue);
+                        }
+                        
                     }
 
 
