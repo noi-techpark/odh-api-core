@@ -495,6 +495,7 @@ namespace OdhApiCore.Controllers
             string? bokfilter = "hgv",
             string? msssource = "sinfo",
             string? detail = "0",
+            string? locfilter = null,
             bool withoutids = false,            
             bool availabilityonly = false,
             CancellationToken cancellationToken = default)
@@ -566,7 +567,7 @@ namespace OdhApiCore.Controllers
             {
                 return await GetFiltered(
                 fields: Array.Empty<string>(), language: null, pagenumber: 1,
-                pagesize: int.MaxValue, idfilter: idfilter, idlist: availableonlineaccos, locfilter: null, categoryfilter: null,
+                pagesize: int.MaxValue, idfilter: idfilter, idlist: availableonlineaccos, locfilter: locfilter, categoryfilter: null,
                 typefilter: null, boardfilter: boardfilter, featurefilter: null, featureidfilter: null, themefilter: null, badgefilter: null,
                 altitudefilter: null, active: null, smgactive: null, bookablefilter: null, smgtagfilter: null, sourcefilter: null,
                 publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, new GeoPolygonSearchResult(), 
@@ -605,10 +606,11 @@ namespace OdhApiCore.Controllers
             string? bokfilter = "hgv",
             string? msssource = "sinfo",
             string? detail = "0",
+            string? locfilter = null,
             bool withoutids = false,            
             CancellationToken cancellationToken = default)
         {
-            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, withoutids, true, cancellationToken);
+            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, locfilter, withoutids, true, cancellationToken);
         }
 
         #endregion
