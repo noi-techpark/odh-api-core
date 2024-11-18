@@ -498,6 +498,9 @@ namespace OdhApiCore.Controllers
             string? locfilter = null,
             bool withoutids = false,            
             bool availabilityonly = false,
+            bool usemsscache = false,
+            bool uselcscache = false,
+            bool removeduplicateoffers = false,
             CancellationToken cancellationToken = default)
         {
             bokfilter ??= "hgv";
@@ -607,10 +610,13 @@ namespace OdhApiCore.Controllers
             string? msssource = "sinfo",
             string? detail = "0",
             string? locfilter = null,
-            bool withoutids = false,            
+            bool withoutids = false,
+            bool usemsscache = false,
+            bool uselcscache = false,
+            bool removeduplicateoffers = false,
             CancellationToken cancellationToken = default)
         {
-            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, locfilter, withoutids, true, cancellationToken);
+            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, locfilter, withoutids, true, usemsscache, uselcscache, removeduplicateoffers, cancellationToken);
         }
 
         #endregion
