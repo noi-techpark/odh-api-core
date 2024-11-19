@@ -24,6 +24,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Geo.Geometries;
 
 namespace OdhApiCore.Controllers
 {
@@ -495,12 +496,11 @@ namespace OdhApiCore.Controllers
             string? bokfilter = "hgv",
             string? msssource = "sinfo",
             string? detail = "0",
-            string? locfilter = null,
-            bool withoutids = false,            
+            string? locfilter = null,                  
             bool availabilityonly = false,
             bool usemsscache = false,
             bool uselcscache = false,
-            bool removeduplicateoffers = false,
+            string removeduplicatesfrom = null, //only valid for availability only?
             CancellationToken cancellationToken = default)
         {
             bokfilter ??= "hgv";
@@ -517,39 +517,37 @@ namespace OdhApiCore.Controllers
             if (usedroute == "v1/AvailabilityCheck")
                 availabilityonly = true;
 
-            //If no ids in the post body, makes ure withoutids is checked (make use of cached MSS)
-            if((idfilter == null || String.IsNullOrEmpty(idfilter)) && withoutids == false)
-                return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutids set to true");
+            //TODO CHECK THIS WITHOUTIDS Stuff (not needed if no id is passed)
+            ////If no ids in the post body, makes sure withoutids is checked (make use of cached MSS)
+            //if((idfilter == null || String.IsNullOrEmpty(idfilter)))
+            //    return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutids set to true");
 
             var accobooklist = Request.HttpContext.Items["accobooklist"];
-            var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
-            var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
+            var accoavailabilitymss = ((MssResult?)Request.HttpContext.Items["mssavailablity"]);
+            var accoavailabilitylcs = ((MssResult?)Request.HttpContext.Items["lcsavailablity"]);
 
-            var accosonmss = ((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
-            var accosonlcs = ((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
+            //Remove Availabilities from
+            if(removeduplicatesfrom != null)
+                RemoveDuplicatesFrom(removeduplicatesfrom, accoavailabilitylcs, accoavailabilitylcs);
 
-            var availableonlineaccos = new List<string>();
-            if (accoavailabilitymss != null)
-                availableonlineaccos.AddRange(accosonmss);
-            if (accoavailabilitylcs != null)
-                availableonlineaccos.AddRange(accosonlcs);
 
-            var resultid = ((MssResult?)accoavailabilitymss)?.ResultId ?? "";
+
+            var resultid = accoavailabilitymss?.ResultId ?? "";
 
             //Counts
             var requestedtotal = accobooklist != null ? ((List<string>)accobooklist).Count : 0;
 
-            var availableonline = accosonmss.Count;
-            var availableonrequest = accosonlcs.Count;
+            var availableonline = accoavailabilitymss?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().Count() ?? 0;
+            var availableonrequest = accoavailabilitylcs?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().Count() ?? 0;
 
             if (availabilityonly)
             {
                 var toreturn = new List<MssResponseShort>();
 
                 if (bokfilter.Contains("hgv") && accoavailabilitymss != null)
-                    toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.ToList() ?? new());
+                    toreturn.AddRange(accoavailabilitymss?.MssResponseShort?.ToList() ?? new());
                 if (bokfilter.Contains("lts") && accoavailabilitylcs != null)
-                    toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.ToList() ?? new());
+                    toreturn.AddRange(accoavailabilitylcs?.MssResponseShort?.ToList() ?? new());
 
                 //return immediately the mss response
                 var result = ResponseHelpers.GetResult(
@@ -568,12 +566,21 @@ namespace OdhApiCore.Controllers
             }
             else
             {
+                var accosonmss = accoavailabilitymss?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
+                var accosonlcs = accoavailabilitylcs?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
+
+                var availableonlineaccos = new List<string>();
+                if (accoavailabilitymss != null)
+                    availableonlineaccos.AddRange(accosonmss);
+                if (accoavailabilitylcs != null)
+                    availableonlineaccos.AddRange(accosonlcs);
+
                 return await GetFiltered(
                 fields: Array.Empty<string>(), language: null, pagenumber: 1,
                 pagesize: int.MaxValue, idfilter: idfilter, idlist: availableonlineaccos, locfilter: locfilter, categoryfilter: null,
                 typefilter: null, boardfilter: boardfilter, featurefilter: null, featureidfilter: null, themefilter: null, badgefilter: null,
                 altitudefilter: null, active: null, smgactive: null, bookablefilter: null, smgtagfilter: null, sourcefilter: null,
-                publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, new GeoPolygonSearchResult(), 
+                publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, null, 
                 new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
                 rawfilter: null, rawsort: null, removenullvalues: false, cancellationToken);
             }                      
@@ -589,7 +596,6 @@ namespace OdhApiCore.Controllers
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
         /// <param name="msssource">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data, when set to true, all passed Ids are omitted) (default: false)</param>        
         /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>        
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<MssResult>), StatusCodes.Status200OK)]
@@ -609,14 +615,13 @@ namespace OdhApiCore.Controllers
             string? bokfilter = "hgv",
             string? msssource = "sinfo",
             string? detail = "0",
-            string? locfilter = null,
-            bool withoutids = false,
+            string? locfilter = null,            
             bool usemsscache = false,
             bool uselcscache = false,
-            bool removeduplicateoffers = false,
+            string removeduplicatesfrom = null,
             CancellationToken cancellationToken = default)
         {
-            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, locfilter, withoutids, true, usemsscache, uselcscache, removeduplicateoffers, cancellationToken);
+            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, locfilter, true, usemsscache, uselcscache, removeduplicatesfrom, cancellationToken);
         }
 
         #endregion
@@ -1027,6 +1032,25 @@ namespace OdhApiCore.Controllers
             });
         }
 
+
+        #endregion
+
+        #region AVAILABILITYHELPER
+
+        private void RemoveDuplicatesFrom(string removeduplicateresultsfrom, MssResult mssresult, MssResult lcsresult)
+        {
+            if(mssresult != null && lcsresult != null)
+            {
+                if (removeduplicateresultsfrom == "lts")
+                {
+                    lcsresult.MssResponseShort = lcsresult.MssResponseShort.Where(x => !mssresult.MssResponseShort.Select(x => x.A0RID).ToList().Contains(x.A0RID)).ToList();
+                }
+                else if(removeduplicateresultsfrom == "mss")
+                {
+                    mssresult.MssResponseShort = mssresult.MssResponseShort.Where(x => !lcsresult.MssResponseShort.Select(x => x.A0RID).ToList().Contains(x.A0RID)).ToList();
+                }
+            }           
+        }
 
         #endregion
     }

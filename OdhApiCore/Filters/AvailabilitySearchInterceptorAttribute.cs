@@ -108,7 +108,13 @@ namespace OdhApiCore.Filters
 
                     // Only needed for PostAvailableAccommodations
                     bool? availabilityonly = actionarguments.ContainsKey("availabilityonly") ? (bool)actionarguments["availabilityonly"]! : false;
-                    bool? withoutids = actionarguments.ContainsKey("withoutids") ? (bool)actionarguments["withoutids"]! : false;
+                    bool msscache = actionarguments.ContainsKey("usemsscache") ? (bool)actionarguments["usemsscache"]! : false;
+                    bool lcscache = actionarguments.ContainsKey("uselcscache") ? (bool)actionarguments["uselcscache"]! : false;
+
+                    string? removeduplicatesfrom = actionarguments.ContainsKey("removeduplicatesfrom") ? (string?)actionarguments!["removeduplicatesfrom"] : null;
+
+                    //obsolete
+                    //bool? withoutids = actionarguments.ContainsKey("withoutids") ? (bool)actionarguments["withoutids"]! : false;
 
                     if (CheckArrivalAndDeparture(arrival, departure))
                     {
@@ -131,11 +137,26 @@ namespace OdhApiCore.Filters
                         }
                         else if(actionid == "PostAvailableAccommodations" || actionid == "PostAvailableAccommodationsOnlyMssResult")
                         {
-                            if(withoutids == false)
+                            //If no Ids are passed and no locfilter is passed search over all IDs
+                            if (actionarguments.ContainsKey("idfilter") && (string)actionarguments["idfilter"] != null)
                             {
                                 //add the parsed ids                      
                                 string passedids = actionarguments.ContainsKey("idfilter") ? (string)actionarguments["idfilter"]! : "";
                                 booklist = passedids.Split(",").ToList();
+                            }
+                            else if (locfilter != null)
+                            {
+                                AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
+                                QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
+                                featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: odhtagfilter, activefilter: active,
+                                smgactivefilter: odhactive, bookablefilter: bookablefilter, sourcefilter: sourcefilter, lastchange: updatefrom, langfilter: langfilter, publishedonfilter: publishedon, (CancellationToken?)context.ActionArguments["cancellationToken"] ?? new());
+
+                                var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
+
+                                // Get Accommodations IDlist 
+                                var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
+
+                                booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
                             }
                         }
 
@@ -146,7 +167,7 @@ namespace OdhApiCore.Filters
                             MssResult mssresult = await GetMSSAvailability(
                                       language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
                                       roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: booklist, 
-                                      idsofchannel: idsource, requestsource: msssource, withoutids.Value);
+                                      idsofchannel: idsource, requestsource: msssource, msscache: msscache);
 
                             if (mssresult != null)
                             {
@@ -157,7 +178,7 @@ namespace OdhApiCore.Filters
                         {
                             MssResult lcsresult = await GetLCSAvailability(
                                             language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                            roominfo: roominfo, bookableaccoIDs: booklist, requestsource: msssource, withoutids: withoutids.Value);
+                                            roominfo: roominfo, bookableaccoIDs: booklist, requestsource: msssource, lcscache: lcscache);
 
                             if (lcsresult != null)
                             {
@@ -347,10 +368,10 @@ namespace OdhApiCore.Filters
             await base.OnResultExecutionAsync(context, next);
         }
 
-        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string requestsource, bool withoutmssids = false, string mssversion = "2")
+        private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string requestsource, bool msscache = false, string mssversion = "2")
         {                       
             // Edge Case No Ids Provided, withoutmssids true
-            if ((bookableaccoIDs.Count == 0) && withoutmssids)
+            if ((bookableaccoIDs.Count == 0) && msscache)
             {
                 using var r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosBookable.json"));
                 string json = await r.ReadToEndAsync();
@@ -359,7 +380,7 @@ namespace OdhApiCore.Filters
 
             MssHelper myhelper = MssHelper.Create(bookableaccoIDs, idsofchannel, bokfilter, language, roominfo, boardfilter, arrival, departure, detail, requestsource, mssversion);
 
-            if (bookableaccoIDs.Count > 0 || withoutmssids)
+            if (bookableaccoIDs.Count > 0 || msscache)
             {                
                 // 0 MSS Method Olle channels affamol mit IDList
                 var myparsedresponse = await GetMssData.GetMssResponse(
@@ -367,7 +388,7 @@ namespace OdhApiCore.Filters
                     lang: myhelper.mssrequestlanguage, idlist: myhelper.accoidlist, idsofchannel: myhelper.idsofchannel, mybookingchannels: myhelper.mybokchannels,
                     myroomdata: myhelper.myroomdata, arrival: myhelper.arrival, departure: myhelper.departure, service: myhelper.service,
                     hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,
-                    rooms: myhelper.rooms, requestsource: myhelper.requestsource, version: myhelper.mssversion, serviceurl: settings.MssConfig.ServiceUrl, mssuser: settings.MssConfig.Username, msspswd: settings.MssConfig.Password, withoutmssids: withoutmssids
+                    rooms: myhelper.rooms, requestsource: myhelper.requestsource, version: myhelper.mssversion, serviceurl: settings.MssConfig.ServiceUrl, mssuser: settings.MssConfig.Username, msspswd: settings.MssConfig.Password, withoutmssids: msscache
                     );
                
                 if (myparsedresponse != null)
@@ -376,12 +397,12 @@ namespace OdhApiCore.Filters
             return new MssResult() { bookableHotels = 0, CheapestChannel = "", Cheapestprice = 0, ResultId = "", MssResponseShort = new List<MssResponseShort>() };
         }
 
-        private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string requestsource, bool withoutids = false)
+        private async Task<MssResult> GetLCSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, List<string> bookableaccoIDs, string requestsource, bool lcscache = false)
         {
             LcsHelper myhelper = LcsHelper.Create(bookableaccoIDs, language, roominfo, boardfilter, arrival, departure, requestsource);
 
             // Edge Case No Ids Provided, withoutids true
-            if ((bookableaccoIDs.Count == 0) && withoutids)
+            if ((bookableaccoIDs.Count == 0))
             {
                 using var r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosAll.json"));
                 string json = await r.ReadToEndAsync();
@@ -449,6 +470,5 @@ namespace OdhApiCore.Filters
 
             return await query.GetAsync<AccoBookListRaw>();
         }
-
     }
 }
