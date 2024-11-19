@@ -528,7 +528,7 @@ namespace OdhApiCore.Controllers
 
             //Remove Availabilities from
             if(removeduplicatesfrom != null)
-                RemoveDuplicatesFrom(removeduplicatesfrom, accoavailabilitylcs, accoavailabilitylcs);
+                RemoveDuplicatesFrom(removeduplicatesfrom, accoavailabilitymss, accoavailabilitylcs);
 
 
 
@@ -1037,7 +1037,7 @@ namespace OdhApiCore.Controllers
 
         #region AVAILABILITYHELPER
 
-        private void RemoveDuplicatesFrom(string removeduplicateresultsfrom, MssResult mssresult, MssResult lcsresult)
+        private void RemoveDuplicatesFrom(string removeduplicateresultsfrom, MssResult? mssresult, MssResult? lcsresult)
         {
             if(mssresult != null && lcsresult != null)
             {
@@ -1045,7 +1045,7 @@ namespace OdhApiCore.Controllers
                 {
                     lcsresult.MssResponseShort = lcsresult.MssResponseShort.Where(x => !mssresult.MssResponseShort.Select(x => x.A0RID).ToList().Contains(x.A0RID)).ToList();
                 }
-                else if(removeduplicateresultsfrom == "mss")
+                else if(removeduplicateresultsfrom == "hgv")
                 {
                     mssresult.MssResponseShort = mssresult.MssResponseShort.Where(x => !lcsresult.MssResponseShort.Select(x => x.A0RID).ToList().Contains(x.A0RID)).ToList();
                 }
