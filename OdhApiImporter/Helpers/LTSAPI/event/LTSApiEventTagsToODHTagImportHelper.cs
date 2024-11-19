@@ -2,9 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Amazon.Auth.AccessControlPolicy;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using LTSAPI;
+using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NINJA.Parser;
@@ -15,12 +18,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
-    public class LTSApiEventTagImportHelper : ImportHelper, IImportHelper
+    public class LTSApiEventTagsToODHTagImportHelper : ImportHelper, IImportHelper
     {
-        public LTSApiEventTagImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
+        public LTSApiEventTagsToODHTagImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
         {
 
         }
@@ -77,30 +81,27 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     string id = data.rid;
 
                     //See if data exists
-                    var query = QueryFactory.Query("tags")
+                    var query = QueryFactory.Query("smgtags")
                         .Select("data")
                         .Where("id", id);
 
-                    var objecttosave = await query.GetObjectSingleAsync<TagLinked>();
+                    var objecttosave = await query.GetObjectSingleAsync<ODHTagLinked>();
 
                     if (objecttosave == null)
-                        objecttosave = new TagLinked();
+                        objecttosave = new ODHTagLinked();
 
                     objecttosave.Id = data.rid;
-                    objecttosave.Active = data.isActive;
                     objecttosave.DisplayAsCategory = false;
                     objecttosave.FirstImport = objecttosave.FirstImport == null ? DateTime.Now : objecttosave.FirstImport;
                     objecttosave.LastChange = data.lastUpdate;
 
-                    objecttosave.Source = "lts";
+                    objecttosave.Source = new List<string>() { "LTSTag" };
                     objecttosave.TagName = data.name;
-                    objecttosave.Description = data.description;
-
+                    
                     objecttosave.MainEntity = "event";
                     objecttosave.ValidForEntity = new List<string>() { "event" };
                     objecttosave.Shortname = objecttosave.TagName.ContainsKey("en") ? objecttosave.TagName["en"] : objecttosave.TagName.FirstOrDefault().Value;
-                    objecttosave.Types = new List<string>() { "eventtag" };
-
+                    
                     objecttosave.IDMCategoryMapping = null;
                     objecttosave.PublishDataWithTagOn = null;
                     objecttosave.Mapping = new Dictionary<string, IDictionary<string, string>>() { { "lts", new Dictionary<string, string>() { { "rid", data.rid }, { "code", data.code } } } };
@@ -122,23 +123,28 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 if (idlistlts.Count > 0)
                 {
-                    //Begin SetDataNotinListToInactive
-                    var idlistdb = await GetAllDataBySourceAndType(new List<string>() { "lts" }, new List<string>() { "eventtag" });
+                   
+                   // var query =
+                   //     QueryFactory.Query("smgtags")
+                   //.Select("id")
+                   //.ODHTagSourcesFilter_GeneratedColumn(new List<string>() { "LTSTag" });
 
-                    var idstodelete = idlistdb.Where(p => !idlistlts.Any(p2 => p2 == p));
+                   // var idlistdb = await query.GetAsync<string>();                    
 
-                    foreach (var idtodelete in idstodelete)
-                    {
-                        var deletedisableresult = await DeleteOrDisableData<TagLinked>(idtodelete, false);
+                   // var idstodelete = idlistdb.Where(p => !idlistlts.Any(p2 => p2 == p));
 
-                        if (deletedisableresult.Item1 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.tags.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.tags", success = true, error = "" });
-                        else if (deletedisableresult.Item2 > 0)
-                            WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.tags.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.tags", success = true, error = "" });
+                   // foreach (var idtodelete in idstodelete)
+                   // {
+                   //     var deletedisableresult = await DeleteOrDisableData<ODHTagLinked>(idtodelete, false);
+
+                   //     if (deletedisableresult.Item1 > 0)
+                   //         WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.tags.deactivate", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.tags", success = true, error = "" });
+                   //     else if (deletedisableresult.Item2 > 0)
+                   //         WriteLog.LogToConsole(idtodelete, "dataimport", "single.events.tags.delete", new ImportLog() { sourceid = idtodelete, sourceinterface = "lts.events.tags", success = true, error = "" });
 
 
-                        deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
-                    }
+                   //     deleteimportcounter = deleteimportcounter + deletedisableresult.Item1 + deletedisableresult.Item2;
+                   // }
                 }
             }
             else
@@ -147,56 +153,25 @@ namespace OdhApiImporter.Helpers.LTSAPI
             return new UpdateDetail() { updated = updateimportcounter, created = newimportcounter, deleted = deleteimportcounter, error = errorimportcounter };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(TagLinked objecttosave, LTSEventTag eventtag)
+        private async Task<PGCRUDResult> InsertDataToDB(ODHTagLinked objecttosave, LTSEventTag eventtag)
         {
             try
             {                
                 //Set LicenseInfo
-                objecttosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(objecttosave, Helper.LicenseHelper.GetLicenseforTag);
+                objecttosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(objecttosave, Helper.LicenseHelper.GetLicenseforODHTag);
 
                 //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
                 objecttosave._Meta = MetadataHelper.GetMetadataobject(objecttosave);
 
                 //Set PublishedOn
-                objecttosave.CreatePublishedOnList();
+                objecttosave.PublishedOn = new List<string>() { "idm-marketplace" };
 
-                var rawdataid = await InsertInRawDataDB(eventtag);
-
-                return await QueryFactory.UpsertData<TagLinked>(objecttosave, "tags", rawdataid, "lts.events.tags.import", importerURL);
+                return await QueryFactory.UpsertData<ODHTagLinked>(objecttosave, new DataInfo("smgtags", CRUDOperation.Create), new EditInfo("importer", "lts"), new CRUDConstraints(), new CompareConfig(false, false));
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
-        }
-
-        private async Task<int> InsertInRawDataDB(LTSEventTag eventtag)
-        {
-            return await QueryFactory.InsertInRawtableAndGetIdAsync(
-                        new RawDataStore()
-                        {
-                            datasource = "lts",
-                            importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(eventtag),
-                            sourceinterface = "events",
-                            sourceid = eventtag.rid,
-                            sourceurl = "https://go.lts.it/api/v1/events/tags",
-                            type = "events.tags",
-                            license = "open",
-                            rawformat = "json"
-                        });
-        }
-    }
-
-    public class LTSEventTag
-    {
-        public string rid { get; set; }
-        public DateTime lastUpdate { get; set; }
-        public IDictionary<string,string> name { get; set; }
-        public IDictionary<string, string> description { get; set; }
-        public bool isActive { get; set; }
-        public string code { get; set; }
-    }
-    
-
+        }        
+    }    
 }
