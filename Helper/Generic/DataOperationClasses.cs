@@ -13,7 +13,7 @@ namespace Helper.Generic
 {
     public enum CRUDOperation
     {
-        Create, Update, Delete, Read
+        Create, Update, Delete, Read, CreateAndUpdate
     }
 
     public class DataInfo
@@ -32,6 +32,11 @@ namespace Helper.Generic
             {
                 ErrorWhendataExists = false;
                 ErrorWhendataIsNew = true;
+            }
+            else if (operation == CRUDOperation.CreateAndUpdate)
+            {
+                ErrorWhendataExists = false;
+                ErrorWhendataIsNew = false;
             }
             else
             {

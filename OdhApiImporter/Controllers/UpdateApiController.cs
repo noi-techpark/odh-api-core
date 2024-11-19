@@ -1006,7 +1006,7 @@ namespace OdhApiImporter.Controllers
 
             try
             {
-                LTSApiEventTagsToODHTagImportHelper importhelper = new LTSApiEventTagsToODHTagImportHelper(settings, QueryFactory, "smgtags", UrlGeneratorStatic("LTS/Events/Tags"));
+                LTSApiEventTagsToODHTagImportHelper importhelper = new LTSApiEventTagsToODHTagImportHelper(settings, QueryFactory, "smgtags", UrlGeneratorStatic("LTS/Events/Tags"), OdhPushnotifier);
 
                 updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags succeeded", otherinfo, updatedetail, true);

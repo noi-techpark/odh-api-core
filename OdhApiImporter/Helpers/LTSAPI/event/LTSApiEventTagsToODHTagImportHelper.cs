@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NINJA.Parser;
+using OdhNotifier;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 using System;
@@ -24,9 +25,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
 {
     public class LTSApiEventTagsToODHTagImportHelper : ImportHelper, IImportHelper
     {
-        public LTSApiEventTagsToODHTagImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
-        {
+        private IOdhPushNotifier OdhPushnotifier;
 
+        public LTSApiEventTagsToODHTagImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL, IOdhPushNotifier odhpushnotifier) : base(settings, queryfactory, table, importerURL)
+        {
+            this.OdhPushnotifier = odhpushnotifier;
         }
 
         private async Task<List<JObject>> GetEventTagsFromLTSV2()
@@ -109,8 +112,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.PublishedOn = null;
                     objecttosave.MappedTagIds = null;
 
-
                     var result = await InsertDataToDB(objecttosave, data);
+
+                    //Push Data if changed
+                    //push modified data to all published Channels
+                    result.pushed = await ImportUtils.CheckIfObjectChangedAndPush(OdhPushnotifier, result, result.id, result.odhtype);
 
                     newimportcounter = newimportcounter + result.created ?? 0;
                     updateimportcounter = updateimportcounter + result.updated ?? 0;
@@ -166,7 +172,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 //Set PublishedOn
                 objecttosave.PublishedOn = new List<string>() { "idm-marketplace" };
 
-                return await QueryFactory.UpsertData<ODHTagLinked>(objecttosave, new DataInfo("smgtags", CRUDOperation.Create), new EditInfo("importer", "lts"), new CRUDConstraints(), new CompareConfig(false, false));
+                return await QueryFactory.UpsertData<ODHTagLinked>(objecttosave, new DataInfo("smgtags", CRUDOperation.CreateAndUpdate), new EditInfo("importer", "lts"), new CRUDConstraints(), new CompareConfig(true, false));
             }
             catch (Exception ex)
             {

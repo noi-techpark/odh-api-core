@@ -766,7 +766,7 @@ namespace OdhApiImporter.Helpers
             return new UpdateDetail() { created = result.created, updated = result.updated, deleted = result.deleted, error = result.error, comparedobjects = result.compareobject != null && result.compareobject.Value ? 1 : 0, objectchanged = result.objectchanged, objectimagechanged = result.objectimagechanged, pushchannels = result.pushchannels, changes = result.changes };
         }
 
-        private async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype, IDictionary<string,bool>? additionalpushinfo = null, string pushorigin = "lts.push")
+        public async Task<IDictionary<string, NotifierResponse>?> CheckIfObjectChangedAndPush(UpdateDetail myupdateresult, string id, string datatype, IDictionary<string,bool>? additionalpushinfo = null, string pushorigin = "lts.push")
         {
             IDictionary<string,NotifierResponse>? pushresults = default(IDictionary<string, NotifierResponse>);
 
