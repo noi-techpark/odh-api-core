@@ -999,7 +999,7 @@ namespace OdhApiImporter.Controllers
             CancellationToken cancellationToken = default)
         {
             UpdateDetail updatedetail = default(UpdateDetail);
-            string operation = "Import LTS Events Tags";
+            string operation = "Import LTS Events Tags To ODH Tags";
             string updatetype = GetUpdateType(null);
             string source = "lts";
             string otherinfo = "events.tags";
