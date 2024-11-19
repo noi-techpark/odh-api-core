@@ -573,6 +573,10 @@ namespace RAVEN
             if (eventlinked.Tags == null)
                 eventlinked.Tags = new List<Tags>();
 
+            //Compatibility
+            if(eventlinked.SmgTags == null)
+                eventlinked.SmgTags = new List<string>();
+
             //New Add Topics to Tags
             foreach (var topic in data.Topics)
             {
@@ -593,6 +597,8 @@ namespace RAVEN
                 foreach (var ltstag in data.LTSTags)
                 {
                     eventlinked.TagIds.Add(ltstag.LTSRID);
+                    //Compatibility
+                    eventlinked.SmgTags.Add(ltstag.LTSRID);
 
                     Tags tag = new Tags();
                     tag.Source = "lts";

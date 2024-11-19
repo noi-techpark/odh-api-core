@@ -991,6 +991,35 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+        //Imports all Event Tags        
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Event/Update/Tags/ToODHTags")]
+        public async Task<IActionResult> ImportLTSEventTagsToODHTags(
+            string id = null,
+            CancellationToken cancellationToken = default)
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Events Tags";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "events.tags";
+
+            try
+            {
+                LTSApiEventTagsToODHTagImportHelper importhelper = new LTSApiEventTagsToODHTagImportHelper(settings, QueryFactory, "smgtags", UrlGeneratorStatic("LTS/Events/Tags"));
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags succeeded", otherinfo, updatedetail, true);
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(null, source, operation, updatetype, "Import LTS Events Tags data failed", otherinfo, updatedetail, ex, true);
+                return BadRequest(updateResult);
+            }
+        }
+
         //Imports all Event Categories        
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("LTS/Event/Update/Categories")]
