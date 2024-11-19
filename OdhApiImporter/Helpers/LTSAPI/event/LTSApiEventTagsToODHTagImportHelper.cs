@@ -172,7 +172,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 //Set PublishedOn
                 objecttosave.PublishedOn = new List<string>() { "idm-marketplace" };
 
-                return await QueryFactory.UpsertData<ODHTagLinked>(objecttosave, new DataInfo("smgtags", CRUDOperation.Create), new EditInfo("importer", "lts"), new CRUDConstraints(), new CompareConfig(true, false));
+                return await QueryFactory.UpsertData<ODHTagLinked>(objecttosave, new DataInfo("smgtags", CRUDOperation.CreateAndUpdate), new EditInfo("importer", "lts"), new CRUDConstraints(), new CompareConfig(true, false));
             }
             catch (Exception ex)
             {
