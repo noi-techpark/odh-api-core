@@ -116,6 +116,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     //Push Data if changed
                     //push modified data to all published Channels
+                    //TODO adding the push status to the response
                     result.pushed = await ImportUtils.CheckIfObjectChangedAndPush(OdhPushnotifier, result, result.id, result.odhtype);
 
                     newimportcounter = newimportcounter + result.created ?? 0;
