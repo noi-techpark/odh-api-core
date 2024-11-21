@@ -38,6 +38,7 @@ namespace Helper.Converters
             return result;
         }
 
+        //Convert Event to EventV2
         private static EventConversionResult ConvertEventToEventV2(EventLinked eventv1, IEnumerable<EventTypes> eventtypes = null, IEnumerable<VenueType> venuetypes = null)
         {
             List<EventV2> eventv2list = new List<EventV2>();
@@ -165,6 +166,7 @@ namespace Helper.Converters
             return new EventConversionResult(eventv2list, venuev2list);
         }
 
+        //Convert EventShort to EventV2
         private static EventConversionResult ConvertEventShortToEventV2(EventShortLinked eventv1, IEnumerable<EventTypes> eventtypes = null, IEnumerable<VenueType> venuetypes = null)
         {
             List<EventV2> eventv2list = new List<EventV2>();
@@ -343,6 +345,162 @@ namespace Helper.Converters
 
             return new EventConversionResult(eventv2list, venuev2list);
         }
+
+        //Convert EventV2 to Event, pass all the Venues, the Root Event should be the first in List
+        private static EventLinked ConvertEventV2ToEvent(EventV2 eventv2, List<VenueV2> venuev2list, List<EventTypes> eventtypes)
+        {
+            EventLinked eventv1 = new EventLinked();
+
+            eventv1.Id = eventv2.Id;
+            eventv1.ImageGallery = eventv2.ImageGallery;
+            eventv1.Shortname = eventv2.Shortname;
+            eventv1.FirstImport = eventv2.FirstImport;
+            eventv1.LastChange = eventv2.LastChange;
+            eventv1.Active = eventv2.Active;
+            eventv1.Mapping = eventv2.Mapping;
+            eventv1.HasLanguage = eventv2.HasLanguage;
+            eventv1.LicenseInfo = eventv2.LicenseInfo;
+            eventv1.Source = eventv2.Source;
+
+            eventv1.Detail = eventv2.Detail;
+            eventv1.ContactInfos = eventv2.ContactInfos;
+
+            eventv1.PublishedOn = eventv2.PublishedOn;
+
+            eventv1.DateBegin = eventv2.Begin;
+            eventv1.DateEnd = eventv2.End;
+
+            eventv1.Mapping = eventv2.Mapping;
+
+            //GpsInfo from venue
+            //Gpstype
+            //Altitude
+            //AltitudeUnitofMeasure
+            //Latitude
+            //Longitude
+            //"OrgRID": "TreviLab",
+            //OdhTags
+            //SmgTags
+            //Districts
+            //EventDate
+            //GpsPoints
+            //ODHActive
+            //SmgActive
+            //Shortname
+            //TopicRiuds
+            //DistrictId
+            //DistrictIds
+            //EventPrice
+            //EventPrices
+            //DistanceInfo
+            //EventBenefit
+            //EventBooking
+            //EventCrossSelling
+            //EventDescAdditional
+            //EventAdditionalInfos
+            //EventOperationScheduleOverview
+            //LocationInfo
+            //EventDatesEnd
+            //EventDatesBegin
+            //EventDateCounter
+            //ClassificationRID            
+            //NextBeginDate
+            //EventPublisher
+            //OrganizerInfos
+
+            eventv1.TopicRIDs = eventv2.TagIds;
+
+            List<TopicLinked> topiclinkedlist = new List<TopicLinked>();
+            foreach(var topicrid in eventv2.TagIds)
+            {
+                var topic = eventtypes.Where(x => x.Id == topicrid).FirstOrDefault();
+                if (topic != null)
+                    topiclinkedlist.Add(new TopicLinked() { TopicRID = topicrid, TopicInfo = topic.TypeDesc["de"] });
+            }
+            eventv1.Topics = topiclinkedlist.ToList();
+
+            eventv1.Tags = eventv2.Tags;
+            eventv1.TagIds = eventv2.TagIds;
+
+
+
+            //if (eventv1.TopicRIDs != null)
+            //{
+            //    foreach (var tag in eventv1.TopicRIDs)
+            //    {
+            //        //Load the Tag
+            //        var eventtype = eventtypes.Where(x => x.Id == tag).FirstOrDefault();
+
+            //        if (eventtype != null)
+            //        {
+            //            //Caution using tag names from lts, they have "/" inside
+            //            var eventtypeid = eventtype.TypeDesc["en"].ToLower().Replace("/", "-");
+
+            //            eventv2.Tags.Add(new Tags() { Id = eventtypeid, Source = eventv1.Source.ToLower() });
+            //            eventv2.TagIds.Add(eventtypeid);
+            //        }
+            //    }
+            //}
+
+            ////Creating Venue
+            //VenueV2 venue = new VenueV2();
+
+            //string venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Location;
+
+            //if (String.IsNullOrEmpty(venuename))
+            //    venuename = eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Mplace;
+
+            ////Try to create an Id with this 3 fields
+            //venue.Id = Regex.Replace(eventv1.ContactInfos.GetEnglishOrFirstKeyFromDictionary().CompanyName, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+
+            //if (String.IsNullOrEmpty(venue.Id))
+            //    venue.Id = Regex.Replace(eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Location, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+            //if (String.IsNullOrEmpty(venue.Id))
+            //    venue.Id = Regex.Replace(eventv1.EventAdditionalInfos.GetEnglishOrFirstKeyFromDictionary().Mplace, "[^0-9a-zA-Z]+", ""); //What should we use as Id?
+
+
+            //venue.Id = venue.Id.ToUpper();
+
+            //venue.Shortname = venuename;
+            //venue.GpsInfo = eventv1.GpsInfo;
+            //venue.LocationInfo = eventv1.LocationInfo;
+            //venue.ContactInfos = eventv1.ContactInfos;
+            //venue.Source = eventv1.Source;
+
+
+            //venue.Detail = new Dictionary<string, Detail>();
+
+            //foreach (var lang in eventv1.HasLanguage)
+            //{
+            //    Detail venuedetail = new Detail();
+            //    venuedetail.Language = lang;
+
+            //    string venuetitle = eventv1.EventAdditionalInfos[lang].Location;
+
+            //    if (String.IsNullOrEmpty(venuename))
+            //        venuetitle = eventv1.EventAdditionalInfos[lang].Mplace;
+
+            //    venuedetail.Title = venuetitle;
+            //    venuedetail.BaseText = eventv1.EventAdditionalInfos[lang].Reg;
+
+            //    venue.Detail[lang] = venuedetail;
+            //}
+
+            //if (venuev2list.Where(x => x.Id == venue.Id).Count() == 0)
+            //    venuev2list.Add(venue);
+
+            //eventv2.Begin = eventdate.From.Date + eventdate.Begin.Value;
+            //eventv2.End = eventdate.To.Date + eventdate.End.Value;
+            //eventv2.BeginUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventv2.Begin);
+            //eventv2.EndUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventv2.End);
+
+
+
+
+
+            return eventv1;
+        }
+
 
         public static TagLinked ConvertEventTopicToTag(EventTypes eventType)
         {
