@@ -156,6 +156,11 @@ namespace OdhApiCore
 
             // TODO: Check if User has Referer, isLogged isAnonymous
 
+
+            //Get the Remote IP            
+            //var remoteip = RemoteIpHelper.GetRequestIP(context, true);
+
+
             // Case 1 Anonymous, Go to IP Restriction (Maybe on Path?)
             if (String.IsNullOrEmpty(referer) && String.IsNullOrEmpty(loggeduser))
             {
