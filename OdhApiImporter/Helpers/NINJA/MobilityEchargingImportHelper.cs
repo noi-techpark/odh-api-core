@@ -14,6 +14,7 @@ using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -289,10 +290,10 @@ namespace OdhApiImporter.Helpers
 
             //Console.WriteLine(String.Join(",", ninjadata.data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList()));
 
-            
 
-            //Get all sources
-            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider.ToLower())).Distinct().ToList();
+
+            //Get all sources            
+            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider != null ? x.pmetadata.provider.ToLower() : "")).Distinct().ToList();
         }
 
         private static List<Tuple<string, string>> GetAndParseProviderList(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)
