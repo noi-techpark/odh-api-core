@@ -19,7 +19,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
-{    
+{
+    /// <summary>
+    /// <a href="https://github.com/noi-techpark/odh-docs/wiki/Geoshapes-Api-and-Geo-Converter#geoshapes-api" target="_blank">Wiki GeoShapes Api</a>
+    /// </summary>
     [EnableCors("CorsPolicy")]
     //[ApiExplorerSettings(IgnoreApi = true)]
     [NullStringParameterActionFilter]

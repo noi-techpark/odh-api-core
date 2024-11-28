@@ -20,6 +20,9 @@ using OdhNotifier;
 
 namespace OdhApiCore.Controllers.api
 {
+    /// <summary>
+    /// <a href="https://github.com/noi-techpark/odh-docs/wiki/Getting-Data-as-JsonLD---schema.org" target="_blank">Wiki Json LD Api</a>
+    /// </summary>
     public class JsonLDController : OdhController
     {        
         public JsonLDController(IWebHostEnvironment env, ISettings settings, ILogger<JsonLDController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
@@ -31,7 +34,7 @@ namespace OdhApiCore.Controllers.api
         /// <summary>
         /// GET Detail Data in JSON LD Format (Schema.org Datatypes as output)
         /// </summary>
-        /// <param name="type">Data Type to transform currently available: ('accommodation', 'gastronomy', 'event', 'recipe', 'poi', 'region', 'tv', 'municipality', 'district', 'skiarea') required</param>
+        /// <param name="type">Type to transform currently available: ('accommodation', 'gastronomy', 'event', 'recipe', 'poi', 'region', 'tv', 'municipality', 'district', 'skiarea') required <a href="https://github.com/noi-techpark/odh-docs/wiki/Dataset-Type" target="_blank">Wiki Dataset Type</a></param>
         /// <param name="Id">ID of the data to transform, required</param>
         /// <param name="language">Output Language, standard EN</param>
         /// <param name="idtoshow">ID to show on Json LD @id, not provided Id of ODH api call is taken</param>
