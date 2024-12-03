@@ -133,17 +133,24 @@ namespace OdhApiImporter.Helpers.RAVEN
                 if (accommodation.SmgTags == null)
                     accommodation.SmgTags = new List<string>();
 
+                if (accommodation.SpecialFeaturesIds == null)
+                    accommodation.SpecialFeaturesIds = new List<string>();
+
                 //IF guestcard active Add Tag "guestcard"
                 if (guestcardactive == null || guestcardactive == false)
                 {
                     accommodation.SmgTags.TryRemoveOnList("guestcard");
                     accommodation.TagIds.TryRemoveOnList("guestcard");
+                    //NEW TO Remove, add speciafeature Guestcard
+                    accommodation.SpecialFeaturesIds.TryRemoveOnList("Guestcard");
                 }
                 else
                 {
                     accommodation.SmgTags.TryAddOrUpdateOnList("guestcard");
                     accommodation.TagIds.TryAddOrUpdateOnList("guestcard");
-                }
+                    //NEW TO Remove, add speciafeature Guestcard
+                    accommodation.SpecialFeaturesIds.TryAddOrUpdateOnList("Guestcard");
+                }            
 
                 //Compatiblity features to Tags
                 var amenities = ltsdata["data"] != null ?  ltsdata["data"]["amenities"] != null ? ltsdata["data"]["amenities"].ToObject<IList<LtsRidList>>() : null :null;
