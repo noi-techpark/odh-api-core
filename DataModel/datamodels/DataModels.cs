@@ -1901,7 +1901,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware, IHasLanguage
     {
         public EventShort()
         {
