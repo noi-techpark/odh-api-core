@@ -130,6 +130,9 @@ namespace OdhApiImporter.Helpers.RAVEN
                 if(accommodation.TagIds == null)
                     accommodation.TagIds =  new HashSet<string>();
 
+                if (accommodation.SmgTags == null)
+                    accommodation.SmgTags = new List<string>();
+
                 //IF guestcard active Add Tag "guestcard"
                 if (guestcardactive == null || guestcardactive == false)
                 {
