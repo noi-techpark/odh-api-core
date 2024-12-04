@@ -507,6 +507,41 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> UpdateAllODHActivityPoiTagIds()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("smgpois");
+
+            var data = await query.GetObjectListAsync<ODHActivityPoiLinked>();
+            int i = 0;
+
+            foreach (var poi in data)
+            {
+                if (poi.Tags != null)
+                {
+                    if(poi.TagIds == null)
+                    {
+                        poi.TagIds = poi.Tags.Select(x => x.Id).ToList();
+
+                        //Save tp DB
+                        //TODO CHECK IF THIS WORKS     
+                        var queryresult = await QueryFactory.Query("smgpois").Where("id", poi.Id)
+                            .UpdateAsync(new JsonBData() { id = poi.Id, data = new JsonRaw(poi) });
+
+                        i++;
+                    }
+
+                    
+                }
+            }
+
+            return i;
+        }
+
+        
+
         public async Task<int> UpdateAllSTAVendingpoints()
         {
             //Load all data from PG and resave
