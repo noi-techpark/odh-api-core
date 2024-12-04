@@ -699,13 +699,15 @@ namespace NINJA.Parser
 
                 echargingpoi.Tags = new List<Tags>()
                 {
-                    new Tags(){ Id = "poi", Source = "lts" },
-                    new Tags(){ Id = "mobility", Source = "lts", Type = "categorytag" },
-                    new Tags(){ Id = "electric charging stations", Source = "lts", Type = "tag" }
+                    new Tags(){ Id = "poi", Source = "idm", Type = "odhcategory", Name = "Poi" },
+                    new Tags(){ Id = "mobility", Source = "idm", Type = "odhcategory", Name = "Mobility" },
+                    new Tags(){ Id = "electric charging stations", Source = "idm", Type = "ltscategory", Name = "Electric charging stations" }              
                 };
 
+                echargingpoi.TagIds = echargingpoi.Tags.Select(x => x.Id).ToList();
+
                 //Adding Category 
-                if(echargingstationtag.DisplayAsCategory == true)
+                if (echargingstationtag.DisplayAsCategory == true)
                 {
                     echargingpoi.AdditionalPoiInfos = new Dictionary<string, AdditionalPoiInfos>();
                     foreach(var lang in new List<string>() { "de", "it", "en"})
