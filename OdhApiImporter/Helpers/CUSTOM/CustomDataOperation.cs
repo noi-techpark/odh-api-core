@@ -509,32 +509,43 @@ namespace OdhApiImporter.Helpers
 
         public async Task<int> UpdateAllODHActivityPoiTagIds()
         {
-            //Load all data from PG and resave
+            //Load all data from PG and resave TODO filter only where TagIds = null
             var query = QueryFactory.Query()
                    .SelectRaw("data")
                    .From("smgpois");
+
+                   
 
             var data = await query.GetObjectListAsync<ODHActivityPoiLinked>();
             int i = 0;
 
             foreach (var poi in data)
             {
-                if (poi.Tags != null)
+                if (poi.TagIds != null && poi.TagIds.Count > 0)
+                    poi.TagIds = poi.TagIds.Distinct().ToList();
+
+                //Update the TagIds
+                await GenericTaggingHelper.AddTagIdsToODHActivityPoi(poi, settings.JsonConfig.Jsondir);
+
+                //Ensure LTSTagIds are into TagIds
+                if (poi.LTSTags != null && poi.LTSTags.Count > 0)
                 {
-                    if(poi.TagIds == null)
+                    foreach (var ltstag in poi.LTSTags)
                     {
-                        poi.TagIds = poi.Tags.Select(x => x.Id).ToList();
-
-                        //Save tp DB
-                        //TODO CHECK IF THIS WORKS     
-                        var queryresult = await QueryFactory.Query("smgpois").Where("id", poi.Id)
-                            .UpdateAsync(new JsonBData() { id = poi.Id, data = new JsonRaw(poi) });
-
-                        i++;
+                        if (!poi.TagIds.Contains(ltstag.LTSRID))
+                            poi.TagIds.Add(ltstag.LTSRID);
                     }
-
-                    
                 }
+
+                //Recreate Tags                     
+                await poi.UpdateTagsExtension(QueryFactory);
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("smgpois").Where("id", poi.Id)
+                        .UpdateAsync(new JsonBData() { id = poi.Id, data = new JsonRaw(poi) });
+
+                i++;
             }
 
             return i;

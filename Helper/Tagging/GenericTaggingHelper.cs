@@ -58,7 +58,8 @@ namespace Helper
 
                     foreach(var translatedtag in GenerateNewTagIds(((ODHActivityPoiLinked)mypgdata).SmgTags ?? new List<string>(), myalltaglist))
                     {
-                        ((ODHActivityPoiLinked)mypgdata).TagIds.Add(translatedtag);
+                        if (!((ODHActivityPoiLinked)mypgdata).TagIds.Contains(translatedtag))
+                            ((ODHActivityPoiLinked)mypgdata).TagIds.Add(translatedtag);
                     }
                     
                 }
