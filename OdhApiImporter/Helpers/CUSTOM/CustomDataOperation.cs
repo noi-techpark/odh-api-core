@@ -512,8 +512,8 @@ namespace OdhApiImporter.Helpers
             //Load all data from PG and resave TODO filter only where TagIds = null
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("smgpois");
-
+                   .From("smgpois")
+                   .WhereRaw("data#>>'{TagIds}' IS NULL");
                    
 
             var data = await query.GetObjectListAsync<ODHActivityPoiLinked>();
