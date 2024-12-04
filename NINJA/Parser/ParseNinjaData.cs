@@ -14,6 +14,7 @@ using Helper;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.FSharp.Control;
 using Newtonsoft.Json.Linq;
+using static Dapper.SqlMapper;
 
 namespace NINJA.Parser
 {
@@ -697,14 +698,15 @@ namespace NINJA.Parser
                     "e-auto ladestation"
                 };
 
-                echargingpoi.Tags = new List<Tags>()
-                {
-                    new Tags(){ Id = "poi", Source = "idm", Type = "odhcategory", Name = "Poi" },
-                    new Tags(){ Id = "mobility", Source = "idm", Type = "odhcategory", Name = "Mobility" },
-                    new Tags(){ Id = "electric charging stations", Source = "idm", Type = "ltscategory", Name = "Electric charging stations" }              
-                };
+                //echargingpoi.Tags = new List<Tags>()
+                //{
+                //    new Tags(){ Id = "poi", Source = "idm", Type = "odhcategory", Name = "Poi" },
+                //    new Tags(){ Id = "mobility", Source = "idm", Type = "odhcategory", Name = "Mobility" },
+                //    new Tags(){ Id = "electric charging stations", Source = "idm", Type = "ltscategory", Name = "Electric charging stations" }              
+                //};
 
-                echargingpoi.TagIds = echargingpoi.Tags.Select(x => x.Id).ToList();
+                //echargingpoi.TagIds = echargingpoi.Tags.Select(x => x.Id).ToList();                
+
 
                 //Adding Category 
                 if (echargingstationtag.DisplayAsCategory == true)
@@ -771,7 +773,7 @@ namespace NINJA.Parser
                 properties.PaymentInfo = data.pmetadata?.paymentInfo;
 
                 //properties.ChargingPlugCount = 1;
-                properties.ChargingPistolTypes = data.smetadata.outlets.Select(y => y.outletTypeCode).Distinct().ToList();
+                properties.ChargingPistolTypes = data.smetadata.outlets != null ? data.smetadata.outlets.Select(y => y.outletTypeCode).Distinct().ToList() : null;
 
                 //TODO do not overwrite the old values
                 var additionalpropertieskey = typeof(EchargingDataProperties).Name;
