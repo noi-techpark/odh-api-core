@@ -402,6 +402,7 @@ namespace OdhApiImporter.Helpers
 
                 //Set Tags based on OdhTags
                 await GenericTaggingHelper.AddTagsToODHActivityPoi(mymuseum, settings.JsonConfig.Jsondir);
+                mymuseum.TagIds = mymuseum.Tags != null ? mymuseum.Tags.Select(x => x.Id).ToList() : null;
              
                 if (mymuseumdata?.Root is { })
                 {

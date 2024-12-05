@@ -121,11 +121,13 @@ namespace OdhApiCore.Filters
                         var booklist = new List<string>();
                         var bokfilterlist = bokfilter != null ? bokfilter.Split(',').ToList() : new List<string>();
 
+                        bool allowwithoutids = false;
+
                         if (actionid == "GetAccommodations")
                         {
                             bool? customisbookablefilter = bookablefilter;
                             if (idfilter != null && idfilter.Count() > 0)
-                                customisbookablefilter = false;
+                                customisbookablefilter = null;
 
                             AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                                 QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
@@ -137,16 +139,22 @@ namespace OdhApiCore.Filters
                             // Get Accommodations IDlist 
                             var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
 
-                            booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();                                                      
+                            booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
+
+                            //What if here the id was not found return nothing
                         }
-                        else if(actionid == "PostAvailableAccommodations" || actionid == "PostAvailableAccommodationsOnlyMssResult")
+                        else if (actionid == "PostAvailableAccommodations" || actionid == "PostAvailableAccommodationsOnlyMssResult")
                         {
+                            allowwithoutids = true;
+
                             //If no Ids are passed and no locfilter is passed search over all IDs
                             if (actionarguments.ContainsKey("idfilter") && (string)actionarguments["idfilter"] != null)
                             {
                                 //add the parsed ids                      
                                 string passedids = actionarguments.ContainsKey("idfilter") ? (string)actionarguments["idfilter"]! : "";
                                 booklist = passedids.Split(",").ToList();
+
+                                allowwithoutids = false;
                             }
                             else if (locfilter != null)
                             {
@@ -161,12 +169,14 @@ namespace OdhApiCore.Filters
                                 var idlist = await GetAccommodationBookList(myhelper, language, seed, searchfilter, geosearchresult);
 
                                 booklist = idlist.Where(x => x.Id != null).Select(x => x.Id!.ToUpper()).ToList() ?? new List<string>();
+
+                                allowwithoutids = false;
                             }
                         }
 
                         context.HttpContext.Items.Add("accobooklist", booklist);
 
-                        if (booklist.Count > 0)
+                        if (allowwithoutids || booklist.Count > 0)
                         {
                             if (bokfilterlist.Contains("hgv"))
                             {
@@ -180,6 +190,7 @@ namespace OdhApiCore.Filters
                                     context.HttpContext.Items.Add("mssavailablity", mssresult);
                                 }
                             }
+
                             if (bokfilterlist.Contains("lts"))
                             {
                                 MssResult lcsresult = await GetLCSAvailability(
@@ -377,8 +388,8 @@ namespace OdhApiCore.Filters
 
         private async Task<MssResult> GetMSSAvailability(string language, string arrival, string departure, string boardfilter, string roominfo, string bokfilter, int? detail, List<string> bookableaccoIDs, string idsofchannel, string requestsource, bool msscache = false, string mssversion = "2")
         {                       
-            // Edge Case No Ids Provided, withoutmssids true
-            if ((bookableaccoIDs.Count == 0) && msscache)
+            // Edge Case No Ids Provided, and use caching disabled
+            if ((bookableaccoIDs.Count == 0) && !msscache)
             {
                 using var r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosBookable.json"));
                 string json = await r.ReadToEndAsync();
@@ -395,7 +406,8 @@ namespace OdhApiCore.Filters
                     lang: myhelper.mssrequestlanguage, idlist: myhelper.accoidlist, idsofchannel: myhelper.idsofchannel, mybookingchannels: myhelper.mybokchannels,
                     myroomdata: myhelper.myroomdata, arrival: myhelper.arrival, departure: myhelper.departure, service: myhelper.service,
                     hgvservicecode: myhelper.hgvservicecode, offerdetails: myhelper.xoffertype, hoteldetails: myhelper.xhoteldetails,
-                    rooms: myhelper.rooms, requestsource: myhelper.requestsource, version: myhelper.mssversion, serviceurl: settings.MssConfig.ServiceUrl, mssuser: settings.MssConfig.Username, msspswd: settings.MssConfig.Password, withoutmssids: msscache
+                    rooms: myhelper.rooms, requestsource: myhelper.requestsource, version: myhelper.mssversion, serviceurl: settings.MssConfig.ServiceUrl, mssuser: settings.MssConfig.Username, msspswd: settings.MssConfig.Password, 
+                    withoutmssids: msscache
                     );
                
                 if (myparsedresponse != null)
@@ -408,7 +420,7 @@ namespace OdhApiCore.Filters
         {
             LcsHelper myhelper = LcsHelper.Create(bookableaccoIDs, language, roominfo, boardfilter, arrival, departure, requestsource);
 
-            // Edge Case No Ids Provided, withoutids true
+            // Edge Case No Ids Provided, load all of them
             if ((bookableaccoIDs.Count == 0))
             {
                 using var r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosAll.json"));

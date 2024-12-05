@@ -5,6 +5,7 @@
 using DataModel;
 using Helper;
 using Helper.Location;
+using Helper.Tagging;
 using Microsoft.FSharp.Control;
 using Newtonsoft.Json;
 using NINJA;
@@ -81,6 +82,8 @@ namespace OdhApiImporter.Helpers
 
                 objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data, objecttosave, echargingtag);
 
+
+
                 if (objecttosave != null)
                 {
                     //Setting Location Info                    
@@ -92,10 +95,10 @@ namespace OdhApiImporter.Helpers
                     objecttosave.Active = true;
                     //objecttosave.SmgActive = true;
 
-                    //var idtocheck = kvp.Key;
-
-                    //if (idtocheck.Length > 50)
-                    //    idtocheck = idtocheck.Substring(0, 50);
+                    //Set TagIds based on OdhTags
+                    await GenericTaggingHelper.AddTagsToODHActivityPoi(objecttosave, settings.JsonConfig.Jsondir);
+                    //Create Tag Objects
+                    objecttosave.TagIds = objecttosave.Tags != null ? objecttosave.Tags.Select(x => x.Id).ToList() : null;
 
                     var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>(id, data));
 

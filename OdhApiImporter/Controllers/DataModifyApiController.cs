@@ -317,11 +317,11 @@ namespace OdhApiImporter.Controllers
         #region ODHActivityPoi
 
         [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("ModifyOldODHActivityPoi")]
-        public async Task<IActionResult> ModifyODHActivityPoiTags(CancellationToken cancellationToken)
+        [HttpGet, Route("ModifyODHActivityPoi")]
+        public async Task<IActionResult> ModifyODHActivityPoiTags(string? id, bool? forceupdate, CancellationToken cancellationToken)
         {
-            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            //var objectscount = await customdataoperation.UpdateAllODHActivityPoiOldTags("sta");
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateAllODHActivityPoiTagIds(id, forceupdate);
             //var objectscount2 = await customdataoperation.UpdateAllODHActivityPoiOldTags("dss");
 
 
@@ -331,7 +331,7 @@ namespace OdhApiImporter.Controllers
                 updatetype = "custom",
                 otherinfo = "",
                 message = "Done",
-                recordsmodified = 0,
+                recordsmodified = objectscount,
                 created = 0,
                 deleted = 0,
                 id = "",

@@ -236,6 +236,7 @@ namespace Helper
 
             //Tagging
             reduced.Tags = mypoi.Tags;
+            reduced.TagIds = mypoi.TagIds;
 
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
             reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForODHActivityPoi(mypoi.ContactInfos, mypoi.SyncSourceInterface);
@@ -385,6 +386,7 @@ namespace Helper
             //ImageGallery
             reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myevent.ImageGallery);
 
+            
             return reduced;
         }
 
@@ -534,7 +536,7 @@ namespace Helper
             reduced.PublishedOn = venue.PublishedOn;
 
             //ImageGallery
-            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(venue.ImageGallery);
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(venue.ImageGallery);            
 
             return reduced;
         }

@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using SqlKata;
 using System.Threading;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace OdhApiImporter.Helpers
 {
@@ -506,6 +507,53 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        public async Task<int> UpdateAllODHActivityPoiTagIds(string? id, bool? forceupdate)
+        {
+            //Load all data from PG and resave TODO filter only where TagIds = null
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("smgpois")
+                   .When(forceupdate != true, x => x.WhereRaw($"data#>>'\\{{TagIds\\}}' IS NULL"))
+                   .When(!String.IsNullOrEmpty(id), x => x.Where("id", id));
+                   
+
+            var data = await query.GetObjectListAsync<ODHActivityPoiLinked>();
+            int i = 0;
+
+            foreach (var poi in data)
+            {
+                if (poi.TagIds != null && poi.TagIds.Count > 0)
+                    poi.TagIds = poi.TagIds.Distinct().ToList();
+
+                //Update the TagIds
+                await GenericTaggingHelper.AddTagIdsToODHActivityPoi(poi, settings.JsonConfig.Jsondir);
+
+                //Ensure LTSTagIds are into TagIds
+                if (poi.LTSTags != null && poi.LTSTags.Count > 0)
+                {
+                    foreach (var ltstag in poi.LTSTags)
+                    {
+                        if (!poi.TagIds.Contains(ltstag.LTSRID))
+                            poi.TagIds.Add(ltstag.LTSRID);
+                    }
+                }
+
+                //Recreate Tags                     
+                await poi.UpdateTagsExtension(QueryFactory);
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("smgpois").Where("id", poi.Id)
+                        .UpdateAsync(new JsonBData() { id = poi.Id, data = new JsonRaw(poi) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        
 
         public async Task<int> UpdateAllSTAVendingpoints()
         {
@@ -1093,14 +1141,19 @@ namespace OdhApiImporter.Helpers
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("tags");
+                   .From("tags")
+                   .TagTypesFilter(new List<string>() { "ltscategory","odhcategory" });
 
             var data = await query.GetObjectListAsync<TagLinked>();
             int i = 0;
 
             foreach (var tag in data)
             {                
-                tag.Source = tag.Types.Contains("ltscategory") ? "lts" : "idm";
+                var source = "idm";
+
+                tag.Source = source;
+                tag._Meta.Source = source;
+
 
                 //Save to DB                 
                 var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
@@ -1200,7 +1253,7 @@ namespace OdhApiImporter.Helpers
                 tag.Id = topic.Id;
                 tag.Source = "noi";
                 tag.TagName = topic.TypeDesc;  
-                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "noi", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
                 tag.ValidForEntity = new List<string>() { "event", "eventshort" };
                 tag.MainEntity = "event";
@@ -1326,7 +1379,7 @@ namespace OdhApiImporter.Helpers
                 tag.Id = topic.Id;
                 tag.Source = "idm";  //TO CHECK
                 tag.TagName = topic.TypeDesc;  //TO CHECK
-                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "idm", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
                 tag.ValidForEntity = new List<string>() { "article" };
                 tag.MainEntity = "article";

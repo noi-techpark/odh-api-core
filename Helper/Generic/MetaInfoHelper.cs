@@ -188,13 +188,7 @@ namespace Helper
 
         public static Metadata GetMetadataforTag(TagLinked data)
         {
-            string sourcemeta = data.Source.ToLower();
-
-            if (data.Types != null && data.Types.Contains("LTSCategory"))
-                sourcemeta = "lts";
-            else if (data.Types != null && (data.Types.Contains("IDMRedactionalCategory") || data.Types.Contains("ODHCategory")))
-                sourcemeta = "idm";
-            
+            string sourcemeta = data.Source.ToLower();            
 
             return GetMetadata(data, sourcemeta, data.LastChange);
         }
