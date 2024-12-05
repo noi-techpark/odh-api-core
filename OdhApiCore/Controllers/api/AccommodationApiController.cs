@@ -473,9 +473,12 @@ namespace OdhApiCore.Controllers
         /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
-        /// <param name="msssource">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data, when set to true, all passed Ids are omitted) (default: false)</param>        
+        /// <param name="msssource">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>                
         /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
+        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
+        /// <param name="usemsscache">Use the MSS Cache to Request Data. No Ids have to be passed, the whole MSS Result of whole South Tyrol is used, default(false)</param>        
+        /// <param name="uselcscache">Currently not used (planned to be active in 2025)</param>        
+        /// <param name="removeduplicatesfrom">Remove all duplicate offers from the requested booking channel possible values: ('lts','hgv'), default(NULL)</param>
         /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<AccommodationV2>), StatusCodes.Status200OK)]
@@ -593,10 +596,15 @@ namespace OdhApiCore.Controllers
         /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
         /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED</param>
         /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
-        /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
+        /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>
+        /// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
         /// <param name="msssource">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>        
+        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
+        /// <param name="usemsscache">Use the MSS Cache to Request Data. No Ids have to be passed, the whole MSS Result of whole South Tyrol is used, default(false)</param>        
+        /// <param name="uselcscache">Currently not used (planned to be active in 2025)</param>        
+        /// <param name="removeduplicatesfrom">Remove all duplicate offers from the requested booking channel possible values: ('lts','hgv'), default(NULL)</param>
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>                
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<MssResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -618,7 +626,7 @@ namespace OdhApiCore.Controllers
             string? locfilter = null,            
             bool usemsscache = false,
             bool uselcscache = false,
-            string removeduplicatesfrom = null,
+            string? removeduplicatesfrom = null,
             CancellationToken cancellationToken = default)
         {
             return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, locfilter, true, usemsscache, uselcscache, removeduplicatesfrom, cancellationToken);
