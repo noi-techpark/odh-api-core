@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using SqlKata;
 using System.Threading;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace OdhApiImporter.Helpers
 {
@@ -507,13 +508,14 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> UpdateAllODHActivityPoiTagIds()
+        public async Task<int> UpdateAllODHActivityPoiTagIds(string? id, bool? forceupdate)
         {
             //Load all data from PG and resave TODO filter only where TagIds = null
             var query = QueryFactory.Query()
                    .SelectRaw("data")
                    .From("smgpois")
-                   .WhereRaw("data#>>'{TagIds}' IS NULL");
+                   .When(forceupdate != true, x => x.WhereRaw($"data#>>'\\{{TagIds\\}}' IS NULL"))
+                   .When(!String.IsNullOrEmpty(id), x => x.Where("id", id));
                    
 
             var data = await query.GetObjectListAsync<ODHActivityPoiLinked>();
@@ -1139,14 +1141,19 @@ namespace OdhApiImporter.Helpers
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("tags");
+                   .From("tags")
+                   .TagTypesFilter(new List<string>() { "ltscategory","odhcategory" });
 
             var data = await query.GetObjectListAsync<TagLinked>();
             int i = 0;
 
             foreach (var tag in data)
             {                
-                tag.Source = tag.Types.Contains("ltscategory") ? "lts" : "idm";
+                var source = "idm";
+
+                tag.Source = source;
+                tag._Meta.Source = source;
+
 
                 //Save to DB                 
                 var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
@@ -1246,7 +1253,7 @@ namespace OdhApiImporter.Helpers
                 tag.Id = topic.Id;
                 tag.Source = "noi";
                 tag.TagName = topic.TypeDesc;  
-                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "noi", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
                 tag.ValidForEntity = new List<string>() { "event", "eventshort" };
                 tag.MainEntity = "event";
@@ -1372,7 +1379,7 @@ namespace OdhApiImporter.Helpers
                 tag.Id = topic.Id;
                 tag.Source = "idm";  //TO CHECK
                 tag.TagName = topic.TypeDesc;  //TO CHECK
-                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "idm", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
                 tag.ValidForEntity = new List<string>() { "article" };
                 tag.MainEntity = "article";
