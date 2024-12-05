@@ -642,7 +642,7 @@ namespace OdhApiCore.Controllers
                 //Hack Bookable Filter
                 bool? customisbookablefilter = bookablefilter;
                 if (idfilter != null && idfilter.Count() > 0)
-                    customisbookablefilter = false;
+                    customisbookablefilter = null;
 
                 AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                     QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,

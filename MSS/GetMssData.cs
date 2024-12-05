@@ -75,7 +75,7 @@ namespace MSS
                     allmyoffers));
 
                 //Und iatz no parsen
-                MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(lang, hgvservicecode, myresult, idlist, myroompersons, requestsource, version);
+                MssResult myparsedresponse = ParseMssResponse.ParsemyMssResponse(lang, hgvservicecode, myresult, idlist, myroompersons, requestsource, version, withoutmssids);
 
                 return myparsedresponse;
             }
