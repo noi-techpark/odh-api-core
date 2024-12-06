@@ -508,14 +508,15 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
-        public async Task<int> UpdateAllODHActivityPoiTagIds(string? id, bool? forceupdate)
+        public async Task<int> UpdateAllODHActivityPoiTagIds(string? id, bool? forceupdate, int? takefirstn)
         {
             //Load all data from PG and resave TODO filter only where TagIds = null
             var query = QueryFactory.Query()
                    .SelectRaw("data")
                    .From("smgpois")
                    .When(forceupdate != true, x => x.WhereRaw($"data#>>'\\{{TagIds\\}}' IS NULL"))
-                   .When(!String.IsNullOrEmpty(id), x => x.Where("id", id));
+                   .When(!String.IsNullOrEmpty(id), x => x.Where("id", id))
+                   .When(takefirstn != null, x => x.Take(takefirstn.Value));
                    
 
             var data = await query.GetObjectListAsync<ODHActivityPoiLinked>();
