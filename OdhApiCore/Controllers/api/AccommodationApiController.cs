@@ -502,7 +502,7 @@ namespace OdhApiCore.Controllers
             string? locfilter = null,                  
             bool availabilityonly = false,
             bool usemsscache = false,
-            bool uselcscache = false,
+            bool uselcscache = true,
             string removeduplicatesfrom = null, //only valid for availability only?
             CancellationToken cancellationToken = default)
         {

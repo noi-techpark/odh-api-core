@@ -110,7 +110,7 @@ namespace OdhApiCore.Filters
                     // Only needed for PostAvailableAccommodations
                     bool? availabilityonly = actionarguments.ContainsKey("availabilityonly") ? (bool)actionarguments["availabilityonly"]! : false;
                     bool msscache = actionarguments.ContainsKey("usemsscache") ? (bool)actionarguments["usemsscache"]! : false;
-                    bool lcscache = actionarguments.ContainsKey("uselcscache") ? (bool)actionarguments["uselcscache"]! : false;
+                    bool lcscache = actionarguments.ContainsKey("uselcscache") ? (bool)actionarguments["uselcscache"]! : true;
 
                     string? removeduplicatesfrom = actionarguments.ContainsKey("removeduplicatesfrom") ? (string?)actionarguments!["removeduplicatesfrom"] : null;
 
@@ -430,14 +430,14 @@ namespace OdhApiCore.Filters
             LcsHelper myhelper = LcsHelper.Create(bookableaccoIDs, language, roominfo, boardfilter, arrival, departure, requestsource);
 
             // Edge Case No Ids Provided, load all of them
-            if ((bookableaccoIDs.Count == 0))
-            {
-                using var r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosAll.json"));
-                string json = await r.ReadToEndAsync();
-                bookableaccoIDs = JsonConvert.DeserializeObject<List<string>>(json) ?? new();
-            }
+            //if ((bookableaccoIDs.Count == 0) && !lcscache)
+            //{
+            //    using var r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosAll.json"));
+            //    string json = await r.ReadToEndAsync();
+            //    bookableaccoIDs = JsonConvert.DeserializeObject<List<string>>(json) ?? new();
+            //}
 
-            if (bookableaccoIDs.Count > 0)
+            if (bookableaccoIDs.Count > 0 || lcscache)
             {
                 var accosearchrequest = LCS.GetAccommodationDataLCS.GetAccommodationDataSearchRequest(resultRID: "", pageNr: "1", pageSize: "10000", language: myhelper.lcsrequestlanguage, 
                     sortingcriterion: "1", sortingorder: "", sortingpromotebookable: "", request: "0", filters: "0", timespanstart: myhelper.arrival, timespanend: myhelper.departure, 
