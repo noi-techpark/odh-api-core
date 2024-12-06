@@ -19,6 +19,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using static RawQueryParser.Filtering;
 
 namespace OdhApiCore.Filters
 {
@@ -178,30 +179,23 @@ namespace OdhApiCore.Filters
 
                         if (allowwithoutids || booklist.Count > 0)
                         {
-                            if (bokfilterlist.Contains("hgv"))
+                            await Parallel.ForEachAsync(bokfilterlist, async (value, cancellationToken) =>
                             {
-                                MssResult mssresult = await GetMSSAvailability(
-                                          language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                          roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: booklist,
-                                          idsofchannel: idsource, requestsource: msssource, msscache: msscache);
-
-                                if (mssresult != null)
+                                if (value == "hgv")
                                 {
-                                    context.HttpContext.Items.Add("mssavailablity", mssresult);
+                                        context.HttpContext.Items.Add("mssavailablity", await GetMSSAvailability(
+                                              language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                              roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: booklist,
+                                              idsofchannel: idsource, requestsource: msssource, msscache: msscache));
                                 }
-                            }
 
-                            if (bokfilterlist.Contains("lts"))
-                            {
-                                MssResult lcsresult = await GetLCSAvailability(
-                                                language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                                roominfo: roominfo, bookableaccoIDs: booklist, requestsource: msssource, lcscache: lcscache);
-
-                                if (lcsresult != null)
+                                if (value == "lts")
                                 {
-                                    context.HttpContext.Items.Add("lcsavailablity", lcsresult);
+                                        context.HttpContext.Items.Add("lcsavailablity", await GetLCSAvailability(
+                                                    language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                                    roominfo: roominfo, bookableaccoIDs: booklist, requestsource: msssource, lcscache: lcscache));
                                 }
-                            }
+                            });                                                        
                         }
                     }                                                          
                 }
@@ -268,37 +262,49 @@ namespace OdhApiCore.Filters
                             {
                                 List<MssResult> result = new();
 
-                                if (bokfilterlist.Contains("hgv"))
+                                await Parallel.ForEachAsync(bokfilterlist, async (value, cancellationToken) =>
                                 {
-                                    MssResult? mssresult = default(MssResult);
+                                    if (value == "hgv")
+                                    {
+                                        MssResult? mssresult = default(MssResult);
 
-                                    if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
-                                    {
-                                        mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
-                                    }
-                                    else if (actionid == "GetAccommodation")
-                                    {
-                                        mssresult = await GetMSSAvailability(
-                                        language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                        roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: bookableAccoIds, idsofchannel: idsource, requestsource: msssource);
-                                    }
+                                        if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
+                                        {
+                                            mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
+                                        }
+                                        else if (actionid == "GetAccommodation")
+                                        {
+                                            mssresult = await GetMSSAvailability(
+                                            language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                            roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: bookableAccoIds, idsofchannel: idsource, requestsource: msssource);
+                                        }
 
-                                    if (mssresult != null)
-                                    {
-                                        result.Add(mssresult);
+                                        if (mssresult != null)
+                                        {
+                                            result.Add(mssresult);
+                                        }
                                     }
-                                }
-                                if (bokfilterlist.Contains("lts"))
-                                {
-                                    MssResult lcsresult = await GetLCSAvailability(
-                                        language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                        roominfo: roominfo, bookableaccoIDs: bookableAccoIds, requestsource: msssource);
+                                    if (value == "lts")
+                                    {
+                                        MssResult? lcsresult = default(MssResult);
 
-                                    if (lcsresult != null)
-                                    {
-                                        result.Add(lcsresult);
+                                        if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
+                                        {
+                                            lcsresult = (MssResult?)context.HttpContext.Items["lcsavailablity"];
+                                        }
+                                        else if (actionid == "GetAccommodation")
+                                        {
+                                            lcsresult = await GetLCSAvailability(
+                                            language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                            roominfo: roominfo, bookableaccoIDs: bookableAccoIds, requestsource: msssource);
+                                        }
+
+                                        if (lcsresult != null)
+                                        {
+                                            result.Add(lcsresult);
+                                        }
                                     }
-                                }
+                                });
 
                                 if (result.Count > 0)
                                 {
@@ -324,47 +330,50 @@ namespace OdhApiCore.Filters
                                 {
                                     List<MssResult> result = new();
 
-                                    if (bokfilterlist.Contains("hgv"))
+                                    await Parallel.ForEachAsync(bokfilterlist, async (value, cancellationToken) =>
                                     {
-                                        MssResult? mssresult = null;
+                                        if (value == "hgv")
+                                        {
+                                            MssResult? mssresult = null;
 
-                                        if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
-                                        {
-                                            mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
-                                        }
-                                        else if (actionid == "GetAccommodation")
-                                        {
-                                            mssresult = await GetMSSAvailability(
-                                            language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                            roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: bookableAccoIds, idsofchannel: idsource,
-                                            requestsource: msssource);
-                                        }
+                                            if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
+                                            {
+                                                mssresult = (MssResult?)context.HttpContext.Items["mssavailablity"];
+                                            }
+                                            else if (actionid == "GetAccommodation")
+                                            {
+                                                mssresult = await GetMSSAvailability(
+                                                language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                                roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: bookableAccoIds, idsofchannel: idsource,
+                                                requestsource: msssource);
+                                            }
 
-                                        if (mssresult != null)
-                                        {
-                                            result.Add(mssresult);
+                                            if (mssresult != null)
+                                            {
+                                                result.Add(mssresult);
+                                            }
                                         }
-                                    }
-                                    if (bokfilterlist.Contains("lts"))
-                                    {
-                                        MssResult? lcsresult = null;
+                                        if (value == "lts")
+                                        {
+                                            MssResult? lcsresult = null;
 
-                                        if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
-                                        {
-                                            lcsresult = (MssResult?)context.HttpContext.Items["lcsavailablity"];
-                                        }
-                                        else if (actionid == "GetAccommodation")
-                                        {
-                                            lcsresult = await GetLCSAvailability(
-                                             language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                             roominfo: roominfo, bookableaccoIDs: bookableAccoIds, requestsource: msssource);
-                                        }
+                                            if (actionid == "GetAccommodations" || actionid == "PostAvailableAccommodations")
+                                            {
+                                                lcsresult = (MssResult?)context.HttpContext.Items["lcsavailablity"];
+                                            }
+                                            else if (actionid == "GetAccommodation")
+                                            {
+                                                lcsresult = await GetLCSAvailability(
+                                                 language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
+                                                 roominfo: roominfo, bookableaccoIDs: bookableAccoIds, requestsource: msssource);
+                                            }
 
-                                        if (lcsresult != null)
-                                        {
-                                            result.Add(lcsresult);
+                                            if (lcsresult != null)
+                                            {
+                                                result.Add(lcsresult);
+                                            }
                                         }
-                                    }
+                                    });                                    
 
                                     if (result.Count > 0)
                                     {
