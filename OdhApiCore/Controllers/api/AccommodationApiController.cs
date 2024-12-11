@@ -465,7 +465,7 @@ namespace OdhApiCore.Controllers
         //SPECIAL GETTER
 
         /// <summary>
-        /// POST Pass Accommodation Ids and get Accommodations with Availability Information / Availability Information Only
+        /// POST Pass Accommodation Ids and get Accommodations with Availability Information / Availability Information Only <a href="https://github.com/noi-techpark/odh-docs/wiki/Accommodation-Workflow#availability-search" target="_blank">Wiki Availability Search</a>
         /// </summary>
         /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
         /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
@@ -476,7 +476,7 @@ namespace OdhApiCore.Controllers
         /// <param name="msssource">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>                
         /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
         /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
-        /// <param name="usemsscache">Use the MSS Cache to Request Data. No Ids have to be passed, the whole MSS Result of whole South Tyrol is used, default(false)</param>        
+        /// <param name="usemsscache">Use the MSS Cache to Request Data. No Ids have to be passed, the whole MSS Result of whole South Tyrol is used, available options (null/false/true) default (null), false = pass always the Ids to MSS omit its caching mechanism, true = do not pass ids to MSS get availability result and filter the resultset of MSS, null = let opendatahub decide when to use caching and when not.</param>        
         /// <param name="uselcscache">Currently not used (planned to be active in 2025)</param>        
         /// <param name="removeduplicatesfrom">Remove all duplicate offers from the requested booking channel possible values: ('lts','hgv'), default(NULL)</param>
         /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
@@ -502,7 +502,7 @@ namespace OdhApiCore.Controllers
             string? locfilter = null,                  
             bool availabilityonly = false,
             bool usemsscache = false,
-            bool uselcscache = false,
+            bool uselcscache = true,
             string removeduplicatesfrom = null, //only valid for availability only?
             CancellationToken cancellationToken = default)
         {
