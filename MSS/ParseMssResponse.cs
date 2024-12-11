@@ -103,8 +103,8 @@ namespace MSS
 
                 foreach (var myhotelresult in myresult.Where(x => x.Elements("channel").Count() > 0))
                 {
-                    //Nur wenn ein Angebot eines Channels vorhanden ist
-                    if (myhotelresult.Elements("channel").Count() > 0)
+                    //Only if there is an offer, and a valid LTS RID
+                    if (myhotelresult.Elements("channel").Count() > 0 && !String.IsNullOrEmpty(myhotelresult.Element("id_lts").Value))
                     {
                         List<CheapestOffer> cheapestofferlist = new List<CheapestOffer>();
 
