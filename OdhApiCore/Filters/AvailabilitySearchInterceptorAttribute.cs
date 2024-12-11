@@ -109,14 +109,12 @@ namespace OdhApiCore.Filters
 
                     // Only needed for PostAvailableAccommodations
                     bool? availabilityonly = actionarguments.ContainsKey("availabilityonly") ? (bool)actionarguments["availabilityonly"]! : false;
-                    bool msscache = actionarguments.ContainsKey("usemsscache") ? (bool)actionarguments["usemsscache"]! : false;
-                    bool lcscache = actionarguments.ContainsKey("uselcscache") ? (bool)actionarguments["uselcscache"]! : true;
+                    // If no option of caching is given let's decide on runtime
+                    bool? msscache = actionarguments.ContainsKey("usemsscache") ? (bool)actionarguments["usemsscache"]! : null;
+                    bool? lcscache = actionarguments.ContainsKey("uselcscache") ? (bool)actionarguments["uselcscache"]! : null;
 
                     string? removeduplicatesfrom = actionarguments.ContainsKey("removeduplicatesfrom") ? (string?)actionarguments!["removeduplicatesfrom"] : null;
-
-                    //obsolete
-                    //bool? withoutids = actionarguments.ContainsKey("withoutids") ? (bool)actionarguments["withoutids"]! : false;
-
+                    
                     if (CheckArrivalAndDeparture(arrival, departure))
                     {
                         var booklist = new List<string>();
@@ -179,21 +177,27 @@ namespace OdhApiCore.Filters
 
                         if (allowwithoutids || booklist.Count > 0)
                         {
+                            //TODO Refine Logic here on a certain amount of Accommodations use the cache
+                            var usecache = false;
+                            if (booklist.Count == 0)
+                                usecache = true;
+
                             await Parallel.ForEachAsync(bokfilterlist, async (value, cancellationToken) =>
                             {
                                 if (value == "hgv")
-                                {
-                                        context.HttpContext.Items.Add("mssavailablity", await GetMSSAvailability(
+                                {                                    
+
+                                    context.HttpContext.Items.Add("mssavailablity", await GetMSSAvailability(
                                               language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
                                               roominfo: roominfo, bokfilter: bokfilter, detail: Convert.ToInt32(detail), bookableaccoIDs: booklist,
-                                              idsofchannel: idsource, requestsource: msssource, msscache: msscache));
+                                              idsofchannel: idsource, requestsource: msssource, msscache: msscache ?? usecache));
                                 }
 
                                 if (value == "lts")
                                 {
                                         context.HttpContext.Items.Add("lcsavailablity", await GetLCSAvailability(
                                                     language: language, arrival: arrival, departure: departure, boardfilter: boardfilter,
-                                                    roominfo: roominfo, bookableaccoIDs: booklist, requestsource: msssource, lcscache: lcscache));
+                                                    roominfo: roominfo, bookableaccoIDs: booklist, requestsource: msssource, lcscache: lcscache ?? usecache));
                                 }
                             });                                                        
                         }
