@@ -434,12 +434,12 @@ namespace OdhApiCore.Filters
             LcsHelper myhelper = LcsHelper.Create(bookableaccoIDs, language, roominfo, boardfilter, arrival, departure, requestsource);
 
             // Edge Case No Ids Provided, load all of them
-            //if ((bookableaccoIDs.Count == 0) && !lcscache)
-            //{
-            //    using var r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosAll.json"));
-            //    string json = await r.ReadToEndAsync();
-            //    bookableaccoIDs = JsonConvert.DeserializeObject<List<string>>(json) ?? new();
-            //}
+            if ((bookableaccoIDs.Count == 0) && !lcscache)
+            {
+                using var r = new StreamReader(Path.Combine(settings.JsonConfig.Jsondir, $"AccosAll.json"));
+                string json = await r.ReadToEndAsync();
+                bookableaccoIDs = JsonConvert.DeserializeObject<List<string>>(json) ?? new();
+            }
 
             if (bookableaccoIDs.Count > 0 || lcscache)
             {
