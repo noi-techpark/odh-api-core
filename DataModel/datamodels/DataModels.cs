@@ -3556,7 +3556,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3564,7 +3564,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3572,7 +3572,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3580,7 +3580,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3588,7 +3588,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string>? Name { get; set; }
     }
 
