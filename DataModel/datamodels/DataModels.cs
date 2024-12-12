@@ -987,7 +987,7 @@ namespace DataModel
 
     #region Venues
 
-    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive
+    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive, IDetailInfosAware, IContactInfosAware
     {
         public Venue()
         {
@@ -3556,7 +3556,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3564,7 +3564,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3572,7 +3572,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3580,7 +3580,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3588,7 +3588,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string>? Name { get; set; }
     }
 

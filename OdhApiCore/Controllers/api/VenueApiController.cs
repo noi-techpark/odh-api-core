@@ -6,6 +6,7 @@ using DataModel;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
+using Helper.Location;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -369,7 +370,13 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
                 venue.Id = Helper.IdGenerator.GenerateIDFromType(venue);
-                //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                //GENERATE HasLanguage
+                venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                //POPULATE LocationInfo
+                venue.LocationInfo = await venue.UpdateLocationInfoExtension(QueryFactory);
+                //TODO DISTANCE Calculation
+                //TRIM all strings
+                venue.TrimStringProperties();
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
                 return await UpsertData<VenueLinked>(venue, new DataInfo("venues_v2", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
@@ -395,7 +402,14 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
                 venue.Id = Helper.IdGenerator.CheckIdFromType<VenueLinked>(id);
-                //venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+
+                //GENERATE HasLanguage
+                venue.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                //POPULATE LocationInfo
+                venue.LocationInfo = await venue.UpdateLocationInfoExtension(QueryFactory);
+                //TODO DISTANCE Calculation
+                //TRIM all strings
+                venue.TrimStringProperties();
 
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
                 return await UpsertData<VenueLinked>(venue, new DataInfo("venues_v2", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));

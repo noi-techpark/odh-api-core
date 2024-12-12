@@ -358,7 +358,7 @@ namespace OdhApiCore.Controllers.api
                     article.LicenseInfo = new LicenseInfo() { ClosedData = false };
                                                 
                 //Populate Tags (Id/Source/Type)
-                await article.UpdateTagsExtension(QueryFactory);
+                await article.UpdateTagsExtension(QueryFactory);                
 
                 //Trim all strings
                 article.TrimStringProperties();

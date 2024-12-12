@@ -398,7 +398,7 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
                 activity.Id = Helper.IdGenerator.GenerateIDFromType(activity);
-                activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                activity.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });                
 
                 return await UpsertData<LTSActivityLinked>(activity, new DataInfo("activities", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
