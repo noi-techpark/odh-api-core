@@ -321,7 +321,7 @@ namespace DataModel
         //Accommodation Properties
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.HasApartment")]
-        public new bool? HasApartment { get { return this.AccoProperties != null ? this.AccoProperties.HasApartment : null; } }
+        public new bool HasApartment { get { return this.AccoProperties != null ? this.AccoProperties.HasApartment.Value : false; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.HasRoom")]
         public new bool? HasRoom { get { return this.AccoProperties != null ? this.AccoProperties.HasRoom : null; } }
@@ -333,7 +333,7 @@ namespace DataModel
         public bool? IsGastronomy { get { return this.AccoProperties != null ? this.AccoProperties.IsGastronomy : null; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsBookable")]
-        public new bool? IsBookable { get { return this.AccoProperties != null ? this.AccoProperties.IsBookable : null; } }
+        public new bool IsBookable { get { return this.AccoProperties != null ? this.AccoProperties.IsBookable.Value : false; } }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsAccommodation")]
         public new bool? IsAccommodation { get { return this.AccoProperties != null ? this.AccoProperties.IsAccommodation : null; } }

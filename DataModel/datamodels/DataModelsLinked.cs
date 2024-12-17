@@ -399,7 +399,7 @@ namespace DataModel
         }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public AccoType AccoType
+        public AccoType? AccoType
         {
             get
             {
@@ -408,7 +408,7 @@ namespace DataModel
         }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public AccoCategory AccoCategory
+        public AccoCategory? AccoCategory
         {
             get
             {
@@ -767,7 +767,7 @@ namespace DataModel
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
-        public ICollection<string> TagIds { get; set; }
+        public ICollection<string>? TagIds { get; set; }
     }
 
     public class LTSPoiLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked

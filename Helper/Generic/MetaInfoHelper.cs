@@ -88,7 +88,20 @@ namespace Helper
             if (data._Meta != null)
                 reduced = (bool)data._Meta.Reduced;
 
-            return GetMetadata(data, "lts", data.LastChange, reduced);
+            //fix if source is null
+            string? datasource = data.Source;
+
+            if (datasource == null)
+            {                
+                datasource = "unknown";
+            }
+            else
+            {
+                datasource = datasource.ToLower();
+            }
+
+
+            return GetMetadata(data, datasource, data.LastChange, reduced);
         }        
 
         public static Metadata GetMetadataforAccommodationRoom(AccommodationRoomLinked data)
