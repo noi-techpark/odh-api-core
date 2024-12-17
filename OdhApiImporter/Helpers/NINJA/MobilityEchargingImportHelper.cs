@@ -5,6 +5,7 @@
 using DataModel;
 using Helper;
 using Helper.Location;
+using Helper.Tagging;
 using Microsoft.FSharp.Control;
 using Newtonsoft.Json;
 using NINJA;
@@ -14,6 +15,7 @@ using SqlKata;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -80,6 +82,8 @@ namespace OdhApiImporter.Helpers
 
                 objecttosave = ParseNinjaData.ParseNinjaEchargingToODHActivityPoi(id, data, objecttosave, echargingtag);
 
+
+
                 if (objecttosave != null)
                 {
                     //Setting Location Info                    
@@ -91,10 +95,10 @@ namespace OdhApiImporter.Helpers
                     objecttosave.Active = true;
                     //objecttosave.SmgActive = true;
 
-                    //var idtocheck = kvp.Key;
-
-                    //if (idtocheck.Length > 50)
-                    //    idtocheck = idtocheck.Substring(0, 50);
+                    //Set TagIds based on OdhTags
+                    await GenericTaggingHelper.AddTagsToODHActivityPoi(objecttosave, settings.JsonConfig.Jsondir);
+                    //Create Tag Objects
+                    objecttosave.TagIds = objecttosave.Tags != null ? objecttosave.Tags.Select(x => x.Id).ToList() : null;
 
                     var result = await InsertDataToDB(objecttosave, new KeyValuePair<string, NinjaDataWithParent<NinjaEchargingPlug, NinjaEchargingStation>>(id, data));
 
@@ -289,10 +293,10 @@ namespace OdhApiImporter.Helpers
 
             //Console.WriteLine(String.Join(",", ninjadata.data.SelectMany(x => x.smetadata.outlets.Select(y => y.outletTypeCode)).Distinct().ToList()));
 
-            
 
-            //Get all sources
-            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider.ToLower())).Distinct().ToList();
+
+            //Get all sources            
+            return ninjadata.data.Select(x => Tuple.Create(x.porigin.ToLower(), x.pmetadata.provider != null ? x.pmetadata.provider.ToLower() : "")).Distinct().ToList();
         }
 
         private static List<Tuple<string, string>> GetAndParseProviderList(NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation> ninjadata)

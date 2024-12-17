@@ -487,6 +487,23 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
+        public static LicenseInfo GetLicenseforTag(TagLinked data)
+        {
+            var isopendata = true;
+            var licensetype = "CC0";
+            var licenseholder = "";
+         
+            if(data.Source == "idm")
+                licenseholder = "https://www.idm-suedtirol.com";
+            else if (data.Source == "noi")
+                licenseholder = "https://noi.bz.it";
+            else if (data.Source == "lts")
+                licenseholder = "https://lts.it";
+
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
         public static LicenseInfo GetLicenseforWeather(string source)
         {
             var isopendata = true;

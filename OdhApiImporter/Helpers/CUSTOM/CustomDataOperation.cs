@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using SqlKata;
 using System.Threading;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace OdhApiImporter.Helpers
 {
@@ -347,6 +348,116 @@ namespace OdhApiImporter.Helpers
             return i;
         }
 
+        public async Task<int> AccommodationModifyToV2(List<string>? idlist)
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("accommodations")
+                   .When(idlist != null, x => x.WhereIn("id", idlist));
+
+            var accos = await query.GetObjectListAsync<AccommodationLinked>();
+            int i = 0;
+
+            foreach (var acco in accos)
+            {
+                var accov2 = new AccommodationV2();
+
+                accov2.AccoBookingChannel = acco.AccoBookingChannel;
+                accov2.AccoCategoryId = acco.AccoCategoryId;
+                accov2.AccoDetail = acco.AccoDetail;
+                accov2.AccoHGVInfo = acco.AccoHGVInfo;
+                accov2.AccoOverview = acco.AccoOverview;
+
+                var accoproperties = new AccoProperties();
+                accoproperties.HasApartment = acco.HasApartment;
+                accoproperties.HasRoom = acco.HasRoom;
+                accoproperties.IsAccommodation = acco.IsAccommodation;
+                accoproperties.IsBookable = acco.IsBookable;
+                accoproperties.IsCamping = acco.IsCamping;
+                accoproperties.IsGastronomy = acco.IsGastronomy;
+                accoproperties.TVMember = acco.TVMember;
+
+                accov2.AccoProperties = accoproperties;
+                accov2.AccoRoomInfo = acco.AccoRoomInfo;
+                accov2.AccoTypeId = acco.AccoTypeId;
+                accov2.Active = acco.Active;
+                accov2.BadgeIds = acco.BadgeIds;
+                accov2.BoardIds = acco.BoardIds;
+                
+                //Todo fill tagids and tags?
+                //accov2.TagIds =
+
+                accov2.DistanceInfo = acco.DistanceInfo;
+                accov2.DistrictId = acco.DistrictId;
+                accov2.Features = acco.Features;
+                accov2.FirstImport = acco.FirstImport;
+                //todo hide this
+                accov2.GastronomyId = acco.GastronomyId;
+                accov2.GpsInfo = acco.GpsInfo;
+                accov2.HasLanguage = acco.HasLanguage;
+
+                //TODO Hide this
+                accov2.HgvId = acco.HgvId;
+                accov2.Id = acco.Id;
+                accov2.ImageGallery = acco.ImageGallery;
+                accov2.IndependentData = acco.IndependentData;
+                accov2.LastChange = acco.LastChange;
+                accov2.LicenseInfo = acco.LicenseInfo;
+                accov2.LocationInfo = acco.LocationInfo;
+                
+                //TODO Hide this
+                accov2.MainLanguage = acco.MainLanguage;
+
+                accov2.Mapping = acco.Mapping;
+                accov2.MarketingGroupIds = acco.MarketingGroupIds;
+                accov2.MssResponseShort = acco.MssResponseShort;
+
+                //TODO Hide this                
+                accov2.PublishedOn = acco.PublishedOn;
+
+                accov2.Representation = acco.Representation;
+
+                Review review = new Review();
+                review.ReviewId = acco.TrustYouID;
+                review.Results = acco.TrustYouResults;
+                review.Provider = "trustyou";
+                review.Active = acco.TrustYouActive;
+                review.Score = acco.TrustYouScore;
+                review.StateInteger = acco.TrustYouState;
+
+                if (accov2.Review == null)
+                    accov2.Review = new Dictionary<string, DataModel.Review>();
+
+                if(!String.IsNullOrEmpty(acco.TrustYouID))
+                    accov2.Review.TryAddOrUpdate("trustyou", review);
+
+                accov2.Shortname = acco.Shortname;
+                accov2.SmgActive = acco.SmgActive;
+                accov2.SmgTags = acco.SmgTags;
+                accov2.Source = acco.Source;
+                accov2.SpecialFeaturesIds = acco.SpecialFeaturesIds;
+                accov2.ThemeIds = acco.ThemeIds;
+                accov2.TourismVereinId = acco.TourismVereinId;
+                accov2._Meta = acco._Meta;
+
+                //TODO Fill
+                //accov2.OperationSchedule;
+                //accov2.TagIds;
+                //accov2.Tags;
+                //accov2.RatePlan;                
+
+                //Save tp DB
+                var queryresult = await QueryFactory.Query("accommodations").Where("id", accov2.Id)
+                     .UpdateAsync(new JsonBData() { id = accov2.Id, data = new JsonRaw(accov2) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+
         #endregion
 
         #region ODHActivityPoi
@@ -377,7 +488,11 @@ namespace OdhApiImporter.Helpers
                     stapoiv2.Tags = new List<Tags>();
                     foreach (var tagdict in tags)
                     {
-                        stapoiv2.Tags.AddRange(tagdict.Value);
+                        foreach(var tagvalue in tagdict.Value)
+                        {
+                            stapoiv2.Tags.Add(tagvalue);
+                        }
+                        
                     }
 
 
@@ -392,6 +507,54 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        public async Task<int> UpdateAllODHActivityPoiTagIds(string? id, bool? forceupdate, int? takefirstn)
+        {
+            //Load all data from PG and resave TODO filter only where TagIds = null
+            var query = QueryFactory.Query()
+                   .SelectRaw("data")
+                   .From("smgpois")
+                   .When(forceupdate != true, x => x.WhereRaw($"data#>>'\\{{TagIds\\}}' IS NULL"))
+                   .When(!String.IsNullOrEmpty(id), x => x.Where("id", id))
+                   .When(takefirstn != null, x => x.Take(takefirstn.Value));
+                   
+
+            var data = await query.GetObjectListAsync<ODHActivityPoiLinked>();
+            int i = 0;
+
+            foreach (var poi in data)
+            {
+                if (poi.TagIds != null && poi.TagIds.Count > 0)
+                    poi.TagIds = poi.TagIds.Distinct().ToList();
+
+                //Update the TagIds
+                await GenericTaggingHelper.AddTagIdsToODHActivityPoi(poi, settings.JsonConfig.Jsondir);
+
+                //Ensure LTSTagIds are into TagIds
+                if (poi.LTSTags != null && poi.LTSTags.Count > 0)
+                {
+                    foreach (var ltstag in poi.LTSTags)
+                    {
+                        if (!poi.TagIds.Contains(ltstag.LTSRID))
+                            poi.TagIds.Add(ltstag.LTSRID);
+                    }
+                }
+
+                //Recreate Tags                     
+                await poi.UpdateTagsExtension(QueryFactory);
+
+                //Save tp DB
+                //TODO CHECK IF THIS WORKS     
+                var queryresult = await QueryFactory.Query("smgpois").Where("id", poi.Id)
+                        .UpdateAsync(new JsonBData() { id = poi.Id, data = new JsonRaw(poi) });
+
+                i++;
+            }
+
+            return i;
+        }
+
+        
 
         public async Task<int> UpdateAllSTAVendingpoints()
         {
@@ -979,14 +1142,19 @@ namespace OdhApiImporter.Helpers
             //Load all data from PG and resave
             var query = QueryFactory.Query()
                    .SelectRaw("data")
-                   .From("tags");
+                   .From("tags")
+                   .TagTypesFilter(new List<string>() { "ltscategory","odhcategory" });
 
             var data = await query.GetObjectListAsync<TagLinked>();
             int i = 0;
 
             foreach (var tag in data)
             {                
-                tag.Source = tag.Types.Contains("ltscategory") ? "lts" : "idm";
+                var source = "idm";
+
+                tag.Source = source;
+                tag._Meta.Source = source;
+
 
                 //Save to DB                 
                 var queryresult = await QueryFactory.Query("tags").Where("id", tag.Id)
@@ -1053,7 +1221,7 @@ namespace OdhApiImporter.Helpers
                 tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
                 tag.FirstImport = DateTime.Now;
                 tag.PublishedOn = null;
-                tag.Types = new List<string>() { "eventtopic" };
+                tag.Types = new List<string>() { "eventtopic","eventcategory" };
 
                 tag.PublishDataWithTagOn = null;
                 tag.Mapping = null;
@@ -1086,7 +1254,7 @@ namespace OdhApiImporter.Helpers
                 tag.Id = topic.Id;
                 tag.Source = "noi";
                 tag.TagName = topic.TypeDesc;  
-                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "noi", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
                 tag.ValidForEntity = new List<string>() { "event", "eventshort" };
                 tag.MainEntity = "event";
@@ -1130,7 +1298,7 @@ namespace OdhApiImporter.Helpers
                 tag.TagName = topic.TypeDesc;
                 tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
-                tag.ValidForEntity = new List<string>() { "odhactivitypoi" };
+                tag.ValidForEntity = new List<string>() { "odhactivitypoi","gastronomy" };
                 tag.MainEntity = "odhactivitypoi";
                 tag.LastChange = DateTime.Now;
                 tag.LicenseInfo = new LicenseInfo() { Author = "https://lts.it", ClosedData = false, License = "CC0", LicenseHolder = "https://lts.it" };
@@ -1179,7 +1347,7 @@ namespace OdhApiImporter.Helpers
                 tag.Shortname = tag.TagName.ContainsKey("en") ? tag.TagName["en"] : tag.TagName.FirstOrDefault().Value;
                 tag.FirstImport = DateTime.Now;
                 tag.PublishedOn = null;
-                tag.Types = new List<string>() { topic.Type.ToLower() };
+                tag.Types = new List<string>() { "venue" + topic.Type.ToLower() };
 
                 tag.PublishDataWithTagOn = null;
                 tag.Mapping = null;
@@ -1212,7 +1380,7 @@ namespace OdhApiImporter.Helpers
                 tag.Id = topic.Id;
                 tag.Source = "idm";  //TO CHECK
                 tag.TagName = topic.TypeDesc;  //TO CHECK
-                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "lts", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
+                tag._Meta = new Metadata() { Id = tag.Id, LastUpdate = DateTime.Now, Reduced = false, Source = "idm", Type = "tag", UpdateInfo = new UpdateInfo() { UpdatedBy = "import", UpdateSource = "importer" } };
                 tag.DisplayAsCategory = false;
                 tag.ValidForEntity = new List<string>() { "article" };
                 tag.MainEntity = "article";

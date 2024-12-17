@@ -27,7 +27,7 @@ namespace DataModel
 
     }
 
-    public class AccommodationLinkedReduced : AccommodationLinked
+    public class AccommodationLinkedReduced : AccommodationV2
     {
 
     }

@@ -86,7 +86,7 @@ namespace OdhApiCore
             await _next(context);
         }
 
-        private static string GenerateClientKey(HttpContext context) => $"{context.Request.Path}_{context.Connection.RemoteIpAddress}";
+        //private static string GenerateClientKey(HttpContext context) => $"{context.Request.Path}_{context.Connection.RemoteIpAddress}";
 
         private static (RateLimitConfig? rlConfig, string key) GenerateClientKeyExtended(HttpContext context, List<RateLimitConfig> rlsettings)
         {
@@ -156,23 +156,28 @@ namespace OdhApiCore
 
             // TODO: Check if User has Referer, isLogged isAnonymous
 
+
+            //Get the Remote IP            
+            var remoteip = RemoteIpHelper.GetRequestIP(context, true);
+
+
             // Case 1 Anonymous, Go to IP Restriction (Maybe on Path?)
             if (String.IsNullOrEmpty(referer) && String.IsNullOrEmpty(loggeduser))
             {
-                ratelimitcachekey = $"{context.Request.Path}_{context.Connection.RemoteIpAddress}";
+                ratelimitcachekey = $"{context.Request.Path}_{remoteip}";
                 ratelimitconfig = rlsettings.FirstOrDefault(x => x.Type == "Anonymous");
             }
             // Case 2 Referer passed generate key with Referer
             else if (!String.IsNullOrEmpty(referer) && String.IsNullOrEmpty(loggeduser))
             {
-                ratelimitcachekey = $"{context.Request.Path}_{context.Connection.RemoteIpAddress}_{referer}";
+                ratelimitcachekey = $"{context.Request.Path}_{remoteip}_{referer}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Referer").FirstOrDefault();
             }
 
             // Case 3 Logged user, decode token and use username as key
             else if (!String.IsNullOrEmpty(loggeduser))
             {
-                ratelimitcachekey = $"{context.Request.Path}_{context.Connection.RemoteIpAddress}_{loggeduser}";
+                ratelimitcachekey = $"{context.Request.Path}_{remoteip}_{loggeduser}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
 
                 // If user is in Role 

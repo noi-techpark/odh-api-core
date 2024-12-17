@@ -82,7 +82,7 @@ namespace LCS
          string timespanstart,
          string timespanend,
          string checkavailabilitystatus,
-         string onlybookableresults,
+         string onlybookableresults,         
          List<string> mealplans,
          List<string> accommodationrids,
          List<string> tourismorg,

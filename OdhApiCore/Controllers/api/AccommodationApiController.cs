@@ -104,7 +104,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult<AccommodationLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResult<AccommodationV2>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]        
@@ -221,7 +221,7 @@ namespace OdhApiCore.Controllers
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(AccommodationLinked), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(AccommodationV2), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)] 
@@ -464,7 +464,7 @@ namespace OdhApiCore.Controllers
         //SPECIAL GETTER
 
         /// <summary>
-        /// POST Pass Accommodation Ids and get Accommodations with Availability Information / Availability Information Only
+        /// POST Pass Accommodation Ids and get Accommodations with Availability Information / Availability Information Only <a href="https://github.com/noi-techpark/odh-docs/wiki/Accommodation-Workflow#availability-search" target="_blank">Wiki Availability Search</a>
         /// </summary>
         /// <param name="availabilitychecklanguage">Language of the Availability Response</param>
         /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
@@ -472,12 +472,15 @@ namespace OdhApiCore.Controllers
         /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
         /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
-        /// <param name="msssource">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data, when set to true, all passed Ids are omitted) (default: false)</param>        
+        /// <param name="msssource">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>                
         /// <param name="availabilityonly">Get only availability information without Accommodation information</param>
+        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
+        /// <param name="usemsscache">Use the MSS Cache to Request Data. No Ids have to be passed, the whole MSS Result of whole South Tyrol is used, available options (null/false/true) default (null), false = pass always the Ids to MSS omit its caching mechanism, true = do not pass ids to MSS get availability result and filter the resultset of MSS, null = let opendatahub decide when to use caching and when not.</param>        
+        /// <param name="uselcscache">Currently not used (planned to be active in 2025)</param>        
+        /// <param name="removeduplicatesfrom">Remove all duplicate offers from the requested booking channel possible values: ('lts','hgv'), default(NULL)</param>
         /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
-        [ProducesResponseType(typeof(JsonResultWithBookingInfo<AccommodationLinked>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(JsonResultWithBookingInfo<AccommodationV2>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -495,8 +498,11 @@ namespace OdhApiCore.Controllers
             string? bokfilter = "hgv",
             string? msssource = "sinfo",
             string? detail = "0",
-            bool withoutids = false,            
+            string? locfilter = null,                  
             bool availabilityonly = false,
+            bool usemsscache = false,
+            bool uselcscache = true,
+            string removeduplicatesfrom = null, //only valid for availability only?
             CancellationToken cancellationToken = default)
         {
             bokfilter ??= "hgv";
@@ -513,39 +519,37 @@ namespace OdhApiCore.Controllers
             if (usedroute == "v1/AvailabilityCheck")
                 availabilityonly = true;
 
-            //If no ids in the post body, makes ure withoutids is checked (make use of cached MSS)
-            if((idfilter == null || String.IsNullOrEmpty(idfilter)) && withoutids == false)
-                return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutids set to true");
+            //TODO CHECK THIS WITHOUTIDS Stuff (not needed if no id is passed)
+            ////If no ids in the post body, makes sure withoutids is checked (make use of cached MSS)
+            //if((idfilter == null || String.IsNullOrEmpty(idfilter)))
+            //    return BadRequest("No Ids in the POST Body, Availability Search over all Accommodations only with withoutids set to true");
 
             var accobooklist = Request.HttpContext.Items["accobooklist"];
-            var accoavailabilitymss = Request.HttpContext.Items["mssavailablity"];
-            var accoavailabilitylcs = Request.HttpContext.Items["lcsavailablity"];
+            var accoavailabilitymss = ((MssResult?)Request.HttpContext.Items["mssavailablity"]);
+            var accoavailabilitylcs = ((MssResult?)Request.HttpContext.Items["lcsavailablity"]);
 
-            var accosonmss = ((MssResult?)accoavailabilitymss)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
-            var accosonlcs = ((MssResult?)accoavailabilitylcs)?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
+            //Remove Availabilities from
+            if(removeduplicatesfrom != null)
+                RemoveDuplicatesFrom(removeduplicatesfrom, accoavailabilitymss, accoavailabilitylcs);
 
-            var availableonlineaccos = new List<string>();
-            if (accoavailabilitymss != null)
-                availableonlineaccos.AddRange(accosonmss);
-            if (accoavailabilitylcs != null)
-                availableonlineaccos.AddRange(accosonlcs);
 
-            var resultid = ((MssResult?)accoavailabilitymss)?.ResultId ?? "";
+
+            var resultid = accoavailabilitymss?.ResultId ?? "";
 
             //Counts
             var requestedtotal = accobooklist != null ? ((List<string>)accobooklist).Count : 0;
 
-            var availableonline = accosonmss.Count;
-            var availableonrequest = accosonlcs.Count;
+            var availableonline = accoavailabilitymss?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().Count() ?? 0;
+            var availableonrequest = accoavailabilitylcs?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().Count() ?? 0;
 
             if (availabilityonly)
             {
                 var toreturn = new List<MssResponseShort>();
 
                 if (bokfilter.Contains("hgv") && accoavailabilitymss != null)
-                    toreturn.AddRange(((MssResult?)accoavailabilitymss)?.MssResponseShort?.ToList() ?? new());
+                    toreturn.AddRange(accoavailabilitymss?.MssResponseShort?.ToList() ?? new());
                 if (bokfilter.Contains("lts") && accoavailabilitylcs != null)
-                    toreturn.AddRange(((MssResult?)accoavailabilitylcs)?.MssResponseShort?.ToList() ?? new());
+                    toreturn.AddRange(accoavailabilitylcs?.MssResponseShort?.ToList() ?? new());
 
                 //return immediately the mss response
                 var result = ResponseHelpers.GetResult(
@@ -564,12 +568,21 @@ namespace OdhApiCore.Controllers
             }
             else
             {
+                var accosonmss = accoavailabilitymss?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
+                var accosonlcs = accoavailabilitylcs?.MssResponseShort?.Select(x => x.A0RID?.ToUpper() ?? "").Distinct().ToList() ?? new List<string>();
+
+                var availableonlineaccos = new List<string>();
+                if (accoavailabilitymss != null)
+                    availableonlineaccos.AddRange(accosonmss);
+                if (accoavailabilitylcs != null)
+                    availableonlineaccos.AddRange(accosonlcs);
+
                 return await GetFiltered(
                 fields: Array.Empty<string>(), language: null, pagenumber: 1,
-                pagesize: int.MaxValue, idfilter: idfilter, idlist: availableonlineaccos, locfilter: null, categoryfilter: null,
+                pagesize: int.MaxValue, idfilter: idfilter, idlist: availableonlineaccos, locfilter: locfilter, categoryfilter: null,
                 typefilter: null, boardfilter: boardfilter, featurefilter: null, featureidfilter: null, themefilter: null, badgefilter: null,
                 altitudefilter: null, active: null, smgactive: null, bookablefilter: null, smgtagfilter: null, sourcefilter: null,
-                publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, new GeoPolygonSearchResult(), 
+                publishedon: null, seed: null, updatefrom: null, langfilter: null, searchfilter: null, null, 
                 new PGGeoSearchResult() { geosearch = false, latitude = 0, longitude = 0, radius = 0 }, 
                 rawfilter: null, rawsort: null, removenullvalues: false, cancellationToken);
             }                      
@@ -582,11 +595,15 @@ namespace OdhApiCore.Controllers
         /// <param name="boardfilter">Boardfilter (BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = No Filter)</param>
         /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED</param>
         /// <param name="departure">Departure Date (yyyy-MM-dd) REQUIRED</param>
-        /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>/// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
+        /// <param name="roominfo">Roominfo Filter REQUIRED (Splitter for Rooms '|' Splitter for Persons Ages ',') (Room Types: 0=notprovided, 1=room, 2=apartment, 4=pitch/tent(onlyLTS), 8=dorm(onlyLTS)) possible Values Example 1-18,10|1-18 = 2 Rooms, Room 1 for 2 person Age 18 and Age 10, Room 2 for 1 Person Age 18), (default:'1-18,18')</param>
+        /// <param name="bokfilter">Booking Channels Filter (Separator ',' possible values: hgv = (Booking Südtirol), htl = (Hotel.de), exp = (Expedia), bok = (Booking.com), lts = (LTS Availability check), (default:hgv)) REQUIRED</param>              
         /// <param name="detail">Include Offer Details (String, 1 = full Details)</param>
         /// <param name="msssource">Source of the Requester (possible value: 'sinfo' = Suedtirol.info, 'sbalance' = Südtirol Balance) REQUIRED</param>        
-        /// <param name="withoutids">Search over all bookable Accommodations (No Ids have to be provided as Post Data, when set to true, all passed Ids are omitted) (default: false)</param>        
-        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>        
+        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
+        /// <param name="usemsscache">Use the MSS Cache to Request Data. No Ids have to be passed, the whole MSS Result of whole South Tyrol is used, default(false)</param>        
+        /// <param name="uselcscache">Currently not used (planned to be active in 2025)</param>        
+        /// <param name="removeduplicatesfrom">Remove all duplicate offers from the requested booking channel possible values: ('lts','hgv'), default(NULL)</param>
+        /// <param name="idfilter">Posted Accommodation IDs (Separated by , must be specified in the POST Body as raw)</param>                
         /// <returns>Result Object with Collection of Accommodation Objects</returns>        
         [ProducesResponseType(typeof(JsonResultWithBookingInfo<MssResult>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -605,10 +622,13 @@ namespace OdhApiCore.Controllers
             string? bokfilter = "hgv",
             string? msssource = "sinfo",
             string? detail = "0",
-            bool withoutids = false,            
+            string? locfilter = null,            
+            bool usemsscache = false,
+            bool uselcscache = false,
+            string? removeduplicatesfrom = null,
             CancellationToken cancellationToken = default)
         {
-            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, withoutids, true, cancellationToken);
+            return await PostAvailableAccommodations(idfilter, availabilitychecklanguage, boardfilter, arrival, departure, roominfo, bokfilter, msssource, detail, locfilter, true, usemsscache, uselcscache, removeduplicatesfrom, cancellationToken);
         }
 
         #endregion
@@ -626,10 +646,15 @@ namespace OdhApiCore.Controllers
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
+                //Hack Bookable Filter
+                bool? customisbookablefilter = bookablefilter;
+                if (idfilter != null && idfilter.Count() > 0)
+                    customisbookablefilter = null;
+
                 AccommodationHelper myhelper = await AccommodationHelper.CreateAsync(
                     QueryFactory, idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
                     featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, smgtags: smgtagfilter, activefilter: active, 
-                    smgactivefilter: smgactive, bookablefilter: bookablefilter, sourcefilter: sourcefilter, lastchange: updatefrom, langfilter: langfilter, publishedonfilter: publishedon, cancellationToken);
+                    smgactivefilter: smgactive, bookablefilter: customisbookablefilter, sourcefilter: sourcefilter, lastchange: updatefrom, langfilter: langfilter, publishedonfilter: publishedon, cancellationToken);
 
                 //Fix if idlist from availabilitysearch is added use this instead of idfilter
                 if (idlist.Count > 0)
@@ -937,12 +962,12 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         //[Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationWriter,AccommodationManager,AccommodationCreate")]
         [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Accommodation")]
-        public Task<IActionResult> Post([FromBody] AccommodationLinked accommodation)
+        public Task<IActionResult> Post([FromBody] AccommodationV2 accommodation)
         {
             return DoAsyncReturn(async () =>
             {
@@ -960,7 +985,7 @@ namespace OdhApiCore.Controllers
                 accommodation.TrimStringProperties();
 
 
-                return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await UpsertData<AccommodationV2>(accommodation, new DataInfo("accommodations", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -970,19 +995,19 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Accommodation Id</param>
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         [AuthorizeODH(PermissionAction.Update)]
         //[Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationWriter,AccommodationManager,AccommodationModify,AccommodationUpdate")]
         [HttpPut, Route("Accommodation/{id}")]
-        public Task<IActionResult> Put(string id, [FromBody] AccommodationLinked accommodation)
+        public Task<IActionResult> Put(string id, [FromBody] AccommodationV2 accommodation)
         {
             return DoAsyncReturn(async () =>
             {
                 //Additional Filters on the Action Update
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
-                accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
+                accommodation.Id = Helper.IdGenerator.CheckIdFromType<AccommodationV2>(id);
 
                 //GENERATE HasLanguage
                 accommodation.CheckMyInsertedLanguages(new List<string> { "de", "en", "it", "nl", "cs", "pl", "ru", "fr" });
@@ -992,7 +1017,7 @@ namespace OdhApiCore.Controllers
                 //TRIM all strings
                 accommodation.TrimStringProperties();
 
-                return await UpsertData<AccommodationLinked>(accommodation, new DataInfo("accommodations", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await UpsertData<AccommodationV2>(accommodation, new DataInfo("accommodations", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
@@ -1013,12 +1038,31 @@ namespace OdhApiCore.Controllers
                 //Additional Filters on the Action Delete
                 AdditionalFiltersToAdd.TryGetValue("Delete", out var additionalfilter);
 
-                id = Helper.IdGenerator.CheckIdFromType<AccommodationLinked>(id);
+                id = Helper.IdGenerator.CheckIdFromType<AccommodationV2>(id);
 
-                return await DeleteData<AccommodationLinked>(id, new DataInfo("accommodations", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await DeleteData<AccommodationV2>(id, new DataInfo("accommodations", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
         }
 
+
+        #endregion
+
+        #region AVAILABILITYHELPER
+
+        private void RemoveDuplicatesFrom(string removeduplicateresultsfrom, MssResult? mssresult, MssResult? lcsresult)
+        {
+            if(mssresult != null && lcsresult != null)
+            {
+                if (removeduplicateresultsfrom == "lts")
+                {
+                    lcsresult.MssResponseShort = lcsresult.MssResponseShort.Where(x => !mssresult.MssResponseShort.Select(x => x.A0RID).ToList().Contains(x.A0RID)).ToList();
+                }
+                else if(removeduplicateresultsfrom == "hgv")
+                {
+                    mssresult.MssResponseShort = mssresult.MssResponseShort.Where(x => !lcsresult.MssResponseShort.Select(x => x.A0RID).ToList().Contains(x.A0RID)).ToList();
+                }
+            }           
+        }
 
         #endregion
     }

@@ -374,7 +374,7 @@ namespace DataModel
         public bool? roomsupdate { get; set; }
         public string updatemode { get; set; }
 
-        public string? response { get; set; }
+        public object? response { get; set; }
 
         public string? exception { get; set; }
 

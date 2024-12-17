@@ -31,7 +31,7 @@ namespace Helper
             if (style == IDStyle.uppercase)
                 odhtype.Id = odhtype.Id.ToUpper();
             else if (style == IDStyle.lowercase)
-                odhtype.Id = odhtype.Id.ToLower();
+                odhtype.Id = odhtype.Id.ToLower();            
         }
 
         public static string CheckIdFromType<T>(string id) where T : IIdentifiable
@@ -62,7 +62,7 @@ namespace Helper
         {
             return odhtype switch
             {
-                Accommodation or AccommodationLinked => IDStyle.uppercase,
+                Accommodation or AccommodationLinked or AccommodationV2 => IDStyle.uppercase,
                 AccoRoom or AccommodationRoomLinked => IDStyle.uppercase,
                 LTSActivityLinked => IDStyle.uppercase,
                 LTSPoiLinked => IDStyle.uppercase,
@@ -86,10 +86,11 @@ namespace Helper
                 SkiRegion or SkiRegionLinked => IDStyle.uppercase,
                 Area or AreaLinked => IDStyle.uppercase,
                 Wine or WineLinked => IDStyle.uppercase,
-                SmgTags or ODHTagLinked => IDStyle.lowercase,                
+                ODHTagLinked => IDStyle.lowercase,                
                 Publisher or PublisherLinked => IDStyle.lowercase,
                 Source or SourceLinked => IDStyle.lowercase,
-                TourismMetaData => IDStyle.lowercase,                
+                TourismMetaData => IDStyle.lowercase,
+                TagLinked => IDStyle.mixed,
                 _ => throw new Exception("not known odh type")
             };
         }
@@ -98,7 +99,7 @@ namespace Helper
         {
             return odhtype switch
             {
-                Type _ when odhtype == typeof(Accommodation) || odhtype == typeof(AccommodationLinked) => IDStyle.uppercase,
+                Type _ when odhtype == typeof(Accommodation) || odhtype == typeof(AccommodationLinked) || odhtype == typeof(AccommodationV2) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(AccoRoom) || odhtype == typeof(AccommodationRoomLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(LTSActivityLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(LTSPoiLinked) => IDStyle.uppercase,
@@ -122,7 +123,8 @@ namespace Helper
                 Type _ when odhtype == typeof(SkiRegion) || odhtype == typeof(SkiRegionLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(Area) || odhtype == typeof(AreaLinked) => IDStyle.uppercase,
                 Type _ when odhtype == typeof(Wine) || odhtype == typeof(WineLinked) => IDStyle.uppercase,
-                Type _ when odhtype == typeof(SmgTags) || odhtype == typeof(ODHTagLinked) || odhtype == typeof(TagLinked) => IDStyle.lowercase,
+                Type _ when odhtype == typeof(ODHTagLinked) => IDStyle.lowercase,
+                Type _ when odhtype == typeof(TagLinked) => IDStyle.mixed,
                 Type _ when odhtype == typeof(Publisher) || odhtype == typeof(PublisherLinked) => IDStyle.lowercase,
                 Type _ when odhtype == typeof(Source) || odhtype == typeof(SourceLinked) => IDStyle.lowercase,
                 Type _ when odhtype == typeof(TourismMetaData) => IDStyle.lowercase,                
@@ -134,8 +136,10 @@ namespace Helper
         {
             if (idstyle == IDStyle.uppercase)
                 return id.ToUpper();
-            else
+            else if (idstyle == IDStyle.lowercase)
                 return id.ToLower();
+            else
+                return id;
         }
     }
 

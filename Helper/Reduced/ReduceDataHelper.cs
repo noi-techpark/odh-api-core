@@ -23,7 +23,7 @@ namespace Helper
         {
             return myobject switch
             {
-                Accommodation or AccommodationLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
+                Accommodation or AccommodationLinked or AccommodationV2 => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 LTSActivityLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 LTSPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
                 GastronomyLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
@@ -236,6 +236,7 @@ namespace Helper
 
             //Tagging
             reduced.Tags = mypoi.Tags;
+            reduced.TagIds = mypoi.TagIds;
 
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
             reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForODHActivityPoi(mypoi.ContactInfos, mypoi.SyncSourceInterface);
@@ -276,7 +277,7 @@ namespace Helper
         }
 
         //LTS Accommodation OK ACTIVE (IDMActive=1)
-        public static AccommodationLinkedReduced CopyLTSAccommodationToReducedObject(AccommodationLinked myacco)
+        public static AccommodationLinkedReduced CopyLTSAccommodationToReducedObject(AccommodationV2 myacco)
         {
             var reduced = new AccommodationLinkedReduced();
 
@@ -292,13 +293,15 @@ namespace Helper
             //reduced.AltitudeUnitofMeasure = myacco.AltitudeUnitofMeasure;
             reduced.GpsInfo = myacco.GpsInfo;
 
+            reduced.AccoProperties = new AccoProperties();
+
             //A0Roo
-            reduced.HasRoom = myacco.HasRoom;
+            reduced.AccoProperties.HasRoom = myacco.HasRoom;
             //A0App
-            reduced.HasApartment = myacco.HasApartment;
+            reduced.AccoProperties.HasApartment = myacco.HasApartment;
 
             //fix 
-            reduced.IsBookable = false;
+            reduced.AccoProperties.IsBookable = false;
 
             //T6RID
             reduced.AccoCategoryId = myacco.AccoCategoryId;
@@ -383,6 +386,7 @@ namespace Helper
             //ImageGallery
             reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myevent.ImageGallery);
 
+            
             return reduced;
         }
 
@@ -532,7 +536,7 @@ namespace Helper
             reduced.PublishedOn = venue.PublishedOn;
 
             //ImageGallery
-            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(venue.ImageGallery);
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(venue.ImageGallery);            
 
             return reduced;
         }

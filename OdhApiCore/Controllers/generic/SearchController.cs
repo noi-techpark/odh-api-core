@@ -19,6 +19,9 @@ using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
 {
+    /// <summary>
+    /// <a href="https://github.com/noi-techpark/odh-docs/wiki/Search-over-all-Entities-in-ODH-Tourism-api" target="_blank">Wiki Search Api</a>
+    /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class SearchController : OdhController
@@ -31,10 +34,9 @@ namespace OdhApiCore.Controllers
         #region SWAGGER Exposed API
 
         /// <summary>
-        /// GET Search over all Entities 
+        /// GET Search over all Entities
         /// </summary>
-        /// <param name="odhtype">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
-        /// <param name="type">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... )</param>
+        /// <param name="type">Restrict search to Entities (accommodation, odhactivitypoi, event, webcam, measuringpoint, ltsactivity, ltspoi, ltsgastronomy, article ..... ) <a href="https://github.com/noi-techpark/odh-docs/wiki/Dataset-Type" target="_blank">Wiki Dataset Type</a></param>
         /// <param name="term">Term to Search for <a href="https://github.com/noi-techpark/odh-docs/wiki/Search-over-all-Entities-in-ODH-Tourism-api" target="_blank">Wiki</a></param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language ('null' all languages are displayed)</param>
         /// <param name="limitto">Limit search to n items per entity</param>

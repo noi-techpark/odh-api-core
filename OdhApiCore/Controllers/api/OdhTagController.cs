@@ -203,7 +203,8 @@ namespace OdhApiCore.Controllers
 
                 var query = QueryFactory.Query("smgtags")
                     .Select("data")
-                    .Where("id", id.ToLower())
+                    //.Where("id", id.ToLower())
+                    .Where("id", "ILIKE", id)
                     .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
                     .FilterDataByAccessRoles(UserRolesToFilter);
 
@@ -225,7 +226,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
         //[Authorize(Roles = "DataWriter,DataCreate,ODHTagManager,ODHTagCreate")]
-        [AuthorizeODH(PermissionAction.Delete)]
+        [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("ODHTag")]
         public Task<IActionResult> Post([FromBody] ODHTagLinked odhtag)
         {
@@ -249,7 +250,7 @@ namespace OdhApiCore.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(nameof(GetODHTagsAsync))]
         //[Authorize(Roles = "DataWriter,DataModify,ODHTagManager,ODHTagModify,ODHTagUpdate")]
-        [AuthorizeODH(PermissionAction.Delete)]
+        [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("ODHTag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHTagLinked odhtag)
         {

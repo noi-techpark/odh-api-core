@@ -15,7 +15,7 @@ namespace MSS
 {
     public class ParseMssResponse
     {
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<MssRoom> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<MssRoom> myroompersons, string requestsource, string version, bool withoutids)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace MSS
 
         }
 
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<string> A0Rids, List<MssRoom> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XDocument mssresponse, List<string> A0Rids, List<MssRoom> myroompersons, string requestsource, string version, bool withoutids)
         {
             try
             {
@@ -46,6 +46,10 @@ namespace MSS
                 var myresult = mssresponse.Root.Elements("root").Elements("result").Elements("hotel").Where
                     (x => A0Rids.Contains(x.Element("id_lts").Value.ToLower()) && x.Elements("channel").Count() > 0);
 
+                if (A0Rids.Count == 0 && withoutids)
+                    myresult = mssresponse.Elements("result").Elements("hotel").Where
+                    (x => x.Elements("channel").Count() > 0);
+
                 return ResponseParser(myresult, servicecode, myroompersons, resultid, requestsource, lang, version);
 
 
@@ -57,7 +61,7 @@ namespace MSS
 
         }
 
-        public static MssResult ParsemyMssResponse(string lang, string servicecode, XElement mssresponse, List<string> A0Rids, List<MssRoom> myroompersons, string requestsource, string version)
+        public static MssResult ParsemyMssResponse(string lang, string servicecode, XElement mssresponse, List<string> A0Rids, List<MssRoom> myroompersons, string requestsource, string version, bool withoutids)
         {
             try
             {
@@ -70,6 +74,10 @@ namespace MSS
 
                 var myresult = mssresponse.Elements("result").Elements("hotel").Where
                     (x => A0Rids.Contains(x.Element("id_lts").Value.ToUpper()) && x.Elements("channel").Count() > 0);
+
+                if(A0Rids.Count == 0 && withoutids)
+                    myresult = mssresponse.Elements("result").Elements("hotel").Where
+                    (x => x.Elements("channel").Count() > 0);
 
                 return ResponseParser(myresult, servicecode, myroompersons, resultid, requestsource, lang, version);
             }
@@ -95,8 +103,8 @@ namespace MSS
 
                 foreach (var myhotelresult in myresult.Where(x => x.Elements("channel").Count() > 0))
                 {
-                    //Nur wenn ein Angebot eines Channels vorhanden ist
-                    if (myhotelresult.Elements("channel").Count() > 0)
+                    //Only if there is an offer, and a valid LTS RID
+                    if (myhotelresult.Elements("channel").Count() > 0 && !String.IsNullOrEmpty(myhotelresult.Element("id_lts").Value))
                     {
                         List<CheapestOffer> cheapestofferlist = new List<CheapestOffer>();
 

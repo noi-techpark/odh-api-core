@@ -322,8 +322,10 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
                 
                 //Set Tags based on OdhTags
                 await GenericTaggingHelper.AddTagsToODHActivityPoi(suedtirolweinpoi, settings.JsonConfig.Jsondir);
+                //Create Tag Objects
+                suedtirolweinpoi.TagIds = suedtirolweinpoi.Tags != null ? suedtirolweinpoi.Tags.Select(x => x.Id).ToList() : null;
 
-              
+
                 var result = await InsertDataToDB(suedtirolweinpoi, new KeyValuePair<string, XElement>(dataid, winedata));
                 newcounter = newcounter + result.created ?? 0;
                 updatecounter = updatecounter + result.updated ?? 0;

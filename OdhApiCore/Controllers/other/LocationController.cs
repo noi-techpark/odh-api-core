@@ -23,6 +23,9 @@ using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers.api
 {
+    /// <summary>
+    /// <a href='https://github.com/noi-techpark/odh-docs/wiki/Location-Endpoint' target="_blank">Wiki Location Api</a>
+    /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class LocationController : OdhController

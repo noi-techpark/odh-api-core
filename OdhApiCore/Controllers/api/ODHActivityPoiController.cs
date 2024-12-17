@@ -9,6 +9,7 @@ using Helper.AdditionalProperties;
 using Helper.Generic;
 using Helper.Identity;
 using Helper.Location;
+using Helper.Tagging;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Responses;
 using OdhNotifier;
+using Schema.NET;
 using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
@@ -416,9 +418,11 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE Automatic Assigned ODHTags
                 ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
 
-                //POPULATE Tags
-                await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
-
+                //POPULATE Tags ??
+                //await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+                //Populate Tags (Id/Source/Type)
+                await odhactivitypoi.UpdateTagsExtension(QueryFactory);
+           
                 //POPULATE Categories
                 await ODHTagHelper.GetCategoriesFromAssignedODHTags(odhactivitypoi, settings.JsonConfig.Jsondir);
 
@@ -466,8 +470,11 @@ namespace OdhApiCore.Controllers.api
                 //POPULATE LocationInfo
                 odhactivitypoi.LocationInfo = await odhactivitypoi.UpdateLocationInfoExtension(QueryFactory);
 
-                //POPULATE Automatic Assigned ODHTags
-                ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+                //POPULATE Automatic Assigned ODHTags ???
+                //ODHTagHelper.SetMainCategorizationForODHActivityPoi(odhactivitypoi);
+                //Populate Tags (Id/Source/Type)
+                await odhactivitypoi.UpdateTagsExtension(QueryFactory);
+
 
                 //POPULATE Tags
                 await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);

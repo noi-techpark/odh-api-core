@@ -100,6 +100,7 @@ namespace OdhApiImporter.Helpers
 
                             //Special get all Taglist and traduce it on import
                             await GenericTaggingHelper.AddTagsToODHActivityPoi(odhactivitypoi, settings.JsonConfig.Jsondir);
+                            odhactivitypoi.TagIds = odhactivitypoi.Tags != null ? odhactivitypoi.Tags.Select(x => x.Id).ToList() : null;
 
                             //Save to Rawdatatable
                             var rawdataid = await InsertInRawDataDB(vendingpoint);

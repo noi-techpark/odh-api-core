@@ -213,6 +213,31 @@ namespace OdhApiImporter.Controllers
             });
         }
 
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ModifyAccommodationsToV2")]
+        public async Task<IActionResult> ModifyAccommodationsToV2()
+        {
+            var objectscount = 0;
+
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+
+            objectscount = await customdataoperation.AccommodationModifyToV2(null);
+
+            return Ok(new UpdateResult
+            {
+                operation = "Modify Accommodation V2",
+                updatetype = "custom",
+                otherinfo = "",
+                message = "Done",
+                recordsmodified = objectscount,
+                created = 0,
+                deleted = 0,
+                id = "",
+                updated = 0,
+                success = true
+            });
+        }
+
         #endregion
 
         #region Articles
@@ -292,11 +317,11 @@ namespace OdhApiImporter.Controllers
         #region ODHActivityPoi
 
         [Authorize(Roles = "DataPush")]
-        [HttpGet, Route("ModifyOldODHActivityPoi")]
-        public async Task<IActionResult> ModifyODHActivityPoiTags(CancellationToken cancellationToken)
+        [HttpGet, Route("ModifyODHActivityPoi")]
+        public async Task<IActionResult> ModifyODHActivityPoiTags(string? id, bool? forceupdate, int? takethefirst, CancellationToken cancellationToken)
         {
-            //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            //var objectscount = await customdataoperation.UpdateAllODHActivityPoiOldTags("sta");
+            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            var objectscount = await customdataoperation.UpdateAllODHActivityPoiTagIds(id, forceupdate, takethefirst);
             //var objectscount2 = await customdataoperation.UpdateAllODHActivityPoiOldTags("dss");
 
 
@@ -306,7 +331,7 @@ namespace OdhApiImporter.Controllers
                 updatetype = "custom",
                 otherinfo = "",
                 message = "Done",
-                recordsmodified = 0,
+                recordsmodified = objectscount,
                 created = 0,
                 deleted = 0,
                 id = "",

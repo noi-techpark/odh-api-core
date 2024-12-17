@@ -102,6 +102,8 @@ namespace DataModel
     public class District : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public Nullable<bool> IsComune { get; set; }
+
+        [SwaggerReference(typeof(MunicipalityLinked), "TESTRegionID")]
         public string? RegionId { get; set; }
         public string? TourismvereinId { get; set; }
         public string? MunicipalityId { get; set; }
@@ -129,7 +131,7 @@ namespace DataModel
         public string? Shortname { get; set; }
         public string? CustomId { get; set; }
         public string? RegionId { get; set; }
-        public string? TourismvereinId { get; set; }
+        public string? TourismvereinId { get; set; }        
         public string? MunicipalityId { get; set; }
         public string? SkiAreaID { get; set; }
         public string? GID { get; set; }
@@ -476,7 +478,7 @@ namespace DataModel
         //public int Units { get; set; }
         //public int Beds { get; set; }
         public int? Representation { get; set; }
-        public bool HasApartment { get; set; }
+        public bool? HasApartment { get; set; }
         public bool? HasRoom { get; set; }
         public bool? IsCamping { get; set; }
         
@@ -545,16 +547,16 @@ namespace DataModel
         public string? TrustYouID { get; set; }
 
         [SwaggerSchema("Review Score on Trust You")]
-        public double TrustYouScore { get; set; }
+        public double? TrustYouScore { get; set; }
 
         [SwaggerSchema("Number of Ratings in Trust You")]
-        public int TrustYouResults { get; set; }
+        public int? TrustYouResults { get; set; }
 
         [SwaggerSchema("Active in Trust You")]
-        public bool TrustYouActive { get; set; }
+        public bool? TrustYouActive { get; set; }
 
         [SwaggerSchema("Trust You State on LTS")]
-        public int TrustYouState { get; set; }
+        public int? TrustYouState { get; set; }
     }
 
     public class AccommodationRaven : Accommodation
@@ -920,6 +922,8 @@ namespace DataModel
         public bool? GrpEvent { get; set; }
         public bool? EventBenefit { get; set; }
         public EventBooking? EventBooking { get; set; }
+
+        [Obsolete("Deprecated use Tags")]
         public ICollection<LTSTags>? LTSTags { get; set; }
 
         public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
@@ -983,7 +987,7 @@ namespace DataModel
 
     #region Venues
 
-    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive
+    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive, IDetailInfosAware, IContactInfosAware
     {
         public Venue()
         {
@@ -1897,7 +1901,7 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware
+    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware, IHasLanguage
     {
         public EventShort()
         {
@@ -3015,7 +3019,7 @@ namespace DataModel
 
         public DistanceInfo? DistanceInfo { get; set; }
 
-        public List<Tags> Tags { get; set; }
+        public ICollection<Tags> Tags { get; set; }
 
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }
@@ -3552,7 +3556,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3560,7 +3564,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3568,7 +3572,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3576,7 +3580,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3584,7 +3588,7 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
         public IDictionary<string, string>? Name { get; set; }
     }
 

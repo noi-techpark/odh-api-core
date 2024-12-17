@@ -41,7 +41,7 @@ namespace Helper
         {
             return myobject switch
             {
-                AccommodationLinked al => GetMetadataforAccommodation(al),
+                AccommodationV2 al => GetMetadataforAccommodation(al),                 
                 AccommodationRoomLinked al => GetMetadataforAccommodationRoom(al),
                 LTSActivityLinked ltsal => GetMetadataforActivity(ltsal),
                 LTSPoiLinked ltspl => GetMetadataforPoi(ltspl),
@@ -82,14 +82,27 @@ namespace Helper
             };            
         }
 
-        public static Metadata GetMetadataforAccommodation(AccommodationLinked data)
+        public static Metadata GetMetadataforAccommodation(AccommodationV2 data)
         {
             bool reduced = false;
             if (data._Meta != null)
                 reduced = (bool)data._Meta.Reduced;
 
-            return GetMetadata(data, "lts", data.LastChange, reduced);
-        }
+            //fix if source is null
+            string? datasource = data.Source;
+
+            if (datasource == null)
+            {                
+                datasource = "unknown";
+            }
+            else
+            {
+                datasource = datasource.ToLower();
+            }
+
+
+            return GetMetadata(data, datasource, data.LastChange, reduced);
+        }        
 
         public static Metadata GetMetadataforAccommodationRoom(AccommodationRoomLinked data)
         {
@@ -188,13 +201,7 @@ namespace Helper
 
         public static Metadata GetMetadataforTag(TagLinked data)
         {
-            string sourcemeta = data.Source.ToLower();
-
-            if (data.Types != null && data.Types.Contains("LTSCategory"))
-                sourcemeta = "lts";
-            else if (data.Types != null && (data.Types.Contains("IDMRedactionalCategory") || data.Types.Contains("ODHCategory")))
-                sourcemeta = "idm";
-            
+            string sourcemeta = data.Source.ToLower();            
 
             return GetMetadata(data, sourcemeta, data.LastChange);
         }

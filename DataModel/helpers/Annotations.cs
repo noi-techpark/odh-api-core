@@ -59,4 +59,18 @@ namespace DataModel.Annotations
     public class GetOnlyJsonPropertyAttribute : Attribute
     {
     }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+    public class SwaggerReferenceAttribute : Attribute
+    {
+        public SwaggerReferenceAttribute(Type referenceto, string? description = null)
+        {
+            Description = description;
+            ReferenceTo = referenceto;
+        }
+
+        public string Description { get; }
+        public Type ReferenceTo { get; }
+    }
+
 }

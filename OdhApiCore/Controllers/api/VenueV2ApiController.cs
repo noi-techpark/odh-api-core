@@ -160,6 +160,7 @@ namespace OdhApiCore.Controllers
 
         #region Converters
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("Venue/ConvertVenueToVenueV2/{id}")]
         public async Task<IActionResult> ConvertVenueToVenueV2(string id, bool savetotable = false)
         {
@@ -201,6 +202,7 @@ namespace OdhApiCore.Controllers
             }            
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet, Route("Venue/ConvertVenueTypesToTags")]
         public async Task<IActionResult> ConvertVenueTypesToTags(bool savetotable = false)
         {
@@ -237,7 +239,6 @@ namespace OdhApiCore.Controllers
 
             return Ok(listtaglinked);
         }
-
 
         #endregion
 
