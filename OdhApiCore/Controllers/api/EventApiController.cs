@@ -7,6 +7,7 @@ using DataModel;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
+using Helper.Location;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -373,7 +374,13 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
                 odhevent.Id = Helper.IdGenerator.GenerateIDFromType(odhevent);
+                //GENERATE HasLanguage
                 odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                //POPULATE LocationInfo
+                odhevent.LocationInfo = await odhevent.UpdateLocationInfoExtension(QueryFactory);
+                //TODO DISTANCE Calculation
+                //TRIM all strings
+                odhevent.TrimStringProperties();
 
                 return await UpsertData<EventLinked>(odhevent, new DataInfo("events", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
@@ -398,7 +405,14 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
                 odhevent.Id = Helper.IdGenerator.CheckIdFromType<EventLinked>(id);
+
+                //GENERATE HasLanguage
                 odhevent.CheckMyInsertedLanguages(new List<string> { "de", "en", "it" });
+                //POPULATE LocationInfo
+                odhevent.LocationInfo = await odhevent.UpdateLocationInfoExtension(QueryFactory);
+                //TODO DISTANCE Calculation
+                //TRIM all strings
+                odhevent.TrimStringProperties();
 
                 return await UpsertData<EventLinked>(odhevent, new DataInfo("events", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
             });
