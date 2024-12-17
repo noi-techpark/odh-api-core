@@ -483,7 +483,7 @@ namespace DataModel
         public bool? IsCamping { get; set; }
         
         public bool? IsGastronomy { get; set; }
-        public bool? IsBookable { get; set; }
+        public bool IsBookable { get; set; }
         public bool? IsAccommodation { get; set; }
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }

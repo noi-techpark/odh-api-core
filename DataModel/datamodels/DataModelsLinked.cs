@@ -767,7 +767,7 @@ namespace DataModel
 
         //Overwrites LTSTags
         public new List<LTSTagsLinked>? LTSTags { get; set; }
-        public ICollection<string> TagIds { get; set; }
+        public ICollection<string>? TagIds { get; set; }
     }
 
     public class LTSPoiLinked : PoiBaseInfos, IMetaData, IGPSInfoAware, IGPSPointsAware, IHasLocationInfoLinked
