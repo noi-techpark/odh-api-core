@@ -962,7 +962,7 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         //[Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationWriter,AccommodationManager,AccommodationCreate")]
         [AuthorizeODH(PermissionAction.Create)]
@@ -995,7 +995,7 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Accommodation Id</param>
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         [AuthorizeODH(PermissionAction.Update)]
         //[Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationWriter,AccommodationManager,AccommodationModify,AccommodationUpdate")]
