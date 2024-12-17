@@ -399,7 +399,7 @@ namespace DataModel
         }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public AccoType AccoType
+        public AccoType? AccoType
         {
             get
             {
@@ -408,7 +408,7 @@ namespace DataModel
         }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
-        public AccoCategory AccoCategory
+        public AccoCategory? AccoCategory
         {
             get
             {
