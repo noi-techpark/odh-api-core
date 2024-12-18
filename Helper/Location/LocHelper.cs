@@ -51,7 +51,7 @@ namespace Helper
     }
 
     public class LocHelperclassDynamic : LocHelperclass
-    {        
-        public new dynamic? name { get; set; }     
+    {
+        public new dynamic? name { get; set; }
     }
 }

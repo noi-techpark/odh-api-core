@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Net.Http;
+using System.Threading.Tasks;
 using GeoConverter;
 using Helper;
 using Microsoft.AspNetCore.Hosting;
@@ -9,8 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhNotifier;
 using SqlKata.Execution;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -21,7 +21,15 @@ namespace OdhApiCore.Controllers.api
     {
         private readonly IHttpClientFactory _clientFactory;
 
-        public GeoConverterController(IWebHostEnvironment env, ISettings settings, ILogger<GeoConverterController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory clientFactory) : base(env, settings, logger, queryFactory, odhpushnotifier)
+        public GeoConverterController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<GeoConverterController> logger,
+            QueryFactory queryFactory,
+            IOdhPushNotifier odhpushnotifier,
+            IHttpClientFactory clientFactory
+        )
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             _clientFactory = clientFactory;
         }

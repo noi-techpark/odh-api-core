@@ -30,7 +30,14 @@ namespace OdhApiCore.Controllers
         private static string absoluteUri = "";
         private readonly ISettings settings;
 
-        public MetaDataController(IWebHostEnvironment env, ISettings settings, ILogger<MetaDataController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier) : base(env, settings, logger, queryFactory, odhpushnotifier)
+        public MetaDataController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<MetaDataController> logger,
+            QueryFactory queryFactory,
+            IOdhPushNotifier odhpushnotifier
+        )
+            : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
         }
@@ -49,8 +56,8 @@ namespace OdhApiCore.Controllers
         /// <param name="searchfilter">String to search for, Shortname and ApiDescription in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of TourismMetaData Objects</returns>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of TourismMetaData Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -65,26 +72,36 @@ namespace OdhApiCore.Controllers
             PageSize pagesize = null!,
             string? seed = null,
             string? updatefrom = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
-            bool removenullvalues = false,            
+            bool removenullvalues = false,
             CancellationToken cancellationToken = default
-            )
-        {            
-            return await GetMetaDataFromTable(fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
-                seed: seed, lastchange: updatefrom, rawfilter: rawfilter, rawsort: rawsort, removenullvalues: removenullvalues, searchfilter: searchfilter, cancellationToken);
+        )
+        {
+            return await GetMetaDataFromTable(
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                pagenumber: pagenumber,
+                pagesize: pagesize,
+                seed: seed,
+                lastchange: updatefrom,
+                rawfilter: rawfilter,
+                rawsort: rawsort,
+                removenullvalues: removenullvalues,
+                searchfilter: searchfilter,
+                cancellationToken
+            );
         }
 
         /// <summary>
-        /// GET TourismMetaData Single 
+        /// GET TourismMetaData Single
         /// </summary>
         /// <param name="id">ID of the MetaData</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>TourismMetaData Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
@@ -96,21 +113,35 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetMetaDataSingle(
             string id,
             string? language,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await GetSingle(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues, cancellationToken);
+            return await GetSingle(
+                id,
+                language,
+                fields: fields ?? Array.Empty<string>(),
+                removenullvalues,
+                cancellationToken
+            );
         }
 
         #region GET
 
         private Task<IActionResult> GetMetaDataFromTable(
-          string[] fields, string? language, uint pagenumber, int? pagesize,
-          string? seed, string? lastchange,
-          string? rawfilter, string? rawsort, bool removenullvalues, string? searchfilter,
-          CancellationToken cancellationToken)
+            string[] fields,
+            string? language,
+            uint pagenumber,
+            int? pagesize,
+            string? seed,
+            string? lastchange,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            string? searchfilter,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
@@ -120,30 +151,43 @@ namespace OdhApiCore.Controllers
                 if (rawsort == null)
                     rawsort = "Id";
 
-                var searchfields = PostgresSQLWhereBuilder.TourismMetaDataTitleFieldsToSearchFor(language).ToList();
+                var searchfields = PostgresSQLWhereBuilder
+                    .TourismMetaDataTitleFieldsToSearchFor(language)
+                    .ToList();
                 searchfields.Add("Shortname");
 
-                var query =
-                    QueryFactory.Query()
-                        .SelectRaw("data")
-                        .From("metadata")
-                        .ApplyRawFilter(rawfilter)
-                        .SearchFilter(searchfields.ToArray(), searchfilter)
-                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                        .FilterDataByAccessRoles(UserRolesToFilter)
-                        .ApplyOrdering_GeneratedColumns(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
+                var query = QueryFactory
+                    .Query()
+                    .SelectRaw("data")
+                    .From("metadata")
+                    .ApplyRawFilter(rawfilter)
+                    .SearchFilter(searchfields.ToArray(), searchfilter)
+                    .When(
+                        !String.IsNullOrEmpty(additionalfilter),
+                        q => q.FilterAdditionalDataByCondition(additionalfilter)
+                    )
+                    .FilterDataByAccessRoles(UserRolesToFilter)
+                    .ApplyOrdering_GeneratedColumns(
+                        ref seed,
+                        new PGGeoSearchResult() { geosearch = false },
+                        rawsort
+                    );
 
                 // Get paginated data
-                var data =
-                    await query
-                        .PaginateAsync<JsonRaw>(
-                            page: (int)pagenumber,
-                            perPage: pagesize ?? 25);
+                var data = await query.PaginateAsync<JsonRaw>(
+                    page: (int)pagenumber,
+                    perPage: pagesize ?? 25
+                );
 
-                var dataTransformed =
-                    data.List.Select(
-                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: null)
-                    );
+                var dataTransformed = data.List.Select(raw =>
+                    raw.TransformRawData(
+                        language,
+                        fields,
+                        filteroutNullValues: removenullvalues,
+                        urlGenerator: UrlGeneratorStatic,
+                        fieldstohide: null
+                    )
+                );
 
                 //TODO WRITE A NEW urlGenerator for metadata
 
@@ -156,26 +200,42 @@ namespace OdhApiCore.Controllers
                     totalcount,
                     seed,
                     dataTransformed,
-                    Url);
+                    Url
+                );
             });
         }
 
-        private Task<IActionResult> GetSingle(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetSingle(
+            string id,
+            string? language,
+            string[] fields,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-                var data = await
-                    QueryFactory.Query("metadata")
-                        .Select("data")
-                        .Where("id", id.ToLower())
-                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter))
-                        .FilterDataByAccessRoles(UserRolesToFilter)
-                        .FirstOrDefaultAsync<JsonRaw?>();                
-                
-                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGeneratorStatic, fieldstohide: null);
+                var data = await QueryFactory
+                    .Query("metadata")
+                    .Select("data")
+                    .Where("id", id.ToLower())
+                    .When(
+                        !String.IsNullOrEmpty(additionalfilter),
+                        q => q.FilterAdditionalDataByCondition(additionalfilter)
+                    )
+                    .FilterDataByAccessRoles(UserRolesToFilter)
+                    .FirstOrDefaultAsync<JsonRaw?>();
+
+                return data?.TransformRawData(
+                    language,
+                    fields,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGeneratorStatic,
+                    fieldstohide: null
+                );
             });
         }
 
@@ -204,8 +264,13 @@ namespace OdhApiCore.Controllers
 
                 //GENERATE ID
                 metadata.Id = Helper.IdGenerator.GenerateIDFromType(metadata);
-                
-                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));                
+
+                return await UpsertData<TourismMetaData>(
+                    metadata,
+                    new DataInfo("metadata", CRUDOperation.Create),
+                    new CompareConfig(false, false),
+                    new CRUDConstraints(additionalfilter, UserRolesToFilter)
+                );
             });
         }
 
@@ -232,7 +297,12 @@ namespace OdhApiCore.Controllers
                 //Check ID uppercase lowercase
                 metadata.Id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
-                return await UpsertData<TourismMetaData>(metadata, new DataInfo("metadata", CRUDOperation.Update), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await UpsertData<TourismMetaData>(
+                    metadata,
+                    new DataInfo("metadata", CRUDOperation.Update),
+                    new CompareConfig(false, false),
+                    new CRUDConstraints(additionalfilter, UserRolesToFilter)
+                );
             });
         }
 
@@ -258,10 +328,13 @@ namespace OdhApiCore.Controllers
                 //Check ID uppercase lowercase
                 id = Helper.IdGenerator.CheckIdFromType<TourismMetaData>(id);
 
-                return await DeleteData<TourismMetaData>(id, new DataInfo("metadata", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await DeleteData<TourismMetaData>(
+                    id,
+                    new DataInfo("metadata", CRUDOperation.Delete),
+                    new CRUDConstraints(additionalfilter, UserRolesToFilter)
+                );
             });
         }
-
 
         #endregion
 
@@ -282,9 +355,8 @@ namespace OdhApiCore.Controllers
         //    }
 
         //    return tourismdatalist;
-        //}                    
+        //}
 
         #endregion
     }
-
 }

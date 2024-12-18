@@ -14,27 +14,40 @@ using SqlKata.Execution;
 
 namespace Helper
 {
-
     public class ODHTagHelper
     {
-        public static async Task<IEnumerable<SmgTags>> GetODHTagsValidforCategories(QueryFactory QueryFactory, List<string> validforentity, List<string>? idlist = null)
+        public static async Task<IEnumerable<SmgTags>> GetODHTagsValidforCategories(
+            QueryFactory QueryFactory,
+            List<string> validforentity,
+            List<string>? idlist = null
+        )
         {
             try
             {
                 List<SmgTags> validtags = new List<SmgTags>();
 
-                var validtagquery = QueryFactory.Query("smgtags")
-                        .Select("data")
-                        .When(validforentity.Count > 0, q => q.WhereInJsonb(
-                            validforentity,
-                            tag => new { ValidForEntity = new[] { tag.ToLower() } }
-                        ))
-                        .When(idlist != null, w => w.WhereIn("id", idlist?.Select(x => x.ToLower()) ?? Enumerable.Empty<string>()))
-                        .WhereRaw("data->>'DisplayAsCategory' = $$", "true");
+                var validtagquery = QueryFactory
+                    .Query("smgtags")
+                    .Select("data")
+                    .When(
+                        validforentity.Count > 0,
+                        q =>
+                            q.WhereInJsonb(
+                                validforentity,
+                                tag => new { ValidForEntity = new[] { tag.ToLower() } }
+                            )
+                    )
+                    .When(
+                        idlist != null,
+                        w =>
+                            w.WhereIn(
+                                "id",
+                                idlist?.Select(x => x.ToLower()) ?? Enumerable.Empty<string>()
+                            )
+                    )
+                    .WhereRaw("data->>'DisplayAsCategory' = $$", "true");
 
-                var validtagdata =
-                    await validtagquery
-                        .GetObjectListAsync<SmgTags>();
+                var validtagdata = await validtagquery.GetObjectListAsync<SmgTags>();
 
                 return validtagdata;
             }
@@ -48,10 +61,7 @@ namespace Helper
         {
             try
             {
-                var query =
-                       QueryFactory.Query("smgtags")
-                           .Select("data")
-                           .Where("id", id.ToLower());
+                var query = QueryFactory.Query("smgtags").Select("data").Where("id", id.ToLower());
 
                 var result = await query.GetObjectSingleAsync<SmgTags>();
 
@@ -68,39 +78,82 @@ namespace Helper
             //Add LTS Id as Mapping
             var maintype = "poi";
 
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "activitydata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "activitydata"
+            )
                 maintype = "activity";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "poidata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "poidata"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "gastronomicdata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "gastronomicdata"
+            )
                 maintype = "gastronomy";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "beacondata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "beacondata"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "archapp")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "archapp"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "museumdata")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "museumdata"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "suedtirolwein")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "suedtirolwein"
+            )
                 maintype = "gastronomy";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "common")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "common"
+            )
                 maintype = "activity";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "none")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "none"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "magnolia")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "magnolia"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "sta")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "sta"
+            )
                 maintype = "poi";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "dssliftbase")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "dssliftbase"
+            )
                 maintype = "activity";
-            if (!String.IsNullOrEmpty(smgpoi.SyncSourceInterface) && smgpoi.SyncSourceInterface.ToLower() == "dssslopebase")
+            if (
+                !String.IsNullOrEmpty(smgpoi.SyncSourceInterface)
+                && smgpoi.SyncSourceInterface.ToLower() == "dssslopebase"
+            )
                 maintype = "activity";
 
-            if(smgpoi.SmgTags == null)
+            if (smgpoi.SmgTags == null)
             {
                 smgpoi.SmgTags = new List<string>();
                 smgpoi.SmgTags.Add(maintype);
             }
-            else if(!smgpoi.SmgTags.Contains("activity") && !smgpoi.SmgTags.Contains("poi") && !smgpoi.SmgTags.Contains("gastronomy"))
+            else if (
+                !smgpoi.SmgTags.Contains("activity")
+                && !smgpoi.SmgTags.Contains("poi")
+                && !smgpoi.SmgTags.Contains("gastronomy")
+            )
             {
                 //Assign to SMGTags if not there
                 if (!smgpoi.SmgTags.Contains(maintype))
@@ -110,10 +163,23 @@ namespace Helper
             return maintype;
         }
 
-        public static async Task GetCategoriesFromAssignedODHTags(ODHActivityPoiLinked smgpoi, string jsondir)
+        public static async Task GetCategoriesFromAssignedODHTags(
+            ODHActivityPoiLinked smgpoi,
+            string jsondir
+        )
         {
             //All available languages
-            List<string> languagelistcategories = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
+            List<string> languagelistcategories = new List<string>()
+            {
+                "de",
+                "it",
+                "en",
+                "nl",
+                "cs",
+                "pl",
+                "fr",
+                "ru",
+            };
 
             //Get Valid Categories live
             //var validtagsforcategories = await GetODHTagsValidforCategories(QueryFactory, new List<string>() { "smgpois" });
@@ -127,7 +193,9 @@ namespace Helper
             if (smgpoi.SmgTags != null && smgpoi.SmgTags.Count > 0)
             {
                 //Setting Categorization by Valid Tags
-                var currentcategories = validtagsforcategories.Where(x => smgpoi.SmgTags.Select(y => y.ToLower()).Contains(x.Id.ToLower()));
+                var currentcategories = validtagsforcategories.Where(x =>
+                    smgpoi.SmgTags.Select(y => y.ToLower()).Contains(x.Id.ToLower())
+                );
 
                 //Resetting Categories
                 foreach (var languagecategory in languagelistcategories)
@@ -136,7 +204,8 @@ namespace Helper
                     {
                         if (smgpoi.AdditionalPoiInfos[languagecategory].Categories == null)
                         {
-                            smgpoi.AdditionalPoiInfos[languagecategory].Categories = new List<string>();
+                            smgpoi.AdditionalPoiInfos[languagecategory].Categories =
+                                new List<string>();
                         }
                         else
                         {
@@ -145,16 +214,32 @@ namespace Helper
                     }
                     else
                     {
-                        smgpoi.AdditionalPoiInfos.TryAddOrUpdate(languagecategory, new AdditionalPoiInfos() { Language = languagecategory, Categories = new List<string>() });
-                    }   
+                        smgpoi.AdditionalPoiInfos.TryAddOrUpdate(
+                            languagecategory,
+                            new AdditionalPoiInfos()
+                            {
+                                Language = languagecategory,
+                                Categories = new List<string>(),
+                            }
+                        );
+                    }
                 }
                 //Reassigning Categories
                 foreach (var smgtagtotranslate in currentcategories)
                 {
                     foreach (var languagecategory in languagelistcategories)
                     {
-                        if (smgtagtotranslate.TagName.ContainsKey(languagecategory) && !smgpoi.AdditionalPoiInfos[languagecategory].Categories.Contains(smgtagtotranslate.TagName[languagecategory].Trim()))
-                            smgpoi.AdditionalPoiInfos[languagecategory].Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
+                        if (
+                            smgtagtotranslate.TagName.ContainsKey(languagecategory)
+                            && !smgpoi
+                                .AdditionalPoiInfos[languagecategory]
+                                .Categories.Contains(
+                                    smgtagtotranslate.TagName[languagecategory].Trim()
+                                )
+                        )
+                            smgpoi
+                                .AdditionalPoiInfos[languagecategory]
+                                .Categories.Add(smgtagtotranslate.TagName[languagecategory].Trim());
                     }
                 }
             }
@@ -163,7 +248,9 @@ namespace Helper
         //GETS all tags for categorization tags from json as object to avoid DB call on each Tag update
         public static async Task<List<TagLinked>> GetAllODHTagsforCategorizationJson(string jsondir)
         {
-            using (StreamReader r = new StreamReader(Path.Combine(jsondir, $"TagsForCategories.json")))
+            using (
+                StreamReader r = new StreamReader(Path.Combine(jsondir, $"TagsForCategories.json"))
+            )
             {
                 string json = await r.ReadToEndAsync();
 

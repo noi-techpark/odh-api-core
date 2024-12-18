@@ -2,16 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Geo.Measure;
-using Helper;
-using SqlKata;
-using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Geo.Measure;
+using Helper;
+using SqlKata;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
@@ -29,43 +29,78 @@ namespace OdhApiCore.Controllers
         public DateTime? begin;
         public DateTime? end;
         public string? lastchange;
+
         //New Publishedonlist
         public List<string> publishedonlist;
         public IDictionary<string, List<string>> tagdict;
 
-
         public static async Task<EventV2Helper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? venueidfilter, string? locfilter, string? tagfilter, string? begindate, string? enddate,
-            bool? activefilter, string? lastchange, string? langfilter, string? source, 
+            QueryFactory queryFactory,
+            string? idfilter,
+            string? venueidfilter,
+            string? locfilter,
+            string? tagfilter,
+            string? begindate,
+            string? enddate,
+            bool? activefilter,
+            string? lastchange,
+            string? langfilter,
+            string? source,
             string? publishedonfilter,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken
+        )
         {
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
             return new EventV2Helper(
-                idfilter: idfilter, venueidfilter: venueidfilter, locfilter: locfilter, tagfilter: tagfilter,
-                begindate: begindate, enddate: enddate,
-                activefilter: activefilter, lastchange: lastchange, sourcefilter: source, 
-                languagefilter: langfilter, publishedonfilter: publishedonfilter, tourismusvereinids: tourismusvereinids);
+                idfilter: idfilter,
+                venueidfilter: venueidfilter,
+                locfilter: locfilter,
+                tagfilter: tagfilter,
+                begindate: begindate,
+                enddate: enddate,
+                activefilter: activefilter,
+                lastchange: lastchange,
+                sourcefilter: source,
+                languagefilter: langfilter,
+                publishedonfilter: publishedonfilter,
+                tourismusvereinids: tourismusvereinids
+            );
         }
 
         private EventV2Helper(
-            string? idfilter, string? venueidfilter, string? locfilter, string? tagfilter,
-            string? begindate, string? enddate, bool? activefilter, string? lastchange, string? languagefilter, 
-            string? sourcefilter, string? publishedonfilter, 
-            IEnumerable<string>? tourismusvereinids)
+            string? idfilter,
+            string? venueidfilter,
+            string? locfilter,
+            string? tagfilter,
+            string? begindate,
+            string? enddate,
+            bool? activefilter,
+            string? lastchange,
+            string? languagefilter,
+            string? sourcefilter,
+            string? publishedonfilter,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
             idlist = CommonListCreator.CreateIdList(idfilter?.ToUpper());
             venueidlist = CommonListCreator.CreateIdList(venueidfilter?.ToUpper());
 
             sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
-            
+
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();
             municipalitylist = new List<string>();
@@ -103,6 +138,6 @@ namespace OdhApiCore.Controllers
                     end = Convert.ToDateTime(enddate);
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
-        }        
+        }
     }
 }

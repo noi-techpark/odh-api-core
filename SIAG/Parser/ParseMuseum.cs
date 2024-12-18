@@ -2,20 +2,24 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using DataModel;
+using Helper;
 
 namespace SIAG.Parser
 {
     public class ParseMuseum
     {
-        public static ODHActivityPoiLinked ParseMuseumToPG(ODHActivityPoiLinked mymuseum, XElement mysiagmuseum, string plz)
+        public static ODHActivityPoiLinked ParseMuseumToPG(
+            ODHActivityPoiLinked mymuseum,
+            XElement mysiagmuseum,
+            string plz
+        )
         {
             XNamespace ax211 = "http://data.service.kks.siag/xsd";
 
@@ -54,7 +58,9 @@ namespace SIAG.Parser
             string wwwDE = mysiagmuseum.Element(ax211 + "wwwD").Value;
             string wwwIT = mysiagmuseum.Element(ax211 + "wwwI").Value;
 
-            bool freeentrance = Convert.ToBoolean(mysiagmuseum.Element(ax211 + "freierEintritt").Value);
+            bool freeentrance = Convert.ToBoolean(
+                mysiagmuseum.Element(ax211 + "freierEintritt").Value
+            );
 
             //bool besonderesobjekt = String.IsNullOrEmpty(mysiagmuseum.Element(ax211 + "besonderesObjekt").Value) ? false : Convert.ToBoolean(mysiagmuseum.Element(ax211 + "besonderesObjekt").Value);
             //string besonderesobjektDE = String.IsNullOrEmpty(mysiagmuseum.Element(ax211 + "besonderesObjekt").Value) ? "" : mysiagmuseum.Element(ax211 + "besonderesObjekt").Element(ax211 + "beschreibungD").Value;
@@ -97,7 +103,7 @@ namespace SIAG.Parser
 
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
-            foreach(var photogallery in mysiagmuseum.Elements(ax211 + "photoGallery"))
+            foreach (var photogallery in mysiagmuseum.Elements(ax211 + "photoGallery"))
             {
                 string imagedescDE = photogallery.Element(ax211 + "beschreibungD").Value;
                 string imagedescIT = photogallery.Element(ax211 + "beschreibungI").Value;
@@ -109,10 +115,10 @@ namespace SIAG.Parser
                 string titleEN = photogallery.Element(ax211 + "titelE").Value;
                 string resourceid = photogallery.Element(ax211 + "resoId").Value;
 
-
                 ImageGallery myimage = new ImageGallery();
                 myimage.ImageSource = "SIAG";
-                myimage.ImageUrl = "https://musport.prov.bz.it/musport/servlet/resource?id=" + resourceid;
+                myimage.ImageUrl =
+                    "https://musport.prov.bz.it/musport/servlet/resource?id=" + resourceid;
                 myimage.ImageTitle["de"] = titleDE;
                 myimage.ImageTitle["it"] = titleIT;
                 myimage.ImageTitle["en"] = titleEN;
@@ -144,7 +150,10 @@ namespace SIAG.Parser
                 museumservicelistIT.Add(museumservice.Element(ax211 + "bezeichnungI").Value);
                 museumservicelistEN.Add(museumservice.Element(ax211 + "bezeichnungE").Value);
 
-                if (museumservice.Element(ax211 + "bezeichnungD").Value == "familienfreundliches museum")
+                if (
+                    museumservice.Element(ax211 + "bezeichnungD").Value
+                    == "familienfreundliches museum"
+                )
                     addfamilytag = true;
 
                 if (museumservice.Element(ax211 + "bezeichnungD").Value == "behindertengerecht")
@@ -453,7 +462,7 @@ namespace SIAG.Parser
             }
 
             mymuseum.SmgTags = smgtaglist.ToList();
-            
+
             return mymuseum;
         }
     }

@@ -2,45 +2,54 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
+using SqlKata.Execution;
 
 namespace Helper
 {
     public class GetAdditionalTypeInfo
     {
-        public static async Task<Dictionary<string, AdditionalPoiInfos>> GetAdditionalTypeInfoForPoi(QueryFactory QueryFactory, string? subtype, List<string>? languages)
+        public static async Task<
+            Dictionary<string, AdditionalPoiInfos>
+        > GetAdditionalTypeInfoForPoi(
+            QueryFactory QueryFactory,
+            string? subtype,
+            List<string>? languages
+        )
         {
-            if(languages == null)
-                languages = new List<string>() { "de","it","en"};
+            if (languages == null)
+                languages = new List<string>() { "de", "it", "en" };
 
-            Dictionary<string, AdditionalPoiInfos> myadditionalpoinfosdict = new Dictionary<string, AdditionalPoiInfos>();
+            Dictionary<string, AdditionalPoiInfos> myadditionalpoinfosdict =
+                new Dictionary<string, AdditionalPoiInfos>();
 
             //Get SuedtirolType Subtype
-            var subtypequery = QueryFactory.Query("smgpoitypes")
-                        .Select("data")
-                        .Where("id", subtype?.ToLower());
-                         //.WhereRaw("data->>'Key' LIKE $$", subtype);
-            var subtypedata =
-                await subtypequery
-                    .GetObjectSingleAsync<SmgPoiTypes>();
+            var subtypequery = QueryFactory
+                .Query("smgpoitypes")
+                .Select("data")
+                .Where("id", subtype?.ToLower());
+            //.WhereRaw("data->>'Key' LIKE $$", subtype);
+            var subtypedata = await subtypequery.GetObjectSingleAsync<SmgPoiTypes>();
 
             if (subtypedata != null)
             {
-                var maintypequery = QueryFactory.Query("smgpoitypes")
-                            .Select("data")
-                            .Where("id", subtypedata.Parent?.ToLower());
+                var maintypequery = QueryFactory
+                    .Query("smgpoitypes")
+                    .Select("data")
+                    .Where("id", subtypedata.Parent?.ToLower());
                 //.WhereRaw("data->>'Key' LIKE $$",  subtypedata.TypeParent);
-                var maintypedata =
-                    await maintypequery
-                        .GetObjectSingleAsync<SmgPoiTypes>();
+                var maintypedata = await maintypequery.GetObjectSingleAsync<SmgPoiTypes>();
 
-                var validtags = await ODHTagHelper.GetODHTagsValidforCategories(QueryFactory, new List<string>(), new List<string>() { maintypedata?.Key ?? "", subtypedata.Key });
+                var validtags = await ODHTagHelper.GetODHTagsValidforCategories(
+                    QueryFactory,
+                    new List<string>(),
+                    new List<string>() { maintypedata?.Key ?? "", subtypedata.Key }
+                );
 
                 foreach (var lang in languages)
                 {
@@ -49,7 +58,7 @@ namespace Helper
                         Language = lang,
                         MainType = maintypedata?.TypeDesc?[lang],
                         SubType = subtypedata?.TypeDesc?[lang],
-                        Categories = validtags.Select(x => x.TagName[lang]).ToList()
+                        Categories = validtags.Select(x => x.TagName[lang]).ToList(),
                     };
 
                     myadditionalpoinfosdict.Add(lang, mypoiinfo);
@@ -57,7 +66,6 @@ namespace Helper
             }
 
             return myadditionalpoinfosdict;
-        }        
+        }
     }
-
 }

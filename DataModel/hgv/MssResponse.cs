@@ -14,7 +14,8 @@ namespace DataModel
         public string? CheapestChannel { get; set; }
         public double? Cheapestprice { get; set; }
         public int? bookableHotels { get; set; }
-        public virtual ICollection<MssResponseShort> MssResponseShort { get; set; } = new HashSet<MssResponseShort>();
+        public virtual ICollection<MssResponseShort> MssResponseShort { get; set; } =
+            new HashSet<MssResponseShort>();
     }
 
     public class MssResponseShort
@@ -52,7 +53,6 @@ namespace DataModel
         public virtual ICollection<RoomDetails> RoomDetails { get; set; } = new List<RoomDetails>();
 
         public virtual ICollection<CheapestRoomCombination> CheapestOfferDetail { get; set; }
-
     }
 
     public class RoomDetails
@@ -73,14 +73,17 @@ namespace DataModel
 
         //Zusatz RoomMax
         public int? Roommax { get; set; }
+
         //Zusatz RoomMin
         public int? Roommin { get; set; }
+
         //Zusatz RoomStd
         public int? Roomstd { get; set; }
 
         public string? Roomtitle { get; set; }
         public string? Roomdesc { get; set; }
         public string? RoomChannelLink { get; set; }
+
         //public string Service { get; set; }
 
         public string? TotalPriceString { get; set; }
@@ -125,7 +128,7 @@ namespace DataModel
         public DateTime? RefundableUntil { get; set; }
         public string? Description { get; set; }
 
-        public List<Penalty> Penalties { get; set; }  //=> new List<Penalty>();
+        public List<Penalty> Penalties { get; set; } //=> new List<Penalty>();
     }
 
     public class Penalty
@@ -144,7 +147,6 @@ namespace DataModel
         public int? RoomFree { get; set; }
     }
 
-
     public class CheapestRoomCombination
     {
         public CheapestRoomCombination()
@@ -159,14 +161,15 @@ namespace DataModel
         {
             get
             {
-                return this.CheapestRoomCombinationDetail != null && this.CheapestRoomCombinationDetail.Count > 0 ? this.CheapestRoomCombinationDetail.Sum(x => x.Price) : 0;
+                return
+                    this.CheapestRoomCombinationDetail != null
+                    && this.CheapestRoomCombinationDetail.Count > 0
+                    ? this.CheapestRoomCombinationDetail.Sum(x => x.Price)
+                    : 0;
             }
         }
     }
 
-
     //TODO
-    public class MssResponseComplete
-    {
-    }
+    public class MssResponseComplete { }
 }

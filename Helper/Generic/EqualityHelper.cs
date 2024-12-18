@@ -2,12 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using JsonDiffPatchDotNet;
-using JsonDiffPatchDotNet.Formatters.JsonPatch;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +9,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
+using JsonDiffPatchDotNet;
+using JsonDiffPatchDotNet.Formatters.JsonPatch;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Helper.Generic
 {
@@ -37,7 +37,7 @@ namespace Helper.Generic
         //            if (property1 != null && property1.GetSetMethod() != null)
         //                property1.SetValue(compareclass1, null, null);
 
-        //            //Set the fields null 
+        //            //Set the fields null
         //            var property2 = compareclass2.GetType().GetProperty(s);
         //            if (property2 != null && property2.GetSetMethod() != null)
         //                property2.SetValue(compareclass2, null, null);
@@ -47,8 +47,14 @@ namespace Helper.Generic
         //    return (JsonConvert.SerializeObject(compareclass1) == JsonConvert.SerializeObject(compareclass2));
         //}
 
-        public static EqualityResult CompareClassesTest<T>(object class1, object class2, List<string> propertiestonotcheck, bool returndiff) where T : IIdentifiable, new()
-        {            
+        public static EqualityResult CompareClassesTest<T>(
+            object class1,
+            object class2,
+            List<string> propertiestonotcheck,
+            bool returndiff
+        )
+            where T : IIdentifiable, new()
+        {
             T compareclass1 = new T();
             T compareclass2 = new T();
 
@@ -64,7 +70,7 @@ namespace Helper.Generic
                     if (property1 != null && property1.GetSetMethod() != null)
                         property1.SetValue(compareclass1, null, null);
 
-                    //Set the fields null 
+                    //Set the fields null
                     var property2 = compareclass2.GetType().GetProperty(s);
                     if (property2 != null && property2.GetSetMethod() != null)
                         property2.SetValue(compareclass2, null, null);
@@ -86,20 +92,26 @@ namespace Helper.Generic
             //var result2 = JsonConvert.SerializeObject(compareclass2, jsonSerializerSettings);
             //return (result1 == result2);
 
-            
+
 
             var equalityresult = new EqualityResult();
 
-            equalityresult.isequal = JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));            
+            equalityresult.isequal = JToken.DeepEquals(
+                JToken.FromObject(compareclass1),
+                JToken.FromObject(compareclass2)
+            );
 
-            if(returndiff && !equalityresult.isequal)
+            if (returndiff && !equalityresult.isequal)
             {
                 //TO TEST JSON DIFF
                 var jdp = new JsonDiffPatch();
 
                 //new Options() { ArrayDiff = ArrayDiffMode.Simplev }
 
-                JToken patch = jdp.Diff(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));
+                JToken patch = jdp.Diff(
+                    JToken.FromObject(compareclass1),
+                    JToken.FromObject(compareclass2)
+                );
                 //if (patch != null)
                 //{
                 //    var formatter = new JsonDeltaFormatter();
@@ -122,7 +134,11 @@ namespace Helper.Generic
             return equalityresult;
         }
 
-        public static bool CompareImageGallery(ICollection<ImageGallery>? compareclass1, ICollection<ImageGallery>? compareclass2, List<string> propertiestonotcheck)
+        public static bool CompareImageGallery(
+            ICollection<ImageGallery>? compareclass1,
+            ICollection<ImageGallery>? compareclass2,
+            List<string> propertiestonotcheck
+        )
         {
             //If both ImageGalleries are null return equal
             if (compareclass1 == null && compareclass2 == null)
@@ -148,7 +164,7 @@ namespace Helper.Generic
                     if (property1 != null)
                         property1.SetValue(compareclass1, null, null);
 
-                    //Set the fields null 
+                    //Set the fields null
                     var property2 = compareclass2.GetType().GetProperty(s);
                     if (property2 != null)
                         property2.SetValue(compareclass2, null, null);
@@ -163,21 +179,35 @@ namespace Helper.Generic
 
             //return (result1 == result2);
 
-            return JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));
+            return JToken.DeepEquals(
+                JToken.FromObject(compareclass1),
+                JToken.FromObject(compareclass2)
+            );
         }
 
-        public static bool ComparePublishedOn(ICollection<string> compareclass1, ICollection<string> compareclass2)
+        public static bool ComparePublishedOn(
+            ICollection<string> compareclass1,
+            ICollection<string> compareclass2
+        )
         {
-            return JToken.DeepEquals(JToken.FromObject(compareclass1), JToken.FromObject(compareclass2));
+            return JToken.DeepEquals(
+                JToken.FromObject(compareclass1),
+                JToken.FromObject(compareclass2)
+            );
         }
     }
 
     public class OrderedContractResolver : DefaultContractResolver
     {
-        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+        protected override IList<JsonProperty> CreateProperties(
+            Type type,
+            MemberSerialization memberSerialization
+        )
         {
-            return base.CreateProperties(type, memberSerialization).OrderBy(p => p.PropertyName).ToList();
-        }    
+            return base.CreateProperties(type, memberSerialization)
+                .OrderBy(p => p.PropertyName)
+                .ToList();
+        }
     }
 
     public class DictionaryOrderConverter : JsonConverter
@@ -187,16 +217,22 @@ namespace Helper.Generic
             return typeof(IDictionary).IsAssignableFrom(objectType);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(
+            JsonReader reader,
+            Type objectType,
+            object existingValue,
+            JsonSerializer serializer
+        )
         {
-            throw new NotImplementedException("Unnecessary because CanRead is false. The type will skip the converter.");
+            throw new NotImplementedException(
+                "Unnecessary because CanRead is false. The type will skip the converter."
+            );
         }
 
         public override bool CanRead
         {
             get { return false; }
         }
-
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -208,7 +244,10 @@ namespace Helper.Generic
 
                 if (dict != null && dict.Count() > 0)
                 {
-                    foreach (var kvp in dict.OrderBy(x => x.Key).ToDictionary(obj => obj.Key, obj => obj.Value))
+                    foreach (
+                        var kvp in dict.OrderBy(x => x.Key)
+                            .ToDictionary(obj => obj.Key, obj => obj.Value)
+                    )
                     {
                         obj.Add(kvp.Key, kvp.Value);
                     }
@@ -216,7 +255,7 @@ namespace Helper.Generic
             }
             else if (typeof(IDictionary).IsAssignableFrom(value.GetType()))
             {
-                var dict = (IDictionary)value;                
+                var dict = (IDictionary)value;
 
                 if (dict != null && dict.Keys.Count > 0)
                 {
@@ -227,11 +266,9 @@ namespace Helper.Generic
                         obj.Add(key, JToken.FromObject(dict[key]));
                     }
                 }
-            }            
+            }
 
             obj.WriteTo(writer);
         }
     }
-
-    
 }

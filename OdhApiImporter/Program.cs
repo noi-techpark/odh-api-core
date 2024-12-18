@@ -24,7 +24,10 @@ namespace OdhApiImporter
             await host.RunAsync();
         }
 
-        private static void ConfigureServices(HostBuilderContext context, IServiceCollection services)
+        private static void ConfigureServices(
+            HostBuilderContext context,
+            IServiceCollection services
+        )
         {
             //services.AddHostedService<Worker>();
             //services.AddSingleton<MonitorLoop>();

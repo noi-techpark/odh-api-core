@@ -2,28 +2,36 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
-using Newtonsoft.Json;
-using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using DataModel;
+using Helper;
+using Newtonsoft.Json;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
     public static class GenericHelper
     {
         public static async Task<IEnumerable<string>> RetrieveAreaFilterDataAsync(
-           QueryFactory queryFactory, string? areafilter, CancellationToken cancellationToken)
+            QueryFactory queryFactory,
+            string? areafilter,
+            CancellationToken cancellationToken
+        )
         {
             if (areafilter != null)
             {
-                return (await LocationListCreator.CreateActivityAreaListPGAsync(
-                    queryFactory, areafilter, cancellationToken)).ToList();
+                return (
+                    await LocationListCreator.CreateActivityAreaListPGAsync(
+                        queryFactory,
+                        areafilter,
+                        cancellationToken
+                    )
+                ).ToList();
             }
             else
             {
@@ -32,24 +40,34 @@ namespace OdhApiCore.Controllers
         }
 
         public static async Task<IEnumerable<string>> RetrieveLocFilterDataAsync(
-            QueryFactory queryFactory, IReadOnlyCollection<string> metaregionlist, CancellationToken cancellationToken)
+            QueryFactory queryFactory,
+            IReadOnlyCollection<string> metaregionlist,
+            CancellationToken cancellationToken
+        )
         {
-            var data = await queryFactory.Query()
-                    .From("metaregions")
-                    .Select("data")
-                    .MetaRegionFilter(metaregionlist)
-                    .GetAsync<JsonRaw>();
-            var mymetaregion = data.Select(raw => JsonConvert.DeserializeObject<MetaRegion>(raw.Value));
-            return (from region in mymetaregion
-                    where region.TourismvereinIds != null
-                    from tid in region.TourismvereinIds ?? Enumerable.Empty<string>()
-                    select tid).Distinct().ToList();
+            var data = await queryFactory
+                .Query()
+                .From("metaregions")
+                .Select("data")
+                .MetaRegionFilter(metaregionlist)
+                .GetAsync<JsonRaw>();
+            var mymetaregion = data.Select(raw =>
+                JsonConvert.DeserializeObject<MetaRegion>(raw.Value)
+            );
+            return (
+                from region in mymetaregion
+                where region.TourismvereinIds != null
+                from tid in region.TourismvereinIds ?? Enumerable.Empty<string>()
+                select tid
+            )
+                .Distinct()
+                .ToList();
         }
 
         #region Tag Filter
 
-        public static IDictionary<string,List<string>> RetrieveTagFilter(string? tagfilter)
-        {            
+        public static IDictionary<string, List<string>> RetrieveTagFilter(string? tagfilter)
+        {
             try
             {
                 if (tagfilter == null)
@@ -63,8 +81,8 @@ namespace OdhApiCore.Controllers
                 //tagfilter = or(lts.Winter,Sommer,idm.Wellness)
 
                 //TODO
-                //tagfilter = or(lts.Winter,idm.Sommer)and(lts.Winter,idm.Sommer) not working at the moment 
-                //tagfilter = or(winter) searches trough lts and 
+                //tagfilter = or(lts.Winter,idm.Sommer)and(lts.Winter,idm.Sommer) not working at the moment
+                //tagfilter = or(winter) searches trough lts and
 
                 //Get Tagoperator
                 char[] splitParams = new char[] { '(', ')' };
@@ -75,18 +93,16 @@ namespace OdhApiCore.Controllers
 
                 foreach (string tagoperator in tagoperators)
                 {
-                    if(tagoperator.Equals("and") || tagoperator.Equals("or"))
+                    if (tagoperator.Equals("and") || tagoperator.Equals("or"))
                     {
                         currentoperator = tagoperator;
                     }
-                    else if(!String.IsNullOrEmpty(tagoperator))
+                    else if (!String.IsNullOrEmpty(tagoperator))
                     {
                         var splittedelements = tagoperator.Split(",");
                         tagstofilter.Add(currentoperator, splittedelements.ToList());
                     }
                 }
-
-
 
                 //int i = 0;
 
@@ -108,7 +124,7 @@ namespace OdhApiCore.Controllers
                 //            i++;
                 //        }
                 //    }
-                //}                
+                //}
 
                 return tagstofilter;
             }

@@ -26,15 +26,13 @@ public static class GeoJsonConverter
             ?.Element("Folder")
             ?.Element("Placemark")
             ?.Element("MultiGeometry");
-        return multiGeo
-            ?.Element("LineString")
-            ?.Element("coordinates")
-            ?.Value;
+        return multiGeo?.Element("LineString")?.Element("coordinates")?.Value;
     }
 
     private static IGeometry ParseGeo(string geo)
     {
-        var res = Regex.Matches(geo, @"(?<lat>\d+\.\d+),(?<long>\d+\.\d+)")
+        var res = Regex
+            .Matches(geo, @"(?<lat>\d+\.\d+),(?<long>\d+\.\d+)")
             .Select(m => (m.Groups["lat"].Value, m.Groups["long"].Value))
             .Select(x => (double.Parse(x.Item2, _culture), double.Parse(x.Item1, _culture)))
             .Select(x => new Coordinate(x.Item1, x.Item2));
@@ -64,10 +62,9 @@ public static class GeoJsonConverter
         var stream = new MemoryStream(bytes);
         var serializer = new Gpx11Serializer();
         var serialized = serializer.DeSerialize(new StreamWrapper(stream));
-        var geometry =
-            serialized.Waypoints.Any() ?
-            serialized.Waypoints :
-            serialized.Tracks.SelectMany(x => x.Segments).SelectMany(x => x.Waypoints);
+        var geometry = serialized.Waypoints.Any()
+            ? serialized.Waypoints
+            : serialized.Tracks.SelectMany(x => x.Segments).SelectMany(x => x.Waypoints);
         var coordinates = geometry.Select(x => x.Coordinate);
         var writer = new GeoJsonWriter();
         return ConvertToGeoJson(new LineString(coordinates));

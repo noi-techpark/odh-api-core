@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
@@ -19,16 +19,37 @@ namespace OdhApiCore.Controllers
         public DateTime? dateto;
 
         public static Task<WeatherHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, string? languagefilter, string? datefrom, string? dateto, string? lastchange,
-            CancellationToken cancellationToken)
-        {           
-            return Task.FromResult(new WeatherHelper(
-               idfilter: idfilter, languagefilter: languagefilter, locfilter: locfilter, datefromstr: datefrom, datetostr: dateto, lastchange: lastchange));
+            QueryFactory queryFactory,
+            string? idfilter,
+            string? locfilter,
+            string? languagefilter,
+            string? datefrom,
+            string? dateto,
+            string? lastchange,
+            CancellationToken cancellationToken
+        )
+        {
+            return Task.FromResult(
+                new WeatherHelper(
+                    idfilter: idfilter,
+                    languagefilter: languagefilter,
+                    locfilter: locfilter,
+                    datefromstr: datefrom,
+                    datetostr: dateto,
+                    lastchange: lastchange
+                )
+            );
         }
 
         private WeatherHelper(
-            string? idfilter, string? languagefilter, string? locfilter, string? datefromstr, string? datetostr, string? lastchange)
-        {           
+            string? idfilter,
+            string? languagefilter,
+            string? locfilter,
+            string? datefromstr,
+            string? datetostr,
+            string? lastchange
+        )
+        {
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter?.ToLower());
 
@@ -43,7 +64,5 @@ namespace OdhApiCore.Controllers
                 if (datetostr != "null")
                     dateto = Convert.ToDateTime(datetostr);
         }
-
-
     }
 }

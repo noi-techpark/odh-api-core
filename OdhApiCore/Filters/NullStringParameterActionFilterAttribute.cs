@@ -2,16 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace OdhApiCore.Controllers
 {
     public class NullStringParameterActionFilterAttribute : ActionFilterAttribute
     {
-        public NullStringParameterActionFilterAttribute()
-        {
-        }
+        public NullStringParameterActionFilterAttribute() { }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

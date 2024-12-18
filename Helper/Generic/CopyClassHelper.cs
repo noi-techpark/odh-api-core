@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper.JsonHelpers;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +10,8 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using Helper.JsonHelpers;
+using Newtonsoft.Json;
 
 namespace Helper
 {
@@ -30,10 +30,17 @@ namespace Helper
             {
                 foreach (var destProperty in destProperties)
                 {
-                    if (destProperty.Name == sourceProperty.Name && destProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType) && destProperty.GetSetMethod() != null)
+                    if (
+                        destProperty.Name == sourceProperty.Name
+                        && destProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType)
+                        && destProperty.GetSetMethod() != null
+                    )
                     {
-                        destProperty.SetValue(destination, sourceProperty.GetValue(
-                            source, new object[] { }), new object[] { });
+                        destProperty.SetValue(
+                            destination,
+                            sourceProperty.GetValue(source, new object[] { }),
+                            new object[] { }
+                        );
 
                         break;
                     }
@@ -89,9 +96,16 @@ namespace Helper
             // for example in default constructor some list property initialized with some values,
             // but in 'source' these items are cleaned -
             // without ObjectCreationHandling.Replace default constructor values will be added to result
-            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace, ContractResolver = new GetOnlyContractResolver() };
+            var deserializeSettings = new JsonSerializerSettings
+            {
+                ObjectCreationHandling = ObjectCreationHandling.Replace,
+                ContractResolver = new GetOnlyContractResolver(),
+            };
 
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), deserializeSettings);
+            return JsonConvert.DeserializeObject<T>(
+                JsonConvert.SerializeObject(source),
+                deserializeSettings
+            );
         }
     }
 }

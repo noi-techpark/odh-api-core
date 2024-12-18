@@ -13,11 +13,15 @@ namespace Helper.Generic
 {
     public enum CRUDOperation
     {
-        Create, Update, Delete, Read, CreateAndUpdate
+        Create,
+        Update,
+        Delete,
+        Read,
+        CreateAndUpdate,
     }
 
     public class DataInfo
-    {        
+    {
         public DataInfo(string table, CRUDOperation operation)
         {
             Table = table;
@@ -70,6 +74,7 @@ namespace Helper.Generic
             Editor = editor;
             Source = source;
         }
+
         public string Editor { get; set; }
         public string? Source { get; set; }
     }

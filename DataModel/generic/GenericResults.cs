@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +10,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DataModel
 {
@@ -74,7 +74,6 @@ namespace DataModel
         public IDictionary<string, NotifierResponse>? pushed { get; set; }
     }
 
-
     //TO CHECK if this could be unified
 
     public struct UpdateResultFailureQueue
@@ -85,7 +84,7 @@ namespace DataModel
         public string message { get; init; }
         public bool success { get; init; }
         public int? recordsmodified { get; init; }
-        
+
         //Push Infos
         public ICollection<string>? pushchannels { get; init; }
 
@@ -102,7 +101,6 @@ namespace DataModel
         public string source { get; init; }
     }
 
-
     public struct UpdateDetailFailureQueue
     {
         //Error
@@ -113,7 +111,6 @@ namespace DataModel
 
         public IDictionary<string, ICollection<NotifierResponse>>? pushed { get; set; }
     }
-
 
     public struct PGCRUDResult
     {
@@ -164,7 +161,8 @@ namespace DataModel
 
             JToken? changes = null;
 
-            IDictionary<string, NotifierResponse> pushed = new Dictionary<string, NotifierResponse>();
+            IDictionary<string, NotifierResponse> pushed =
+                new Dictionary<string, NotifierResponse>();
 
             foreach (var updatedetail in updatedetails)
             {
@@ -174,8 +172,8 @@ namespace DataModel
                 updated = updatedetail.updated + updated;
                 deleted = updatedetail.deleted + deleted;
                 error = updatedetail.error + error;
-                if(updatedetail.objectchanged != null)
-                    objectchanged =  updatedetail.objectchanged + objectchanged;
+                if (updatedetail.objectchanged != null)
+                    objectchanged = updatedetail.objectchanged + objectchanged;
                 if (updatedetail.objectimagechanged != null)
                     objectimagechanged = updatedetail.objectimagechanged + objectimagechanged;
 
@@ -186,7 +184,6 @@ namespace DataModel
                     else
                         changes.Append(updatedetail.changes);
                 }
-
 
                 if (updatedetail.pushchannels != null)
                 {
@@ -204,10 +201,31 @@ namespace DataModel
                 }
             }
 
-            return new UpdateDetail() { created = created, updated = updated, deleted = deleted, error = error, comparedobjects = objectscompared, objectchanged = objectchanged, objectimagechanged = objectimagechanged, pushchannels = channelstopush, pushed = pushed, changes = changes };
+            return new UpdateDetail()
+            {
+                created = created,
+                updated = updated,
+                deleted = deleted,
+                error = error,
+                comparedobjects = objectscompared,
+                objectchanged = objectchanged,
+                objectimagechanged = objectimagechanged,
+                pushchannels = channelstopush,
+                pushed = pushed,
+                changes = changes,
+            };
         }
 
-        public static UpdateResult GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, bool createlog)
+        public static UpdateResult GetSuccessUpdateResult(
+            string id,
+            string source,
+            string operation,
+            string updatetype,
+            string message,
+            string otherinfo,
+            UpdateDetail detail,
+            bool createlog
+        )
         {
             var result = new UpdateResult()
             {
@@ -226,22 +244,33 @@ namespace DataModel
                 objectimagechanged = detail.objectimagechanged,
                 //objectchanges = detail.changes != null ? JsonConvert.DeserializeObject<dynamic>(detail.changes.ToString(Formatting.None)) : null,
                 objectchanges = null,
-                objectchangestring = detail.changes != null ? detail.changes.ToString(Formatting.None) : null,
+                objectchangestring =
+                    detail.changes != null ? detail.changes.ToString(Formatting.None) : null,
                 pushchannels = detail.pushchannels,
                 pushed = detail.pushed,
                 error = detail.error,
                 success = true,
                 exception = null,
-                stacktrace = null
+                stacktrace = null,
             };
 
             if (createlog)
                 Console.WriteLine(JsonConvert.SerializeObject(result));
 
             return result;
-        }     
+        }
 
-        public static UpdateResult GetErrorUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetail detail, Exception ex, bool createlog)
+        public static UpdateResult GetErrorUpdateResult(
+            string id,
+            string source,
+            string operation,
+            string updatetype,
+            string message,
+            string otherinfo,
+            UpdateDetail detail,
+            Exception ex,
+            bool createlog
+        )
         {
             var result = new UpdateResult()
             {
@@ -265,7 +294,7 @@ namespace DataModel
                 error = detail.error,
                 success = false,
                 exception = ex.Message,
-                stacktrace = ex.StackTrace
+                stacktrace = ex.StackTrace,
             };
 
             if (createlog)
@@ -274,8 +303,16 @@ namespace DataModel
             return result;
         }
 
-
-        public static UpdateResultFailureQueue GetSuccessUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetailFailureQueue detail, bool createlog)
+        public static UpdateResultFailureQueue GetSuccessUpdateResult(
+            string id,
+            string source,
+            string operation,
+            string updatetype,
+            string message,
+            string otherinfo,
+            UpdateDetailFailureQueue detail,
+            bool createlog
+        )
         {
             var result = new UpdateResultFailureQueue()
             {
@@ -291,7 +328,7 @@ namespace DataModel
                 error = detail.error,
                 success = true,
                 exception = null,
-                stacktrace = null
+                stacktrace = null,
             };
 
             if (createlog)
@@ -300,7 +337,17 @@ namespace DataModel
             return result;
         }
 
-        public static UpdateResultFailureQueue GetErrorUpdateResult(string id, string source, string operation, string updatetype, string message, string otherinfo, UpdateDetailFailureQueue detail, Exception ex, bool createlog)
+        public static UpdateResultFailureQueue GetErrorUpdateResult(
+            string id,
+            string source,
+            string operation,
+            string updatetype,
+            string message,
+            string otherinfo,
+            UpdateDetailFailureQueue detail,
+            Exception ex,
+            bool createlog
+        )
         {
             var result = new UpdateResultFailureQueue()
             {
@@ -316,7 +363,7 @@ namespace DataModel
                 error = detail.error,
                 success = false,
                 exception = ex.Message,
-                stacktrace = ex.StackTrace
+                stacktrace = ex.StackTrace,
             };
 
             if (createlog)
@@ -325,25 +372,12 @@ namespace DataModel
             return result;
         }
 
-
-        public static JsonGenerationResult GetSuccessJsonGenerateResult(string operation, string type, string message, bool createlog)
-        {
-            var result = new JsonGenerationResult()
-            {
-                operation = operation,
-                type = type,                
-                message = message,
-                success = true,
-                exception = null
-            };
-
-            if (createlog)
-                Console.WriteLine(JsonConvert.SerializeObject(result));
-
-            return result;
-        }
-
-        public static JsonGenerationResult GetErrorJsonGenerateResult(string operation, string type, string message, Exception ex, bool createlog)
+        public static JsonGenerationResult GetSuccessJsonGenerateResult(
+            string operation,
+            string type,
+            string message,
+            bool createlog
+        )
         {
             var result = new JsonGenerationResult()
             {
@@ -351,7 +385,7 @@ namespace DataModel
                 type = type,
                 message = message,
                 success = true,
-                exception = ex.Message
+                exception = null,
             };
 
             if (createlog)
@@ -360,6 +394,28 @@ namespace DataModel
             return result;
         }
 
+        public static JsonGenerationResult GetErrorJsonGenerateResult(
+            string operation,
+            string type,
+            string message,
+            Exception ex,
+            bool createlog
+        )
+        {
+            var result = new JsonGenerationResult()
+            {
+                operation = operation,
+                type = type,
+                message = message,
+                success = true,
+                exception = ex.Message,
+            };
+
+            if (createlog)
+                Console.WriteLine(JsonConvert.SerializeObject(result));
+
+            return result;
+        }
     }
 
     #region Pushnotifications
@@ -414,6 +470,7 @@ namespace DataModel
     public class EqualityResult
     {
         public bool isequal { get; set; }
+
         //public IList<Operation>? operations {get;set;}
         public JToken? patch { get; set; }
     }

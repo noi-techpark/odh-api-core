@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Helper;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -11,11 +16,6 @@ using Microsoft.Extensions.Logging;
 using OdhApiCore.GenericHelpers;
 using OdhNotifier;
 using SqlKata.Execution;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers
 {
@@ -25,11 +25,15 @@ namespace OdhApiCore.Controllers
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class DeprecatedController : OdhController
-    {        
-        public DeprecatedController(IWebHostEnvironment env, ISettings settings, ILogger<DeprecatedController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
-            : base(env, settings, logger, queryFactory, odhpushnotifier)
-        {
-        }
+    {
+        public DeprecatedController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<DeprecatedController> logger,
+            QueryFactory queryFactory,
+            IOdhPushNotifier odhpushnotifier
+        )
+            : base(env, settings, logger, queryFactory, odhpushnotifier) { }
 
         #region SWAGGER Exposed API
 
@@ -43,9 +47,9 @@ namespace OdhApiCore.Controllers
         /// <param name="fields">Mandatory Select a field for the Distinct Query, example fields=Source, arrays are selected with a [*] example HasLanguage[*] / Features[*].Id  (Only one field supported). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawsort</a></param>
-        /// <param name="getasarray">Get only first selected field as simple string Array</param>        
+        /// <param name="getasarray">Get only first selected field as simple string Array</param>
         /// <param name="excludenulloremptyvalues">Exclude empty and null values from output</param>
-        /// <returns>Array of string/object</returns>        
+        /// <returns>Array of string/object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -60,18 +64,30 @@ namespace OdhApiCore.Controllers
             PageSize pagesize = null!,
             string? odhtype = null,
             string? type = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? seed = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool getasarray = false,
             bool excludenulloremptyvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             var fieldstodisplay = fields ?? Array.Empty<string>();
-          
-            return await GetDeprecated(pagenumber, pagesize, odhtype ?? type, fieldstodisplay, seed, rawfilter, rawsort, getasarray, excludenulloremptyvalues, null, cancellationToken);
+
+            return await GetDeprecated(
+                pagenumber,
+                pagesize,
+                odhtype ?? type,
+                fieldstodisplay,
+                seed,
+                rawfilter,
+                rawsort,
+                getasarray,
+                excludenulloremptyvalues,
+                null,
+                cancellationToken
+            );
         }
 
         ////TODO Get openapi file and parse trough an render to output
@@ -86,7 +102,7 @@ namespace OdhApiCore.Controllers
         //        var responsecontent = await response.Content.ReadAsStringAsync();
 
         //        JObject? obj = JsonConvert.DeserializeObject<JObject>(responsecontent);
-                
+
         //        return Ok(obj);
         //    }
         //}
@@ -95,31 +111,45 @@ namespace OdhApiCore.Controllers
 
         #region GETTER
 
-        private Task<IActionResult> GetDeprecated(uint? pagenumber, int? pagesize,
-            string? odhtype, string[] fields, string? seed, string? rawfilter, string? rawsort, bool? getasarray,bool excludenullvalues,
-            PGGeoSearchResult geosearchresult, CancellationToken cancellationToken)
+        private Task<IActionResult> GetDeprecated(
+            uint? pagenumber,
+            int? pagesize,
+            string? odhtype,
+            string[] fields,
+            string? seed,
+            string? rawfilter,
+            string? rawsort,
+            bool? getasarray,
+            bool excludenullvalues,
+            PGGeoSearchResult geosearchresult,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
                 List<string> typestocheck = new List<string>();
-                Dictionary<string, IEnumerable<DeprecationInfo>> resultdict = new Dictionary<string, IEnumerable<DeprecationInfo>>();
+                Dictionary<string, IEnumerable<DeprecationInfo>> resultdict =
+                    new Dictionary<string, IEnumerable<DeprecationInfo>>();
 
                 if (odhtype == null)
                     typestocheck = ODHTypeHelper.GetAllTypeStrings().ToList();
                 else
                     typestocheck = odhtype.Split(",").ToList();
 
-                foreach(var typetocheck in typestocheck)
+                foreach (var typetocheck in typestocheck)
                 {
-
-                    resultdict.Add(typetocheck, GetDeprecatedFieldsByAttributes.GetDeprecatedFields(ODHTypeHelper.TranslateTypeString2Type(typetocheck)));
-
+                    resultdict.Add(
+                        typetocheck,
+                        GetDeprecatedFieldsByAttributes.GetDeprecatedFields(
+                            ODHTypeHelper.TranslateTypeString2Type(typetocheck)
+                        )
+                    );
                 }
 
                 return resultdict;
             });
         }
-        
+
         #endregion
     }
 }

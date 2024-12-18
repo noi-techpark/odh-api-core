@@ -2,19 +2,19 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Amazon.Runtime.Internal.Transform;
-using DataModel;
-using Helper.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.Runtime.Internal.Transform;
+using DataModel;
+using Helper.Extensions;
 
 namespace Helper
 {
     public static class PublishedOnHelper
-    {           
+    {
         /// <summary>
         /// Create the publishedon List
         /// </summary>
@@ -22,42 +22,70 @@ namespace Helper
         /// <param name="mydata"></param>
         /// <param name="allowedtags"></param>
         /// <param name="activatesourceonly"></param>
-        public static void CreatePublishedOnList<T>(this T mydata, ICollection<AllowedTags>? allowedtags = null, Tuple<string,bool>? activatesourceonly = null) where T : IIdentifiable, IMetaData, ISource, IPublishedOn
+        public static void CreatePublishedOnList<T>(
+            this T mydata,
+            ICollection<AllowedTags>? allowedtags = null,
+            Tuple<string, bool>? activatesourceonly = null
+        )
+            where T : IIdentifiable, IMetaData, ISource, IPublishedOn
         {
             //alowedsources  Dictionary<odhtype, sourcelist> TODO Export in Config
-            Dictionary<string, List<string>> allowedsourcesMP = new Dictionary<string, List<string>>()
+            Dictionary<string, List<string>> allowedsourcesMP = new Dictionary<
+                string,
+                List<string>
+            >()
             {
-                { "event", new List<string>(){ "lts","drin","trevilab" } },
-                { "accommodation", new List<string>(){ "lts" } },
-                { "odhactivitypoi", new List<string>(){ "lts","suedtirolwein", "archapp" } }
+                {
+                    "event",
+                    new List<string>() { "lts", "drin", "trevilab" }
+                },
+                {
+                    "accommodation",
+                    new List<string>() { "lts" }
+                },
+                {
+                    "odhactivitypoi",
+                    new List<string>() { "lts", "suedtirolwein", "archapp" }
+                },
             };
 
             //Blacklist for exceptions Dictionary<string, Tuple<string,string> TODO Export in Config
-            Dictionary<string, Tuple<string, string>> blacklistsourcesandtagsMP = new Dictionary<string, Tuple<string, string>>()
+            Dictionary<string, Tuple<string, string>> blacklistsourcesandtagsMP = new Dictionary<
+                string,
+                Tuple<string, string>
+            >()
             {
-               { "odhactivitypoi", Tuple.Create("lts", "weinkellereien") }
+                { "odhactivitypoi", Tuple.Create("lts", "weinkellereien") },
             };
 
             //Whitelist on Types Deprecated? TODO Export in Config
             Dictionary<string, List<string>> allowedtypesMP = new Dictionary<string, List<string>>()
             {
-                { "article", new List<string>(){ "rezeptartikel" } }
+                {
+                    "article",
+                    new List<string>() { "rezeptartikel" }
+                },
             };
 
             //Blacklist TVs
             Dictionary<string, List<string>> notallowedtvs = new Dictionary<string, List<string>>()
             {
-                //TV Obertilliach, Cortina, Sappada, Auronzo, Arabba, 
-                { "odhactivitypoi", new List<string>(){ 
-                    "F68D877B11916F39E6413DFB744259EB", 
-                    "3063A07EFE5EC4D357FCB6C5128E81F0",
-                    "3629935C546A49328842D3E0E9150CE8",
-                    "E9D7583EECBA480EA073C4F8C030E83C", 
-                    "9FA380DE9937C1BB64844076674968E2",
-                    "6B39D0B4DD4CCAE6477F7013B090784C",
-                    "F7D7AAEC0313487B9CE8EC9067E43B73", 
-                    "E1407CED66C14AABBF49532AA49C76A6",
-                    "7D208AA1374F1484A2483829207C9421"} }
+                //TV Obertilliach, Cortina, Sappada, Auronzo, Arabba,
+                {
+                    "odhactivitypoi",
+                    new List<string>()
+                    {
+                        "F68D877B11916F39E6413DFB744259EB",
+                        "3063A07EFE5EC4D357FCB6C5128E81F0",
+                        "3629935C546A49328842D3E0E9150CE8",
+                        "E9D7583EECBA480EA073C4F8C030E83C",
+                        "9FA380DE9937C1BB64844076674968E2",
+                        "6B39D0B4DD4CCAE6477F7013B090784C",
+                        "F7D7AAEC0313487B9CE8EC9067E43B73",
+                        "E1407CED66C14AABBF49532AA49C76A6",
+                        "7D208AA1374F1484A2483829207C9421",
+                    }
+                },
             };
 
             List<string> publishedonlist = new List<string>();
@@ -66,12 +94,14 @@ namespace Helper
 
             if (mydata != null)
             {
-
                 switch (typeswitcher)
                 {
                     //Accommodations smgactive (Source LTS IDMActive)
                     case "accommodation":
-                        if ((mydata as AccommodationLinked).SmgActive && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
+                        if (
+                            (mydata as AccommodationLinked).SmgActive
+                            && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source)
+                        )
                         {
                             publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                             publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
@@ -87,7 +117,10 @@ namespace Helper
 
                         if (activatesourceonly != null && activatesourceonly.Item2 == true)
                         {
-                            if (activatesourceonly.Item1 == (mydata as AccommodationRoomLinked)._Meta.Source)
+                            if (
+                                activatesourceonly.Item1
+                                == (mydata as AccommodationRoomLinked)._Meta.Source
+                            )
                             {
                                 publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                             }
@@ -97,86 +130,152 @@ namespace Helper
                             publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                         }
 
-
                         break;
                     //Event Add all Active Events from now
                     case "event":
 
-                        if(mydata is EventLinked)
+                        if (mydata is EventLinked)
                         {
                             //EVENTS LTS
-                            if ((mydata as EventLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
+                            if (
+                                (mydata as EventLinked).Active
+                                && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source)
+                            )
                             {
-                                if ((mydata as EventLinked).SmgActive && mydata._Meta.Source == "lts")
+                                if (
+                                    (mydata as EventLinked).SmgActive
+                                    && mydata._Meta.Source == "lts"
+                                )
                                     publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
 
-                                //Marketplace Events only ClassificationRID 
-                                var validclassificationrids = new List<string>() { "CE212B488FA14954BE91BBCFA47C0F06" };
-                                if (validclassificationrids.Contains((mydata as EventLinked).ClassificationRID) && mydata._Meta.Source == "lts")
+                                //Marketplace Events only ClassificationRID
+                                var validclassificationrids = new List<string>()
+                                {
+                                    "CE212B488FA14954BE91BBCFA47C0F06",
+                                };
+                                if (
+                                    validclassificationrids.Contains(
+                                        (mydata as EventLinked).ClassificationRID
+                                    )
+                                    && mydata._Meta.Source == "lts"
+                                )
                                     publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
 
                                 //Events DRIN CENTROTREVI
-                                if ((mydata as EventLinked).Active && (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin"))
+                                if (
+                                    (mydata as EventLinked).Active
+                                    && (
+                                        mydata._Meta.Source == "trevilab"
+                                        || mydata._Meta.Source == "drin"
+                                    )
+                                )
                                 {
                                     if ((mydata as EventLinked).SmgActive)
                                     {
                                         if (mydata._Meta.Source == "drin")
-                                            publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
+                                            publishedonlist.TryAddOrUpdateOnList(
+                                                "centro-trevi.drin"
+                                            );
                                         if (mydata._Meta.Source == "trevilab")
-                                            publishedonlist.TryAddOrUpdateOnList("centro-trevi.trevilab");
+                                            publishedonlist.TryAddOrUpdateOnList(
+                                                "centro-trevi.trevilab"
+                                            );
                                     }
-
                                 }
                             }
                         }
-                        else if(mydata is EventV2)
+                        else if (mydata is EventV2)
                         {
                             //EVENTS LTS
-                            if ((mydata as EventV2).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
-                            {                              
-                                //Marketplace Events only ClassificationRID 
-                                var validclassificationrids = new List<string>() { "CE212B488FA14954BE91BBCFA47C0F06" };
-
-                                if((mydata as EventV2).Mapping.ContainsKey("lts"))
+                            if (
+                                (mydata as EventV2).Active
+                                && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source)
+                            )
+                            {
+                                //Marketplace Events only ClassificationRID
+                                var validclassificationrids = new List<string>()
                                 {
-                                    if((mydata as EventV2).Mapping["lts"].ContainsKey("ClassificationRID"))
+                                    "CE212B488FA14954BE91BBCFA47C0F06",
+                                };
+
+                                if ((mydata as EventV2).Mapping.ContainsKey("lts"))
+                                {
+                                    if (
+                                        (mydata as EventV2)
+                                            .Mapping["lts"]
+                                            .ContainsKey("ClassificationRID")
+                                    )
                                     {
-                                        if (validclassificationrids.Contains((mydata as EventV2).Mapping["lts"]["ClassificationRID"]) && mydata._Meta.Source == "lts")
+                                        if (
+                                            validclassificationrids.Contains(
+                                                (mydata as EventV2).Mapping["lts"][
+                                                    "ClassificationRID"
+                                                ]
+                                            )
+                                            && mydata._Meta.Source == "lts"
+                                        )
                                             publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                                     }
                                 }
 
-
                                 //Events DRIN CENTROTREVI
-                                if ((mydata as EventV2).Active && (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin"))
-                                {                                    
-                                        if (mydata._Meta.Source == "drin")
-                                            publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
-                                        if (mydata._Meta.Source == "trevilab")
-                                            publishedonlist.TryAddOrUpdateOnList("centro-trevi.trevilab");                                 
+                                if (
+                                    (mydata as EventV2).Active
+                                    && (
+                                        mydata._Meta.Source == "trevilab"
+                                        || mydata._Meta.Source == "drin"
+                                    )
+                                )
+                                {
+                                    if (mydata._Meta.Source == "drin")
+                                        publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
+                                    if (mydata._Meta.Source == "trevilab")
+                                        publishedonlist.TryAddOrUpdateOnList(
+                                            "centro-trevi.trevilab"
+                                        );
                                 }
                             }
                         }
 
                         break;
 
-                    //ODHActivityPoi 
+                    //ODHActivityPoi
                     case "odhactivitypoi":
 
                         if ((mydata as ODHActivityPoiLinked).SmgActive)
                             publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
-                        if ((mydata as ODHActivityPoiLinked).SmgActive && mydata._Meta.Source == "suedtirolwein")
+                        if (
+                            (mydata as ODHActivityPoiLinked).SmgActive
+                            && mydata._Meta.Source == "suedtirolwein"
+                        )
                             publishedonlist.TryAddOrUpdateOnList("suedtirolwein.com");
 
-                        if ((mydata as ODHActivityPoiLinked).Active && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source))
+                        if (
+                            (mydata as ODHActivityPoiLinked).Active
+                            && allowedsourcesMP[mydata._Meta.Type].Contains(mydata._Meta.Source)
+                        )
                         {
                             //Check if LocationInfo is in one of the blacklistedtv
                             bool tvallowed = true;
-                            if((mydata as ODHActivityPoiLinked).TourismorganizationId != null)
-                                    tvallowed = notallowedtvs[mydata._Meta.Type].Where(x => x.Contains((mydata as ODHActivityPoiLinked).TourismorganizationId)).Count() > 0 ? false : true;
+                            if ((mydata as ODHActivityPoiLinked).TourismorganizationId != null)
+                                tvallowed =
+                                    notallowedtvs[mydata._Meta.Type]
+                                        .Where(x =>
+                                            x.Contains(
+                                                (
+                                                    mydata as ODHActivityPoiLinked
+                                                ).TourismorganizationId
+                                            )
+                                        )
+                                        .Count() > 0
+                                        ? false
+                                        : true;
 
                             //IF category is white or blacklisted find an intersection
-                            var tagintersection = allowedtags.Select(x => x.Id).ToList().Intersect((mydata as ODHActivityPoiLinked).SmgTags);
+                            var tagintersection = allowedtags
+                                .Select(x => x.Id)
+                                .ToList()
+                                .Intersect((mydata as ODHActivityPoiLinked).SmgTags);
 
                             if (tagintersection.Count() > 0 && tvallowed)
                             {
@@ -186,7 +285,9 @@ namespace Helper
 
                                 foreach (var intersectedtag in tagintersection)
                                 {
-                                    var myallowedtag = allowedtags.Where(x => x.Id == intersectedtag).FirstOrDefault();
+                                    var myallowedtag = allowedtags
+                                        .Where(x => x.Id == intersectedtag)
+                                        .FirstOrDefault();
 
                                     foreach (var publishon in myallowedtag.PublishDataWithTagOn)
                                     {
@@ -194,7 +295,14 @@ namespace Helper
                                         if (publishon.Value == false)
                                             blacklistedpublisher.Add(publishon.Key);
 
-                                        if (blacklistsourcesandtagsMP[mydata._Meta.Type] != null && blacklistsourcesandtagsMP[mydata._Meta.Type].Item1 == mydata._Meta.Source && (mydata as ODHActivityPoiLinked).SmgTags.Contains(blacklistsourcesandtagsMP[mydata._Meta.Type].Item2))
+                                        if (
+                                            blacklistsourcesandtagsMP[mydata._Meta.Type] != null
+                                            && blacklistsourcesandtagsMP[mydata._Meta.Type].Item1
+                                                == mydata._Meta.Source
+                                            && (mydata as ODHActivityPoiLinked).SmgTags.Contains(
+                                                blacklistsourcesandtagsMP[mydata._Meta.Type].Item2
+                                            )
+                                        )
                                             blacklistedpublisher.Add("idm-marketplace");
 
                                         if (!blacklistedpublisher.Contains(publishon.Key))
@@ -204,7 +312,6 @@ namespace Helper
                                                 publisherstoadd.Add(publishon.Key);
                                             }
                                         }
-
                                     }
                                 }
 
@@ -214,11 +321,10 @@ namespace Helper
                                 }
                             }
                         }
-                        
 
                         break;
 
-                    //EventShort 
+                    //EventShort
                     case "eventshort":
 
                         if ((mydata as EventShortLinked).ActiveWeb == true)
@@ -261,12 +367,17 @@ namespace Helper
                                 //Venues LTS
                                 //Venues NOI
                                 //Venues DRIN CENTROTREVI
-                                if (mydata._Meta.Source == "trevilab" || mydata._Meta.Source == "drin")
+                                if (
+                                    mydata._Meta.Source == "trevilab"
+                                    || mydata._Meta.Source == "drin"
+                                )
                                 {
                                     if (mydata._Meta.Source == "drin")
                                         publishedonlist.TryAddOrUpdateOnList("centro-trevi.drin");
                                     if (mydata._Meta.Source == "trevilab")
-                                        publishedonlist.TryAddOrUpdateOnList("centro-trevi.trevilab");
+                                        publishedonlist.TryAddOrUpdateOnList(
+                                            "centro-trevi.trevilab"
+                                        );
                                 }
                             }
                         }
@@ -365,7 +476,10 @@ namespace Helper
                     case "article":
                         var article = (mydata as ArticlesLinked);
 
-                        if (article.SmgActive && allowedtypesMP[mydata._Meta.Type].Contains(article.Type.ToLower()))
+                        if (
+                            article.SmgActive
+                            && allowedtypesMP[mydata._Meta.Type].Contains(article.Type.ToLower())
+                        )
                         {
                             publishedonlist.TryAddOrUpdateOnList("suedtirol.info");
                             //publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
@@ -374,7 +488,11 @@ namespace Helper
 
                     case "odhtag":
                         var odhtag = (mydata as ODHTagLinked);
-                        if (odhtag != null && odhtag.DisplayAsCategory != null && odhtag.DisplayAsCategory.Value == true)
+                        if (
+                            odhtag != null
+                            && odhtag.DisplayAsCategory != null
+                            && odhtag.DisplayAsCategory.Value == true
+                        )
                             publishedonlist.TryAddOrUpdateOnList("idm-marketplace");
                         break;
 
@@ -397,6 +515,5 @@ namespace Helper
                 mydata.PublishedOn = publishedonlist;
             }
         }
-
     }
 }

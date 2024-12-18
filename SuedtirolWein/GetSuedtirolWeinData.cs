@@ -12,7 +12,10 @@ namespace SuedtirolWein
 {
     public class GetSuedtirolWeinData
     {
-        private static async Task<HttpResponseMessage> RequestCompaniesAsync(string serviceurl, string lang)
+        private static async Task<HttpResponseMessage> RequestCompaniesAsync(
+            string serviceurl,
+            string lang
+        )
         {
             try
             {
@@ -27,12 +30,18 @@ namespace SuedtirolWein
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Content = new StringContent(ex.Message),
+                };
             }
-
         }
 
-        private static async Task<HttpResponseMessage> RequestAwardsAsync(string serviceurl, string lang)
+        private static async Task<HttpResponseMessage> RequestAwardsAsync(
+            string serviceurl,
+            string lang
+        )
         {
             try
             {
@@ -44,15 +53,21 @@ namespace SuedtirolWein
 
                     return myresponse;
                 }
-
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Content = new StringContent(ex.Message),
+                };
             }
         }
 
-        public static async Task<XDocument> GetSueditrolWineCompaniesAsync(string serviceurl, string lang)
+        public static async Task<XDocument> GetSueditrolWineCompaniesAsync(
+            string serviceurl,
+            string lang
+        )
         {
             //make Request
             HttpResponseMessage response = await RequestCompaniesAsync(serviceurl, lang);
@@ -63,7 +78,10 @@ namespace SuedtirolWein
             return myweatherresponse;
         }
 
-        public static async Task<XDocument> GetSueditrolWineAwardsAsync(string serviceurl, string lang)
+        public static async Task<XDocument> GetSueditrolWineAwardsAsync(
+            string serviceurl,
+            string lang
+        )
         {
             //make Request
             HttpResponseMessage response = await RequestAwardsAsync(serviceurl, lang);
@@ -73,6 +91,5 @@ namespace SuedtirolWein
 
             return myweatherresponse;
         }
-
     }
 }

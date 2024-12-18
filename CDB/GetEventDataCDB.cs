@@ -15,7 +15,12 @@ namespace CDB
     public class GetEvents
     {
         //Methode für Liste
-        public static XDocument GetEventList(string lang, string searchid, int pageSize, int pagenr, string requestor,
+        public static XDocument GetEventList(
+            string lang,
+            string searchid,
+            int pageSize,
+            int pagenr,
+            string requestor,
             string publRIDList,
             string topicRIDList,
             DateTime datefrom,
@@ -33,20 +38,33 @@ namespace CDB
             string ltsuser,
             string ltspswd,
             string serviceurl
-            )
+        )
         {
             try
             {
-                XDocument myEvents = GetEventDataCDB.GetEventSeekEngine(publRIDList, 
-                    String.Format("{0:yyyy-MM-dd}", datefrom), 
-                    String.Format("{0:yyyy-MM-dd}", dateto), 
-                    topicRIDList, ranc, fraRIDList, seekword, lang, 
-                    pagenr.ToString(), pageSize.ToString(), orgRIDList, 
-                    title, searchid, onlyEveHead, showSDat, zone, withCdays, 
-                    compatibilitymode, 
-                    ltsuser, 
+                XDocument myEvents = GetEventDataCDB.GetEventSeekEngine(
+                    publRIDList,
+                    String.Format("{0:yyyy-MM-dd}", datefrom),
+                    String.Format("{0:yyyy-MM-dd}", dateto),
+                    topicRIDList,
+                    ranc,
+                    fraRIDList,
+                    seekword,
+                    lang,
+                    pagenr.ToString(),
+                    pageSize.ToString(),
+                    orgRIDList,
+                    title,
+                    searchid,
+                    onlyEveHead,
+                    showSDat,
+                    zone,
+                    withCdays,
+                    compatibilitymode,
+                    ltsuser,
                     ltspswd,
-                    serviceurl);
+                    serviceurl
+                );
 
                 return myEvents;
 
@@ -76,13 +94,22 @@ namespace CDB
         }
 
         //Methode für Liste der Geänderten
-        public static XDocument GetEventChangeList(DateTime startDate, string ltsuser, string ltspswd,
-            string serviceurl)
+        public static XDocument GetEventChangeList(
+            DateTime startDate,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
             try
             {
-                XDocument myEventsChanged = GetEventDataCDB.GetEventsChangedfromCDB(String.Format("{0:yyyy-MM-dd}", startDate), "0", 
-                    ltsuser, ltspswd,serviceurl);
+                XDocument myEventsChanged = GetEventDataCDB.GetEventsChangedfromCDB(
+                    String.Format("{0:yyyy-MM-dd}", startDate),
+                    "0",
+                    ltsuser,
+                    ltspswd,
+                    serviceurl
+                );
 
                 return myEventsChanged;
             }
@@ -93,7 +120,9 @@ namespace CDB
         }
 
         //Methode für Detail
-        public static XElement GetEventDetail(string lang, string requestor,
+        public static XElement GetEventDetail(
+            string lang,
+            string requestor,
             string evRIDList,
             string publRIDList,
             string withOrganizer,
@@ -101,23 +130,30 @@ namespace CDB
             string ltsuser,
             string ltspswd,
             string serviceurl
-            )
+        )
         {
             try
             {
-                XDocument myEvents = GetEventDataCDB.GetEventDatafromCDB(evRIDList, withOrganizer, lang, publRIDList, withCdays, ltsuser, ltspswd, serviceurl);
+                XDocument myEvents = GetEventDataCDB.GetEventDatafromCDB(
+                    evRIDList,
+                    withOrganizer,
+                    lang,
+                    publRIDList,
+                    withCdays,
+                    ltsuser,
+                    ltspswd,
+                    serviceurl
+                );
 
                 var myEventElement = myEvents.Root.Element("Root").Element("Head");
 
                 return myEventElement;
-
             }
             catch (Exception ex)
             {
                 return null;
             }
         }
-
     }
 
     public class GetEventDataCDB
@@ -125,20 +161,48 @@ namespace CDB
         public static CDBDataSoapClient.EndpointConfiguration GetEndpointConfig()
         {
             //TODO CHECK IF THIS WORKS
-            CDBDataSoapClient.EndpointConfiguration myconfig = new CDBDataSoapClient.EndpointConfiguration();
+            CDBDataSoapClient.EndpointConfiguration myconfig =
+                new CDBDataSoapClient.EndpointConfiguration();
 
             return myconfig;
         }
 
         //Event Data
-        public static XDocument GetEventDatafromCDB(string EvRIDList, string WithOrganizer, string LngID, string PublRIDList, string WithCdays, string ltsuser, string ltspswd, string serviceurl)
+        public static XDocument GetEventDatafromCDB(
+            string EvRIDList,
+            string WithOrganizer,
+            string LngID,
+            string PublRIDList,
+            string WithCdays,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVData' Version='1.0' EvRID='" + EvRIDList + "' WithOrganizer='" + WithOrganizer + "' LngID='" + LngID + "' PublRID='" + PublRIDList + "' WithCDays='" + WithCdays + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVData' Version='1.0' EvRID='"
+                + EvRIDList
+                + "' WithOrganizer='"
+                + WithOrganizer
+                + "' LngID='"
+                + LngID
+                + "' PublRID='"
+                + PublRIDList
+                + "' WithCDays='"
+                + WithCdays
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -148,14 +212,32 @@ namespace CDB
         }
 
         //Event Organizer Data
-        public static XDocument GetEventOrganizerDatafromCDB(string OrgRIDList, string LngID, string ltsuser, string ltspswd, string serviceurl)
+        public static XDocument GetEventOrganizerDatafromCDB(
+            string OrgRIDList,
+            string LngID,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVOrganizerData' Version='1.0' OrgRID='" + OrgRIDList + "' LngID='" + LngID + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVOrganizerData' Version='1.0' OrgRID='"
+                + OrgRIDList
+                + "' LngID='"
+                + LngID
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -165,14 +247,78 @@ namespace CDB
         }
 
         //Event Seek Engine
-        public static XDocument GetEventSeekEngine(string PublRIDList, string DateFrom, string DateTo, string TopRIDList, string Ranc, string FraRIDList, string Seekword, string LngId, string PageAct, string PageSize, string OrgRIDList, string titlelist, string SeekID, string OnlyEveHead, string ShowSDat, string Zone, string WithCDays, string CompatiblityMode, string ltsuser, string ltspswd, string serviceurl)
-        {            
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+        public static XDocument GetEventSeekEngine(
+            string PublRIDList,
+            string DateFrom,
+            string DateTo,
+            string TopRIDList,
+            string Ranc,
+            string FraRIDList,
+            string Seekword,
+            string LngId,
+            string PageAct,
+            string PageSize,
+            string OrgRIDList,
+            string titlelist,
+            string SeekID,
+            string OnlyEveHead,
+            string ShowSDat,
+            string Zone,
+            string WithCDays,
+            string CompatiblityMode,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
+        {
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVSeekEngine' Version='1.0' PublRID='" + PublRIDList + "' DateFrom='" + DateFrom + "' DateTo='" + DateTo + "' TopRID='" + TopRIDList + "' Ranc='" + Ranc + "' FraRID='" + FraRIDList + "' SeekWord='" + Seekword + "' LngID='" + LngId + "' PageAct='" + PageAct + "' PageSize='" + PageSize + "' OrgRID='" + OrgRIDList + "' Title='" + titlelist + "' SeekID='" + SeekID + "' OnlyEveHead='" + OnlyEveHead + "' ShowSDat='" + ShowSDat + "' Zone='" + Zone + "' WithCDays='" + WithCDays + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVSeekEngine' Version='1.0' PublRID='"
+                + PublRIDList
+                + "' DateFrom='"
+                + DateFrom
+                + "' DateTo='"
+                + DateTo
+                + "' TopRID='"
+                + TopRIDList
+                + "' Ranc='"
+                + Ranc
+                + "' FraRID='"
+                + FraRIDList
+                + "' SeekWord='"
+                + Seekword
+                + "' LngID='"
+                + LngId
+                + "' PageAct='"
+                + PageAct
+                + "' PageSize='"
+                + PageSize
+                + "' OrgRID='"
+                + OrgRIDList
+                + "' Title='"
+                + titlelist
+                + "' SeekID='"
+                + SeekID
+                + "' OnlyEveHead='"
+                + OnlyEveHead
+                + "' ShowSDat='"
+                + ShowSDat
+                + "' Zone='"
+                + Zone
+                + "' WithCDays='"
+                + WithCDays
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -182,14 +328,29 @@ namespace CDB
         }
 
         //Event Publisher RIDS Data
-        public static XDocument GetEventAllPublisherfromCDB(string LngID, string ltsuser, string ltspswd, string serviceurl)
+        public static XDocument GetEventAllPublisherfromCDB(
+            string LngID,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVAllPublisher' Version='1.0' LngID='" + LngID + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVAllPublisher' Version='1.0' LngID='"
+                + LngID
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -199,14 +360,32 @@ namespace CDB
         }
 
         //Event Topic Data
-        public static XDocument GetEventAllTopicsfromCDB(string TopicRIDList, string LngID, string ltsuser, string ltspswd, string serviceurl)
+        public static XDocument GetEventAllTopicsfromCDB(
+            string TopicRIDList,
+            string LngID,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVAllTopics' Version='1.0' TopRID='" + TopicRIDList + "' LngID='" + LngID + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVAllTopics' Version='1.0' TopRID='"
+                + TopicRIDList
+                + "' LngID='"
+                + LngID
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -216,14 +395,32 @@ namespace CDB
         }
 
         //Event Nation Data
-        public static XDocument GetEventAllNationfromCDB(string NatRIDList, string LngID, string ltsuser, string ltspswd, string serviceurl)
+        public static XDocument GetEventAllNationfromCDB(
+            string NatRIDList,
+            string LngID,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVNation' Version='1.0' NatID='" + NatRIDList + "' LngID='" + LngID + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVNation' Version='1.0' NatID='"
+                + NatRIDList
+                + "' LngID='"
+                + LngID
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -233,14 +430,32 @@ namespace CDB
         }
 
         //Event Fraction Data
-        public static XDocument GetEventAllFractionfromCDB(string FraRIDList, string LngID, string ltsuser, string ltspswd, string serviceurl)
+        public static XDocument GetEventAllFractionfromCDB(
+            string FraRIDList,
+            string LngID,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVFraktion' Version='1.0' NatID='" + FraRIDList + "' LngID='" + LngID + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVFraktion' Version='1.0' NatID='"
+                + FraRIDList
+                + "' LngID='"
+                + LngID
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -249,15 +464,33 @@ namespace CDB
             return myresponse;
         }
 
-        //Event Area Data This function returns the geo-zones to be displayed in the instance of EventViewer. 
-        public static XDocument GetEventAllAreasfromCDB(string EveVInstanceIDList, string LngID, string ltsuser, string ltspswd, string serviceurl)
+        //Event Area Data This function returns the geo-zones to be displayed in the instance of EventViewer.
+        public static XDocument GetEventAllAreasfromCDB(
+            string EveVInstanceIDList,
+            string LngID,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVAreas' Version='1.0' EveVInstanceID='" + EveVInstanceIDList + "' LngID='" + LngID + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVAreas' Version='1.0' EveVInstanceID='"
+                + EveVInstanceIDList
+                + "' LngID='"
+                + LngID
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -266,15 +499,33 @@ namespace CDB
             return myresponse;
         }
 
-        //Event Area Data This function returns the geo-zones to be displayed in the instance of EventViewer. 
-        public static XDocument GetEventAllInstancesfromCDB(string EveVInstanceIDList, string LngID, string ltsuser, string ltspswd, string serviceurl)
+        //Event Area Data This function returns the geo-zones to be displayed in the instance of EventViewer.
+        public static XDocument GetEventAllInstancesfromCDB(
+            string EveVInstanceIDList,
+            string LngID,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVInstance' Version='1.0' EveVInstanceID='…'='" + EveVInstanceIDList + "' LngID='" + LngID + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVInstance' Version='1.0' EveVInstanceID='…'='"
+                + EveVInstanceIDList
+                + "' LngID='"
+                + LngID
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 
@@ -284,14 +535,32 @@ namespace CDB
         }
 
         //Events Changed Data  active events (0=all; <>1=yes)
-        public static XDocument GetEventsChangedfromCDB(string StartDate, string I0Act, string ltsuser, string ltspswd, string serviceurl)
+        public static XDocument GetEventsChangedfromCDB(
+            string StartDate,
+            string I0Act,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(GetEndpointConfig(), serviceurl);
+            var proxy = new ServiceReferenceCDBData.CDBDataSoapClient(
+                GetEndpointConfig(),
+                serviceurl
+            );
 
             proxy.ClientCredentials.UserName.UserName = ltsuser;
             proxy.ClientCredentials.UserName.Password = ltspswd;
 
-            string sinput = "<SendData UserID='" + ltsuser + "' SessionID='" + ltspswd + "' Function='GetEveVChanged' Version='1.0' StartDate='" + StartDate + "' I0Act='" + I0Act + "' />";
+            string sinput =
+                "<SendData UserID='"
+                + ltsuser
+                + "' SessionID='"
+                + ltspswd
+                + "' Function='GetEveVChanged' Version='1.0' StartDate='"
+                + StartDate
+                + "' I0Act='"
+                + I0Act
+                + "' />";
 
             var xresponse = proxy.SendData(sinput);
 

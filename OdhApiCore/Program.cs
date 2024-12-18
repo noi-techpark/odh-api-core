@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System.Threading.Tasks;
 
 namespace OdhApiCore
 {
@@ -12,7 +12,7 @@ namespace OdhApiCore
     {
         public static async Task Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();           
+            var host = CreateHostBuilder(args).Build();
 
             await host.RunAsync();
         }
@@ -24,8 +24,7 @@ namespace OdhApiCore
                 //{
                 //    config.AddEnvironmentVariables();
                 //})
-                .ConfigureWebHostDefaults(webBuilder =>
-                    webBuilder.UseStartup<Startup>());
+                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>());
         }
     }
 }

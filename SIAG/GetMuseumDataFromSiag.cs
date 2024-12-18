@@ -13,10 +13,9 @@ using System.Xml.Linq;
 namespace SIAG
 {
     public class GetMuseumFromSIAG
-    {        
+    {
         public static async Task<HttpResponseMessage> MuseumList(string serviceurl)
         {
-
             string requesturl = serviceurl + "getMuseums";
             using (var client = new HttpClient())
             {
@@ -24,12 +23,10 @@ namespace SIAG
 
                 return myresponse;
             }
-
         }
 
         public static async Task<XDocument> GetMuseumList(string serviceurl)
         {
-
             var myresponse = MuseumList(serviceurl);
 
             var myresponsecontent = await myresponse.Result.Content.ReadAsStringAsync();
@@ -37,10 +34,12 @@ namespace SIAG
             XDocument xresponse = XDocument.Parse(myresponsecontent);
 
             return xresponse;
-
         }
 
-        public static async Task<HttpResponseMessage> MuseumDetail(string serviceurl, string museumid)
+        public static async Task<HttpResponseMessage> MuseumDetail(
+            string serviceurl,
+            string museumid
+        )
         {
             try
             {
@@ -54,7 +53,11 @@ namespace SIAG
             }
             catch (Exception ex)
             {
-                return new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message) };
+                return new HttpResponseMessage
+                {
+                    StatusCode = HttpStatusCode.BadRequest,
+                    Content = new StringContent(ex.Message),
+                };
             }
         }
 

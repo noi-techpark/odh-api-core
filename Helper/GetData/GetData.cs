@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Authentication;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +11,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.AspNetCore.Authentication;
+using Newtonsoft.Json;
 
 namespace Helper.GetData
 {
@@ -20,9 +20,9 @@ namespace Helper.GetData
     {
         None,
         Basic,
-        Bearer
+        Bearer,
     }
-    
+
     public class GetData
     {
         private string serviceurl;
@@ -31,7 +31,13 @@ namespace Helper.GetData
         private string bearertoken;
         private GetDataAuthenticationOptions authtype;
 
-        public GetData(string _serviceurl, string _user, string _pass, string _bearertoken, GetDataAuthenticationOptions _authtype)
+        public GetData(
+            string _serviceurl,
+            string _user,
+            string _pass,
+            string _bearertoken,
+            GetDataAuthenticationOptions _authtype
+        )
         {
             serviceurl = _serviceurl;
             user = _user;
@@ -40,9 +46,9 @@ namespace Helper.GetData
             authtype = _authtype;
         }
 
-        private async Task<HttpResponseMessage> GetDataFromService() 
-        {            
-            if(authtype == GetDataAuthenticationOptions.Basic)
+        private async Task<HttpResponseMessage> GetDataFromService()
+        {
+            if (authtype == GetDataAuthenticationOptions.Basic)
             {
                 CredentialCache wrCache = new CredentialCache();
                 wrCache.Add(new Uri(serviceurl), "Basic", new NetworkCredential(user, pass));
@@ -59,13 +65,16 @@ namespace Helper.GetData
             {
                 using (var client = new HttpClient())
                 {
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearertoken);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                        "Bearer",
+                        bearertoken
+                    );
 
                     return await client.GetAsync(serviceurl);
-                }                
+                }
             }
             else
-            {                
+            {
                 using (var client = new HttpClient())
                 {
                     return await client.GetAsync(serviceurl);
@@ -79,7 +88,7 @@ namespace Helper.GetData
             HttpResponseMessage response = await GetDataFromService();
 
             if (response.StatusCode != HttpStatusCode.OK)
-                throw new Exception("Error on getting data "+ response.StatusCode.ToString());
+                throw new Exception("Error on getting data " + response.StatusCode.ToString());
 
             //Parse JSON Response to
             var responsecontent = await response.Content.ReadAsStringAsync();

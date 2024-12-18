@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
 using System;
 using System.Linq;
+using Helper;
 using Xunit;
 
 namespace OdhApiCoreTests.Helper
@@ -25,20 +25,26 @@ namespace OdhApiCoreTests.Helper
         public void GetFlags_InvalidEnumType()
         {
             var @enum = 12333;
-            Assert.Throws<ArgumentException>("withFlags", () =>
-            {
-                var flags = @enum.GetFlags().ToList();
-            });
+            Assert.Throws<ArgumentException>(
+                "withFlags",
+                () =>
+                {
+                    var flags = @enum.GetFlags().ToList();
+                }
+            );
         }
 
         [Fact]
         public void GetFlags_InvalidNonFlaggedEnum()
         {
             var @enum = DayOfWeek.Monday;
-            Assert.Throws<ArgumentException>("withFlags", () =>
-            {
-                var flags = @enum.GetFlags().ToList();
-            });
+            Assert.Throws<ArgumentException>(
+                "withFlags",
+                () =>
+                {
+                    var flags = @enum.GetFlags().ToList();
+                }
+            );
         }
 
         [Fact]
@@ -51,13 +57,19 @@ namespace OdhApiCoreTests.Helper
             Assert.True(newenum.HasFlag(ActivityTypeBerg.Hochtouren));
 
             // Functionally equivalent
-            Assert.Equal(@enum | ActivityTypeBerg.Hochtouren, @enum.SetFlags(ActivityTypeBerg.Hochtouren));
+            Assert.Equal(
+                @enum | ActivityTypeBerg.Hochtouren,
+                @enum.SetFlags(ActivityTypeBerg.Hochtouren)
+            );
         }
 
         [Fact]
         public void SetFlags_TestWithOnFalse()
         {
-            var @enum = ActivityTypeBerg.Bergtouren | ActivityTypeBerg.Schneeschuhtouren | ActivityTypeBerg.Hochtouren;
+            var @enum =
+                ActivityTypeBerg.Bergtouren
+                | ActivityTypeBerg.Schneeschuhtouren
+                | ActivityTypeBerg.Hochtouren;
 
             // Attention, not functionally equivalent!
             //Assert.Equal(@enum & ActivityTypeBerg.Bergtouren, @enum.SetFlags(ActivityTypeBerg.Bergtouren, false));
@@ -74,7 +86,10 @@ namespace OdhApiCoreTests.Helper
         {
             var @enum = ActivityTypeBerg.Bergtouren | ActivityTypeBerg.Schneeschuhtouren;
             // Functionally equivalent
-            Assert.Equal(@enum.HasFlag(ActivityTypeBerg.Alpinklettern), @enum.IsFlagSet(ActivityTypeBerg.Alpinklettern));
+            Assert.Equal(
+                @enum.HasFlag(ActivityTypeBerg.Alpinklettern),
+                @enum.IsFlagSet(ActivityTypeBerg.Alpinklettern)
+            );
         }
     }
 }

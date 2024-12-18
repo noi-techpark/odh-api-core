@@ -36,7 +36,7 @@
 //    [EnableCors("CorsPolicy")]
 //    [NullStringParameterActionFilter]
 //    public class GastroItemController : OdhController
-//    {     
+//    {
 //        public GastroItemController(IWebHostEnvironment env, ISettings settings, ILogger<GastroItemController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
 //            : base(env, settings, logger, queryFactory, odhpushnotifier)
 //        {
@@ -53,7 +53,7 @@
 //        /// <param name="GastroItemtype">Type of the GastroItem ('null' = Filter disabled, possible values: BITMASK: 'Mountains = 1','Cycling = 2','Local tours = 4','Horses = 8','Hiking = 16','Running and fitness = 32','Cross-country ski-track = 64','Tobbogan run = 128','Slopes = 256','Lifts = 512'), (default:'1023' == ALL), REFERENCE TO: GET /api/GastroItemTypes </param>
 //        /// <param name="subtype">Subtype of the GastroItem (BITMASK Filter = available SubTypes depends on the selected GastroItem Type), (default:'null')</param>
 //        /// <param name="idlist">IDFilter (Separator ',' List of GastroItem IDs), (default:'null')</param>
-//        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>        
+//        /// <param name="locfilter">Locfilter SPECIAL Separator ',' possible values: reg + REGIONID = (Filter by Region), reg + REGIONID = (Filter by Region), tvs + TOURISMVEREINID = (Filter by Tourismverein), mun + MUNICIPALITYID = (Filter by Municipality), fra + FRACTIONID = (Filter by Fraction), 'null' = (No Filter), (default:'null') <a href="https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#location-filter-locfilter" target="_blank">Wiki locfilter</a></param>
 //        /// <param name="areafilter">AreaFilter (Separator ',' IDList of AreaIDs separated by ','), (default:'null')</param>
 //        /// <param name="distancefilter">Distance Range Filter (Separator ',' example Value: 15,40 Distance from 15 up to 40 Km), (default:'null')</param>
 //        /// <param name="altitudefilter">Altitude Range Filter (Separator ',' example Value: 500,1000 Altitude from 500 up to 1000 metres), (default:'null')</param>
@@ -74,7 +74,7 @@
 //        /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
 //        /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
 //        /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-//        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues" target="_blank">Opendatahub Wiki</a></param>        
+//        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues" target="_blank">Opendatahub Wiki</a></param>
 //        /// <returns>Collection of GastroItem Objects</returns>
 //        /// <response code="200">List created</response>
 //        /// <response code="400">Request Error</response>
@@ -111,7 +111,7 @@
 //        /// <param name="id">ID of the GastroItem</param>
 //        /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
 //        /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-//        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+//        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
 //        /// <returns>GBLTSGastroItem Object</returns>
 //        /// <response code="200">Object created</response>
 //        /// <response code="400">Request Error</response>
@@ -136,7 +136,7 @@
 //        #region GETTER
 
 //        private Task<IActionResult> GetFiltered(
-//            string[] fields, uint pagenumber, int? pagesize, 
+//            string[] fields, uint pagenumber, int? pagesize,
 //            string? rawfilter, string? rawsort,
 //            bool removenullvalues, CancellationToken cancellationToken)
 //        {
@@ -159,7 +159,7 @@
 //                        .PaginateAsync<JsonRaw>(
 //                            page: (int)pagenumber,
 //                            perPage: pagesize ?? 25);
-                
+
 //                var dataTransformed =
 //                    data.List.Select(
 //                        raw => raw.TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
@@ -198,14 +198,14 @@
 //                        .FilterDataByAccessRoles(UserRolesToFilter);
 
 //                var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-                
+
 //                return data?.TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
 //            });
 //        }
 
 //        #endregion
 
-        
+
 
 //        #region POST PUT DELETE
 
@@ -226,7 +226,7 @@
 //                AdditionalFiltersToAdd.TryGetValue("Create", out var additionalfilter);
 
 //                gastroitem.Id = Helper.IdGenerator.GenerateIDFromType(gastroitem);
-                
+
 //                return await UpsertData<GastroItem>(gastroitem, new DataInfo("gastroitems", CRUDOperation.Create), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
 //            });
 //        }
@@ -250,7 +250,7 @@
 //                AdditionalFiltersToAdd.TryGetValue("Update", out var additionalfilter);
 
 //                gastroitem.Id = Helper.IdGenerator.CheckIdFromType<GastroItem>(id);
-             
+
 //                return await UpsertData<GastroItem>(gastroitem, new DataInfo("gastroitems", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
 //            });
 //        }

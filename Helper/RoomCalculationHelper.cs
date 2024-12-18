@@ -14,20 +14,33 @@ namespace Helper
 {
     public class RoomCalculationHelper
     {
-        public static CheapestRoomCombination CalculateCheapestRooms(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        public static CheapestRoomCombination CalculateCheapestRooms(
+            IEnumerable<CheapestOffer> cheapestofferlist,
+            int rooms,
+            string service
+        )
         {
-            if (cheapestofferlist != null && cheapestofferlist.Count() > 0 && cheapestofferlist.Count() >= rooms)
+            if (
+                cheapestofferlist != null
+                && cheapestofferlist.Count() > 0
+                && cheapestofferlist.Count() >= rooms
+            )
             {
                 if (rooms == 1)
                 {
-                    var cheapestorffersingle = cheapestofferlist.OrderBy(x => x.Price).Take(1).FirstOrDefault();
-                    CheapestRoomCombination cheapestroomcombinationresult = new CheapestRoomCombination();
+                    var cheapestorffersingle = cheapestofferlist
+                        .OrderBy(x => x.Price)
+                        .Take(1)
+                        .FirstOrDefault();
+                    CheapestRoomCombination cheapestroomcombinationresult =
+                        new CheapestRoomCombination();
                     if (cheapestorffersingle is { })
-                        cheapestroomcombinationresult.CheapestRoomCombinationDetail = new List<CheapestOffer>() { cheapestorffersingle };
+                        cheapestroomcombinationresult.CheapestRoomCombinationDetail =
+                            new List<CheapestOffer>() { cheapestorffersingle };
                     cheapestroomcombinationresult.Service = service;
 
                     return cheapestroomcombinationresult;
-                }                
+                }
                 else
                     return CalculateCheapestRoomCombinations(cheapestofferlist, rooms, service);
                 //else
@@ -43,16 +56,27 @@ namespace Helper
             }
             else
             {
-                return new CheapestRoomCombination() { Service = service, CheapestRoomCombinationDetail = new List<CheapestOffer>() };
+                return new CheapestRoomCombination()
+                {
+                    Service = service,
+                    CheapestRoomCombinationDetail = new List<CheapestOffer>(),
+                };
             }
         }
 
-        private static CheapestRoomCombination CalculateCheapestRoomCombinationsWithCombinations(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
+        private static CheapestRoomCombination CalculateCheapestRoomCombinationsWithCombinations(
+            IEnumerable<CheapestOffer> cheapestofferlist,
+            int rooms,
+            string service
+        )
         {
             List<CheapestRoomCombination> mycombinationresult = new List<CheapestRoomCombination>();
 
             //Create combinations TO verify use variations??
-            Combinations<CheapestOffer> combinations = new Combinations<CheapestOffer>(cheapestofferlist, rooms);
+            Combinations<CheapestOffer> combinations = new Combinations<CheapestOffer>(
+                cheapestofferlist,
+                rooms
+            );
 
             foreach (IList<CheapestOffer> c in combinations)
             {
@@ -71,7 +95,7 @@ namespace Helper
                         break;
                 }
 
-                //Remove all combinations where more rooms are used than roomfree                 
+                //Remove all combinations where more rooms are used than roomfree
                 if (addcombination)
                 {
                     for (int i = 0; i < rooms; i++)
@@ -90,20 +114,32 @@ namespace Helper
 
                 if (addcombination)
                 {
-                    mycombinationresult.Add(new CheapestRoomCombination() { CheapestRoomCombinationDetail = c, Service = service });
+                    mycombinationresult.Add(
+                        new CheapestRoomCombination()
+                        {
+                            CheapestRoomCombinationDetail = c,
+                            Service = service,
+                        }
+                    );
                 }
             }
 
             //Return Cheapestroomcombination
-            var cheapestcombination = mycombinationresult.OrderBy(x => x.Price).Take(1).FirstOrDefault();
+            var cheapestcombination = mycombinationresult
+                .OrderBy(x => x.Price)
+                .Take(1)
+                .FirstOrDefault();
 
             return cheapestcombination ?? new();
         }
 
-
         //TO TEST
-        private static CheapestRoomCombination CalculateCheapestRoomCombinations(IEnumerable<CheapestOffer> cheapestofferlist, int rooms, string service)
-        {            
+        private static CheapestRoomCombination CalculateCheapestRoomCombinations(
+            IEnumerable<CheapestOffer> cheapestofferlist,
+            int rooms,
+            string service
+        )
+        {
             //Create an Array with a Collection
             List<CheapestOffer>[] offerbyroomseq = new List<CheapestOffer>[rooms];
 
@@ -114,7 +150,10 @@ namespace Helper
             for (int i = 1; i <= rooms; i++)
             {
                 //To check could it be that a roomseq does not exist?
-                offerbyroomseq[i - 1] = cheapestofferlist.Where(x => x.RoomSeq == i).OrderBy(x => x.Price).ToList();
+                offerbyroomseq[i - 1] = cheapestofferlist
+                    .Where(x => x.RoomSeq == i)
+                    .OrderBy(x => x.Price)
+                    .ToList();
             }
 
             //TO check, are there offerbyroomseq with not enough rooms?
@@ -133,7 +172,10 @@ namespace Helper
                     var usedroomscount = 0;
                     if (cheapestroomcombination.CheapestRoomCombinationDetail.Count > 0)
                     {
-                        usedroomscount = cheapestroomcombination.CheapestRoomCombinationDetail.Count(x => x.RoomId == room.RoomId);
+                        usedroomscount =
+                            cheapestroomcombination.CheapestRoomCombinationDetail.Count(x =>
+                                x.RoomId == room.RoomId
+                            );
                     }
 
                     //if roomfree > cheapestroomcombination
@@ -142,7 +184,7 @@ namespace Helper
                         cheapestroomcombination.CheapestRoomCombinationDetail.Add(room);
                         break;
                     }
-                }            
+                }
             }
 
             //If there are cheapestroomcombinations with not enough rooms return null
@@ -194,21 +236,24 @@ namespace Helper
             return true;
         }
 
-        public static IEnumerable<List<T>> GetDifferentCombinations<T>(this IEnumerable<T> collection, int count)
+        public static IEnumerable<List<T>> GetDifferentCombinations<T>(
+            this IEnumerable<T> collection,
+            int count
+        )
         {
             int[] indexes = new int[count];
             int listCount = collection.Count();
             if (count > listCount)
-                throw new InvalidOperationException($"{nameof(count)} is greater than the collection elements.");
+                throw new InvalidOperationException(
+                    $"{nameof(count)} is greater than the collection elements."
+                );
             InitIndexes(indexes);
             do
             {
                 var selected = TakeAt(indexes, collection);
                 yield return selected;
                 SetIndexes(indexes, indexes.Length - 1, listCount);
-            }
-            while (!AllPlacesChecked(indexes, listCount));
-
+            } while (!AllPlacesChecked(indexes, listCount));
         }
-    }    
+    }
 }

@@ -12,13 +12,45 @@ namespace LCS
     public class GetWeatherDataLCS
     {
         //Methode wos Live die Wetterdaten holt zu an Messpunkt!
-        public static ServiceReferenceLCS.WeatherSnowObservationDetailRS GetMeasuringpointData(string lang, List<string> measuringpointList, string serviceurl, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static ServiceReferenceLCS.WeatherSnowObservationDetailRS GetMeasuringpointData(
+            string lang,
+            List<string> measuringpointList,
+            string serviceurl,
+            string ltsuser,
+            string ltspswd,
+            string ltsmsgpswd
+        )
         {
             List<string> areas = new List<string>();
 
-            var myweathersnowrequest = GetLCSRequests.GetWeatherSnowDetailRequest("", "1", "25", lang, "0", "0", "1", "1", "0", "1", "1", "1", "1", "1", "", "", "", measuringpointList, "SMG", ltsmsgpswd);
+            var myweathersnowrequest = GetLCSRequests.GetWeatherSnowDetailRequest(
+                "",
+                "1",
+                "25",
+                lang,
+                "0",
+                "0",
+                "1",
+                "1",
+                "0",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "",
+                "",
+                "",
+                measuringpointList,
+                "SMG",
+                ltsmsgpswd
+            );
 
-            GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(serviceurl, ltsuser, ltspswd);
+            GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(
+                serviceurl,
+                ltsuser,
+                ltspswd
+            );
 
             var myweatherresponse = myactivitysearch.GetWeatherSnowDetail(myweathersnowrequest);
 
@@ -26,13 +58,45 @@ namespace LCS
         }
 
         //Methode wos Live die Wetterdaten holt zu an Messpunkt!
-        public static ServiceReferenceLCS.WeatherSnowObservationDetailRS GetMeasuringpointDataReduced(string lang, List<string> measuringpointList, string serviceurl, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static ServiceReferenceLCS.WeatherSnowObservationDetailRS GetMeasuringpointDataReduced(
+            string lang,
+            List<string> measuringpointList,
+            string serviceurl,
+            string ltsuser,
+            string ltspswd,
+            string ltsmsgpswd
+        )
         {
             List<string> areas = new List<string>();
 
-            var myweathersnowrequest = GetLCSRequests.GetWeatherSnowDetailRequest("", "1", "25", lang, "0", "0", "0", "1", "0", "0", "1", "1", "0", "1", "", "", "", measuringpointList, "SMG", ltsmsgpswd);
+            var myweathersnowrequest = GetLCSRequests.GetWeatherSnowDetailRequest(
+                "",
+                "1",
+                "25",
+                lang,
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "1",
+                "1",
+                "0",
+                "1",
+                "",
+                "",
+                "",
+                measuringpointList,
+                "SMG",
+                ltsmsgpswd
+            );
 
-            GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(serviceurl, ltsuser, ltspswd);
+            GetActivityDataLCS myactivitysearch = new GetActivityDataLCS(
+                serviceurl,
+                ltsuser,
+                ltspswd
+            );
 
             var myweatherresponse = myactivitysearch.GetWeatherSnowDetail(myweathersnowrequest);
 

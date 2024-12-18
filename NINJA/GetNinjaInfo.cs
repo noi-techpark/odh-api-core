@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DataModel;
+using Newtonsoft.Json;
 
 namespace NINJA
 {
@@ -18,7 +18,8 @@ namespace NINJA
         /// <returns></returns>
         public static async Task<NinjaObject<NinjaEvent>> GetNinjaEvent(string serviceurl)
         {
-            string eventselect = @"Culture/*/?limit=-1&offset=0&select=tmetadata&where=sactive.eq.true,tname.eq.1aJW6sEGo40hWeL_B2yK4N7CIGwRlmwVpAkwqxjF1ruA:1179155880&shownull=false&distinct=true";
+            string eventselect =
+                @"Culture/*/?limit=-1&offset=0&select=tmetadata&where=sactive.eq.true,tname.eq.1aJW6sEGo40hWeL_B2yK4N7CIGwRlmwVpAkwqxjF1ruA:1179155880&shownull=false&distinct=true";
 
             var requesturl = serviceurl + eventselect;
 
@@ -30,12 +31,13 @@ namespace NINJA
 
                 var myresponsejson = await myresponse.Content.ReadAsStringAsync();
 
-                var btpresponseobject = JsonConvert.DeserializeObject<NinjaObject<NinjaEvent>>(myresponsejson);
+                var btpresponseobject = JsonConvert.DeserializeObject<NinjaObject<NinjaEvent>>(
+                    myresponsejson
+                );
 
                 return btpresponseobject;
             }
         }
-
 
         /// <summary>
         /// Gets the Data from Ninja Api
@@ -43,7 +45,8 @@ namespace NINJA
         /// <returns></returns>
         public static async Task<NinjaObject<NinjaPlaceRoom>> GetNinjaPlaces(string serviceurl)
         {
-            string placeselect = @"Culture/?limit=-1&offset=0&where=sactive.eq.true,sorigin.eq.1aJW6sEGo40hWeL_B2yK4N7CIGwRlmwVpAkwqxjF1ruA&shownull=false&distinct=true";
+            string placeselect =
+                @"Culture/?limit=-1&offset=0&where=sactive.eq.true,sorigin.eq.1aJW6sEGo40hWeL_B2yK4N7CIGwRlmwVpAkwqxjF1ruA&shownull=false&distinct=true";
 
             var requesturl = serviceurl + placeselect;
 
@@ -55,16 +58,20 @@ namespace NINJA
 
                 var myresponsejson = await myresponse.Content.ReadAsStringAsync();
 
-                var btpresponseobject = JsonConvert.DeserializeObject<NinjaObject<NinjaPlaceRoom>>(myresponsejson);
+                var btpresponseobject = JsonConvert.DeserializeObject<NinjaObject<NinjaPlaceRoom>>(
+                    myresponsejson
+                );
 
                 return btpresponseobject;
             }
         }
 
-
-        public static async Task<NinjaObject<NinjaEchargingStation>> GetNinjaEchargingStations(string serviceurl)
+        public static async Task<NinjaObject<NinjaEchargingStation>> GetNinjaEchargingStations(
+            string serviceurl
+        )
         {
-            string placeselect = $"EChargingStation?limit=0&where=sactive.eq.true,scoordinate.bbc.({NinjaHelper.GetBoundingBoxForSouthTyrol()})";
+            string placeselect =
+                $"EChargingStation?limit=0&where=sactive.eq.true,scoordinate.bbc.({NinjaHelper.GetBoundingBoxForSouthTyrol()})";
 
             var requesturl = serviceurl + placeselect;
 
@@ -76,13 +83,18 @@ namespace NINJA
 
                 var myresponsejson = await myresponse.Content.ReadAsStringAsync();
 
-                return JsonConvert.DeserializeObject<NinjaObject<NinjaEchargingStation>>(myresponsejson);
+                return JsonConvert.DeserializeObject<NinjaObject<NinjaEchargingStation>>(
+                    myresponsejson
+                );
             }
         }
 
-        public static async Task<NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>> GetNinjaEchargingPlugs(string serviceurl)
-        {            
-            string placeselect = $"EChargingPlug?limit=0&where=sactive.eq.true,scoordinate.bbc.({NinjaHelper.GetBoundingBoxForSouthTyrol()})";
+        public static async Task<
+            NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>
+        > GetNinjaEchargingPlugs(string serviceurl)
+        {
+            string placeselect =
+                $"EChargingPlug?limit=0&where=sactive.eq.true,scoordinate.bbc.({NinjaHelper.GetBoundingBoxForSouthTyrol()})";
 
             var requesturl = serviceurl + placeselect;
 
@@ -94,10 +106,11 @@ namespace NINJA
 
                 var myresponsejson = await myresponse.Content.ReadAsStringAsync();
 
-                return JsonConvert.DeserializeObject<NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>>(myresponsejson);
+                return JsonConvert.DeserializeObject<
+                    NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>
+                >(myresponsejson);
             }
         }
-
     }
 
     public class NinjaHelper

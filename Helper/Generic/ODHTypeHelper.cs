@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
+using Newtonsoft.Json;
 
 namespace Helper
 {
@@ -51,10 +51,9 @@ namespace Helper
                 "weather",
                 "weatherforecast",
                 "weatherrealtime",
-                "snowreport"
+                "snowreport",
             };
         }
-
 
         #region TypeObject2TypeStringANDPGTable
 
@@ -101,11 +100,11 @@ namespace Helper
                 WeatherForecast or WeatherForecastLinked => "weatherforecast",
                 WeatherRealTimeLinked or WeatherRealTimeLinked => "weatherrealtime",
                 TourismMetaData => "odhmetadata",
-                TagLinked => "tag",                
+                TagLinked => "tag",
                 SnowReportBaseData => "snowreport",
                 VenueV2 => "venue",
                 EventV2 => "event",
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -151,7 +150,7 @@ namespace Helper
                 TagLinked => "tags",
                 EventV2 => "eventsv2",
                 VenueV2 => "venuesv2",
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -197,7 +196,7 @@ namespace Helper
                 "weatherhistory" => "weatherdatahistory",
                 "odhmetadata" => "metadata",
                 "tag" => "tags",
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -244,7 +243,7 @@ namespace Helper
                 "snowreport" => typeof(SnowReportBaseData),
                 "odhmetadata" => typeof(TourismMetaData),
                 "tag" => typeof(TagLinked),
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -292,7 +291,7 @@ namespace Helper
                 "tags" => "tag",
                 "venuesv2" => "venue",
                 "eventsv2" => "event",
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -337,7 +336,7 @@ namespace Helper
                 "tags" => typeof(TagLinked),
                 "eventsv2" => typeof(EventV2),
                 "venuesv2" => typeof(VenueV2),
-                _ => throw new Exception("not known table name")
+                _ => throw new Exception("not known table name"),
             };
         }
 
@@ -385,7 +384,7 @@ namespace Helper
                 "tag" => id.ToLower(),
                 "publisher" => id.ToLower(),
                 "source" => id.ToLower(),
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -398,7 +397,9 @@ namespace Helper
             return odhtype switch
             {
                 "accommodation" => JsonConvert.DeserializeObject<AccommodationV2>(raw.Value)!,
-                "accommodationroom" => JsonConvert.DeserializeObject<AccommodationRoomLinked>(raw.Value)!,
+                "accommodationroom" => JsonConvert.DeserializeObject<AccommodationRoomLinked>(
+                    raw.Value
+                )!,
                 "ltsactivity" => JsonConvert.DeserializeObject<LTSActivityLinked>(raw.Value)!,
                 "ltspoi" => JsonConvert.DeserializeObject<LTSPoiLinked>(raw.Value)!,
                 "ltsgastronomy" => JsonConvert.DeserializeObject<GastronomyLinked>(raw.Value)!,
@@ -413,7 +414,9 @@ namespace Helper
                 "experiencearea" => JsonConvert.DeserializeObject<ExperienceAreaLinked>(raw.Value)!,
                 "metaregion" => JsonConvert.DeserializeObject<MetaRegionLinked>(raw.Value)!,
                 "region" => JsonConvert.DeserializeObject<RegionLinked>(raw.Value)!,
-                "tourismassociation" => JsonConvert.DeserializeObject<TourismvereinLinked>(raw.Value)!,
+                "tourismassociation" => JsonConvert.DeserializeObject<TourismvereinLinked>(
+                    raw.Value
+                )!,
                 "municipality" => JsonConvert.DeserializeObject<MunicipalityLinked>(raw.Value)!,
                 "district" => JsonConvert.DeserializeObject<DistrictLinked>(raw.Value)!,
                 "skiarea" => JsonConvert.DeserializeObject<SkiAreaLinked>(raw.Value)!,
@@ -426,7 +429,7 @@ namespace Helper
                 "weatherhistory" => JsonConvert.DeserializeObject<WeatherHistoryLinked>(raw.Value)!,
                 "odhmetadata" => JsonConvert.DeserializeObject<TourismMetaData>(raw.Value)!,
                 "tag" => JsonConvert.DeserializeObject<TagLinked>(raw.Value)!,
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -480,16 +483,29 @@ namespace Helper
             {
                 "accommodation" => PostgresSQLWhereBuilder.AccoTitleFieldsToSearchFor,
                 "accommodationroom" => PostgresSQLWhereBuilder.AccoRoomNameFieldsToSearchFor,
-                "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
-                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea" or "webcam" or "venue"
-                => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
+                "ltsactivity"
+                or "ltspoi"
+                or "ltsgastronomy"
+                or "event"
+                or "odhactivitypoi"
+                or "metaregion"
+                or "region"
+                or "tourismassociation"
+                or "municipality"
+                or "district"
+                or "skiarea"
+                or "skiregion"
+                or "article"
+                or "experiencearea"
+                or "webcam"
+                or "venue" => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
                 //"measuringpoint" => PostgresSQLWhereBuilder.,
-//                "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
+                //                "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
                 //"venue" => PostgresSQLWhereBuilder.TitleFieldsToSearchFor,
-                //"eventshort" => "eventeuracnoi",           
+                //"eventshort" => "eventeuracnoi",
                 //"area" => "areas",
                 //"wineaward" => "wines",
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -532,10 +548,9 @@ namespace Helper
                 "snowreport" => "Weather/SnowReport",
                 "weather" => "Weather",
 
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
-
 
         #endregion
 
@@ -551,7 +566,7 @@ namespace Helper
         //        //"measuringpoint" => PostgresSQLWhereBuilder.,
         //        "webcam" => PostgresSQLWhereBuilder.WebcamnameFieldsToSearchFor,
         //        "venue" => PostgresSQLWhereBuilder.VenueTitleFieldsToSearchFor,
-        //        //"eventshort" => "eventeuracnoi",           
+        //        //"eventshort" => "eventeuracnoi",
         //        //"area" => "areas",
         //        //"wineaward" => "wines",
         //        _ => throw new Exception("not known odh type")
@@ -564,15 +579,27 @@ namespace Helper
             {
                 "accommodation" => $"AccoDetail.{language}.Name",
                 "accommodationroom" => $"AccoRoomDetail.{language}.Name",
-                "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
-                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea" or "venue"
-                => $"Detail.{language}.Title",
+                "ltsactivity"
+                or "ltspoi"
+                or "ltsgastronomy"
+                or "event"
+                or "odhactivitypoi"
+                or "metaregion"
+                or "region"
+                or "tourismassociation"
+                or "municipality"
+                or "district"
+                or "skiarea"
+                or "skiregion"
+                or "article"
+                or "experiencearea"
+                or "venue" => $"Detail.{language}.Title",
                 "measuringpoint" => $"Shortname",
-                "webcam" => $"Webcamname.{language}",                
-                //"eventshort" => "eventeuracnoi",           
+                "webcam" => $"Webcamname.{language}",
+                //"eventshort" => "eventeuracnoi",
                 //"area" => "areas",
                 //"wineaward" => "wines",
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -582,16 +609,27 @@ namespace Helper
             {
                 "accommodation" => $"AccoDetail.{language}.Longdesc",
                 "accommodationroom" => $"AccoRoomDetail.{language}.Longdesc",
-                "ltsactivity" or "ltspoi" or "ltsgastronomy" or "event" or "odhactivitypoi" or "metaregion" or "region" or "tourismassociation" or "municipality"
-                or "district" or "skiarea" or "skiregion" or "article" or "experiencearea"
-                => $"Detail.{language}.BaseText",
+                "ltsactivity"
+                or "ltspoi"
+                or "ltsgastronomy"
+                or "event"
+                or "odhactivitypoi"
+                or "metaregion"
+                or "region"
+                or "tourismassociation"
+                or "municipality"
+                or "district"
+                or "skiarea"
+                or "skiregion"
+                or "article"
+                or "experiencearea" => $"Detail.{language}.BaseText",
                 "measuringpoint" => "notextfield",
                 "webcam" => "notextfield",
                 "venue" => "notextfield",
-                //"eventshort" => "eventeuracnoi",           
+                //"eventshort" => "eventeuracnoi",
                 //"area" => "areas",
                 //"wineaward" => "wines",
-                _ => throw new Exception("not known odh type")
+                _ => throw new Exception("not known odh type"),
             };
         }
     }

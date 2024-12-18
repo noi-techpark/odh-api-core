@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using MongoDB.Driver.Linq;
 
 namespace Helper
 {
@@ -48,7 +48,7 @@ namespace Helper
                 {
                     int filterint;
 
-                    if(int.TryParse(filter, out filterint))
+                    if (int.TryParse(filter, out filterint))
                         activityIds.Add(filterint);
                 }
             }
@@ -56,7 +56,11 @@ namespace Helper
             return activityIds;
         }
 
-        public static List<string> CreateStringListFromStringParameter(string? inputstring, string separator = ",", IDStyle transformto = IDStyle.mixed)
+        public static List<string> CreateStringListFromStringParameter(
+            string? inputstring,
+            string separator = ",",
+            IDStyle transformto = IDStyle.mixed
+        )
         {
             List<string> listToReturn = new List<string>();
 
@@ -74,24 +78,24 @@ namespace Helper
                 //TODO Remove brackets
 
                 //Method 2 ChatGPT Regex
-                Regex splitregx = new Regex("(?:" + separator + "|\\s*(?:\"([^\"]*)\"|'([^']*)'|([^,]*)))");
+                Regex splitregx = new Regex(
+                    "(?:" + separator + "|\\s*(?:\"([^\"]*)\"|'([^']*)'|([^,]*)))"
+                );
                 var substrings = splitregx.Split(inputstring);
 
                 foreach (var filter in substrings.ToList().Where(x => !String.IsNullOrEmpty(x)))
-                {                    
-                        if (transformto == IDStyle.lowercase)
-                            listToReturn.Add(filter.ToLower());
-                        if (transformto == IDStyle.uppercase)
-                            listToReturn.Add(filter.ToUpper());
-                        else
-                            listToReturn.Add(filter);                 
+                {
+                    if (transformto == IDStyle.lowercase)
+                        listToReturn.Add(filter.ToLower());
+                    if (transformto == IDStyle.uppercase)
+                        listToReturn.Add(filter.ToUpper());
+                    else
+                        listToReturn.Add(filter);
                 }
             }
 
             return listToReturn;
         }
-
-
 
         public static List<string> CreateSmgPoiSourceList(string? sourcestring)
         {
@@ -171,22 +175,25 @@ namespace Helper
 
         public static (double, double) CreateRangeStringDouble(string? rangetoSplit)
         {
-            NumberFormatInfo provider = new NumberFormatInfo
-            {
-                NumberDecimalSeparator = "."
-            };
+            NumberFormatInfo provider = new NumberFormatInfo { NumberDecimalSeparator = "." };
 
             if (rangetoSplit != null)
             {
                 var splittedfilter = rangetoSplit.Split(',');
 
-                return (Convert.ToDouble(splittedfilter[0], provider), Convert.ToDouble(splittedfilter[1], provider));
+                return (
+                    Convert.ToDouble(splittedfilter[0], provider),
+                    Convert.ToDouble(splittedfilter[1], provider)
+                );
             }
             else
                 return (0.0, 0.0);
         }
 
-        public static List<string> CreateDifficultyList(string? difficultyfilter, string? activitypoitype)
+        public static List<string> CreateDifficultyList(
+            string? difficultyfilter,
+            string? activitypoitype
+        )
         {
             List<string> difficultyids = new List<string>();
 
@@ -279,14 +286,15 @@ namespace Helper
 
                         break;
                 }
-
-
             }
 
             return difficultyids;
         }
 
-        public static List<string> CreateDifficultyListfromFlag(string? difficultyfilter, string activitypoitype)
+        public static List<string> CreateDifficultyListfromFlag(
+            string? difficultyfilter,
+            string activitypoitype
+        )
         {
             List<string> difficultyids = new List<string>();
 
@@ -388,8 +396,6 @@ namespace Helper
 
                         break;
                 }
-
-
             }
 
             return difficultyids;

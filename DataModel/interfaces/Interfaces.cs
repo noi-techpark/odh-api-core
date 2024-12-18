@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace DataModel
 {
@@ -247,9 +247,11 @@ namespace DataModel
     public interface IOperationSchedules
     {
         IDictionary<string, string> OperationscheduleName { get; set; }
+
         //string OperationscheduleName { get; set; }
         DateTime Start { get; set; }
         DateTime Stop { get; set; }
+
         //bool? ClosedonPublicHolidays { get; set; }
 
         ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
@@ -351,7 +353,6 @@ namespace DataModel
         string? Location { get; set; }
     }
 
-
     public interface IEventPrice
     {
         double Price { get; set; }
@@ -388,5 +389,4 @@ namespace DataModel
     }
 
     #endregion
-
 }

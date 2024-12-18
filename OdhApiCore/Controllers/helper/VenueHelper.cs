@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
-using SqlKata.Execution;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Helper;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
@@ -26,7 +26,7 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
-       
+
         public bool capacity;
         public int capacitymin;
         public int capacitymax;
@@ -34,37 +34,87 @@ namespace OdhApiCore.Controllers
         public bool roomcount;
         public int roomcountmin;
         public int roomcountmax;
+
         //New Publishedonlist
         public List<string> publishedonlist;
 
         public static async Task<VenueHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? categoryfilter, string? featurefilter, string? setuptypefilter, string? locfilter,
-            string? capacityfilter, string? roomcountfilter, string? languagefilter, string? sourcefilter, bool? activefilter, bool? smgactivefilter,
-            string? odhtags, string? lastchange, string? publishedonfilter, CancellationToken cancellationToken)
+            QueryFactory queryFactory,
+            string? idfilter,
+            string? categoryfilter,
+            string? featurefilter,
+            string? setuptypefilter,
+            string? locfilter,
+            string? capacityfilter,
+            string? roomcountfilter,
+            string? languagefilter,
+            string? sourcefilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? odhtags,
+            string? lastchange,
+            string? publishedonfilter,
+            CancellationToken cancellationToken
+        )
         {
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
-            return new VenueHelper(idfilter, categoryfilter, featurefilter, setuptypefilter, locfilter, capacityfilter, roomcountfilter, 
-                languagefilter, sourcefilter, activefilter, smgactivefilter, odhtags, lastchange, publishedonfilter, tourismusvereinids);
+            return new VenueHelper(
+                idfilter,
+                categoryfilter,
+                featurefilter,
+                setuptypefilter,
+                locfilter,
+                capacityfilter,
+                roomcountfilter,
+                languagefilter,
+                sourcefilter,
+                activefilter,
+                smgactivefilter,
+                odhtags,
+                lastchange,
+                publishedonfilter,
+                tourismusvereinids
+            );
         }
 
         private VenueHelper(
-            string? idfilter, string? categoryfilter, string? featurefilter, string? setuptypefilter, string? locfilter,
-            string? capacityfilter, string? roomcountfilter, string? languagefilter, string? sourcefilter,
-            bool? activefilter, bool? smgactivefilter, string? odhtags, string? lastchange, string? publishedonfilter, IEnumerable<string>? tourismusvereinids)
+            string? idfilter,
+            string? categoryfilter,
+            string? featurefilter,
+            string? setuptypefilter,
+            string? locfilter,
+            string? capacityfilter,
+            string? roomcountfilter,
+            string? languagefilter,
+            string? sourcefilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? odhtags,
+            string? lastchange,
+            string? publishedonfilter,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
-          
             sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
 
-            setuptypelist = Helper.VenueListCreator.CreateVenueSeatTypeListfromFlag(setuptypefilter);
+            setuptypelist = Helper.VenueListCreator.CreateVenueSeatTypeListfromFlag(
+                setuptypefilter
+            );
             featurelist = Helper.VenueListCreator.CreateVenueFeatureListfromFlag(featurefilter);
             categorylist = Helper.VenueListCreator.CreateVenueCategoryListfromFlag(categoryfilter);
-
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
@@ -89,10 +139,9 @@ namespace OdhApiCore.Controllers
             if (tourismusvereinids != null)
                 tourismvereinlist.AddRange(tourismusvereinids);
 
-
             //Capacity
             capacity = capacityfilter != null;
-           if(capacity)
+            if (capacity)
                 (capacitymin, capacitymax) = CommonListCreator.CreateRangeString(capacityfilter);
 
             //Altitude

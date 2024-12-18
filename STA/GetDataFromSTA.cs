@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using CsvHelper;
-using CsvHelper.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace STA
 {
@@ -37,7 +37,12 @@ namespace STA
                 var records = default(IEnumerable<STAVendingPoint>);
 
                 //Import from File or from posted data
-                using (var reader = csvcontent == null ? new StreamReader(csvurl, Encoding.UTF8) : new StreamReader(GenerateStreamFromString(csvcontent), Encoding.UTF8))
+                using (
+                    var reader =
+                        csvcontent == null
+                            ? new StreamReader(csvurl, Encoding.UTF8)
+                            : new StreamReader(GenerateStreamFromString(csvcontent), Encoding.UTF8)
+                )
                 using (var csv = new CsvReader(reader, config))
                 {
                     //csv.Configuration.Delimiter = ";";
@@ -51,11 +56,19 @@ namespace STA
                     myresult.records = records.ToList();
 
                     return Task.FromResult(myresult);
-                }                
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Task.FromResult(new ParseResult<STAVendingPoint>() { Error = true, Success = false, ErrorMessage = ex.Message, records = Enumerable.Empty<STAVendingPoint>() });
+                return Task.FromResult(
+                    new ParseResult<STAVendingPoint>()
+                    {
+                        Error = true,
+                        Success = false,
+                        ErrorMessage = ex.Message,
+                        records = Enumerable.Empty<STAVendingPoint>(),
+                    }
+                );
             }
         }
 

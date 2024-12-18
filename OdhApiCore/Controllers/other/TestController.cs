@@ -2,22 +2,22 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Helper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-using SqlKata.Execution;
 using System.Globalization;
 using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using DataModel;
 using DataModel.Annotations;
+using Helper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using OdhNotifier;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -30,7 +30,14 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public TestController(IWebHostEnvironment env, ISettings settings, ILogger<TestController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier, IHttpClientFactory httpClientFactory)
+        public TestController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<TestController> logger,
+            QueryFactory queryFactory,
+            IOdhPushNotifier odhpushnotifier,
+            IHttpClientFactory httpClientFactory
+        )
             : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.httpClientFactory = httpClientFactory;
@@ -41,21 +48,18 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestAppsettings")]
         public IActionResult GetTestappsettings()
         {
-
             return Ok(JsonConvert.SerializeObject(settings.Field2HideConfig));
         }
 
         [HttpGet, Route("TestQuotasettings")]
         public IActionResult GetTestquotasettings()
         {
-
             return Ok(JsonConvert.SerializeObject(settings.RateLimitConfig));
         }
 
         [HttpGet, Route("TestQuotaRoutes")]
         public IActionResult GetTestQuotaRoutes()
         {
-
             return Ok(JsonConvert.SerializeObject(settings.NoRateLimitConfig));
         }
 
@@ -65,12 +69,21 @@ namespace OdhApiCore.Controllers.api
             var url = Url.Link("UrlHelperTest", new { });
             var remoteurl = RemoteIpHelper.GetRequestIP(this.HttpContext, true);
 
-            var xforwardedforheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-For", this.HttpContext);
-            var xforwardedprotoheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Proto", this.HttpContext);
-            var xforwardedhostheader = RemoteIpHelper.GetHeaderValueAs<string>("X-Forwarded-Host", this.HttpContext);
+            var xforwardedforheader = RemoteIpHelper.GetHeaderValueAs<string>(
+                "X-Forwarded-For",
+                this.HttpContext
+            );
+            var xforwardedprotoheader = RemoteIpHelper.GetHeaderValueAs<string>(
+                "X-Forwarded-Proto",
+                this.HttpContext
+            );
+            var xforwardedhostheader = RemoteIpHelper.GetHeaderValueAs<string>(
+                "X-Forwarded-Host",
+                this.HttpContext
+            );
 
             var xforwardedproto = this.HttpContext.Request.Scheme;
-            var xforwardedhost = this.HttpContext.Request.Host;            
+            var xforwardedhost = this.HttpContext.Request.Host;
 
             return new
             {
@@ -78,18 +91,21 @@ namespace OdhApiCore.Controllers.api
                 RemoteURL = remoteurl,
                 ForwardedForHeader = xforwardedforheader,
                 ForwardedProtoHeader = xforwardedprotoheader,
-                ForwardedHostHeader = xforwardedhostheader,                
+                ForwardedHostHeader = xforwardedhostheader,
                 ForwardedProtoContext = xforwardedproto,
-                ForwardedHostContext = xforwardedhost
-            }; 
+                ForwardedHostContext = xforwardedhost,
+            };
         }
 
-        
         //Not working
         [HttpGet, Route("TestDateTimeConversion1")]
         public IActionResult GetDatetimeConversion1()
         {
-            var date = DateTime.ParseExact("31/12/2020 18:00", "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+            var date = DateTime.ParseExact(
+                "31/12/2020 18:00",
+                "dd/MM/yyyy HH:mm",
+                CultureInfo.InvariantCulture
+            );
 
             return Ok(date);
         }
@@ -147,15 +163,14 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("GetTimeZoneTest")]
         public IActionResult GetTimeZoneTest()
         {
-            var currentdate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome"));
+            var currentdate = TimeZoneInfo.ConvertTime(
+                DateTime.UtcNow,
+                TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome")
+            );
             var date = DateTime.Now;
 
             return Ok(new { date, currentdate });
         }
-
-        
-
-
 
         [ProducesResponseType(typeof(IEnumerable<ObjectwithDeprecated>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -163,8 +178,18 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestDeprecated")]
         public IActionResult GetDeprecated()
         {
-            ObjectwithDeprecated test1 = new ObjectwithDeprecated() { name = "test", name2 = "test", namecol = new List<string>() { "test1", "test2" } };
-            ObjectwithDeprecated test2 = new ObjectwithDeprecated() { name = "test2", name2 = "test2", namecol = new List<string>() { "test21", "test22" } };
+            ObjectwithDeprecated test1 = new ObjectwithDeprecated()
+            {
+                name = "test",
+                name2 = "test",
+                namecol = new List<string>() { "test1", "test2" },
+            };
+            ObjectwithDeprecated test2 = new ObjectwithDeprecated()
+            {
+                name = "test2",
+                name2 = "test2",
+                namecol = new List<string>() { "test21", "test22" },
+            };
 
             var toreturn = new List<ObjectwithDeprecated>();
             toreturn.Add(test1);
@@ -173,19 +198,19 @@ namespace OdhApiCore.Controllers.api
             return Ok(toreturn);
         }
 
-
         [HttpGet, Route("TestQuery")]
         public async Task<IActionResult> GetTestRudi()
         {
-            var validforentity = new List<string>();         
+            var validforentity = new List<string>();
             validforentity.Add("winter");
 
-            var subcategories = await QueryFactory.Query()
-             .SelectRaw("data")
-             .From("smgtags")
-             .ODHTagValidForEntityFilter(validforentity)
-             .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
-             .GetObjectListAsync<ODHTagLinked>();
+            var subcategories = await QueryFactory
+                .Query()
+                .SelectRaw("data")
+                .From("smgtags")
+                .ODHTagValidForEntityFilter(validforentity)
+                .ODHTagMainEntityFilter(new List<string>() { "smgpoi" })
+                .GetObjectListAsync<ODHTagLinked>();
 
             return Ok(subcategories);
         }
@@ -193,11 +218,13 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("TestLocReduced")]
         public async Task<IActionResult> GetTestLocReduced()
         {
-            var municipalityreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(QueryFactory, "municipalities");
+            var municipalityreducedinfo = await GpsHelper.GetReducedWithGPSInfoList(
+                QueryFactory,
+                "municipalities"
+            );
 
             return Ok(municipalityreducedinfo);
         }
-
 
         //[HttpGet, Route("TestFCMSendV2")]
         //public async Task<IActionResult> TestFCMSendV2()
@@ -309,10 +336,11 @@ namespace OdhApiCore.Controllers.api
 
         #endregion
     }
-    
+
     public class ObjectwithDeprecated
     {
         public string? name { get; set; }
+
         [SwaggerDeprecated("Will be removed on 12-05-22, please use name instead.")]
         public string? name2 { get; set; }
         public ICollection<string>? namecol { get; set; }

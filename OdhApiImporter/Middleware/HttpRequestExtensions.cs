@@ -2,37 +2,46 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Diagnostics;
 using Helper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
 
 namespace OdhApiImporter
 {
     public static class HttpRequestExtensions
     {
-        public static IApplicationBuilder UseODHCustomHttpRequestConfig(this IApplicationBuilder builder, IConfiguration configuration)
+        public static IApplicationBuilder UseODHCustomHttpRequestConfig(
+            this IApplicationBuilder builder,
+            IConfiguration configuration
+        )
         {
-            return builder.Use(async (context, next) =>
-            {     
-                
-                Stopwatch requesttime = new Stopwatch();
-                requesttime.Start();
-
-                await next();
-
-                if (!String.IsNullOrEmpty(context.Request.Path.Value))
+            return builder.Use(
+                async (context, next) =>
                 {
-                    requesttime.Stop();
+                    Stopwatch requesttime = new Stopwatch();
+                    requesttime.Start();
 
-                    GenerateLogResponse(context, requesttime.ElapsedMilliseconds, "", "");
+                    await next();
+
+                    if (!String.IsNullOrEmpty(context.Request.Path.Value))
+                    {
+                        requesttime.Stop();
+
+                        GenerateLogResponse(context, requesttime.ElapsedMilliseconds, "", "");
+                    }
                 }
-            });
+            );
         }
 
-        public static void GenerateLogResponse(Microsoft.AspNetCore.Http.HttpContext context, long? elapsedtime = 0, string? quotaapplied = "", string? cachekey = "")
+        public static void GenerateLogResponse(
+            Microsoft.AspNetCore.Http.HttpContext context,
+            long? elapsedtime = 0,
+            string? quotaapplied = "",
+            string? cachekey = ""
+        )
         {
             //TODO Make a Referer Class/Method for the logic
             var referer = "not provided";
@@ -60,7 +69,12 @@ namespace OdhApiImporter
             if (context.Request.Headers.ContainsKey("User-Agent"))
                 useragent = context.Request.Headers["User-Agent"].ToString();
 
-            var urlparameters = context.Request.QueryString.Value != null ? context.Request.QueryString.HasValue ? context.Request.QueryString.Value.Replace("?", "") : "" : "";
+            var urlparameters =
+                context.Request.QueryString.Value != null
+                    ? context.Request.QueryString.HasValue
+                        ? context.Request.QueryString.Value.Replace("?", "")
+                        : ""
+                    : "";
 
             //To check
             var remoteip = RemoteIpHelper.GetRequestIP(context, true);
@@ -86,19 +100,28 @@ namespace OdhApiImporter
                 referer = referer,
                 schema = context.Request.Scheme,
                 useragent = useragent,
-                username = context.User.Identity != null ? context.User.Identity.Name != null ? context.User.Identity.Name.ToString() : "anonymous" : "anonymous",
+                username =
+                    context.User.Identity != null
+                        ? context.User.Identity.Name != null
+                            ? context.User.Identity.Name.ToString()
+                            : "anonymous"
+                        : "anonymous",
                 ipaddress = remoteip,
                 statuscode = context.Response.StatusCode,
                 origin = origin,
                 elapsedtime = elapsedtime,
                 appliedquota = ratelimitpolicy,
-                ratelimitkey = cachekey
+                ratelimitkey = cachekey,
             };
-            LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>() { id = "", type = "HttpRequest", log = "apiaccess", output = httplog };
+            LogOutput<HttpRequestLog> logoutput = new LogOutput<HttpRequestLog>()
+            {
+                id = "",
+                type = "HttpRequest",
+                log = "apiaccess",
+                output = httplog,
+            };
 
             Console.WriteLine(JsonConvert.SerializeObject(logoutput));
         }
-
     }
-
 }

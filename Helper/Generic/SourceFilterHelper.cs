@@ -28,7 +28,6 @@ namespace Helper.Generic
                         sourcelistnew.Add("magnolia");
                     if (!sourcelistnew.Contains("common"))
                         sourcelistnew.Add("common");
-
                 }
                 else if (source == "lts")
                 {
@@ -91,7 +90,7 @@ namespace Helper.Generic
                         sourcelistnew.Add("pension erlacher");
                     if (!sourcelistnew.Contains("vek"))
                         sourcelistnew.Add("vek");
-                }               
+                }
             }
 
             return sourcelistnew;

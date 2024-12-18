@@ -2,6 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Authorization;
@@ -11,10 +15,6 @@ using Microsoft.Extensions.Logging;
 using OdhNotifier;
 using PushServer;
 using SqlKata.Execution;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -23,7 +23,13 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         private readonly IWebHostEnvironment env;
 
-        public PushNotificationController(IWebHostEnvironment env, ISettings settings, ILogger<PushNotificationController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
+        public PushNotificationController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<PushNotificationController> logger,
+            QueryFactory queryFactory,
+            IOdhPushNotifier odhpushnotifier
+        )
             : base(env, settings, logger, queryFactory, odhpushnotifier)
         {
             this.settings = settings;
@@ -39,13 +45,19 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpPost, Route("PushData/{id}/{type}/{publisher}")]
-        public async Task<IActionResult> PushData(string id, string type, string publisher, bool usemocks = true, string ? language = null)
+        public async Task<IActionResult> PushData(
+            string id,
+            string type,
+            string publisher,
+            bool usemocks = true,
+            string? language = null
+        )
         {
             IDictionary<string, PushResponse> resultdict = new Dictionary<string, PushResponse>();
 
             //If environment is set on production deactivate usemocks
             //if (!env.IsDevelopment())
-                usemocks = false;
+            usemocks = false;
 
             foreach (var publish in publisher.Split(","))
             {
@@ -62,31 +74,58 @@ namespace OdhApiCore.Controllers.api
 
                 //Check if data can be pushed
                 var checkobjectresult = await CheckPublishedOnAttribute(id, type, publish);
-                
+
                 if (checkobjectresult.Item1)
                 {
                     switch (publish)
                     {
                         //FCM Push
                         case "noi-communityapp":
-                            data.Result = usemocks ? new PushResult() { Error = "", Success = true, Messages = 1, Response = "This is a mockup response" } : await GetDataAndSendFCMMessage(type, id, publish, language);
+                            data.Result = usemocks
+                                ? new PushResult()
+                                {
+                                    Error = "",
+                                    Success = true,
+                                    Messages = 1,
+                                    Response = "This is a mockup response",
+                                }
+                                : await GetDataAndSendFCMMessage(type, id, publish, language);
                             break;
 
                         //NOTIFIER
                         case "idm-marketplace":
                             if (usemocks)
-                                data.Result = new NotifierResponse() { HttpStatusCode = System.Net.HttpStatusCode.OK, Response = "This is a mockup response", Service = "idm-marketplace", Success = true };
+                                data.Result = new NotifierResponse()
+                                {
+                                    HttpStatusCode = System.Net.HttpStatusCode.OK,
+                                    Response = "This is a mockup response",
+                                    Service = "idm-marketplace",
+                                    Success = true,
+                                };
                             else
                             {
-                                var notifierresult = await OdhPushnotifier.PushToPublishedOnServices(id, type, "manual.push", new Dictionary<string, bool> { { "imageschanged", true } }, false, "push.api", new List<string>() { publish });
-                                data.Result = notifierresult != null &&
-                                              notifierresult.ContainsKey(publish) ?
-                                              notifierresult[publish] :
-                                              new { Success = false };
+                                var notifierresult =
+                                    await OdhPushnotifier.PushToPublishedOnServices(
+                                        id,
+                                        type,
+                                        "manual.push",
+                                        new Dictionary<string, bool> { { "imageschanged", true } },
+                                        false,
+                                        "push.api",
+                                        new List<string>() { publish }
+                                    );
+                                data.Result =
+                                    notifierresult != null && notifierresult.ContainsKey(publish)
+                                        ? notifierresult[publish]
+                                        : new { Success = false };
                             }
                             break;
                         default:
-                            data.Result = new { Response = "Publisher is not registered on this api", Success = false };
+                            data.Result = new
+                            {
+                                Response = "Publisher is not registered on this api",
+                                Success = false,
+                            };
                             break;
                     }
                 }
@@ -95,9 +134,9 @@ namespace OdhApiCore.Controllers.api
                     data.Result = new { Response = checkobjectresult.Item2, Success = false };
                 }
 
-
                 //Save the result in a push table
-                var insertresult = await QueryFactory.Query("pushresults")
+                var insertresult = await QueryFactory
+                    .Query("pushresults")
                     .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
 
                 resultdict.Add(publish, data);
@@ -106,15 +145,19 @@ namespace OdhApiCore.Controllers.api
             return Ok(resultdict);
         }
 
-        private async Task<(bool, string)> CheckPublishedOnAttribute(string id, string type, string publish)
+        private async Task<(bool, string)> CheckPublishedOnAttribute(
+            string id,
+            string type,
+            string publish
+        )
         {
             //Check if the object has the publisher in the PublishedOn Array
             var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
-           
-            var query =
-              QueryFactory.Query(mytable)
-                  .Select("data")
-                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
+
+            var query = QueryFactory
+                .Query(mytable)
+                .Select("data")
+                .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
 
             var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
@@ -123,16 +166,18 @@ namespace OdhApiCore.Controllers.api
 
             var myobject = ODHTypeHelper.ConvertJsonRawToObject(type, data);
 
-
             if (myobject == null)
                 return (false, "data not found");
-            else if(myobject != null && myobject is IPublishedOn)
+            else if (myobject != null && myobject is IPublishedOn)
             {
                 //check if publisher is set
-                if ((myobject as IPublishedOn).PublishedOn != null && (myobject as IPublishedOn).PublishedOn.Contains(publish))
-                    return (true,"");
+                if (
+                    (myobject as IPublishedOn).PublishedOn != null
+                    && (myobject as IPublishedOn).PublishedOn.Contains(publish)
+                )
+                    return (true, "");
                 else
-                    return (false,"publisher not activated for this record");
+                    return (false, "publisher not activated for this record");
             }
 
             return (false, "something went wrong");
@@ -156,11 +201,11 @@ namespace OdhApiCore.Controllers.api
             var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
             var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
 
-            var query =
-              QueryFactory.Query(mytable)
-                  .Select("data")
-                  .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
-                  //.When(FilterClosedData, q => q.FilterClosedData());
+            var query = QueryFactory
+                .Query(mytable)
+                .Select("data")
+                .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
+            //.When(FilterClosedData, q => q.FilterClosedData());
 
             // TODO: Create a logic that constructs a message out of the object
 
@@ -170,7 +215,13 @@ namespace OdhApiCore.Controllers.api
 
             var message = new PushServerMessage();
 
-            var result = await SendToPushServer.SendMessageToPushServer(pushserverconfig.ServiceUrl, message, pushserverconfig.User, pushserverconfig.Password, message.destination.language);
+            var result = await SendToPushServer.SendMessageToPushServer(
+                pushserverconfig.ServiceUrl,
+                message,
+                pushserverconfig.User,
+                pushserverconfig.Password,
+                message.destination.language
+            );
 
             return Ok(result);
         }
@@ -187,7 +238,13 @@ namespace OdhApiCore.Controllers.api
         {
             var pushserverconfig = settings.PushServerConfig;
 
-            var result = await SendToPushServer.SendMessageToPushServer(pushserverconfig.ServiceUrl, message, pushserverconfig.User, pushserverconfig.Password, message.destination.language);
+            var result = await SendToPushServer.SendMessageToPushServer(
+                pushserverconfig.ServiceUrl,
+                message,
+                pushserverconfig.User,
+                pushserverconfig.Password,
+                message.destination.language
+            );
 
             return Ok(result);
         }
@@ -203,12 +260,22 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpGet, Route("FCMMessage/{type}/{id}/{identifier}/{language}")]
-        public async Task<IActionResult> GetFCM(string type, string id, string identifier, string? language = null)
-        {            
-            return Ok(GetDataAndSendFCMMessage(type, id, identifier, language));            
+        public async Task<IActionResult> GetFCM(
+            string type,
+            string id,
+            string identifier,
+            string? language = null
+        )
+        {
+            return Ok(GetDataAndSendFCMMessage(type, id, identifier, language));
         }
 
-        private async Task<PushResult> GetDataAndSendFCMMessage(string type, string id, string identifier, string? language = null)
+        private async Task<PushResult> GetDataAndSendFCMMessage(
+            string type,
+            string id,
+            string identifier,
+            string? language = null
+        )
         {
             try
             {
@@ -216,10 +283,10 @@ namespace OdhApiCore.Controllers.api
                 var mytable = ODHTypeHelper.TranslateTypeString2Table(type);
                 var mytype = ODHTypeHelper.TranslateTypeString2Type(type);
 
-                var query =
-                  QueryFactory.Query(mytable)
-                      .Select("data")
-                      .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
+                var query = QueryFactory
+                    .Query(mytable)
+                    .Select("data")
+                    .Where("id", ODHTypeHelper.ConvertIdbyTypeString(type, id));
                 //.When(FilterClosedData, q => q.FilterClosedData());
 
 
@@ -237,7 +304,7 @@ namespace OdhApiCore.Controllers.api
 
                 if (language != null)
                     languages = language.Split(',').ToList();
-                else if(myobject is IHasLanguage && (myobject as IHasLanguage).HasLanguage != null)
+                else if (myobject is IHasLanguage && (myobject as IHasLanguage).HasLanguage != null)
                     languages = (myobject as IHasLanguage).HasLanguage.ToList();
 
                 List<FCMessageV2> messages = new();
@@ -245,7 +312,11 @@ namespace OdhApiCore.Controllers.api
                 foreach (var lang in languages)
                 {
                     //Construct the message
-                    var message = FCMMessageConstructor.ConstructMyMessageV2(identifier, lang.ToLower(), myobject);
+                    var message = FCMMessageConstructor.ConstructMyMessageV2(
+                        identifier,
+                        lang.ToLower(),
+                        myobject
+                    );
 
                     if (message != null)
                         messages.Add(message);
@@ -253,20 +324,26 @@ namespace OdhApiCore.Controllers.api
                         throw new Exception("Message could not be constructed");
                 }
 
-                var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == identifier).FirstOrDefault();
+                var pushserverconfig = settings
+                    .FCMConfig.Where(x => x.Identifier == identifier)
+                    .FirstOrDefault();
 
                 if (pushserverconfig == null)
                     throw new Exception("PushserverConfig could not be found");
                 List<PushResult> resultlist = new();
 
-                string sendurl = $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";
-
+                string sendurl =
+                    $"https://fcm.googleapis.com/v1/projects/{pushserverconfig.ProjecTName}/messages:send";
 
                 foreach (var message in messages)
                 {
                     //var result = await FCMPushNotification.SendNotification(message, sendurl, pushserverconfig.SenderId, pushserverconfig.ServerKey);
 
-                    var result = await FCMPushNotification.SendNotificationV2(message, sendurl, pushserverconfig.ServiceAccount);
+                    var result = await FCMPushNotification.SendNotificationV2(
+                        message,
+                        sendurl,
+                        pushserverconfig.ServiceAccount
+                    );
 
                     resultlist.Add(result);
                 }
@@ -275,7 +352,12 @@ namespace OdhApiCore.Controllers.api
             }
             catch (Exception ex)
             {
-                return new PushResult() { Error = ex.Message, Response = "Error", Success = false };
+                return new PushResult()
+                {
+                    Error = ex.Message,
+                    Response = "Error",
+                    Success = false,
+                };
             }
         }
 
@@ -287,14 +369,24 @@ namespace OdhApiCore.Controllers.api
         [ApiExplorerSettings(IgnoreApi = true)]
         [Authorize(Roles = "DataWriter,DataCreate,PushMessageWriter")]
         [HttpPost, Route("FCMMessage/{identifier}")]
-        public async Task<IActionResult> PostFCMMessage(string identifier, [FromBody] FCMModels message)
+        public async Task<IActionResult> PostFCMMessage(
+            string identifier,
+            [FromBody] FCMModels message
+        )
         {
             //TODO add configurable FCM setting where config can be accessed by identifier
-            var pushserverconfig = settings.FCMConfig.Where(x => x.Identifier == identifier).FirstOrDefault();
+            var pushserverconfig = settings
+                .FCMConfig.Where(x => x.Identifier == identifier)
+                .FirstOrDefault();
 
             if (pushserverconfig != null)
             {
-                var result = await FCMPushNotification.SendNotification(message, " https://fcm.googleapis.com/fcm/send", pushserverconfig.SenderId, pushserverconfig.ServerKey);
+                var result = await FCMPushNotification.SendNotification(
+                    message,
+                    " https://fcm.googleapis.com/fcm/send",
+                    pushserverconfig.SenderId,
+                    pushserverconfig.ServerKey
+                );
 
                 return Ok(result);
             }

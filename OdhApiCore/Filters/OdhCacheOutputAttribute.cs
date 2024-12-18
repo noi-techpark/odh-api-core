@@ -14,7 +14,8 @@ namespace OdhApiCore.Filters
     {
         protected override bool IsCachingAllowed(FilterContext actionContext, bool anonymousOnly)
         {
-            var environment = actionContext.HttpContext.RequestServices.GetService<IWebHostEnvironment>();
+            var environment =
+                actionContext.HttpContext.RequestServices.GetService<IWebHostEnvironment>();
             //if (environment?.IsDevelopment() ?? false)
             //{
             //    return false;

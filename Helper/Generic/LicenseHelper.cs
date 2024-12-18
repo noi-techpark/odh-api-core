@@ -2,24 +2,38 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
 
 namespace Helper
 {
     public class LicenseHelper
     {
-        public static LicenseInfo GetLicenseInfoobject(string licensetype, string author, string licenseholder, bool closeddata)
+        public static LicenseInfo GetLicenseInfoobject(
+            string licensetype,
+            string author,
+            string licenseholder,
+            bool closeddata
+        )
         {
-            return new LicenseInfo() { Author = author, License = licensetype, LicenseHolder = licenseholder, ClosedData = closeddata };
+            return new LicenseInfo()
+            {
+                Author = author,
+                License = licensetype,
+                LicenseHolder = licenseholder,
+                ClosedData = closeddata,
+            };
         }
 
         //TODO Make a HOF and apply all the rules
-        public static LicenseInfo GetLicenseInfoobject<T>(T myobject, Func<T, LicenseInfo> licensegenerator)
+        public static LicenseInfo GetLicenseInfoobject<T>(
+            T myobject,
+            Func<T, LicenseInfo> licensegenerator
+        )
         {
             return licensegenerator(myobject);
         }
@@ -34,7 +48,7 @@ namespace Helper
             {
                 isopendata = true;
                 licensetype = "CC0";
-            }           
+            }
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
@@ -116,13 +130,14 @@ namespace Helper
             }
 
             //Source DRIN and CentroTrevi
-            if(data.Source.ToLower() != "lts")
+            if (data.Source.ToLower() != "lts")
             {
                 isopendata = true;
                 licensetype = "CC0";
 
                 if (data.Source.ToLower() == "trevilab")
-                    licenseholder = @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
+                    licenseholder =
+                        @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
                 if (data.Source.ToLower() == "drin")
                     licenseholder = @"https://www.provincia.bz.it/arte-cultura/giovani/drin.asp";
                 else
@@ -140,19 +155,27 @@ namespace Helper
 
             if (data.Source.ToLower() == "lts")
             {
-                if(data.Active && (data.Mapping.ContainsKey("lts") && data.Mapping["lts"].ContainsKey("ClassificationRID") && data.Mapping["lts"]["ClassificationRID"] == "CE212B488FA14954BE91BBCFA47C0F06"))
-
+                if (
+                    data.Active
+                    && (
+                        data.Mapping.ContainsKey("lts")
+                        && data.Mapping["lts"].ContainsKey("ClassificationRID")
+                        && data.Mapping["lts"]["ClassificationRID"]
+                            == "CE212B488FA14954BE91BBCFA47C0F06"
+                    )
+                )
                 {
                     isopendata = true;
                     licensetype = "CC0";
-                }                
+                }
             }
             //Source DRIN and CentroTrevi
             else if (data.Source.ToLower() == "trevilab")
             {
                 isopendata = true;
                 licensetype = "CC0";
-                licenseholder = @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
+                licenseholder =
+                    @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
             }
             else if (data.Source.ToLower() == "drin")
             {
@@ -165,11 +188,10 @@ namespace Helper
                 isopendata = true;
                 licensetype = "unknown";
                 licenseholder = "unknown";
-            }            
-            
+            }
+
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
-
 
         public static LicenseInfo GetLicenseforOdhActivityPoi(ODHActivityPoi data)
         {
@@ -182,7 +204,12 @@ namespace Helper
 
             if (data.Source.ToLower() == "noi")
                 licenseholder = "http://noi.bz.it";
-            if (data.Source.ToLower() == "idm" || data.Source.ToLower() == "content" || data.Source.ToLower() == "magnolia" || data.Source.ToLower() == "common")
+            if (
+                data.Source.ToLower() == "idm"
+                || data.Source.ToLower() == "content"
+                || data.Source.ToLower() == "magnolia"
+                || data.Source.ToLower() == "common"
+            )
                 licenseholder = @"https://www.idm-suedtirol.com";
             if (data.Source.ToLower() == "siag")
                 licenseholder = "http://www.provinz.bz.it/kunst-kultur/museen";
@@ -207,21 +234,22 @@ namespace Helper
             if (data.Source.ToLower() == "echargingspreadsheet")
                 licenseholder = @"";
 
-            List<string?> allowedsources = new List<string?>() { 
-                "magnolia", 
-                "none", 
-                "museumdata", 
+            List<string?> allowedsources = new List<string?>()
+            {
+                "magnolia",
+                "none",
+                "museumdata",
                 "suedtirolwein",
                 "suedtirolweincompany",
                 "suedtirolweinaward",
-                "archapp", 
-                "activitydata", 
-                "poidata", 
-                "beacondata", 
-                "gastronomicdata", 
+                "archapp",
+                "activitydata",
+                "poidata",
+                "beacondata",
+                "gastronomicdata",
                 "common",
-                "sta", 
-                "dssliftbase", 
+                "sta",
+                "dssliftbase",
                 "dssslopebase",
                 "noi",
                 "neogy",
@@ -229,10 +257,10 @@ namespace Helper
                 "ecogy gmbh",
                 "route220",
                 "leitner energy",
-                "ötzi genossenschaft",
+                "ï¿½tzi genossenschaft",
                 "vek",
                 "pension erlacher",
-                "officina elettrica san vigilio di marebbe spa"
+                "officina elettrica san vigilio di marebbe spa",
             };
 
             if (data.Active)
@@ -283,11 +311,11 @@ namespace Helper
                 licensetype = ""; //licensetype = "CC0";
             }
 
-            if(data.Source?.ToLower() == "content")
+            if (data.Source?.ToLower() == "content")
             {
                 isopendata = true;
                 licenseholder = @"https://www.idm-suedtirol.com";
-            }            
+            }
 
             if (data.Source?.ToLower() == "dss")
             {
@@ -350,7 +378,11 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
 
-            if (data.attributes.categories is { } && !data.attributes.categories.Contains("lts/visi_unpublishedOnODH") && data.attributes.categories.Contains("lts/visi_publishedOnODH"))
+            if (
+                data.attributes.categories is { }
+                && !data.attributes.categories.Contains("lts/visi_unpublishedOnODH")
+                && data.attributes.categories.Contains("lts/visi_publishedOnODH")
+            )
             {
                 isopendata = true;
                 licensetype = "CC0";
@@ -365,7 +397,11 @@ namespace Helper
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
 
-            if (data.SmgTags is { } && !data.SmgTags.Contains("lts/visi_unpublishedOnODH") && data.SmgTags.Contains("lts/visi_publishedOnODH"))
+            if (
+                data.SmgTags is { }
+                && !data.SmgTags.Contains("lts/visi_unpublishedOnODH")
+                && data.SmgTags.Contains("lts/visi_publishedOnODH")
+            )
             {
                 isopendata = true;
                 licensetype = "CC0";
@@ -379,11 +415,14 @@ namespace Helper
             var isopendata = false;
             var licensetype = "Closed";
             var licenseholder = @"https://www.lts.it";
-           
 
             if (data.Source.ToLower() == "lts")
             {
-                if (data.TagIds is {} && !data.TagIds.Contains("lts/visi_unpublishedOnODH") && data.TagIds.Contains("lts/visi_publishedOnODH"))
+                if (
+                    data.TagIds is { }
+                    && !data.TagIds.Contains("lts/visi_unpublishedOnODH")
+                    && data.TagIds.Contains("lts/visi_publishedOnODH")
+                )
                 {
                     isopendata = true;
                     licensetype = "CC0";
@@ -394,7 +433,8 @@ namespace Helper
             {
                 isopendata = true;
                 licensetype = "CC0";
-                licenseholder = @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
+                licenseholder =
+                    @"https://www.provincia.bz.it/arte-cultura/cultura/centro-trevi.asp";
             }
             else if (data.Source.ToLower() == "drin")
             {
@@ -409,10 +449,8 @@ namespace Helper
                 licenseholder = "unknown";
             }
 
-
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
-
 
         public static LicenseInfo GetLicenseforEventShort(EventShort data)
         {
@@ -492,14 +530,13 @@ namespace Helper
             var isopendata = true;
             var licensetype = "CC0";
             var licenseholder = "";
-         
-            if(data.Source == "idm")
+
+            if (data.Source == "idm")
                 licenseholder = "https://www.idm-suedtirol.com";
             else if (data.Source == "noi")
                 licenseholder = "https://noi.bz.it";
             else if (data.Source == "lts")
                 licenseholder = "https://lts.it";
-
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
@@ -516,7 +553,11 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
-        public static void CheckLicenseInfoWithSource(LicenseInfo licenseinfo, string source, bool setcloseddatato)
+        public static void CheckLicenseInfoWithSource(
+            LicenseInfo licenseinfo,
+            string source,
+            bool setcloseddatato
+        )
         {
             if (source == "lts")
             {

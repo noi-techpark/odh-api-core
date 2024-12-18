@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,11 +10,12 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
 
 namespace Helper
 {
     public static class HasLanguageHelper
-    {        
+    {
         private static void FixDetailBaseAndIntroText(Detail mydetail)
         {
             if (!String.IsNullOrEmpty(mydetail.BaseText))
@@ -41,22 +41,42 @@ namespace Helper
         }
 
         //Generic
-        public static void CheckMyInsertedLanguages<T>(this T mypoiactivity, List<string>? availablelanguages)  where T: IHasLanguage, IContactInfosAware, IDetailInfosAware
+        public static void CheckMyInsertedLanguages<T>(
+            this T mypoiactivity,
+            List<string>? availablelanguages
+        )
+            where T : IHasLanguage, IContactInfosAware, IDetailInfosAware
         {
             if (availablelanguages == null || availablelanguages.Count == 0)
-                availablelanguages = new List<string>() { "de", "it", "en", "nl", "cs", "pl", "fr", "ru" };
+                availablelanguages = new List<string>()
+                {
+                    "de",
+                    "it",
+                    "en",
+                    "nl",
+                    "cs",
+                    "pl",
+                    "fr",
+                    "ru",
+                };
 
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
-                if (mypoiactivity.Detail.ContainsKey(language) || mypoiactivity.ContactInfos.ContainsKey(language)) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                if (
+                    mypoiactivity.Detail.ContainsKey(language)
+                    || mypoiactivity.ContactInfos.ContainsKey(language)
+                ) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
                 {
                     bool removelang = true;
 
-                    if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
+                    if (
+                        mypoiactivity.Detail.ContainsKey(language)
+                        && mypoiactivity.Detail[language] != null
+                    )
                     {
                         var detailvalues = mypoiactivity.Detail[language];
 
@@ -81,7 +101,10 @@ namespace Helper
                             removelang = false;
                     }
 
-                    if (mypoiactivity.ContactInfos.ContainsKey(language) && mypoiactivity.ContactInfos[language] != null)
+                    if (
+                        mypoiactivity.ContactInfos.ContainsKey(language)
+                        && mypoiactivity.ContactInfos[language] != null
+                    )
                     {
                         var contactvalues = mypoiactivity.ContactInfos[language];
 
@@ -119,7 +142,7 @@ namespace Helper
                             removelang = false;
                         if (!String.IsNullOrEmpty(contactvalues.ZipCode))
                             removelang = false;
-                    }                    
+                    }
 
                     //Add Language
                     if (removelang == false)
@@ -144,19 +167,29 @@ namespace Helper
         }
 
         //For Articles
-        public static void CheckMyInsertedLanguages(this Article myarticle, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(
+            this Article myarticle,
+            List<string> availablelanguages
+        )
         {
             if (myarticle.HasLanguage == null)
                 myarticle.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
-                if (myarticle.Detail.ContainsKey(language) || myarticle.ContactInfos.ContainsKey(language) || myarticle.AdditionalArticleInfos.ContainsKey(language))
+                if (
+                    myarticle.Detail.ContainsKey(language)
+                    || myarticle.ContactInfos.ContainsKey(language)
+                    || myarticle.AdditionalArticleInfos.ContainsKey(language)
+                )
                 {
                     bool removelang = true;
-                    
-                    if (myarticle.Detail.ContainsKey(language) && myarticle.Detail[language] != null)
+
+                    if (
+                        myarticle.Detail.ContainsKey(language)
+                        && myarticle.Detail[language] != null
+                    )
                     {
                         var detailvalues = myarticle.Detail[language];
 
@@ -187,8 +220,11 @@ namespace Helper
 
                         myarticle.Detail[language].Language = language;
                     }
-                    
-                    if (myarticle.ContactInfos.ContainsKey(language) && myarticle.ContactInfos[language] != null)
+
+                    if (
+                        myarticle.ContactInfos.ContainsKey(language)
+                        && myarticle.ContactInfos[language] != null
+                    )
                     {
                         var contactvalues = myarticle.ContactInfos[language];
 
@@ -238,7 +274,6 @@ namespace Helper
 
                         if (additionalvalues.Elements.Count > 0)
                             removelang = false;
-
                     }
 
                     //Add Language
@@ -260,23 +295,32 @@ namespace Helper
                             myarticle.HasLanguage.Remove(language);
                     }
                 }
-            }            
+            }
         }
 
         //For Activities, Pois, ODHActivityPois
-        public static void CheckMyInsertedLanguages(this PoiBaseInfos mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(
+            this PoiBaseInfos mypoiactivity,
+            List<string> availablelanguages
+        )
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
-                if (mypoiactivity.Detail.ContainsKey(language) || mypoiactivity.ContactInfos.ContainsKey(language)) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                if (
+                    mypoiactivity.Detail.ContainsKey(language)
+                    || mypoiactivity.ContactInfos.ContainsKey(language)
+                ) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
                 {
                     bool removelang = true;
 
-                    if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
+                    if (
+                        mypoiactivity.Detail.ContainsKey(language)
+                        && mypoiactivity.Detail[language] != null
+                    )
                     {
                         var detailvalues = mypoiactivity.Detail[language];
 
@@ -287,21 +331,24 @@ namespace Helper
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.BaseText))
                             if (!String.IsNullOrEmpty(detailvalues.BaseText.Trim()))
-                               removelang = false;
+                                removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.GetThereText))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.Header))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.IntroText))
                             if (!String.IsNullOrEmpty(detailvalues.IntroText.Trim()))
-                                     removelang = false;
+                                removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.SubHeader))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.Title))
                             removelang = false;
                     }
-                    
-                    if (mypoiactivity.ContactInfos.ContainsKey(language) && mypoiactivity.ContactInfos[language] != null)
+
+                    if (
+                        mypoiactivity.ContactInfos.ContainsKey(language)
+                        && mypoiactivity.ContactInfos[language] != null
+                    )
                     {
                         var contactvalues = mypoiactivity.ContactInfos[language];
 
@@ -350,7 +397,6 @@ namespace Helper
                         //Always present do not remove
                         //if (additionalvalues.Elements.Count > 0)
                         //    removelang = false;
-
                     }
 
                     //Add Language
@@ -372,23 +418,32 @@ namespace Helper
                             mypoiactivity.HasLanguage.Remove(language);
                     }
                 }
-            }            
+            }
         }
 
         //For Events
-        public static void CheckMyInsertedLanguages(this Event mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(
+            this Event mypoiactivity,
+            List<string> availablelanguages
+        )
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
-                if (mypoiactivity.Detail.ContainsKey(language) || mypoiactivity.ContactInfos.ContainsKey(language)) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                if (
+                    mypoiactivity.Detail.ContainsKey(language)
+                    || mypoiactivity.ContactInfos.ContainsKey(language)
+                ) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
                 {
                     bool removelang = true;
-                    
-                    if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
+
+                    if (
+                        mypoiactivity.Detail.ContainsKey(language)
+                        && mypoiactivity.Detail[language] != null
+                    )
                     {
                         var detailvalues = mypoiactivity.Detail[language];
 
@@ -399,21 +454,24 @@ namespace Helper
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.BaseText))
                             if (!String.IsNullOrEmpty(detailvalues.BaseText.Trim()))
-                                    removelang = false;
+                                removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.GetThereText))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.Header))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.IntroText))
                             if (!String.IsNullOrEmpty(detailvalues.IntroText.Trim()))
-                                    removelang = false;
+                                removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.SubHeader))
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.Title))
                             removelang = false;
                     }
-                    
-                    if (mypoiactivity.ContactInfos.ContainsKey(language) && mypoiactivity.ContactInfos[language] != null)
+
+                    if (
+                        mypoiactivity.ContactInfos.ContainsKey(language)
+                        && mypoiactivity.ContactInfos[language] != null
+                    )
                     {
                         var contactvalues = mypoiactivity.ContactInfos[language];
 
@@ -471,23 +529,32 @@ namespace Helper
                             mypoiactivity.HasLanguage.Remove(language);
                     }
                 }
-            }            
+            }
         }
 
         //For Gastronomy
-        public static void CheckMyInsertedLanguages(this Gastronomy mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(
+            this Gastronomy mypoiactivity,
+            List<string> availablelanguages
+        )
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
-                if (mypoiactivity.Detail.ContainsKey(language) || mypoiactivity.ContactInfos.ContainsKey(language)) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                if (
+                    mypoiactivity.Detail.ContainsKey(language)
+                    || mypoiactivity.ContactInfos.ContainsKey(language)
+                ) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
                 {
                     bool removelang = true;
 
-                    if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
+                    if (
+                        mypoiactivity.Detail.ContainsKey(language)
+                        && mypoiactivity.Detail[language] != null
+                    )
                     {
                         var detailvalues = mypoiactivity.Detail[language];
                         FixDetailBaseAndIntroText(detailvalues);
@@ -511,8 +578,11 @@ namespace Helper
                         if (!String.IsNullOrEmpty(detailvalues.Title))
                             removelang = false;
                     }
-                    
-                    if (mypoiactivity.ContactInfos.ContainsKey(language) && mypoiactivity.ContactInfos[language] != null)
+
+                    if (
+                        mypoiactivity.ContactInfos.ContainsKey(language)
+                        && mypoiactivity.ContactInfos[language] != null
+                    )
                     {
                         var contactvalues = mypoiactivity.ContactInfos[language];
 
@@ -575,7 +645,10 @@ namespace Helper
         }
 
         //For EventShort
-        public static void CheckMyInsertedLanguages(this EventShort mydata, List<string>? availablelanguages = null)
+        public static void CheckMyInsertedLanguages(
+            this EventShort mydata,
+            List<string>? availablelanguages = null
+        )
         {
             if (availablelanguages == null)
                 availablelanguages = new List<string> { "de", "it", "en" };
@@ -585,18 +658,27 @@ namespace Helper
 
             foreach (string language in availablelanguages)
             {
-                if (mydata.EventText.ContainsKey(language) || mydata.EventTitle.ContainsKey(language)) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                if (
+                    mydata.EventText.ContainsKey(language)
+                    || mydata.EventTitle.ContainsKey(language)
+                ) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
                 {
                     bool removelang = true;
 
-                    if (mydata.EventText.ContainsKey(language) && mydata.EventText[language] != null)
+                    if (
+                        mydata.EventText.ContainsKey(language)
+                        && mydata.EventText[language] != null
+                    )
                     {
                         if (!String.IsNullOrEmpty(mydata.EventText[language]))
-                            removelang = false;                       
+                            removelang = false;
                     }
 
-                    if (mydata.EventTitle.ContainsKey(language) && mydata.EventTitle[language] != null)
-                    {                       
+                    if (
+                        mydata.EventTitle.ContainsKey(language)
+                        && mydata.EventTitle[language] != null
+                    )
+                    {
                         if (!String.IsNullOrEmpty(mydata.EventTitle[language]))
                             removelang = false;
                     }
@@ -618,19 +700,28 @@ namespace Helper
         }
 
         //For Accommodations
-        public static void CheckMyInsertedLanguages(this Accommodation mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(
+            this Accommodation mypoiactivity,
+            List<string> availablelanguages
+        )
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
-                if (mypoiactivity.AccoDetail != null && mypoiactivity.AccoDetail.ContainsKey(language)) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                if (
+                    mypoiactivity.AccoDetail != null
+                    && mypoiactivity.AccoDetail.ContainsKey(language)
+                ) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
                 {
                     bool removelang = true;
 
-                    if (mypoiactivity.AccoDetail.ContainsKey(language) && mypoiactivity.AccoDetail[language] != null)
+                    if (
+                        mypoiactivity.AccoDetail.ContainsKey(language)
+                        && mypoiactivity.AccoDetail[language] != null
+                    )
                     {
                         var detailvalues = mypoiactivity.AccoDetail[language];
 
@@ -668,11 +759,10 @@ namespace Helper
 
                         if (!String.IsNullOrEmpty(detailvalues.Longdesc))
                             if (!String.IsNullOrEmpty(detailvalues.Longdesc.Trim()))
-                                removelang = false;                       
+                                removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.Shortdesc))
                             if (!String.IsNullOrEmpty(detailvalues.Shortdesc.Trim()))
-                                removelang = false;                        
-                        
+                                removelang = false;
                     }
 
                     //Add Language
@@ -685,7 +775,7 @@ namespace Helper
                     else if (removelang == true)
                     {
                         if (mypoiactivity.AccoDetail.ContainsKey(language))
-                            mypoiactivity.AccoDetail.Remove(language);                       
+                            mypoiactivity.AccoDetail.Remove(language);
 
                         if (mypoiactivity.HasLanguage.Contains(language))
                             mypoiactivity.HasLanguage.Remove(language);
@@ -695,19 +785,28 @@ namespace Helper
         }
 
         //For AccommodationRooms
-        public static void CheckMyInsertedLanguages(this AccoRoom mypoiactivity, List<string> availablelanguages)
+        public static void CheckMyInsertedLanguages(
+            this AccoRoom mypoiactivity,
+            List<string> availablelanguages
+        )
         {
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
-                if (mypoiactivity.AccoRoomDetail != null && mypoiactivity.AccoRoomDetail.ContainsKey(language)) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                if (
+                    mypoiactivity.AccoRoomDetail != null
+                    && mypoiactivity.AccoRoomDetail.ContainsKey(language)
+                ) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
                 {
                     bool removelang = true;
 
-                    if (mypoiactivity.AccoRoomDetail.ContainsKey(language) && mypoiactivity.AccoRoomDetail[language] != null)
+                    if (
+                        mypoiactivity.AccoRoomDetail.ContainsKey(language)
+                        && mypoiactivity.AccoRoomDetail[language] != null
+                    )
                     {
                         var detailvalues = mypoiactivity.AccoRoomDetail[language];
 
@@ -715,7 +814,7 @@ namespace Helper
                         //FixDetailBaseAndIntroText(detailvalues);
 
                         if (!String.IsNullOrEmpty(detailvalues.Name))
-                            removelang = false;                    
+                            removelang = false;
 
                         if (!String.IsNullOrEmpty(detailvalues.Longdesc))
                             if (!String.IsNullOrEmpty(detailvalues.Longdesc.Trim()))
@@ -723,7 +822,6 @@ namespace Helper
                         if (!String.IsNullOrEmpty(detailvalues.Shortdesc))
                             if (!String.IsNullOrEmpty(detailvalues.Shortdesc.Trim()))
                                 removelang = false;
-
                     }
 
                     //Add Language
@@ -746,7 +844,10 @@ namespace Helper
         }
 
         //For Webcams
-        public static void CheckMyInsertedLanguages(this WebcamInfo mypoiactivity, List<string>? availablelanguages = null)
+        public static void CheckMyInsertedLanguages(
+            this WebcamInfo mypoiactivity,
+            List<string>? availablelanguages = null
+        )
         {
             if (availablelanguages == null)
                 availablelanguages = new List<string> { "de", "it", "en" };
@@ -754,14 +855,20 @@ namespace Helper
             if (mypoiactivity.HasLanguage == null)
                 mypoiactivity.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
-                if (mypoiactivity.Detail.ContainsKey(language) || mypoiactivity.ContactInfos.ContainsKey(language)) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
+                if (
+                    mypoiactivity.Detail.ContainsKey(language)
+                    || mypoiactivity.ContactInfos.ContainsKey(language)
+                ) // || mypoiactivity.AdditionalPoiInfos.ContainsKey(language))
                 {
                     bool removelang = true;
 
-                    if (mypoiactivity.Detail.ContainsKey(language) && mypoiactivity.Detail[language] != null)
+                    if (
+                        mypoiactivity.Detail.ContainsKey(language)
+                        && mypoiactivity.Detail[language] != null
+                    )
                     {
                         var detailvalues = mypoiactivity.Detail[language];
                         FixDetailBaseAndIntroText(detailvalues);
@@ -786,7 +893,10 @@ namespace Helper
                             removelang = false;
                     }
 
-                    if (mypoiactivity.ContactInfos.ContainsKey(language) && mypoiactivity.ContactInfos[language] != null)
+                    if (
+                        mypoiactivity.ContactInfos.ContainsKey(language)
+                        && mypoiactivity.ContactInfos[language] != null
+                    )
                     {
                         var contactvalues = mypoiactivity.ContactInfos[language];
 
@@ -848,13 +958,16 @@ namespace Helper
             }
         }
 
-        //For Wines        
-        public static void CheckMyInsertedLanguages(this Wine mydata, List<string> availablelanguages)
+        //For Wines
+        public static void CheckMyInsertedLanguages(
+            this Wine mydata,
+            List<string> availablelanguages
+        )
         {
             if (mydata.HasLanguage == null)
                 mydata.HasLanguage = new List<string>();
 
-            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos, 
+            //Detail, ImageGallery, ContactInfos, AdditionalArticleInfos,
             foreach (string language in availablelanguages)
             {
                 if (mydata.Detail.ContainsKey(language))
@@ -884,7 +997,7 @@ namespace Helper
                             removelang = false;
                         if (!String.IsNullOrEmpty(detailvalues.Title))
                             removelang = false;
-                    }                                      
+                    }
 
                     //Add Language
                     if (removelang == false)
@@ -897,13 +1010,12 @@ namespace Helper
                     {
                         if (mydata.Detail.ContainsKey(language))
                             mydata.Detail.Remove(language);
-                        
+
                         if (mydata.HasLanguage.Contains(language))
                             mydata.HasLanguage.Remove(language);
                     }
                 }
             }
         }
-
     }
 }

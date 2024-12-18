@@ -2,21 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using Swashbuckle.AspNetCore.Annotations;
-using System.Linq;
-using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json.Converters;
-using DataModel.Annotations;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Diagnostics;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Linq;
 using System.Net;
+using DataModel.Annotations;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DataModel
-{  
+{
     #region District Municipality Region
 
     public class Region : BaseInfos, IImageGalleryAware, IGpsPolygon, IPublishedOn
@@ -25,20 +25,21 @@ namespace DataModel
         {
             DetailThemed = new Dictionary<string, DetailThemed>();
         }
+
         public IDictionary<string, DetailThemed> DetailThemed { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
-        
+
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
-        
+
         public bool VisibleInSearch { get; set; }
-        
+
         public ICollection<string>? SkiareaIds { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }        
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
-   
+
     public class MetaRegion : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public MetaRegion()
@@ -50,14 +51,15 @@ namespace DataModel
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<string>? TourismvereinIds { get; set; }
         public ICollection<string>? RegionIds { get; set; }
-        public ICollection<GpsPolygon>? GpsPolygon { get; set; }        
+        public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }        
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
-   
+
     public class ExperienceArea : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public ICollection<string>? DistrictIds { get; set; }
@@ -66,18 +68,19 @@ namespace DataModel
         public bool VisibleInSearch { get; set; }
         public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
-    
+
     public class Tourismverein : BaseInfos, IImageGalleryAware, IGpsPolygon
     {
         public string? RegionId { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
         public ICollection<string>? SkiareaIds { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }        
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class Municipality : BaseInfos, IImageGalleryAware, IGpsPolygon
@@ -89,6 +92,7 @@ namespace DataModel
         public string? SiagId { get; set; }
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
@@ -109,29 +113,40 @@ namespace DataModel
         public string? MunicipalityId { get; set; }
         public string? SiagId { get; set; }
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
+
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
         public bool VisibleInSearch { get; set; }
-        public ICollection<RelatedContent>? RelatedContent { get; set; }        
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
-    public class Area : IIdentifiable, IActivateable, IImportDateassigneable, IMappingAware, ISource, ISmgActive, IPublishedOn, IShortName
+    public class Area
+        : IIdentifiable,
+            IActivateable,
+            IImportDateassigneable,
+            IMappingAware,
+            ISource,
+            ISmgActive,
+            IPublishedOn,
+            IShortName
     {
         public Area()
         {
             Mapping = new Dictionary<string, IDictionary<string, string>>();
             Detail = new Dictionary<string, Detail>();
         }
+
         public LicenseInfo? LicenseInfo { get; set; }
         public string? Id { get; set; }
         public bool Active { get; set; }
+
         //[SwaggerDeprecatedV2Attribute("Obsolete, use PublishedOn", "2024-01-01", "")]
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
         public string? CustomId { get; set; }
         public string? RegionId { get; set; }
-        public string? TourismvereinId { get; set; }        
+        public string? TourismvereinId { get; set; }
         public string? MunicipalityId { get; set; }
         public string? SkiAreaID { get; set; }
         public string? GID { get; set; }
@@ -165,10 +180,8 @@ namespace DataModel
 
         public string? AreaRadius { get; set; }
 
-
         public int? AltitudeFrom { get; set; }
         public int? AltitudeTo { get; set; }
-
 
         public IDictionary<string, string> SkiRegionName { get; set; }
 
@@ -176,7 +189,10 @@ namespace DataModel
         public HashSet<string>? AreaId { get; set; }
 
         [GetOnlyJsonProperty]
-        public ICollection<string>? AreaIds { get { return this.AreaId; } }
+        public ICollection<string>? AreaIds
+        {
+            get { return this.AreaId; }
+        }
 
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
@@ -194,7 +210,7 @@ namespace DataModel
 
         public ICollection<GpsPolygon>? GpsPolygon { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }        
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     public class SkiAreaRaven : SkiArea
@@ -209,14 +225,18 @@ namespace DataModel
         //Logic shifted to RelatedContent
         //public ICollection<Webcam>? Webcam { get; set; }
 
-        public ICollection<RelatedContent>? RelatedContent { get; set; }        
+        public ICollection<RelatedContent>? RelatedContent { get; set; }
     }
 
     #endregion
 
-    #region Activities & POIs      
+    #region Activities & POIs
 
-    public class ODHActivityPoi : PoiBaseInfos, ILicenseInfo, IGPSPointsAware, IHasAdditionalProperties
+    public class ODHActivityPoi
+        : PoiBaseInfos,
+            ILicenseInfo,
+            IGPSPointsAware,
+            IHasAdditionalProperties
     {
         public ODHActivityPoi()
         {
@@ -248,9 +268,10 @@ namespace DataModel
         public ICollection<CategoryCodes>? CategoryCodes { get; set; }
         public ICollection<DishRates>? DishRates { get; set; }
         public ICollection<CapacityCeremony>? CapacityCeremony { get; set; }
-        public ICollection<Facilities>? Facilities { get; set; }       
+        public ICollection<Facilities>? Facilities { get; set; }
+
         //End Gastronomy Infos
-        
+
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
         public IDictionary<string, List<AdditionalContact>>? AdditionalContact { get; set; }
@@ -259,10 +280,7 @@ namespace DataModel
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         public IDictionary<string, GpsInfo> GpsPoints
         {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary();
-            }
+            get { return this.GpsInfo.ToGpsPointsDictionary(); }
         }
 
         //Check if here we can define what classes this Additionalproperties can be
@@ -270,10 +288,7 @@ namespace DataModel
         public IDictionary<string, dynamic>? AdditionalProperties { get; set; }
     }
 
-    public interface IAdditionalProperties
-    {
-
-    }
+    public interface IAdditionalProperties { }
 
     //TODO Move all properties to this section
     public class ODHActivityPoiProperties : IAdditionalProperties
@@ -303,7 +318,7 @@ namespace DataModel
 
         public Ratings? Ratings { get; set; }
         public ICollection<string>? Exposition { get; set; }
-     
+
         public int? WayNumber { get; set; }
 
         public string? Number { get; set; }
@@ -329,7 +344,21 @@ namespace DataModel
         //[SwaggerDeprecated("Use the name of the referenced data")]
         //public string? Name { get; set; }
 
-        [SwaggerEnum(new[] { "accommodation", "event", "odhactivitypoi", "measuringpoint", "webcam", "article", "venue", "wineaward", "skiarea", "skiregion" })]
+        [SwaggerEnum(
+            new[]
+            {
+                "accommodation",
+                "event",
+                "odhactivitypoi",
+                "measuringpoint",
+                "webcam",
+                "article",
+                "venue",
+                "wineaward",
+                "skiarea",
+                "skiregion",
+            }
+        )]
         public string? Type { get; set; }
 
         //public string? Link
@@ -341,10 +370,15 @@ namespace DataModel
         //    }
         //}
 
-        public string Self {
+        public string Self
+        {
             get
             {
-                return DataModelHelpers.TranslateTypeString2EndPointForRelatedContent(this.Type.ToLower()) + "/" + this.Id;
+                return DataModelHelpers.TranslateTypeString2EndPointForRelatedContent(
+                        this.Type.ToLower()
+                    )
+                    + "/"
+                    + this.Id;
             }
         }
     }
@@ -364,13 +398,24 @@ namespace DataModel
         //accessInfo (FREE_PUBLICLY_ACCESSIBLE)
         //accessType (PUBLIC)
         //reservable (true/false)
-        //paymentInfo 
+        //paymentInfo
         //outlets [ id, maxPower, maxCurrent, minCurrent, outletTypeCode (Type2Mennekes, CHAdeMO, CCS, 700 bar small vehicles, )  ]
-        
+
         public int? Capacity { get; set; }
 
         [SwaggerSchema(Description = "State of the E-chargingstation", ReadOnly = true)]
-        [SwaggerEnum(new[] { "UNAVAILABLE", "ACTIVE", "TEMPORARYUNAVAILABLE", "AVAILABLE", "UNKNOWN","FAULT", "PLANNED" })]
+        [SwaggerEnum(
+            new[]
+            {
+                "UNAVAILABLE",
+                "ACTIVE",
+                "TEMPORARYUNAVAILABLE",
+                "AVAILABLE",
+                "UNKNOWN",
+                "FAULT",
+                "PLANNED",
+            }
+        )]
         public string? State { get; set; }
 
         [SwaggerSchema(Description = "Information about Payment", ReadOnly = true)]
@@ -379,9 +424,18 @@ namespace DataModel
         [SwaggerSchema(Description = "Public or private access", ReadOnly = true)]
         [SwaggerEnum(new[] { "PUBLIC", "PRIVATE", "PRIVATE_WITHPUBLICACCESS" })]
         public string? AccessType { get; set; }
-        
+
         [SwaggerSchema(Description = "Types of the Charging Pistols", ReadOnly = true)]
-        [SwaggerEnum(new[] { "Typ 1-Stecker", "Typ 2-Stecker", "Combo-Stecker", "CHAdeMO-Stecker", "Tesla Supercharger" })]
+        [SwaggerEnum(
+            new[]
+            {
+                "Typ 1-Stecker",
+                "Typ 2-Stecker",
+                "Combo-Stecker",
+                "CHAdeMO-Stecker",
+                "Tesla Supercharger",
+            }
+        )]
         public List<string>? ChargingPistolTypes { get; set; }
 
         [SwaggerSchema(Description = "AccessType Information", ReadOnly = true)]
@@ -390,12 +444,11 @@ namespace DataModel
         public DateTime? SurveyDate { get; set; }
         public string? SurveyType { get; set; }
 
-        public IDictionary<string,string> SurveyAnnotations { get; set; }
+        public IDictionary<string, string> SurveyAnnotations { get; set; }
 
         public bool? Covered { get; set; }
         public bool? VerticalRoadSign { get; set; }
         public bool? HorizontalFloorRoadSign { get; set; }
-
 
         [SwaggerSchema(Description = "Charging Station Accessible", ReadOnly = true)]
         public bool? ChargingStationAccessible { get; set; }
@@ -407,12 +460,13 @@ namespace DataModel
         public int? ChargingPistolOperationHeight { get; set; }
 
         public int? ChargingCableLength { get; set; }
-      
+
         public bool? ShieldingPostInFrontOfStation { get; set; }
 
-        [SwaggerSchema("Stufenlose Gehsteiganbindung: zulässige maximale Steigung <5-8%) bodengleich an den Gehsteig angebunden")]
+        [SwaggerSchema(
+            "Stufenlose Gehsteiganbindung: zulässige maximale Steigung <5-8%) bodengleich an den Gehsteig angebunden"
+        )]
         public bool? SteplessSidewalkConnection { get; set; }
-
 
         [SwaggerEnum(new[] { "Barrierefrei", "Bedingt zugänglich", "Nicht zugänglich" })]
         public string? Barrierfree { get; set; }
@@ -431,22 +485,22 @@ namespace DataModel
         [SwaggerSchema("Eben (wenn Steigung <5% und Querneigung <3%)")]
         public bool? Flat { get; set; }
 
-        [SwaggerSchema("Steigung % (wenn Steigung >5%)")] 
+        [SwaggerSchema("Steigung % (wenn Steigung >5%)")]
         public double? Gradient { get; set; }
 
-        [SwaggerSchema("Querneigung % (wenn Querneigung >3%)")] 
+        [SwaggerSchema("Querneigung % (wenn Querneigung >3%)")]
         public double? LateralInclination { get; set; }
-        
+
         [SwaggerEnum(new[] { "Barrierefrei", "Bedingt zugänglich", "Nicht zugänglich" })]
         public string Pavement { get; set; }
 
-        [SwaggerSchema("Width, (on column barrierfree = 350 cm), (on row barrierfree = 250 cm)")] 
+        [SwaggerSchema("Width, (on column barrierfree = 350 cm), (on row barrierfree = 250 cm)")]
         public int? Width { get; set; }
 
         [SwaggerSchema("Length, (on column barrierfree = 500 cm), (on row barrierfree = 650 cm)")]
         public int? Length { get; set; }
 
-        [SwaggerSchema("Schraffurmarkierung")] 
+        [SwaggerSchema("Schraffurmarkierung")]
         public bool? ManeuvringSpaceSignagePresent { get; set; }
     }
 
@@ -454,7 +508,21 @@ namespace DataModel
 
     #region Accommodations
 
-    public class Accommodation : IIdentifiable, IShortName, IActivateable, IGpsInfo, IImageGalleryAware, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn, IDistrictId
+    public class Accommodation
+        : IIdentifiable,
+            IShortName,
+            IActivateable,
+            IGpsInfo,
+            IImageGalleryAware,
+            ISmgActive,
+            IHasLanguage,
+            IImportDateassigneable,
+            ILicenseInfo,
+            ISource,
+            IMappingAware,
+            IDistanceInfoAware,
+            IPublishedOn,
+            IDistrictId
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -472,6 +540,7 @@ namespace DataModel
 
         [SwaggerDeprecated("Accommodation ID on the HGV System, use Mapping instead")]
         public string? HgvId { get; set; }
+
         [SwaggerDeprecated("Use AccoDetail.lang.Name")]
         public string? Shortname { get; set; }
 
@@ -481,15 +550,16 @@ namespace DataModel
         public bool? HasApartment { get; set; }
         public bool? HasRoom { get; set; }
         public bool? IsCamping { get; set; }
-        
+
         public bool? IsGastronomy { get; set; }
         public bool IsBookable { get; set; }
         public bool? IsAccommodation { get; set; }
+
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public bool? TVMember { get; set; }
         public string? TourismVereinId { get; set; }
-        
+
         //not used todo remove
         public string? MainLanguage { get; set; }
         public DateTime? FirstImport { get; set; }
@@ -528,10 +598,12 @@ namespace DataModel
 
         public ICollection<MssResponseShort>? MssResponseShort { get; set; }
 
-        [SwaggerSchema("Independent Data <a href='https://www.independent.it/it/cooperativa-independent' target='_blank'>cooperative Independent</a>")]
+        [SwaggerSchema(
+            "Independent Data <a href='https://www.independent.it/it/cooperativa-independent' target='_blank'>cooperative Independent</a>"
+        )]
         public IndependentData? IndependentData { get; set; }
 
-        public ICollection<AccoRoomInfo>? AccoRoomInfo { get; set; }       
+        public ICollection<AccoRoomInfo>? AccoRoomInfo { get; set; }
 
         public ICollection<string>? PublishedOn { get; set; }
 
@@ -603,7 +675,9 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerDeprecated("Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerDeprecated(
+            "Deprecated use the Id/Selflink to retrieve correct names from the appropriate Endpoint"
+        )]
         public string? Name { get; set; }
 
         public string? HgvId { get; set; }
@@ -620,7 +694,17 @@ namespace DataModel
         public string? BookingId { get; set; }
     }
 
-    public class AccoRoom : IIdentifiable, IShortName, IImageGalleryAware, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable
+    public class AccoRoom
+        : IIdentifiable,
+            IShortName,
+            IImageGalleryAware,
+            IHasLanguage,
+            IImportDateassigneable,
+            ILicenseInfo,
+            ISource,
+            IMappingAware,
+            IPublishedOn,
+            IActivateable
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -740,7 +824,22 @@ namespace DataModel
 
     #region Gastronomy
 
-    public abstract class Gastronomy : IIdentifiable, IActivateable, IGpsInfo, IImageGalleryAware, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IDistrictId
+    public abstract class Gastronomy
+        : IIdentifiable,
+            IActivateable,
+            IGpsInfo,
+            IImageGalleryAware,
+            IContactInfosAware,
+            ISmgTags,
+            ISmgActive,
+            IImportDateassigneable,
+            IDetailInfosAware,
+            ISource,
+            IMappingAware,
+            IDistanceInfoAware,
+            ILicenseInfo,
+            IPublishedOn,
+            IDistrictId
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -758,11 +857,12 @@ namespace DataModel
 
         public string? Type { get; set; }
 
-        //Region Fraktion 
+        //Region Fraktion
         public string? DistrictId { get; set; }
+
         //public string MunicipalityId { get; set; }
-        //public string RegionId { get; set; }       
-        //public string TourismorganizationId { get; set; }        
+        //public string RegionId { get; set; }
+        //public string TourismorganizationId { get; set; }
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
@@ -782,7 +882,6 @@ namespace DataModel
         //public ICollection<OperationScheduleTime> OperationScheduleTime { get; set; }
         //Wenn mearere sein aso
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
-
 
         //CapacityCeremony
         public int? MaxSeatingCapacity { get; set; }
@@ -805,6 +904,7 @@ namespace DataModel
         public string? AccommodationId { get; set; }
 
         public ICollection<string>? SmgTags { get; set; }
+
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
@@ -829,16 +929,31 @@ namespace DataModel
         public new ICollection<CategoryCodesLinked>? CategoryCodes { get; set; }
         public new ICollection<DishRatesLinked>? DishRates { get; set; }
         public new ICollection<CapacityCeremonyLinked>? CapacityCeremony { get; set; }
-        public new ICollection<FacilitiesLinked>? Facilities { get; set; }        
+        public new ICollection<FacilitiesLinked>? Facilities { get; set; }
         public new LocationInfoLinked? LocationInfo { get; set; }
-
     }
 
     #endregion
 
     #region Events
 
-    public class Event : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IGpsInfo, IContactInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, ILicenseInfo, IPublishedOn, IDistrictId
+    public class Event
+        : IIdentifiable,
+            IShortName,
+            IActivateable,
+            IImageGalleryAware,
+            IGpsInfo,
+            IContactInfosAware,
+            ISmgTags,
+            ISmgActive,
+            IImportDateassigneable,
+            IDetailInfosAware,
+            ISource,
+            IMappingAware,
+            IDistanceInfoAware,
+            ILicenseInfo,
+            IPublishedOn,
+            IDistrictId
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -865,7 +980,6 @@ namespace DataModel
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
-
 
         //GPS Info
         public string? Gpstype { get; set; }
@@ -894,7 +1008,6 @@ namespace DataModel
 
         public ICollection<string>? TopicRIDs { get; set; }
         public ICollection<Topic>? Topics { get; set; }
-
 
         public ICollection<EventPublisher>? EventPublisher { get; set; }
 
@@ -960,7 +1073,7 @@ namespace DataModel
     }
 
     //TODO Migrate to new EventPricing class
-    
+
     public class EventPricing
     {
         public EventPricing()
@@ -969,9 +1082,9 @@ namespace DataModel
         }
 
         public double Price { get; set; }
-        public string? Type { get; set; }               
+        public string? Type { get; set; }
         public string PriceID { get; set; }
-        
+
         public IDictionary<string, EventPricingDescription> EventPricingDesc { get; set; }
     }
 
@@ -987,7 +1100,23 @@ namespace DataModel
 
     #region Venues
 
-    public class Venue : IIdentifiable, IShortName, IActivateable, ISmgTags, IHasLanguage, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IImageGalleryAware, ISmgActive, IDetailInfosAware, IContactInfosAware
+    public class Venue
+        : IIdentifiable,
+            IShortName,
+            IActivateable,
+            ISmgTags,
+            IHasLanguage,
+            IImportDateassigneable,
+            ILicenseInfo,
+            ISource,
+            IMappingAware,
+            IDistanceInfoAware,
+            IGPSInfoAware,
+            IPublishedOn,
+            IImageGalleryAware,
+            ISmgActive,
+            IDetailInfosAware,
+            IContactInfosAware
     {
         public Venue()
         {
@@ -996,7 +1125,7 @@ namespace DataModel
             Detail = new Dictionary<string, Detail>();
             ContactInfos = new Dictionary<string, ContactInfos>();
         }
-             
+
         public LicenseInfo? LicenseInfo { get; set; }
 
         public string? Id { get; set; }
@@ -1006,10 +1135,10 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
-        
+
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
-        
+
         public ICollection<string>? SmgTags { get; set; }
 
         public LocationInfo? LocationInfo { get; set; }
@@ -1030,10 +1159,7 @@ namespace DataModel
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public IDictionary<string, GpsInfo> GpsPoints
         {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary(true);
-            }
+            get { return this.GpsInfo.ToGpsPointsDictionary(true); }
         }
 
         public IDictionary<string, Detail> Detail { get; set; }
@@ -1056,10 +1182,29 @@ namespace DataModel
 
     #endregion
 
-    #region Articles    
+    #region Articles
 
     //BaseInfo Article
-    public abstract class Article : IIdentifiable, IShortName, IActivateable, IImageGalleryAware, IContactInfosAware, IAdditionalArticleInfosAware, ISmgTags, ISmgActive, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IGPSInfoAware, IDistanceInfoAware, IPublishedOn, IGPSPointsAware, IHasLanguage, IVideoItemsAware
+    public abstract class Article
+        : IIdentifiable,
+            IShortName,
+            IActivateable,
+            IImageGalleryAware,
+            IContactInfosAware,
+            IAdditionalArticleInfosAware,
+            ISmgTags,
+            ISmgActive,
+            IImportDateassigneable,
+            ILicenseInfo,
+            IDetailInfosAware,
+            ISource,
+            IMappingAware,
+            IGPSInfoAware,
+            IDistanceInfoAware,
+            IPublishedOn,
+            IGPSPointsAware,
+            IHasLanguage,
+            IVideoItemsAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1084,12 +1229,14 @@ namespace DataModel
 
         //[SwaggerDeprecated("Obsolete, use Tags")]
         public string? SubType { get; set; }
+
         //für BaseArticle
         //public string SubType2 { get; set; }
 
         //NEU SMG Infos
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
@@ -1122,7 +1269,6 @@ namespace DataModel
         public ICollection<string>? SmgTags { get; set; }
 
         public ICollection<string>? HasLanguage { get; set; }
-        
 
         //New Article Expiration date
         public DateTime? ExpirationDate { get; set; }
@@ -1139,9 +1285,7 @@ namespace DataModel
                 }
                 else
                 {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
+                    return new Dictionary<string, GpsInfo> { };
                 }
             }
         }
@@ -1157,7 +1301,6 @@ namespace DataModel
 
         //Video Items
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
-
     }
 
     #endregion
@@ -1175,20 +1318,33 @@ namespace DataModel
         }
 
         [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
-        public DateTime date { get { return this.Date; } }
-        [SwaggerDeprecated("Obsolete, use EvolutionTitle", "2024-02-28", "2024-12-31")]
-        public string? evolutiontitle { get { return this.EvolutionTitle; } }
-        [SwaggerDeprecated("Obsolete, use Evolution", "2024-02-28", "2024-12-31")]
-        public string? evolution { get { return this.Evolution; } }
-        [SwaggerDeprecated("Obsolete, use Language", "2024-02-28", "2024-12-31")]
-        public string? language { get { return this.Language; } }
+        public DateTime date
+        {
+            get { return this.Date; }
+        }
 
+        [SwaggerDeprecated("Obsolete, use EvolutionTitle", "2024-02-28", "2024-12-31")]
+        public string? evolutiontitle
+        {
+            get { return this.EvolutionTitle; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use Evolution", "2024-02-28", "2024-12-31")]
+        public string? evolution
+        {
+            get { return this.Evolution; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use Language", "2024-02-28", "2024-12-31")]
+        public string? language
+        {
+            get { return this.Language; }
+        }
 
         public DateTime Date { get; set; }
         public string? EvolutionTitle { get; set; }
         public string? Evolution { get; set; }
         public string? Language { get; set; }
-
 
         public int Id { get; set; }
         public ICollection<Conditions> Conditions { get; set; }
@@ -1200,19 +1356,33 @@ namespace DataModel
 
     public class Conditions
     {
-        [SwaggerDeprecated("Obsolete, use Date","2024-02-28","2024-12-31")]
-        public DateTime date { get { return this.Date; } }
-        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
-        public string? Weatherdesc { get { return this.WeatherDesc; } }
-        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
-        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
-        [SwaggerDeprecated("Obsolete, use BulletinStatus", "2024-02-28", "2024-12-31")]
-        public int bulletinStatus { get { return this.BulletinStatus; } }
+        [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
+        public DateTime date
+        {
+            get { return this.Date; }
+        }
 
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc
+        {
+            get { return this.WeatherDesc; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WeatherImgurl
+        {
+            get { return this.WeatherImgUrl; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use BulletinStatus", "2024-02-28", "2024-12-31")]
+        public int bulletinStatus
+        {
+            get { return this.BulletinStatus; }
+        }
 
         public DateTime Date { get; set; }
         public string? Title { get; set; }
-        public string? WeatherCondition { get; set; }      
+        public string? WeatherCondition { get; set; }
         public string? Temperatures { get; set; }
         public string? WeatherDesc { get; set; }
         public string? WeatherImgUrl { get; set; }
@@ -1227,14 +1397,28 @@ namespace DataModel
     public class Forecast
     {
         [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
-        public DateTime date { get { return this.Date; } }
-        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
-        public string? Weatherdesc { get { return this.WeatherDesc; } }
-        [SwaggerDeprecated("Obsolete, use WeatherCode", "2024-02-28", "2024-12-31")]
-        public string? Weathercode { get { return this.WeatherCode; } }
-        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
-        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
+        public DateTime date
+        {
+            get { return this.Date; }
+        }
 
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc
+        {
+            get { return this.WeatherDesc; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use WeatherCode", "2024-02-28", "2024-12-31")]
+        public string? Weathercode
+        {
+            get { return this.WeatherCode; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WeatherImgurl
+        {
+            get { return this.WeatherImgUrl; }
+        }
 
         public DateTime Date { get; set; }
 
@@ -1242,7 +1426,7 @@ namespace DataModel
         public int TempMaxmin { get; set; }
         public int TempMinmax { get; set; }
         public int TempMinmin { get; set; }
-                
+
         public string? WeatherCode { get; set; }
         public string? WeatherDesc { get; set; }
         public string? WeatherImgUrl { get; set; }
@@ -1253,30 +1437,76 @@ namespace DataModel
     public class Mountain
     {
         [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
-        public DateTime date { get { return this.Date; } }
-        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
-        public string? Weatherdesc { get { return this.WeatherDesc; } }
-        [SwaggerDeprecated("Obsolete, use MountainImgUrl", "2024-02-28", "2024-12-31")]
-        public string? MountainImgurl { get { return this.MountainImgUrl; } }
-        [SwaggerDeprecated("Obsolete, use NorthCode", "2024-02-28", "2024-12-31")] 
-        public string? Northcode { get { return this.NorthCode; } }
-        [SwaggerDeprecated("Obsolete, use NorthDesc", "2024-02-28", "2024-12-31")]
-        public string? Northdesc { get { return this.NorthDesc; } }
-        [SwaggerDeprecated("Obsolete, use NorthImgUrl", "2024-02-28", "2024-12-31")]
-        public string? Northimgurl { get { return this.NorthImgUrl; } }
-        [SwaggerDeprecated("Obsolete, use SouthCode", "2024-02-28", "2024-12-31")]
-        public string? Southcode { get { return this.SouthCode; } }
-        [SwaggerDeprecated("Obsolete, use SouthDesc", "2024-02-28", "2024-12-31")]
-        public string? Southdesc { get { return this.SouthDesc; } }
-        [SwaggerDeprecated("Obsolete, use SouthImgUrl", "2024-02-28", "2024-12-31")]
-        public string? Southimgurl { get { return this.SouthImgUrl; } }
-        [SwaggerDeprecated("Obsolete, use WindCode", "2024-02-28", "2024-12-31")]
-        public string? Windcode { get { return this.WindCode; } }
-        [SwaggerDeprecated("Obsolete, use WindDesc", "2024-02-28", "2024-12-31")]
-        public string? Winddesc { get { return this.WindDesc; } }
-        [SwaggerDeprecated("Obsolete, use WindImgUrl", "2024-02-28", "2024-12-31")]
-        public string? WindImgurl { get { return this.WindImgUrl; } }
+        public DateTime date
+        {
+            get { return this.Date; }
+        }
 
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc
+        {
+            get { return this.WeatherDesc; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use MountainImgUrl", "2024-02-28", "2024-12-31")]
+        public string? MountainImgurl
+        {
+            get { return this.MountainImgUrl; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use NorthCode", "2024-02-28", "2024-12-31")]
+        public string? Northcode
+        {
+            get { return this.NorthCode; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use NorthDesc", "2024-02-28", "2024-12-31")]
+        public string? Northdesc
+        {
+            get { return this.NorthDesc; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use NorthImgUrl", "2024-02-28", "2024-12-31")]
+        public string? Northimgurl
+        {
+            get { return this.NorthImgUrl; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use SouthCode", "2024-02-28", "2024-12-31")]
+        public string? Southcode
+        {
+            get { return this.SouthCode; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use SouthDesc", "2024-02-28", "2024-12-31")]
+        public string? Southdesc
+        {
+            get { return this.SouthDesc; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use SouthImgUrl", "2024-02-28", "2024-12-31")]
+        public string? Southimgurl
+        {
+            get { return this.SouthImgUrl; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use WindCode", "2024-02-28", "2024-12-31")]
+        public string? Windcode
+        {
+            get { return this.WindCode; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use WindDesc", "2024-02-28", "2024-12-31")]
+        public string? Winddesc
+        {
+            get { return this.WindDesc; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use WindImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WindImgurl
+        {
+            get { return this.WindImgUrl; }
+        }
 
         public DateTime Date { get; set; }
 
@@ -1284,7 +1514,7 @@ namespace DataModel
         public string? WeatherDesc { get; set; }
         public string? Conditions { get; set; }
         public string? Zerolimit { get; set; }
-        
+
         public string? Reliability { get; set; }
 
         public string? Sunrise { get; set; }
@@ -1315,15 +1545,34 @@ namespace DataModel
     public class Stationdata
     {
         [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
-        public DateTime date { get { return this.Date; } }
+        public DateTime date
+        {
+            get { return this.Date; }
+        }
+
         [SwaggerDeprecated("Obsolete, use MaxTemp", "2024-02-28", "2024-12-31")]
-        public int Maxtemp { get { return this.MaxTemp; } }
+        public int Maxtemp
+        {
+            get { return this.MaxTemp; }
+        }
+
         [SwaggerDeprecated("Obsolete, use WeatherCode", "2024-02-28", "2024-12-31")]
-        public string? Weathercode { get { return this.WeatherCode; } }
+        public string? Weathercode
+        {
+            get { return this.WeatherCode; }
+        }
+
         [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
-        public string? Weatherdesc { get { return this.WeatherDesc; } }
+        public string? Weatherdesc
+        {
+            get { return this.WeatherDesc; }
+        }
+
         [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
-        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
+        public string? WeatherImgurl
+        {
+            get { return this.WeatherImgUrl; }
+        }
 
         public DateTime Date { get; set; }
         public int Id { get; set; }
@@ -1331,9 +1580,9 @@ namespace DataModel
 
         public string? WeatherCode { get; set; }
         public string? WeatherDesc { get; set; }
-        public string? WeatherImgUrl { get; set; }       
+        public string? WeatherImgUrl { get; set; }
 
-        public int MinTemp { get; set; }        
+        public int MinTemp { get; set; }
         public int MaxTemp { get; set; }
     }
 
@@ -1349,11 +1598,15 @@ namespace DataModel
         public string? Language { get; set; }
 
         public string? DistrictName { get; set; }
+
         //public Dictionary<string, string>? District { get; set; }
 
 
         [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
-        public DateTime date { get { return this.Date; } }
+        public DateTime date
+        {
+            get { return this.Date; }
+        }
 
         public DateTime Date { get; set; }
 
@@ -1367,7 +1620,10 @@ namespace DataModel
     public class BezirksForecast
     {
         [SwaggerDeprecated("Obsolete, use Date", "2024-02-28", "2024-12-31")]
-        public DateTime date { get { return this.Date; } }
+        public DateTime date
+        {
+            get { return this.Date; }
+        }
 
         public DateTime Date { get; set; }
 
@@ -1379,13 +1635,23 @@ namespace DataModel
         public string? WeatherImgUrl { get; set; }
 
         //Compatibility
-        [SwaggerDeprecated("Obsolete, use WeatherCode", "2024-02-28", "2024-12-31")] 
-        public string? Weathercode { get { return this.WeatherCode; } }
-        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")] 
-        public string? Weatherdesc { get { return this.WeatherDesc; } }
-        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")] 
-        public string? WeatherImgurl { get { return this.WeatherImgUrl; } }
+        [SwaggerDeprecated("Obsolete, use WeatherCode", "2024-02-28", "2024-12-31")]
+        public string? Weathercode
+        {
+            get { return this.WeatherCode; }
+        }
 
+        [SwaggerDeprecated("Obsolete, use WeatherDesc", "2024-02-28", "2024-12-31")]
+        public string? Weatherdesc
+        {
+            get { return this.WeatherDesc; }
+        }
+
+        [SwaggerDeprecated("Obsolete, use WeatherImgUrl", "2024-02-28", "2024-12-31")]
+        public string? WeatherImgurl
+        {
+            get { return this.WeatherImgUrl; }
+        }
 
         public int MaxTemp { get; set; }
         public int MinTemp { get; set; }
@@ -1403,50 +1669,69 @@ namespace DataModel
         public int Thunderstorm { get; set; }
 
         public int SymbolId { get; set; }
-        
+
         public int? Reliability { get; set; }
     }
 
-    public class WeatherRealTime: IIdentifiable
+    public class WeatherRealTime : IIdentifiable
     {
         public string Id { get; set; }
 
         public double altitude { get; set; }
-        [SwaggerSchema("Indicates whether the weather stations are: [1] in the valley, [2] gauge stations, [3] on the mountain")]
+
+        [SwaggerSchema(
+            "Indicates whether the weather stations are: [1] in the valley, [2] gauge stations, [3] on the mountain"
+        )]
         public int categoryId { get; set; }
         public string? code { get; set; }
         public string? id { get; set; }
+
         [SwaggerSchema("Wind direction")]
         public string? dd { get; set; }
+
         [SwaggerSchema("Wind speed (km/h)")]
         public string? ff { get; set; }
+
         [SwaggerSchema("Snow depth (cm)")]
         public string? hs { get; set; }
         public DateTime lastUpdated { get; set; }
         public double latitude { get; set; }
         public double longitude { get; set; }
-        [SwaggerSchema("Only for weather stations on the mountain: [1] if the weather station is a snow measuring field, [2] if the weather station is a wind station, [null] otherwise")]
+
+        [SwaggerSchema(
+            "Only for weather stations on the mountain: [1] if the weather station is a snow measuring field, [2] if the weather station is a wind station, [null] otherwise"
+        )]
         public string? lwdType { get; set; }
+
         [SwaggerSchema("Precipitation from midnight (mm)")]
         public string? n { get; set; }
         public string? name { get; set; }
+
         [SwaggerSchema("Atmospheric pressure (hPa)")]
         public string? p { get; set; }
+
         [SwaggerSchema("Flow rate (m³/s)")]
         public string? q { get; set; }
+
         [SwaggerSchema("Relative humidity (rH)")]
         public string? rh { get; set; }
+
         [SwaggerSchema("Air temperature (°C)")]
         public string? t { get; set; }
         public string? vaxcode { get; set; }
+
         [SwaggerSchema("Water level (cm)")]
         public string? w { get; set; }
+
         [SwaggerSchema("Wind gust")]
         public string? wMax { get; set; }
+
         [SwaggerSchema("Sunshine duration (h)")]
         public string? sd { get; set; }
+
         [SwaggerSchema("Global radiation")]
         public string? gs { get; set; }
+
         [SwaggerSchema("Water temperature (°C)")]
         public string? wt { get; set; }
         public string? visibility { get; set; }
@@ -1469,6 +1754,7 @@ namespace DataModel
             Weather = new Dictionary<string, Weather>();
             WeatherDistrict = new Dictionary<string, IEnumerable<BezirksWeather>>();
         }
+
         public IDictionary<string, Weather> Weather { get; set; }
 
         public IEnumerable<WeatherForecast> WeatherForecast { get; set; }
@@ -1484,14 +1770,15 @@ namespace DataModel
         public string? Shortname { get; set; }
         public string Id { get; set; }
     }
+
     public class WeatherForecast : IIdentifiable, IImportDateassigneable, ILicenseInfo, IShortName
     {
         public DateTime Date { get; set; }
 
         //"absTempMin": -10,
-		//"absTempMax": 20,
-		//"absPrecMin": 0,
-		//"absPrecMax": 10
+        //"absTempMax": 20,
+        //"absPrecMin": 0,
+        //"absPrecMax": 10
 
         public string Id { get; set; }
         public string? Language { get; set; }
@@ -1502,7 +1789,7 @@ namespace DataModel
         public IEnumerable<GpsInfo> GpsInfo { get; set; }
 
         public string MunicipalityIstatCode { get; set; }
-        
+
         public string Shortname { get; set; }
 
         public Dictionary<string, string> MunicipalityName { get; set; }
@@ -1518,8 +1805,10 @@ namespace DataModel
 
         [SwaggerSchema("Minimum Temperature in °C")]
         public int? MinTemp { get; set; }
+
         [SwaggerSchema("Maximum Temperature in °C")]
         public int? MaxTemp { get; set; }
+
         [SwaggerSchema("Sunshine Duration in Hours h")]
         public int? SunshineDuration { get; set; }
 
@@ -1536,7 +1825,7 @@ namespace DataModel
         public string? WeatherDesc { get; set; }
 
         [SwaggerSchema("Weather Desciption multi language")]
-        public Dictionary<string,string>? WeatherDescription { get; set; }
+        public Dictionary<string, string>? WeatherDescription { get; set; }
 
         [SwaggerSchema("Weather ImageUrl")]
         public string? WeatherImgUrl { get; set; }
@@ -1574,13 +1863,19 @@ namespace DataModel
         public int? WindSpeed { get; set; }
     }
 
-
-
-    #endregion   
+    #endregion
 
     #region Packages
 
-    public class Package : IIdentifiable, IShortName, IActivateable, ISmgActive, ISmgTags, IImageGalleryAware, IHasLanguage, ISource
+    public class Package
+        : IIdentifiable,
+            IShortName,
+            IActivateable,
+            ISmgActive,
+            ISmgTags,
+            IImageGalleryAware,
+            IHasLanguage,
+            ISource
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -1598,6 +1893,7 @@ namespace DataModel
         public DateTime LastUpdate { get; set; }
 
         public bool Active { get; set; }
+
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
@@ -1689,7 +1985,7 @@ namespace DataModel
 
         public IDictionary<string, PackageDetail> PackageDetail { get; set; }
         public ICollection<ImageGallery>? ImageGallery { get; set; }
-    }    
+    }
 
     public class PackageTheme
     {
@@ -1700,7 +1996,7 @@ namespace DataModel
 
         public int ThemeId { get; set; }
         public IDictionary<string, ThemeDetail> ThemeDetail { get; set; }
-    }    
+    }
 
     public class ThemeDetail : ILanguage
     {
@@ -1712,7 +2008,18 @@ namespace DataModel
 
     #region Measuringpoints
 
-    public class Measuringpoint : IIdentifiable, IShortName, IActivateable, ISmgActive, IGpsInfo, ILicenseInfo, IImportDateassigneable, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public class Measuringpoint
+        : IIdentifiable,
+            IShortName,
+            IActivateable,
+            ISmgActive,
+            IGpsInfo,
+            ILicenseInfo,
+            IImportDateassigneable,
+            ISource,
+            IMappingAware,
+            IDistanceInfoAware,
+            IPublishedOn
     {
         public Measuringpoint()
         {
@@ -1728,6 +2035,7 @@ namespace DataModel
         public DateTime? LastChange { get; set; }
 
         public bool Active { get; set; }
+
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
         public string? Shortname { get; set; }
@@ -1739,7 +2047,6 @@ namespace DataModel
         public Nullable<double> Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
         public DistanceInfo? DistanceInfo { get; set; }
-
 
         //Observation
         public string? SnowHeight { get; set; }
@@ -1753,13 +2060,12 @@ namespace DataModel
         public string? OwnerId { get; set; }
 
         public List<string>? AreaIds { get; set; }
-        
+
         public ICollection<string>? PublishedOn { get; set; }
 
         public string Source { get; set; }
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
-
 
         public IEnumerable<string>? SkiAreaIds { get; set; }
     }
@@ -1780,6 +2086,7 @@ namespace DataModel
         public string? Level { get; set; }
         public string? LevelId { get; set; }
         public Dictionary<string, string> WeatherStatus { get; set; }
+
         //New
         public string? IconID { get; set; }
         public DateTime? Date { get; set; }
@@ -1788,10 +2095,7 @@ namespace DataModel
     //SnowReport Base Data
     public class SnowReportBaseData
     {
-        public SnowReportBaseData()
-        {
-
-        }
+        public SnowReportBaseData() { }
 
         public string? Id { get; set; }
         public string? RID { get; set; }
@@ -1818,7 +2122,7 @@ namespace DataModel
         //public string weathercode { get; set; }
         //public string observationtemperature { get; set; }
 
-        //Slopes Lifts        
+        //Slopes Lifts
         public string? totalskilift { get; set; }
         public string? openskilift { get; set; }
         public string? totalskiliftkm { get; set; }
@@ -1838,8 +2142,6 @@ namespace DataModel
         public string? totaliceskating { get; set; }
         public string? openiceskating { get; set; }
 
-
-
         //Contact
         public string? contactadress { get; set; }
         public string? contacttel { get; set; }
@@ -1853,8 +2155,6 @@ namespace DataModel
         //Gps
         public string? contactgpsnorth { get; set; }
         public string? contactgpseast { get; set; }
-
-
 
         //public virtual ICollection<Slopes> Slopes { get; set; }
         //public virtual ICollection<Tracks> Tracks { get; set; }
@@ -1901,7 +2201,18 @@ namespace DataModel
 
     #region EventShort
 
-    public class EventShort : IIdentifiable, IShortName, IImportDateassigneable, ISource, IMappingAware, ILicenseInfo, IPublishedOn, IGPSPointsAware, IImageGalleryAware, IVideoItemsAware, IHasLanguage
+    public class EventShort
+        : IIdentifiable,
+            IShortName,
+            IImportDateassigneable,
+            ISource,
+            IMappingAware,
+            ILicenseInfo,
+            IPublishedOn,
+            IGPSPointsAware,
+            IImageGalleryAware,
+            IVideoItemsAware,
+            IHasLanguage
     {
         public EventShort()
         {
@@ -1926,67 +2237,65 @@ namespace DataModel
         public IDictionary<string, string> EventTitle { get; set; }
 
         [SwaggerDeprecated("Deprecated, use EventText")]
-        public string? EventTextDE {
-            get
-            {
-                return EventText.ContainsKey("de") ? EventText["de"] : null;
-            }
+        public string? EventTextDE
+        {
+            get { return EventText.ContainsKey("de") ? EventText["de"] : null; }
         }
 
         [SwaggerDeprecated("Deprecated, use EventText")]
-        public string? EventTextIT {
-            get
-            {
-                return EventText.ContainsKey("it") ? EventText["it"] : null;
-            }
+        public string? EventTextIT
+        {
+            get { return EventText.ContainsKey("it") ? EventText["it"] : null; }
         }
+
         [SwaggerDeprecated("Deprecated, use EventText")]
-        public string? EventTextEN {
-            get
-            {
-                return EventText.ContainsKey("en") ? EventText["en"] : null;
-            }
+        public string? EventTextEN
+        {
+            get { return EventText.ContainsKey("en") ? EventText["en"] : null; }
         }
-     
+
         //Hauptbeschreibung
         [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescription { get; set; }
+
         //Beschreibung DE
-        [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionDE {
-            get
-            {
-                return EventTitle.ContainsKey("de") ? EventTitle["de"] : "";
-            }
+        [SwaggerDeprecated("Deprecated, use EventTitle")]
+        public string? EventDescriptionDE
+        {
+            get { return EventTitle.ContainsKey("de") ? EventTitle["de"] : ""; }
         }
+
         //Beschreibung IT
-        [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionIT {
-            get
-            {
-                return EventTitle.ContainsKey("it") ? EventTitle["it"] : "";
-            }
+        [SwaggerDeprecated("Deprecated, use EventTitle")]
+        public string? EventDescriptionIT
+        {
+            get { return EventTitle.ContainsKey("it") ? EventTitle["it"] : ""; }
         }
+
         //Beschreibung EN
-        [SwaggerDeprecated("Deprecated, use EventTitle")] 
-        public string? EventDescriptionEN {
-            get
-            {
-                return EventTitle.ContainsKey("en") ? EventTitle["en"] : "";
-            }
+        [SwaggerDeprecated("Deprecated, use EventTitle")]
+        public string? EventDescriptionEN
+        {
+            get { return EventTitle.ContainsKey("en") ? EventTitle["en"] : ""; }
         }
+
         //Hauptsaal/ort
         public string? AnchorVenue { get; set; }
+
         //Hauptsaal/ort soll für die Ausgabe verwendet werden
         public string? AnchorVenueShort { get; set; }
+
         //letzte Änderung
         public DateTime ChangedOn { get; set; }
+
         //Beginndatum
         public DateTime StartDate { get; set; }
+
         //Beginnzeit
         //public string StartTime { get; set; }
         ////Ende Datum
         public DateTime EndDate { get; set; }
+
         //Endzeit
         //public string EndTime { get; set; }
 
@@ -1995,6 +2304,7 @@ namespace DataModel
 
         //URL für externe Webseite (noch nicht ausgefüllt)
         public string? WebAddress { get; set; }
+
         //Spezialfelder
 
         [SwaggerDeprecated("Deprecated")]
@@ -2068,7 +2378,7 @@ namespace DataModel
         //gebuchten Sääle von spezifischen Event
         //Space : Code für Raum von DB
         //SpaceDesc: Beschreibung --> zu nehmen
-        //SpaceAbbrev: Abgekürzte Beschreibung 
+        //SpaceAbbrev: Abgekürzte Beschreibung
         //SoaceType : EC = Eurac, NO = Noi
         //Comnment: entweder x oder leer --> x bedeutet bitte nicht anzeigen!!!!!!!
         //Subtitle: Untertitel vom Saal (anzeigen)
@@ -2080,24 +2390,32 @@ namespace DataModel
 
         //[SwaggerDeprecated("Deprecated, use GpsInfo")]
         public List<string>? TechnologyFields { get; set; }
+
         //[SwaggerDeprecated("Deprecated, use GpsInfo")]
         public List<string>? CustomTagging { get; set; }
 
-         [SwaggerDeprecated("Deprecated, use Documents")]
-        public List<DocumentPDF>? EventDocument {
+        [SwaggerDeprecated("Deprecated, use Documents")]
+        public List<DocumentPDF>? EventDocument
+        {
             get
             {
                 if (this.Documents != null && this.Documents.Count > 0)
                 {
-                    return this.Documents.SelectMany(x => x.Value).Select(y => new DocumentPDF() { DocumentURL = y.DocumentURL, Language = y.Language }).ToList();
+                    return this
+                        .Documents.SelectMany(x => x.Value)
+                        .Select(y => new DocumentPDF()
+                        {
+                            DocumentURL = y.DocumentURL,
+                            Language = y.Language,
+                        })
+                        .ToList();
                 }
                 else
                     return null;
-            }            
+            }
         }
 
         public IDictionary<string, List<Document>?> Documents { get; set; }
-
 
         public bool? ExternalOrganizer { get; set; }
 
@@ -2109,7 +2427,15 @@ namespace DataModel
         {
             get
             {
-                return !String.IsNullOrEmpty(this.AnchorVenue) ? (this.AnchorVenue.StartsWith("NOI ") || this.AnchorVenue.StartsWith("Noi ") || this.AnchorVenue.StartsWith("noi ")) ? this.AnchorVenue.Remove(0, 3).Trim() : this.AnchorVenue : this.AnchorVenue;
+                return !String.IsNullOrEmpty(this.AnchorVenue)
+                    ? (
+                        this.AnchorVenue.StartsWith("NOI ")
+                        || this.AnchorVenue.StartsWith("Noi ")
+                        || this.AnchorVenue.StartsWith("noi ")
+                    )
+                        ? this.AnchorVenue.Remove(0, 3).Trim()
+                        : this.AnchorVenue
+                    : this.AnchorVenue;
             }
         }
 
@@ -2120,7 +2446,8 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use PublishedOn: today.noi.bz.it")]
         [SwaggerSchema(" ActiveToday Indicates if Event is shown on the today NOI Website")]
-        public bool? ActiveToday {
+        public bool? ActiveToday
+        {
             get
             {
                 if (this.PublishedOn != null && this.PublishedOn.Count > 0)
@@ -2135,8 +2462,11 @@ namespace DataModel
         }
 
         [SwaggerDeprecated("Deprecated, use PublishedOn: noi.bz.it")]
-        [SwaggerSchema(" ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI")]
-        public bool? ActiveWeb {
+        [SwaggerSchema(
+            " ActiveWeb Indicates if Event is shown on the Noi Website Section Events at NOI"
+        )]
+        public bool? ActiveWeb
+        {
             get
             {
                 if (this.PublishedOn != null && this.PublishedOn.Count > 0)
@@ -2152,7 +2482,8 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use PublishedOn: noi-communityapp")]
         [SwaggerSchema("ActiveCommunityApp Indicates if Event is shown on the Noi Community App")]
-        public bool? ActiveCommunityApp {
+        public bool? ActiveCommunityApp
+        {
             get
             {
                 if (this.PublishedOn != null && this.PublishedOn.Count > 0)
@@ -2184,22 +2515,18 @@ namespace DataModel
                 }
                 else
                 {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
+                    return new Dictionary<string, GpsInfo> { };
                 }
             }
         }
 
         public AgeRange? TypicalAgeRange { get; set; }
-       
 
         //Use Active for filtering out not active events
         public bool? Active { get; set; }
 
         //Video Items
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
-
     }
 
     public class RoomBooked
@@ -2220,7 +2547,15 @@ namespace DataModel
         {
             get
             {
-                return !String.IsNullOrEmpty(this.SpaceDesc) ? (this.SpaceDesc.StartsWith("NOI ") || this.SpaceDesc.StartsWith("Noi ") || this.SpaceDesc.StartsWith("noi ")) ? this.SpaceDesc.Remove(0, 3).Trim() : this.SpaceDesc : this.SpaceDesc;
+                return !String.IsNullOrEmpty(this.SpaceDesc)
+                    ? (
+                        this.SpaceDesc.StartsWith("NOI ")
+                        || this.SpaceDesc.StartsWith("Noi ")
+                        || this.SpaceDesc.StartsWith("noi ")
+                    )
+                        ? this.SpaceDesc.Remove(0, 3).Trim()
+                        : this.SpaceDesc
+                    : this.SpaceDesc;
             }
         }
     }
@@ -2265,10 +2600,10 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescriptionDE { get; set; }
-     
+
         [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescriptionIT { get; set; }
-        
+
         [SwaggerDeprecated("Deprecated, use EventTitle")]
         public string? EventDescriptionEN { get; set; }
 
@@ -2292,8 +2627,10 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextDE { get; set; }
+
         [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextIT { get; set; }
+
         [SwaggerDeprecated("Deprecated, use EventText")]
         public string? EventTextEN { get; set; }
 
@@ -2345,6 +2682,7 @@ namespace DataModel
         public string? Webcamurl { get; set; }
 
         public GpsInfo? GpsInfo { get; set; }
+
         [Obsolete("Use Publishedon")]
         public int? ListPosition { get; set; }
         public string? Streamurl { get; set; }
@@ -2363,7 +2701,18 @@ namespace DataModel
         //public string Source { get; set; }
     }
 
-    public class WebcamInfoRaven : Webcam, IIdentifiable, IShortName, IImportDateassigneable, ISource, ILicenseInfo, IMappingAware, IPublishedOn, IGPSPointsAware, IActivateable, ISmgActive
+    public class WebcamInfoRaven
+        : Webcam,
+            IIdentifiable,
+            IShortName,
+            IImportDateassigneable,
+            ISource,
+            ILicenseInfo,
+            IMappingAware,
+            IPublishedOn,
+            IGPSPointsAware,
+            IActivateable,
+            ISmgActive
     {
         public WebcamInfoRaven()
         {
@@ -2400,14 +2749,12 @@ namespace DataModel
                 {
                     return new Dictionary<string, GpsInfo>
                     {
-                        { this.GpsInfo.Gpstype, this.GpsInfo }
+                        { this.GpsInfo.Gpstype, this.GpsInfo },
                     };
                 }
                 else
                 {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
+                    return new Dictionary<string, GpsInfo> { };
                 }
             }
         }
@@ -2416,7 +2763,6 @@ namespace DataModel
 
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
 
-
         ////Temporary Hack because GpsInfo here is a object instead of object list
         //public ICollection<GpsInfo> GpsInfos
         //{
@@ -2424,10 +2770,18 @@ namespace DataModel
         //    {
         //        return this.GpsInfo != null ? new List<GpsInfo> { this.GpsInfo } : new List<GpsInfo>();
         //    }
-        //}       
+        //}
     }
 
-    public class WebcamInfo : WebcamInfoRaven, IHasLanguage, IImageGalleryAware, IContactInfosAware, IDetailInfosAware, IGPSInfoAware, ISmgTags, IVideoItemsAware
+    public class WebcamInfo
+        : WebcamInfoRaven,
+            IHasLanguage,
+            IImageGalleryAware,
+            IContactInfosAware,
+            IDetailInfosAware,
+            IGPSInfoAware,
+            ISmgTags,
+            IVideoItemsAware
     {
         public WebcamInfo()
         {
@@ -2450,9 +2804,7 @@ namespace DataModel
                 }
                 else
                 {
-                    return new Dictionary<string, GpsInfo>
-                    {
-                    };
+                    return new Dictionary<string, GpsInfo> { };
                 }
             }
         }
@@ -2470,26 +2822,37 @@ namespace DataModel
 
         public WebcamProperties WebCamProperties { get; set; }
 
-
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [Obsolete("Use Detail.Title")]
-        public new IDictionary<string, string> Webcamname { get { return this.Detail.ToDictionary(x => x.Key, x => x.Value.Title); } }
+        public new IDictionary<string, string> Webcamname
+        {
+            get { return this.Detail.ToDictionary(x => x.Key, x => x.Value.Title); }
+        }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [Obsolete("Use WebcamProperties.Webcamurl")]
-        public new string? Webcamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.WebcamUrl : null; } }
+        public new string? Webcamurl
+        {
+            get { return this.WebCamProperties != null ? this.WebCamProperties.WebcamUrl : null; }
+        }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [Obsolete("Use WebcamProperties.Streamurl")]
-        public new string? Streamurl { get { return this.WebCamProperties != null ? this.WebCamProperties.StreamUrl : null; } }
+        public new string? Streamurl
+        {
+            get { return this.WebCamProperties != null ? this.WebCamProperties.StreamUrl : null; }
+        }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
         [Obsolete("Use WebcamProperties.Previewurl")]
-        public new string? Previewurl { get { return this.WebCamProperties != null ? this.WebCamProperties.PreviewUrl : null; } }
+        public new string? Previewurl
+        {
+            get { return this.WebCamProperties != null ? this.WebCamProperties.PreviewUrl : null; }
+        }
 
         public ICollection<string> HasLanguage { get; set; }
     }
-    
+
     public class WebcamProperties
     {
         public string? WebcamUrl { get; set; }
@@ -2508,7 +2871,16 @@ namespace DataModel
 
     #region Wine
 
-    public class Wine : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware, IPublishedOn, IActivateable, ISmgActive
+    public class Wine
+        : IIdentifiable,
+            IShortName,
+            IImportDateassigneable,
+            ILicenseInfo,
+            ISource,
+            IMappingAware,
+            IPublishedOn,
+            IActivateable,
+            ISmgActive
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2525,7 +2897,7 @@ namespace DataModel
         public IDictionary<string, Detail> Detail { get; set; }
 
         //public Dictionary<string, string> Title { get; set; }
-        //public Dictionary<string, string> WineName { get; set; }        
+        //public Dictionary<string, string> WineName { get; set; }
 
         public int Vintage { get; set; }
         public int Awardyear { get; set; }
@@ -2541,6 +2913,7 @@ namespace DataModel
         public DateTime? FirstImport { get; set; }
 
         public bool Active { get; set; }
+
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
@@ -2552,7 +2925,6 @@ namespace DataModel
 
         public ICollection<string> PublishedOn { get; set; }
     }
-
 
     #endregion
 
@@ -2603,7 +2975,7 @@ namespace DataModel
         public string? ClusterCustomId { get; set; }
     }
 
-    //For Types Api 
+    //For Types Api
     public class SmgPoiTypes
     {
         public SmgPoiTypes()
@@ -2620,7 +2992,7 @@ namespace DataModel
         public IDictionary<string, string>? TypeDesc { get; set; }
     }
 
-    //For Types Api 
+    //For Types Api
     public class EventTypes
     {
         public EventTypes()
@@ -2634,28 +3006,17 @@ namespace DataModel
         public Dictionary<string, string> TypeDesc { get; set; }
     }
 
-    //For Types Api 
-    public class ActivityTypes : SmgPoiTypes
-    {
+    //For Types Api
+    public class ActivityTypes : SmgPoiTypes { }
 
-    }
+    //For Types Api
+    public class ArticleTypes : SmgPoiTypes { }
 
-    //For Types Api 
-    public class ArticleTypes : SmgPoiTypes
-    {
+    //For Types Api
+    public class PoiTypes : SmgPoiTypes { }
 
-    }
-
-    //For Types Api 
-    public class PoiTypes : SmgPoiTypes
-    {
-
-    }
-
-    //For Types Api 
-    public class ODHActivityPoiTypes : SmgPoiTypes
-    {
-    }
+    //For Types Api
+    public class ODHActivityPoiTypes : SmgPoiTypes { }
 
     #endregion
 
@@ -2664,7 +3025,45 @@ namespace DataModel
     public class Metadata
     {
         public string Id { get; set; }
-        [SwaggerEnum(new[] { "accommodation", "accommodationroom", "event", "odhactivitypoi", "measuringpoint", "webcam", "article", "venue", "eventshort", "experiencearea", "region", "metaregion", "tourismassociation", "municipality", "district", "area", "wineaward", "skiarea", "skiregion", "odhtag", "publisher", "tag", "weatherhistory", "weather", "weatherdistrict", "weatherforecast", "weatherrealtime", "snowreport", "odhmetadata", "package", "ltsactivity", "ltspoi", "ltsgastronomy" })]
+
+        [SwaggerEnum(
+            new[]
+            {
+                "accommodation",
+                "accommodationroom",
+                "event",
+                "odhactivitypoi",
+                "measuringpoint",
+                "webcam",
+                "article",
+                "venue",
+                "eventshort",
+                "experiencearea",
+                "region",
+                "metaregion",
+                "tourismassociation",
+                "municipality",
+                "district",
+                "area",
+                "wineaward",
+                "skiarea",
+                "skiregion",
+                "odhtag",
+                "publisher",
+                "tag",
+                "weatherhistory",
+                "weather",
+                "weatherdistrict",
+                "weatherforecast",
+                "weatherrealtime",
+                "snowreport",
+                "odhmetadata",
+                "package",
+                "ltsactivity",
+                "ltspoi",
+                "ltsgastronomy",
+            }
+        )]
         public string Type { get; set; }
         public DateTime? LastUpdate { get; set; }
         public string Source { get; set; }
@@ -2686,11 +3085,17 @@ namespace DataModel
         public string? License { get; set; }
         public string? LicenseHolder { get; set; }
         public string? Author { get; set; }
+
         [SwaggerSchema(Description = "readonly field", ReadOnly = true)]
         public bool ClosedData { get; set; }
     }
 
-    public class SmgTags : IIdentifiable, IShortName, IImportDateassigneable, ILicenseInfo, IPublishedOn
+    public class SmgTags
+        : IIdentifiable,
+            IShortName,
+            IImportDateassigneable,
+            ILicenseInfo,
+            IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2710,7 +3115,6 @@ namespace DataModel
         public IDictionary<string, string> TagName { get; set; }
         public ICollection<string> ValidForEntity { get; set; }
 
-
         public ICollection<string> Source { get; set; }
 
         public DateTime? FirstImport { get; set; }
@@ -2720,6 +3124,7 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated, use Mapping or MappedIds")]
         public IDictionary<string, string>? IDMCategoryMapping { get; set; }
+
         [SwaggerDeprecated("Deprecated, use Mapping")]
         public LTSTaggingInfo? LTSTaggingInfo { get; set; }
 
@@ -2752,7 +3157,7 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-        
+
         public string Key { get; set; }
 
         public IDictionary<string, string> Name { get; set; }
@@ -2776,7 +3181,11 @@ namespace DataModel
         {
             get
             {
-                return String.Format("{0}/{1}", this.BaseUrl != null ? this.BaseUrl : "", String.Join("/", this.PathParam));
+                return String.Format(
+                    "{0}/{1}",
+                    this.BaseUrl != null ? this.BaseUrl : "",
+                    String.Join("/", this.PathParam)
+                );
             }
         }
     }
@@ -2792,7 +3201,7 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-        
+
         public string Key { get; set; }
 
         public IDictionary<string, string> Name { get; set; }
@@ -2856,9 +3265,23 @@ namespace DataModel
         public string ODHTagId { get; set; }
         public string LTSTagRID { get; set; }
     }
-  
+
     //BaseInfos for Districts / Regions / Municipalities ...
-    public abstract class BaseInfos : IIdentifiable, IActivateable, IGpsInfo, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, IContactInfosAware, ISource, IMappingAware, IDistanceInfoAware, IPublishedOn
+    public abstract class BaseInfos
+        : IIdentifiable,
+            IActivateable,
+            IGpsInfo,
+            ISmgTags,
+            ISmgActive,
+            IHasLanguage,
+            IImportDateassigneable,
+            ILicenseInfo,
+            IDetailInfosAware,
+            IContactInfosAware,
+            ISource,
+            IMappingAware,
+            IDistanceInfoAware,
+            IPublishedOn
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2908,7 +3331,26 @@ namespace DataModel
     }
 
     //BaseInfos for ODHActivityPois / Activities / Pois
-    public class PoiBaseInfos : IIdentifiable, IActivateable, IGeoDataInfoAware, IActivityStatus, IImageGalleryAware, IContactInfosAware, IAdditionalPoiInfosAware, ISmgTags, ISmgActive, IHasLanguage, IImportDateassigneable, ILicenseInfo, IDetailInfosAware, ISource, IMappingAware, IDistanceInfoAware, IGPSInfoAware, IPublishedOn, IVideoItemsAware
+    public class PoiBaseInfos
+        : IIdentifiable,
+            IActivateable,
+            IGeoDataInfoAware,
+            IActivityStatus,
+            IImageGalleryAware,
+            IContactInfosAware,
+            IAdditionalPoiInfosAware,
+            ISmgTags,
+            ISmgActive,
+            IHasLanguage,
+            IImportDateassigneable,
+            ILicenseInfo,
+            IDetailInfosAware,
+            ISource,
+            IMappingAware,
+            IDistanceInfoAware,
+            IGPSInfoAware,
+            IPublishedOn,
+            IVideoItemsAware
     {
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -2923,27 +3365,28 @@ namespace DataModel
         }
 
         public string? Id { get; set; }
-        
+
         public string? OutdooractiveID { get; set; }
         public string? OutdooractiveElevationID { get; set; }
 
         [SwaggerDeprecated("Use Mappings")]
         public string? SmgId { get; set; }
 
-
         public bool? CopyrightChecked { get; set; }
 
         [SwaggerSchema("Active on Source")]
         public bool Active { get; set; }
         public string? Shortname { get; set; }
-   
+
         [SwaggerDeprecated("Use Ratings.Difficulty")]
         public string? Difficulty { get; set; }
 
         [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? Type { get; set; }
+
         [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? SubType { get; set; }
+
         [SwaggerDeprecated("Use AdditionalPoiInfos.Categories instead")]
         public string? PoiType { get; set; }
 
@@ -2959,9 +3402,12 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated use AreaIds")]
         public HashSet<string>? AreaId { get; set; }
-        
+
         [GetOnlyJsonProperty]
-        public ICollection<string>? AreaIds { get { return this.AreaId; } }
+        public ICollection<string>? AreaIds
+        {
+            get { return this.AreaId; }
+        }
 
         public double? AltitudeDifference { get; set; }
         public double? AltitudeHighestPoint { get; set; }
@@ -3023,18 +3469,21 @@ namespace DataModel
 
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
     }
-     
+
     public class Detail : IDetailInfos, ILanguage
     {
         public string? Header { get; set; }
-        //public string SiteHeader { get; set; }  
+
+        //public string SiteHeader { get; set; }
         public string? SubHeader { get; set; }
         public string? IntroText { get; set; }
         public string? BaseText { get; set; }
         public string? Title { get; set; }
+
         //OLT
         //public string Alttext { get; set; }
         public string? AdditionalText { get; set; }
+
         //NEW
         public string? MetaTitle { get; set; }
         public string? MetaDesc { get; set; }
@@ -3044,7 +3493,7 @@ namespace DataModel
 
         public ICollection<string>? Keywords { get; set; }
 
-        //New LTS Fields        
+        //New LTS Fields
         public string? ParkingInfo { get; set; }
         public string? PublicTransportationInfo { get; set; }
         public string? AuthorTip { get; set; }
@@ -3052,7 +3501,7 @@ namespace DataModel
         public string? EquipmentInfo { get; set; }
     }
 
-    //Special Element for Themed Content 
+    //Special Element for Themed Content
     public class DetailThemed : ILanguage
     {
         public DetailThemed()
@@ -3076,7 +3525,21 @@ namespace DataModel
     {
         //[DefaultValue("position")]
         //[JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        [SwaggerEnum(new[] { "position", "viewpoint", "startingandarrivalpoint", "startingpoint", "arrivalpoint", "carparking", "halfwaypoint", "valleystationpoint", "middlestationpoint", "mountainstationpoint" })]
+        [SwaggerEnum(
+            new[]
+            {
+                "position",
+                "viewpoint",
+                "startingandarrivalpoint",
+                "startingpoint",
+                "arrivalpoint",
+                "carparking",
+                "halfwaypoint",
+                "valleystationpoint",
+                "middlestationpoint",
+                "mountainstationpoint",
+            }
+        )]
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
@@ -3168,6 +3631,7 @@ namespace DataModel
         //NEW
         public string? Definition { get; set; }
         public double? Duration { get; set; }
+
         //To Remove (at the moment here is stored panomax 360 / 720, this info is already into Definition with SD/HD
         public int? Resolution { get; set; }
         public int? Bitrate { get; set; }
@@ -3177,14 +3641,14 @@ namespace DataModel
     {
         [SwaggerSchema(Description = "Street Address")]
         public string? Address { get; set; }
-        
-        [SwaggerSchema(Description = "Region (Province / State / Departement / Canton etc...")] 
+
+        [SwaggerSchema(Description = "Region (Province / State / Departement / Canton etc...")]
         public string? Region { get; set; }
-        
+
         [SwaggerSchema(Description = "Regioncode")]
         public string? RegionCode { get; set; }
 
-        [SwaggerSchema(Description = "Area (Additional Area Name)")] 
+        [SwaggerSchema(Description = "Area (Additional Area Name)")]
         public string? Area { get; set; }
         public string? City { get; set; }
         public string? ZipCode { get; set; }
@@ -3211,8 +3675,10 @@ namespace DataModel
 
         [SwaggerDeprecated("Use Categories instead")]
         public string? MainType { get; set; }
+
         [SwaggerDeprecated("Use Categories instead")]
         public string? SubType { get; set; }
+
         [SwaggerDeprecated("Use Categories instead")]
         public string? PoiType { get; set; }
 
@@ -3312,20 +3778,26 @@ namespace DataModel
         //public string Language { get; set; }
     }
 
-    [SwaggerSchema("Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>")]
+    [SwaggerSchema(
+        "Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>"
+    )]
     public class OperationSchedule : IOperationSchedules
     {
         public OperationSchedule()
         {
             OperationscheduleName = new Dictionary<string, string>();
         }
+
         public IDictionary<string, string> OperationscheduleName { get; set; }
         public DateTime Start { get; set; }
         public DateTime Stop { get; set; }
+
         /// <summary>
         /// Type: 1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider)
-        /// </summary>        
-        [SwaggerSchema("1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider), Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>")]
+        /// </summary>
+        [SwaggerSchema(
+            "1 - Standard, 2 - Only day + month recurring (year not to consider) 3 - only month recurring (season: year and day not to consider), Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>"
+        )]
         public string? Type { get; set; }
 
         public ICollection<OperationScheduleTime>? OperationScheduleTime { get; set; }
@@ -3338,23 +3810,32 @@ namespace DataModel
         public bool Monday { get; set; }
         public bool Tuesday { get; set; }
         public bool Wednesday { get; set; }
+
         // Here for compatibility reasons
         [SwaggerDeprecated("Will be removed within 2023-12-31")]
-        public bool Thuresday { get { return Thursday; }  }
+        public bool Thuresday
+        {
+            get { return Thursday; }
+        }
         public bool Thursday { get; set; }
         public bool Friday { get; set; }
         public bool Saturday { get; set; }
         public bool Sunday { get; set; }
+
         /// <summary>
         /// //1 = closed, 2 = open, 0 = undefined
         /// </summary>
-        [SwaggerSchema("1 = closed, 2 = open, 0 = undefined, Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>")]
+        [SwaggerSchema(
+            "1 = closed, 2 = open, 0 = undefined, Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>"
+        )]
         public int State { get; set; }
 
         /// <summary>
         /// 1 = General Opening Time, 2 = time range for warm meals, 3 = time range for pizza, 4 = time range for snack’s
         /// </summary>
-        [SwaggerSchema("1 = General Opening Time, 2 = time range for warm meals, 3 = time range for pizza, 4 = time range for snack’s, Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>")]
+        [SwaggerSchema(
+            "1 = General Opening Time, 2 = time range for warm meals, 3 = time range for pizza, 4 = time range for snack’s, Wiki Article on <a href='https://github.com/noi-techpark/odh-docs/wiki/Operationschedule-Format' target='_blank'>Wiki Article</a>"
+        )]
         public int Timecode { get; set; }
     }
 
@@ -3556,7 +4037,9 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema(
+            "This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint"
+        )]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3564,7 +4047,9 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema(
+            "This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint"
+        )]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3572,7 +4057,9 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema(
+            "This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint"
+        )]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3580,7 +4067,9 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema(
+            "This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint"
+        )]
         public IDictionary<string, string?>? Name { get; set; }
     }
 
@@ -3588,7 +4077,9 @@ namespace DataModel
     {
         public string? Id { get; set; }
 
-        [SwaggerSchema("This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint")]
+        [SwaggerSchema(
+            "This Name field is a Helper field and may contain not updated LocationInfo Names, Use the Id/Selflink to retrieve correct names from the appropriate Endpoint"
+        )]
         public IDictionary<string, string>? Name { get; set; }
     }
 
@@ -3623,7 +4114,7 @@ namespace DataModel
                 "ltsgastronomy" => "Gastronomy",
                 "event" => "Event",
                 "odhactivitypoi" => "ODHActivityPoi",
-                "package" => "Package",                
+                "package" => "Package",
                 "webcam" => "WebcamInfo",
                 "article" => "Article",
                 "venue" => "Venue",
@@ -3649,8 +4140,8 @@ namespace DataModel
                 "weatherrealtime" => "Weather/Realtime",
                 "snowreport" => "Weather/Snowreport",
                 "odhmetadata" => "MetaData",
-                "tag" => "Tag",                
-                _ => throw new Exception("not known odh type")
+                "tag" => "Tag",
+                _ => throw new Exception("not known odh type"),
             };
         }
 
@@ -3664,13 +4155,13 @@ namespace DataModel
 
                 return TranslateTypeString2EndPoint(odhtype);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return "ODHActivityPoi";
             }
         }
     }
-    
+
     #endregion
 
     public class PushResponse
@@ -3698,16 +4189,17 @@ namespace DataModel
         public string? Response { get; set; }
         public string? Error { get; set; }
 
-        public static PushResult MergeMultipleFCMPushNotificationResponses(IEnumerable<PushResult> responses)
+        public static PushResult MergeMultipleFCMPushNotificationResponses(
+            IEnumerable<PushResult> responses
+        )
         {
             return new PushResult()
             {
                 Messages = responses.Sum(x => x.Messages),
                 Error = String.Join("|", responses.Select(x => x.Error)),
                 Success = responses.Any(x => x.Success == true),
-                Response = String.Join("|", responses.Select(x => x.Response))
+                Response = String.Join("|", responses.Select(x => x.Response)),
             };
         }
     }
-
 }

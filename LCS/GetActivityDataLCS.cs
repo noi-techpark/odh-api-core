@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.Text;
 using System.Xml.Linq;
+using Helper;
 
 namespace LCS
 {
@@ -62,14 +62,18 @@ namespace LCS
         }
 
         //Weather Snow Observation Search
-        public ServiceReferenceLCS.WeatherSnowObservationSearchRS GetWeatherSnowSearch(XElement myrequest)
+        public ServiceReferenceLCS.WeatherSnowObservationSearchRS GetWeatherSnowSearch(
+            XElement myrequest
+        )
         {
             var activitysearch = lcs.oWeatherSnowObservationSearch(myrequest.ToXmlElement());
             return activitysearch;
         }
 
         //Weather Snow Observation Detail
-        public ServiceReferenceLCS.WeatherSnowObservationDetailRS GetWeatherSnowDetail(XElement myrequest)
+        public ServiceReferenceLCS.WeatherSnowObservationDetailRS GetWeatherSnowDetail(
+            XElement myrequest
+        )
         {
             var activitydetail = lcs.oWeatherSnowObservationDetail(myrequest.ToXmlElement());
             return activitydetail;
@@ -88,7 +92,5 @@ namespace LCS
             var activitydetail = lcs.oWebCamDetail(myrequest.ToXmlElement());
             return activitydetail;
         }
-
-       
     }
 }

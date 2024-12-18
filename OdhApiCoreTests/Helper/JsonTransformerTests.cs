@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Helper;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit;
 
 namespace OdhApiCoreTests.Helper
@@ -18,14 +18,16 @@ namespace OdhApiCoreTests.Helper
         [Fact]
         public void FilterByLanguageTest()
         {
-            var actual = @"{
+            var actual =
+                @"{
                 ""languages"": {
                     ""de"": ""hallo"",
                     ""it"": ""ciao"",
                     ""en"": ""hello""
                 }
             }";
-            var expected = @"{
+            var expected =
+                @"{
                 ""languages"": {
                     ""de"": ""hallo""
                 }
@@ -39,7 +41,8 @@ namespace OdhApiCoreTests.Helper
         [Fact]
         public void FilterImagesByCC0LicenseTest()
         {
-            var actual = @"[{
+            var actual =
+                @"[{
                 ""License"": ""CC0"",
                 ""Name"": ""Image1""
             },
@@ -47,7 +50,8 @@ namespace OdhApiCoreTests.Helper
                 ""License"": ""LTS"",
                 ""Name"": ""Image2""
             }]";
-            var expected = @"[{
+            var expected =
+                @"[{
                 ""License"": ""CC0"",
                 ""Name"": ""Image1""
             }]";

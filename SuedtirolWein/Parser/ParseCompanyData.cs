@@ -2,27 +2,38 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using DataModel;
+using Helper;
 
 namespace SuedtirolWein.Parser
 {
     public class ParseCompanyData
     {
-        private static void ParseContactInfo(string language, XElement companydata, ODHActivityPoiLinked mywinecompany)
+        private static void ParseContactInfo(
+            string language,
+            XElement companydata,
+            ODHActivityPoiLinked mywinecompany
+        )
         {
             ContactInfos contactinfo = new ContactInfos();
 
             contactinfo.CompanyName = companydata.Element("title").Value;
-            contactinfo.Address = companydata.Element("address") != null ? companydata.Element("address").Value : null;
-            contactinfo.ZipCode = companydata.Element("zipcode") != null ? companydata.Element("zipcode").Value : null;
-            contactinfo.City = companydata.Element("place") != null ? companydata.Element("place").Value : null;
+            contactinfo.Address =
+                companydata.Element("address") != null
+                    ? companydata.Element("address").Value
+                    : null;
+            contactinfo.ZipCode =
+                companydata.Element("zipcode") != null
+                    ? companydata.Element("zipcode").Value
+                    : null;
+            contactinfo.City =
+                companydata.Element("place") != null ? companydata.Element("place").Value : null;
 
             string countryname = "Italy";
             if (language == "de")
@@ -32,24 +43,33 @@ namespace SuedtirolWein.Parser
 
             contactinfo.CountryName = countryname;
             contactinfo.CountryCode = "IT";
-            contactinfo.Phonenumber = companydata.Element("phone") != null ? companydata.Element("phone").Value : null;
+            contactinfo.Phonenumber =
+                companydata.Element("phone") != null ? companydata.Element("phone").Value : null;
 
             string webadresseIT = "";
             //Webadress gschicht
             if (companydata.Element("homepage") != null)
             {
-                webadresseIT = companydata.Element("homepage").Value.Contains("http") ? companydata.Element("homepage").Value : "http://" + companydata.Element("homepage").Value;
+                webadresseIT = companydata.Element("homepage").Value.Contains("http")
+                    ? companydata.Element("homepage").Value
+                    : "http://" + companydata.Element("homepage").Value;
             }
 
             contactinfo.Url = webadresseIT;
-            contactinfo.Email = companydata.Element("email") != null ? companydata.Element("email").Value : null;
-            contactinfo.LogoUrl = companydata.Element("logo") != null ? companydata.Element("logo").Value : null;
+            contactinfo.Email =
+                companydata.Element("email") != null ? companydata.Element("email").Value : null;
+            contactinfo.LogoUrl =
+                companydata.Element("logo") != null ? companydata.Element("logo").Value : null;
             contactinfo.Language = language;
 
             mywinecompany.ContactInfos.TryAddOrUpdate(language, contactinfo);
         }
 
-        private static void ParseDetailInfo(string language, XElement companydata, ODHActivityPoiLinked mywinecompany)
+        private static void ParseDetailInfo(
+            string language,
+            XElement companydata,
+            ODHActivityPoiLinked mywinecompany
+        )
         {
             //Detail IT
             Detail mydetail = new Detail();
@@ -58,21 +78,30 @@ namespace SuedtirolWein.Parser
                 if (mywinecompany.Detail.ContainsKey(language))
                     mydetail = mywinecompany.Detail[language];
 
-
             mydetail.Title = companydata.Element("title").Value;
 
-            mydetail.BaseText = companydata.Element("companydescription") != null ? companydata.Element("companydescription").Value : null;
+            mydetail.BaseText =
+                companydata.Element("companydescription") != null
+                    ? companydata.Element("companydescription").Value
+                    : null;
 
-            mydetail.Header = companydata.Element("slogan") != null ? companydata.Element("slogan").Value : null;
-            mydetail.SubHeader = companydata.Element("subtitle") != null ? companydata.Element("subtitle").Value : null;
-            mydetail.IntroText = companydata.Element("quote") != null ? companydata.Element("quote").Value : null;
-
+            mydetail.Header =
+                companydata.Element("slogan") != null ? companydata.Element("slogan").Value : null;
+            mydetail.SubHeader =
+                companydata.Element("subtitle") != null
+                    ? companydata.Element("subtitle").Value
+                    : null;
+            mydetail.IntroText =
+                companydata.Element("quote") != null ? companydata.Element("quote").Value : null;
 
             mydetail.Language = language;
             mywinecompany.Detail.TryAddOrUpdate(language, mydetail);
         }
 
-        private static void ParseImageGalleryData(IDictionary<string, XElement> companydata, ODHActivityPoiLinked mywinecompany)
+        private static void ParseImageGalleryData(
+            IDictionary<string, XElement> companydata,
+            ODHActivityPoiLinked mywinecompany
+        )
         {
             //ImageGallery
             List<ImageGallery> myimagegallerylist = new List<ImageGallery>();
@@ -92,13 +121,22 @@ namespace SuedtirolWein.Parser
 
                 //Image Title
                 if (companydata["de"].Element("imagemetatitle") != null)
-                    myimagegallery.ImageTitle.TryAddOrUpdate("de", companydata["de"].Element("imagemetatitle").Value);
+                    myimagegallery.ImageTitle.TryAddOrUpdate(
+                        "de",
+                        companydata["de"].Element("imagemetatitle").Value
+                    );
                 //Image Description
                 if (companydata["de"].Element("imagemetadescription") != null)
-                    myimagegallery.ImageDesc.TryAddOrUpdate("de", companydata["de"].Element("imagemetadescription").Value);
+                    myimagegallery.ImageDesc.TryAddOrUpdate(
+                        "de",
+                        companydata["de"].Element("imagemetadescription").Value
+                    );
                 //Image Alttext
                 if (companydata["de"].Element("imagemetaalt") != null)
-                    myimagegallery.ImageAltText.TryAddOrUpdate("de", companydata["de"].Element("imagemetaalt").Value);
+                    myimagegallery.ImageAltText.TryAddOrUpdate(
+                        "de",
+                        companydata["de"].Element("imagemetaalt").Value
+                    );
 
                 imageurlmedia = myimagegallery.ImageUrl;
 
@@ -109,12 +147,26 @@ namespace SuedtirolWein.Parser
                 if (myimagegallerylist.Count == 1)
                 {
                     if (companydata["it"].Element("imagemetatitle") != null)
-                        myimagegallerylist.FirstOrDefault().ImageTitle.TryAddOrUpdate("it", companydata["it"].Element("imagemetatitle").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageTitle.TryAddOrUpdate(
+                                "it",
+                                companydata["it"].Element("imagemetatitle").Value
+                            );
                     if (companydata["it"].Element("imagemetadescription") != null)
-                        myimagegallerylist.FirstOrDefault().ImageDesc.TryAddOrUpdate("it", companydata["it"].Element("imagemetadescription").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageDesc.TryAddOrUpdate(
+                                "it",
+                                companydata["it"].Element("imagemetadescription").Value
+                            );
                     if (companydata["it"].Element("imagemetaalt") != null)
-                        myimagegallerylist.FirstOrDefault().ImageAltText.TryAddOrUpdate("it", companydata["it"].Element("imagemetaalt").Value);
-
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageAltText.TryAddOrUpdate(
+                                "it",
+                                companydata["it"].Element("imagemetaalt").Value
+                            );
                 }
             }
             if (companydata["en"] != null && companydata["en"].Element("media") != null)
@@ -122,11 +174,26 @@ namespace SuedtirolWein.Parser
                 if (myimagegallerylist.Count == 1)
                 {
                     if (companydata["en"].Element("imagemetatitle") != null)
-                        myimagegallerylist.FirstOrDefault().ImageTitle.TryAddOrUpdate("en", companydata["en"].Element("imagemetatitle").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageTitle.TryAddOrUpdate(
+                                "en",
+                                companydata["en"].Element("imagemetatitle").Value
+                            );
                     if (companydata["en"].Element("imagemetadescription") != null)
-                        myimagegallerylist.FirstOrDefault().ImageDesc.TryAddOrUpdate("en", companydata["en"].Element("imagemetadescription").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageDesc.TryAddOrUpdate(
+                                "en",
+                                companydata["en"].Element("imagemetadescription").Value
+                            );
                     if (companydata["en"].Element("imagemetaalt") != null)
-                        myimagegallerylist.FirstOrDefault().ImageAltText.TryAddOrUpdate("en", companydata["en"].Element("imagemetaalt").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageAltText.TryAddOrUpdate(
+                                "en",
+                                companydata["en"].Element("imagemetaalt").Value
+                            );
                 }
             }
             if (companydata["ru"] != null && companydata["ru"].Element("media") != null)
@@ -134,11 +201,26 @@ namespace SuedtirolWein.Parser
                 if (myimagegallerylist.Count == 1)
                 {
                     if (companydata["ru"].Element("imagemetatitle") != null)
-                        myimagegallerylist.FirstOrDefault().ImageTitle.TryAddOrUpdate("ru", companydata["ru"].Element("imagemetatitle").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageTitle.TryAddOrUpdate(
+                                "ru",
+                                companydata["ru"].Element("imagemetatitle").Value
+                            );
                     if (companydata["ru"].Element("imagemetadescription") != null)
-                        myimagegallerylist.FirstOrDefault().ImageDesc.TryAddOrUpdate("ru", companydata["ru"].Element("imagemetadescription").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageDesc.TryAddOrUpdate(
+                                "ru",
+                                companydata["ru"].Element("imagemetadescription").Value
+                            );
                     if (companydata["ru"].Element("imagemetaalt") != null)
-                        myimagegallerylist.FirstOrDefault().ImageAltText.TryAddOrUpdate("ru", companydata["ru"].Element("imagemetaalt").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageAltText.TryAddOrUpdate(
+                                "ru",
+                                companydata["ru"].Element("imagemetaalt").Value
+                            );
                 }
             }
             if (companydata["jp"] != null && companydata["jp"].Element("media") != null)
@@ -146,11 +228,26 @@ namespace SuedtirolWein.Parser
                 if (myimagegallerylist.Count == 1)
                 {
                     if (companydata["jp"].Element("imagemetatitle") != null)
-                        myimagegallerylist.FirstOrDefault().ImageTitle.TryAddOrUpdate("jp", companydata["jp"].Element("imagemetatitle").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageTitle.TryAddOrUpdate(
+                                "jp",
+                                companydata["jp"].Element("imagemetatitle").Value
+                            );
                     if (companydata["jp"].Element("imagemetadescription") != null)
-                        myimagegallerylist.FirstOrDefault().ImageDesc.TryAddOrUpdate("jp", companydata["jp"].Element("imagemetadescription").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageDesc.TryAddOrUpdate(
+                                "jp",
+                                companydata["jp"].Element("imagemetadescription").Value
+                            );
                     if (companydata["jp"].Element("imagemetaalt") != null)
-                        myimagegallerylist.FirstOrDefault().ImageAltText.TryAddOrUpdate("jp", companydata["jp"].Element("imagemetaalt").Value);
+                        myimagegallerylist
+                            .FirstOrDefault()
+                            .ImageAltText.TryAddOrUpdate(
+                                "jp",
+                                companydata["jp"].Element("imagemetaalt").Value
+                            );
                 }
             }
 
@@ -188,7 +285,11 @@ namespace SuedtirolWein.Parser
             mywinecompany.ImageGallery = myimagegallerylist;
         }
 
-        private static void ParsePropertyData(string language, XElement companydata, ODHActivityPoiLinked mywinecompany)
+        private static void ParsePropertyData(
+            string language,
+            XElement companydata,
+            ODHActivityPoiLinked mywinecompany
+        )
         {
             //PROPS DE
             List<PoiProperty> mypropertylist = new List<PoiProperty>();
@@ -196,7 +297,9 @@ namespace SuedtirolWein.Parser
             {
                 PoiProperty mypropopeningtimeswineshop = new PoiProperty();
                 mypropopeningtimeswineshop.Name = "openingtimeswineshop";
-                mypropopeningtimeswineshop.Value = companydata.Element("openingtimeswineshop").Value;
+                mypropopeningtimeswineshop.Value = companydata
+                    .Element("openingtimeswineshop")
+                    .Value;
                 mypropertylist.Add(mypropopeningtimeswineshop);
             }
             if (companydata.Element("openingtimesguides") != null)
@@ -210,7 +313,9 @@ namespace SuedtirolWein.Parser
             {
                 PoiProperty mypropopeningtimesgastronomie = new PoiProperty();
                 mypropopeningtimesgastronomie.Name = "openingtimesgastronomie";
-                mypropopeningtimesgastronomie.Value = companydata.Element("openingtimesgastronomie").Value;
+                mypropopeningtimesgastronomie.Value = companydata
+                    .Element("openingtimesgastronomie")
+                    .Value;
                 mypropertylist.Add(mypropopeningtimesgastronomie);
             }
             if (companydata.Element("companyholiday") != null)
@@ -297,7 +402,9 @@ namespace SuedtirolWein.Parser
                 PoiProperty mypropissparklingwineassociation = new PoiProperty();
                 mypropissparklingwineassociation.Name = "issparklingwineassociation";
 
-                mypropissparklingwineassociation.Value = companydata.Element("issparklingwineassociation").Value;
+                mypropissparklingwineassociation.Value = companydata
+                    .Element("issparklingwineassociation")
+                    .Value;
                 mypropertylist.Add(mypropissparklingwineassociation);
             }
             if (companydata.Element("iswinery") != null)
@@ -400,7 +507,9 @@ namespace SuedtirolWein.Parser
                 PoiProperty mypropdescriptionsparklingwineproducer = new PoiProperty();
                 mypropdescriptionsparklingwineproducer.Name = "descriptionsparklingwineproducer";
 
-                mypropdescriptionsparklingwineproducer.Value = companydata.Element("descriptionsparklingwineproducer").Value;
+                mypropdescriptionsparklingwineproducer.Value = companydata
+                    .Element("descriptionsparklingwineproducer")
+                    .Value;
                 mypropertylist.Add(mypropdescriptionsparklingwineproducer);
             }
 
@@ -410,7 +519,9 @@ namespace SuedtirolWein.Parser
                 PoiProperty myproph1sparklingwineproducer = new PoiProperty();
                 myproph1sparklingwineproducer.Name = "h1sparklingwineproducer";
 
-                myproph1sparklingwineproducer.Value = companydata.Element("h1sparklingwineproducer").Value;
+                myproph1sparklingwineproducer.Value = companydata
+                    .Element("h1sparklingwineproducer")
+                    .Value;
                 mypropertylist.Add(myproph1sparklingwineproducer);
             }
 
@@ -420,7 +531,9 @@ namespace SuedtirolWein.Parser
                 PoiProperty myproph2sparklingwineproducer = new PoiProperty();
                 myproph2sparklingwineproducer.Name = "h2sparklingwineproducer";
 
-                myproph2sparklingwineproducer.Value = companydata.Element("h2sparklingwineproducer").Value;
+                myproph2sparklingwineproducer.Value = companydata
+                    .Element("h2sparklingwineproducer")
+                    .Value;
                 mypropertylist.Add(myproph2sparklingwineproducer);
             }
 
@@ -430,7 +543,9 @@ namespace SuedtirolWein.Parser
                 PoiProperty mypropimagesparklingwineproducer = new PoiProperty();
                 mypropimagesparklingwineproducer.Name = "imagesparklingwineproducer";
 
-                mypropimagesparklingwineproducer.Value = companydata.Element("imagesparklingwineproducer").Value;
+                mypropimagesparklingwineproducer.Value = companydata
+                    .Element("imagesparklingwineproducer")
+                    .Value;
                 mypropertylist.Add(mypropimagesparklingwineproducer);
             }
 
@@ -527,7 +642,11 @@ namespace SuedtirolWein.Parser
             mywinecompany.PoiProperty.TryAddOrUpdate(language, mypropertylist);
         }
 
-        private static void ParseImporterData(string language, XElement companydata, ODHActivityPoiLinked mywinecompany)
+        private static void ParseImporterData(
+            string language,
+            XElement companydata,
+            ODHActivityPoiLinked mywinecompany
+        )
         {
             List<AdditionalContact> importercontactInfos = new List<AdditionalContact>();
 
@@ -535,7 +654,11 @@ namespace SuedtirolWein.Parser
             {
                 if (companydata.Element("importers").Elements("importer") != null)
                 {
-                    foreach (var companyimporterde in companydata.Element("importers").Elements("importer"))
+                    foreach (
+                        var companyimporterde in companydata
+                            .Element("importers")
+                            .Elements("importer")
+                    )
                     {
                         if (companyimporterde.HasElements)
                         {
@@ -545,23 +668,41 @@ namespace SuedtirolWein.Parser
                             ContactInfos myimportercontactinfode = new ContactInfos();
 
                             if (companyimporterde.Element("importername") != null)
-                                myimportercontactinfode.CompanyName = companyimporterde.Element("importername").Value;
+                                myimportercontactinfode.CompanyName = companyimporterde
+                                    .Element("importername")
+                                    .Value;
                             if (companyimporterde.Element("importeraddress") != null)
-                                myimportercontactinfode.Address = companyimporterde.Element("importeraddress").Value;
+                                myimportercontactinfode.Address = companyimporterde
+                                    .Element("importeraddress")
+                                    .Value;
                             if (companyimporterde.Element("importerzipcode") != null)
-                                myimportercontactinfode.ZipCode = companyimporterde.Element("importerzipcode").Value;
+                                myimportercontactinfode.ZipCode = companyimporterde
+                                    .Element("importerzipcode")
+                                    .Value;
                             if (companyimporterde.Element("importerplace") != null)
-                                myimportercontactinfode.City = companyimporterde.Element("importerplace").Value;
+                                myimportercontactinfode.City = companyimporterde
+                                    .Element("importerplace")
+                                    .Value;
                             if (companyimporterde.Element("importerphone") != null)
-                                myimportercontactinfode.Phonenumber = companyimporterde.Element("importerphone").Value;
+                                myimportercontactinfode.Phonenumber = companyimporterde
+                                    .Element("importerphone")
+                                    .Value;
                             if (companyimporterde.Element("importeremail") != null)
-                                myimportercontactinfode.Email = companyimporterde.Element("importeremail").Value;
+                                myimportercontactinfode.Email = companyimporterde
+                                    .Element("importeremail")
+                                    .Value;
                             if (companyimporterde.Element("importerhomepage") != null)
-                                myimportercontactinfode.Url = companyimporterde.Element("importerhomepage").Value;
+                                myimportercontactinfode.Url = companyimporterde
+                                    .Element("importerhomepage")
+                                    .Value;
                             if (companyimporterde.Element("importercontactperson") != null)
-                                myimportercontactinfode.Givenname = companyimporterde.Element("importercontactperson").Value;
+                                myimportercontactinfode.Givenname = companyimporterde
+                                    .Element("importercontactperson")
+                                    .Value;
                             if (companyimporterde.Element("importerdescription") != null)
-                                myadditionalcontactde.Description = companyimporterde.Element("importerdescription").Value;
+                                myadditionalcontactde.Description = companyimporterde
+                                    .Element("importerdescription")
+                                    .Value;
 
                             myimportercontactinfode.Language = language;
 
@@ -575,13 +716,18 @@ namespace SuedtirolWein.Parser
             if (importercontactInfos.Count > 0)
             {
                 if (mywinecompany.AdditionalContact == null)
-                    mywinecompany.AdditionalContact = new Dictionary<string, List<AdditionalContact>>();
+                    mywinecompany.AdditionalContact =
+                        new Dictionary<string, List<AdditionalContact>>();
 
                 mywinecompany.AdditionalContact.TryAddOrUpdate(language, importercontactInfos);
             }
         }
 
-        public static ODHActivityPoiLinked ParsetheCompanyData(ODHActivityPoiLinked mywinecompany, IDictionary<string, XElement> companydata, List<string> haslanguage)
+        public static ODHActivityPoiLinked ParsetheCompanyData(
+            ODHActivityPoiLinked mywinecompany,
+            IDictionary<string, XElement> companydata,
+            List<string> haslanguage
+        )
         {
             mywinecompany.LastChange = DateTime.Now;
 
@@ -631,16 +777,31 @@ namespace SuedtirolWein.Parser
                 mywinecompany.PoiServices = poiServices;
             }
 
-            if (companydata["de"].Element("latidude") != null && companydata["de"].Element("longitude") != null)
+            if (
+                companydata["de"].Element("latidude") != null
+                && companydata["de"].Element("longitude") != null
+            )
             {
-                if (!companydata["de"].Element("latidude").Value.Contains("°") && !companydata["de"].Element("longitude").Value.Contains("°"))
+                if (
+                    !companydata["de"].Element("latidude").Value.Contains("°")
+                    && !companydata["de"].Element("longitude").Value.Contains("°")
+                )
                 {
-                    if (companydata["de"].Element("latidude").Value != "0" && companydata["de"].Element("longitude").Value != "0")
+                    if (
+                        companydata["de"].Element("latidude").Value != "0"
+                        && companydata["de"].Element("longitude").Value != "0"
+                    )
                     {
                         List<GpsInfo> gpsinfolist = new List<GpsInfo>();
                         GpsInfo mygps = new GpsInfo();
-                        mygps.Latitude = Convert.ToDouble(companydata["de"].Element("latidude").Value, CultureInfo.CurrentCulture);
-                        mygps.Longitude = Convert.ToDouble(companydata["de"].Element("longitude").Value, CultureInfo.CurrentCulture);
+                        mygps.Latitude = Convert.ToDouble(
+                            companydata["de"].Element("latidude").Value,
+                            CultureInfo.CurrentCulture
+                        );
+                        mygps.Longitude = Convert.ToDouble(
+                            companydata["de"].Element("longitude").Value,
+                            CultureInfo.CurrentCulture
+                        );
                         mygps.Gpstype = "position";
                         gpsinfolist.Add(mygps);
                         mywinecompany.GpsInfo = gpsinfolist;
@@ -655,6 +816,6 @@ namespace SuedtirolWein.Parser
             }
 
             return mywinecompany;
-        }       
+        }
     }
 }
