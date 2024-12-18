@@ -257,7 +257,10 @@ namespace DataModel
         [SwaggerDeprecated("Obsolete")]
         public ICollection<string>? PoiServices { get; set; }
 
+        [SwaggerDeprecated("Obsolete")]
         public string? SyncSourceInterface { get; set; }
+        
+        [SwaggerDeprecated("Obsolete")]
         public string? SyncUpdateMode { get; set; }
 
         public int? AgeFrom { get; set; }
@@ -3366,7 +3369,9 @@ namespace DataModel
 
         public string? Id { get; set; }
 
+        [SwaggerDeprecated("Use Mappings")]
         public string? OutdooractiveID { get; set; }
+        [SwaggerDeprecated("Use Mappings")]
         public string? OutdooractiveElevationID { get; set; }
 
         [SwaggerDeprecated("Use Mappings")]

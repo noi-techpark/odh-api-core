@@ -526,6 +526,65 @@ namespace DataModel
 
     #endregion
 
+    #region ODHActivityPoiV2
+
+    public class ODHActivityPoiV2: ODHActivityPoiLinked
+    {
+        //Properties to remove/rename/replace
+
+        public new int? AgeFrom { get; set; }
+        public new int? AgeTo { get; set; }
+        public new int? MaxSeatingCapacity { get; set; }
+        public new string? OutdooractiveID { get; set; }
+        public new string? OutdooractiveElevationID { get; set; }
+        public new string? SmgId { get; set; }
+        public new string? CustomId { get; set; }
+        public new bool? CopyrightChecked { get; set; }
+        public new string? Difficulty { get; set; }
+        public new string? Type { get; set; }
+        public new string? SubType { get; set; }
+        public new string? PoiType { get; set; }
+        public new bool SmgActive { get; set; }
+        public new HashSet<string>? AreaId { get; set; }
+        public new string? TourismorganizationId { get; set; }
+        public new double? AltitudeDifference { get; set; }
+        public new double? AltitudeHighestPoint { get; set; }
+        public new double? AltitudeLowestPoint { get; set; }
+        public new double? AltitudeSumUp { get; set; }
+        public new double? AltitudeSumDown { get; set; }
+
+        public new double? DistanceDuration { get; set; }
+        public new double? DistanceLength { get; set; }
+
+        public new bool? Highlight { get; set; }
+        public new bool? IsOpen { get; set; }
+        public new bool? IsPrepared { get; set; }
+        public new bool? RunToValley { get; set; }
+        public new bool? IsWithLigth { get; set; }
+        public new bool? HasRentals { get; set; }
+        public new bool? HasFreeEntrance { get; set; }
+        public new bool? LiftAvailable { get; set; }
+        public new bool? FeetClimb { get; set; }
+
+        public new bool? BikeTransport { get; set; }
+
+        public new string? OwnerRid { get; set; }
+
+        public new int? WayNumber { get; set; }
+
+        public new string? Number { get; set; }
+
+        public new List<string>? ChildPoiIds { get; set; }
+        public new List<string>? MasterPoiIds { get; set; }
+        public new string? SyncSourceInterface { get; set; }
+        public new string? SyncUpdateMode { get; set; }
+        public new ICollection<string>? PoiServices { get; set; }
+        public new IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }
+
+    }
+
+    #endregion
+
     #region AdditionalInfos
 
     //AdditionalInfos Centrotrevi
