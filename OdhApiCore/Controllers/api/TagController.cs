@@ -214,10 +214,13 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="tag">Tag Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(nameof(GetTagAsync))]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[InvalidateCacheOutput(nameof(GetTagAsync))]
         //[Authorize(Roles = "DataWriter,DataCreate,TagManager,TagCreate")]
         [AuthorizeODH(PermissionAction.Create)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost, Route("Tag")]
         public Task<IActionResult> Post([FromBody] TagLinked tag)
         {
@@ -239,10 +242,13 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Tag Id</param>
         /// <param name="tag">Tag Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(nameof(GetTagAsync))]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[InvalidateCacheOutput(nameof(GetTagAsync))]
         //[Authorize(Roles = "DataWriter,DataModify,TagManager,TagModify,TagUpdate")]
         [AuthorizeODH(PermissionAction.Update)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut, Route("Tag/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] TagLinked tag)
         {
@@ -263,10 +269,13 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Tag Id</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(nameof(GetTagAsync))]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[InvalidateCacheOutput(nameof(GetTagAsync))]
         //[Authorize(Roles = "DataWriter,DataDelete,TagManager,TagDelete")]
         [AuthorizeODH(PermissionAction.Delete)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete, Route("Tag/{id}")]
         public Task<IActionResult> Delete(string id)
         {

@@ -963,9 +963,12 @@ namespace OdhApiCore.Controllers
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
+        //[InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         //[Authorize(Roles = "DataWriter,DataCreate,AccoManager,AccoCreate,AccommodationWriter,AccommodationManager,AccommodationCreate")]
         [AuthorizeODH(PermissionAction.Create)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost, Route("Accommodation")]
         public Task<IActionResult> Post([FromBody] AccommodationV2 accommodation)
         {
@@ -996,9 +999,12 @@ namespace OdhApiCore.Controllers
         /// <param name="accommodation">Accommodation Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
+        //[InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         [AuthorizeODH(PermissionAction.Update)]
         //[Authorize(Roles = "DataWriter,DataModify,AccoManager,AccoModify,AccommodationWriter,AccommodationManager,AccommodationModify,AccommodationUpdate")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut, Route("Accommodation/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] AccommodationV2 accommodation)
         {
@@ -1026,10 +1032,13 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Accommodation Id</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[InvalidateCacheOutput(typeof(AccommodationController), nameof(GetAccommodations))]
         [AuthorizeODH(PermissionAction.Delete)]
         //[Authorize(Roles = "DataWriter,DataDelete,AccoManager,AccoDelete,AccommodationWriter,AccommodationManager,AccommodationDelete")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete, Route("Accommodation/{id}")]
         public Task<IActionResult> Delete(string id)
         {

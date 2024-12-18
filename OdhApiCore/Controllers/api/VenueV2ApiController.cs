@@ -326,7 +326,7 @@ namespace OdhApiCore.Controllers
         }
 
         #endregion
-   
+
         #region POST PUT DELETE
 
         /// <summary>
@@ -334,10 +334,13 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="poi">Venue Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
         //[Authorize(Roles = "DataWriter,DataCreate,VenueManager,VenueCreate")]
         [AuthorizeODH(PermissionAction.Create)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost, Route("Venue")]
         public Task<IActionResult> Post([FromBody] VenueV2 venue)
         {
@@ -367,10 +370,13 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Venue Id</param>
         /// <param name="venue">Venue Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
         //[Authorize(Roles = "DataWriter,DataModify,VenueManager,VenueModify,VenueUpdate")]
         [AuthorizeODH(PermissionAction.Update)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut, Route("Venue/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] VenueV2 venue)
         {
@@ -400,10 +406,13 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">Venue Id</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         //[InvalidateCacheOutput(nameof(GetVenueList))]
         //[Authorize(Roles = "DataWriter,DataDelete,VenueManager,VenueDelete")]
         [AuthorizeODH(PermissionAction.Delete)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete, Route("Venue/{id}")]
         public Task<IActionResult> Delete(string id)
         {

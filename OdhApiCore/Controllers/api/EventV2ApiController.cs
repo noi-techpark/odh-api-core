@@ -401,9 +401,12 @@ namespace OdhApiCore.Controllers
         /// <param name="odhevent">Event Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(nameof(GetEventList))]
+        //[InvalidateCacheOutput(nameof(GetEventList))]
         [AuthorizeODH(PermissionAction.Create)]
         //[Authorize(Roles = "DataWriter,DataCreate,EventManager,EventCreate")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost, Route("Event")]
         public Task<IActionResult> Post([FromBody] EventV2 odhevent)
         {
@@ -434,7 +437,10 @@ namespace OdhApiCore.Controllers
         /// <param name="odhevent">Event Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(nameof(GetEventList))]
+        //[InvalidateCacheOutput(nameof(GetEventList))]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AuthorizeODH(PermissionAction.Update)]
         //[Authorize(Roles = "DataWriter,DataModify,EventManager,EventModify,EventUpdate")]
         [HttpPut, Route("Event/{id}")]
@@ -466,8 +472,11 @@ namespace OdhApiCore.Controllers
         /// <param name="id">Event Id</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(nameof(GetEventList))]
+        //[InvalidateCacheOutput(nameof(GetEventList))]
         //[Authorize(Roles = "DataWriter,DataDelete,EventManager,EventDelete")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("Event/{id}")]
         public Task<IActionResult> Delete(string id)

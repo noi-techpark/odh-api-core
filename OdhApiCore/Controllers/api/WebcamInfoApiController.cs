@@ -211,10 +211,13 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="webcam">WebcamInfo Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [AuthorizeODH(PermissionAction.Create)]
         //[Authorize(Roles = "DataWriter,DataCreate,WebcamManager,WebcamCreate")]
-        [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        //[InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost, Route("WebcamInfo")]
         public Task<IActionResult> Post([FromBody] WebcamInfoLinked webcam)
         {
@@ -240,10 +243,13 @@ namespace OdhApiCore.Controllers
         /// <param name="id">WebcamInfo Id</param>
         /// <param name="webcam">WebcamInfo Object</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [AuthorizeODH(PermissionAction.Update)]
         //[Authorize(Roles = "DataWriter,DataModify,WebcamManager,WebcamModify,WebcamUpdate")]
-        [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        //[InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] WebcamInfoLinked webcam)
         {
@@ -265,10 +271,13 @@ namespace OdhApiCore.Controllers
         /// </summary>
         /// <param name="id">WebcamInfo Id</param>
         /// <returns>Http Response</returns>
-        [ApiExplorerSettings(IgnoreApi = true)]
+        //[ApiExplorerSettings(IgnoreApi = true)]
         [AuthorizeODH(PermissionAction.Delete)]
         //[Authorize(Roles = "DataWriter,DataDelete,WebcamManager,WebcamDelete")]
-        [InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        //[InvalidateCacheOutput(typeof(WebcamInfoController), nameof(Get))]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete, Route("WebcamInfo/{id}")]
         public Task<IActionResult> Delete(string id)
         {

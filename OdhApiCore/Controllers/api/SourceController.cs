@@ -189,6 +189,9 @@ namespace OdhApiCore.Controllers
         /// <param name="Source">SourceLinked Object</param>
         /// <returns>Http Response</returns>
         //[Authorize(Roles = "DataWriter,DataCreate,SourceManager,SourceCreate")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Source")]
         public Task<IActionResult> Post([FromBody] SourceLinked source)
@@ -215,6 +218,9 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[Authorize(Roles = "DataWriter,DataModify,SourceManager,SourceModify,SourceUpdate")]
         [AuthorizeODH(PermissionAction.Update)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut, Route("Source/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] SourceLinked source)
         {
@@ -236,6 +242,9 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[Authorize(Roles = "DataWriter,DataDelete,SourceManager,SourceDelete")]
         [AuthorizeODH(PermissionAction.Delete)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete, Route("Source/{id}")]
         public Task<IActionResult> Delete(string id)
         {

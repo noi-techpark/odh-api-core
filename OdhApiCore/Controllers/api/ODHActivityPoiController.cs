@@ -395,8 +395,11 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactivitypoi">ODHActivityPoi Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
+        //[InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         //[Authorize(Roles = "DataWriter,DataCreate,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiCreate,SmgPoiManager,SmgPoiCreate")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("ODHActivityPoi")]
         public Task<IActionResult> Post([FromBody] ODHActivityPoiLinked odhactivitypoi)
@@ -450,8 +453,11 @@ namespace OdhApiCore.Controllers.api
         /// <param name="odhactivitypoi">ODHActivityPoi Object</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
+        //[InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         //[Authorize(Roles = "DataWriter,DataModify,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiModify,ODHActivityPoiUpdate,SmgPoiManager,SmgPoiModify")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AuthorizeODH(PermissionAction.Update)]
         [HttpPut, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] ODHActivityPoiLinked odhactivitypoi)
@@ -505,8 +511,11 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ODHActivityPoi Id</param>
         /// <returns>Http Response</returns>
         //[ApiExplorerSettings(IgnoreApi = true)]
-        [InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
+        //[InvalidateCacheOutput(typeof(ODHActivityPoiController), nameof(GetODHActivityPoiList))]
         //[Authorize(Roles = "DataWriter,DataDelete,ODHActivityPoiWriter,ODHActivityPoiManager,ODHActivityPoiDelete,SmgPoiManager,SmgPoiDelete")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AuthorizeODH(PermissionAction.Delete)]
         [HttpDelete, Route("ODHActivityPoi/{id}")]
         public Task<IActionResult> Delete(string id)

@@ -329,7 +329,7 @@ namespace OdhApiCore.Controllers.api
         //[ApiExplorerSettings(IgnoreApi = true)]
         //[Authorize(Roles = "DataWriter,DataCreate,ArticleManager,ArticleCreate")]
         [AuthorizeODH(PermissionAction.Create)]
-        [InvalidateCacheOutput(nameof(GetArticleList))]
+        //[InvalidateCacheOutput(nameof(GetArticleList))]
         [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

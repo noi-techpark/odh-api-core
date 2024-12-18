@@ -190,6 +190,9 @@ namespace OdhApiCore.Controllers
         /// <param name="publisher">PublisherLinked Object</param>
         /// <returns>Http Response</returns>
         //[Authorize(Roles = "DataWriter,DataCreate,PublisherManager,PublisherCreate")]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AuthorizeODH(PermissionAction.Create)]
         [HttpPost, Route("Publisher")]
         public Task<IActionResult> Post([FromBody] PublisherLinked publisher)
@@ -216,6 +219,9 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[Authorize(Roles = "DataWriter,DataModify,PublisherManager,PublisherModify,PublisherUpdate")]
         [AuthorizeODH(PermissionAction.Update)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPut, Route("Publisher/{id}")]
         public Task<IActionResult> Put(string id, [FromBody] PublisherLinked publisher)
         {
@@ -237,6 +243,9 @@ namespace OdhApiCore.Controllers
         /// <returns>Http Response</returns>
         //[Authorize(Roles = "DataWriter,DataDelete,PublisherManager,PublisherDelete")]
         [AuthorizeODH(PermissionAction.Delete)]
+        [ProducesResponseType(typeof(PGCRUDResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpDelete, Route("Publisher/{id}")]
         public Task<IActionResult> Delete(string id)
         {
