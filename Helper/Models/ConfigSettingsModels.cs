@@ -15,10 +15,11 @@ namespace Helper
     {
         string PostgresConnectionString { get; }
         string MongoDBConnectionString { get; }
-         XmlConfig XmlConfig { get; }
+        XmlConfig XmlConfig { get; }
         JsonConfig JsonConfig { get; }
         S3ImageresizerConfig S3ImageresizerConfig { get; }
         PushServerConfig PushServerConfig { get; }
+
         //FCMConfig FCMConfig { get; }
         List<Field2HideConfig> Field2HideConfig { get; }
         List<RequestInterceptorConfig> RequestInterceptorConfig { get; }
@@ -73,7 +74,13 @@ namespace Helper
 
     public class S3ImageresizerConfig
     {
-        public S3ImageresizerConfig(string url, string docurl, string bucketaccesspoint, string accesskey, string secretkey)
+        public S3ImageresizerConfig(
+            string url,
+            string docurl,
+            string bucketaccesspoint,
+            string accesskey,
+            string secretkey
+        )
         {
             this.Url = url;
             this.DocUrl = docurl;
@@ -105,14 +112,22 @@ namespace Helper
 
     public class RequestInterceptorConfig
     {
-        public RequestInterceptorConfig(string action, string controller, string querystrings, string redirectaction, string redirectcontroller, string redirectquerystrings)
+        public RequestInterceptorConfig(
+            string action,
+            string controller,
+            string querystrings,
+            string redirectaction,
+            string redirectcontroller,
+            string redirectquerystrings
+        )
         {
             this.Action = action;
             this.Controller = controller;
             this.QueryStrings = querystrings != null ? querystrings.Split('&').ToList() : null;
             this.RedirectAction = redirectaction;
             this.RedirectController = redirectcontroller;
-            this.RedirectQueryStrings = redirectquerystrings != null ? redirectquerystrings.Split('&').ToList() : null;
+            this.RedirectQueryStrings =
+                redirectquerystrings != null ? redirectquerystrings.Split('&').ToList() : null;
         }
 
         public string Action { get; private set; }
@@ -139,12 +154,19 @@ namespace Helper
 
     public class FCMConfig
     {
-        public FCMConfig(string identifier, string serverkey, string senderid, string projectname, string serviceaccount, string serviceaccountjson)
+        public FCMConfig(
+            string identifier,
+            string serverkey,
+            string senderid,
+            string projectname,
+            string serviceaccount,
+            string serviceaccountjson
+        )
         {
             this.Identifier = identifier;
             this.ServerKey = serverkey;
             this.SenderId = senderid;
-            this.ProjecTName = projectname; 
+            this.ProjecTName = projectname;
             this.ServiceAccount = serviceaccount;
             this.ServiceAccountJson = serviceaccountjson;
         }
@@ -178,6 +200,7 @@ namespace Helper
             NoRateLimitRoutes = noratelimitroutes;
             NoRateLimitReferer = noratelimitrefers;
         }
+
         public List<string> NoRateLimitRoutes { get; private set; }
         public List<string> NoRateLimitReferer { get; private set; }
     }
@@ -216,7 +239,12 @@ namespace Helper
 
     public class LcsConfig
     {
-        public LcsConfig(string username, string password, string messagepassword, string serviceurl)
+        public LcsConfig(
+            string username,
+            string password,
+            string messagepassword,
+            string serviceurl
+        )
         {
             this.Username = username;
             this.Password = password;
@@ -431,7 +459,13 @@ namespace Helper
 
     public class LTSCredentials
     {
-        public LTSCredentials(string serviceurl, string username, string password, string ltsclientid, bool opendata)
+        public LTSCredentials(
+            string serviceurl,
+            string username,
+            string password,
+            string ltsclientid,
+            bool opendata
+        )
         {
             this.serviceurl = serviceurl;
             this.ltsclientid = ltsclientid;
@@ -468,6 +502,4 @@ namespace Helper
         public IDictionary<string, string> Parameters { get; set; }
         public List<string> ValidTypes { get; set; }
     }
-
-
 }

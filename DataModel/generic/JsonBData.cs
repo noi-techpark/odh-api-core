@@ -28,7 +28,7 @@ namespace DataModel
         public Int32 rawdataid { get; set; }
     }
 
-    public interface IRawDataStore 
+    public interface IRawDataStore
     {
         string type { get; set; }
         string datasource { get; set; }
@@ -37,11 +37,11 @@ namespace DataModel
         string sourceurl { get; set; }
         DateTime importdate { get; set; }
         string license { get; set; }
-        string rawformat { get; set; }        
+        string rawformat { get; set; }
     }
 
     public class RawDataStore : IRawDataStore
-    {              
+    {
         public string type { get; set; }
         public string datasource { get; set; }
         public string sourceinterface { get; set; }
@@ -52,16 +52,16 @@ namespace DataModel
         public string license { get; set; }
         public string rawformat { get; set; }
 
-        public string raw { get; set; }        
+        public string raw { get; set; }
     }
 
     public class RawDataStoreWithId : RawDataStore
     {
-        public int? id { get; set; }    
+        public int? id { get; set; }
     }
 
     public class RawDataStoreJson : RawDataStoreWithId
-    {      
+    {
         public RawDataStoreJson(RawDataStoreWithId rawdatastore)
         {
             this.id = rawdatastore.id;
@@ -84,7 +84,7 @@ namespace DataModel
     {
         public static IRawDataStore UseJsonRaw(this RawDataStoreWithId rawdatastore)
         {
-            if(rawdatastore.rawformat == "json")
+            if (rawdatastore.rawformat == "json")
             {
                 return new RawDataStoreJson(rawdatastore);
             }
@@ -93,4 +93,3 @@ namespace DataModel
         }
     }
 }
-

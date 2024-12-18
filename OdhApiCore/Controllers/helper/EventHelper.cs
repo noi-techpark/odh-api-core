@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
-using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Helper;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
@@ -15,7 +15,7 @@ namespace OdhApiCore.Controllers
     {
         public List<string> idlist;
         public List<string> orgidlist;
-        public List<Int32> rancidlist;        
+        public List<Int32> rancidlist;
         public List<string> topicrids;
         public List<string> smgtaglist;
         public List<string> districtlist;
@@ -29,36 +29,79 @@ namespace OdhApiCore.Controllers
         public DateTime? begin;
         public DateTime? end;
         public string? lastchange;
+
         //New Publishedonlist
         public List<string> publishedonlist;
 
         public static async Task<EventHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, string? rancfilter,
-            string? topicfilter, string? orgfilter, string? begindate, string? enddate,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? langfilter, string? source, 
+            QueryFactory queryFactory,
+            string? idfilter,
+            string? locfilter,
+            string? rancfilter,
+            string? topicfilter,
+            string? orgfilter,
+            string? begindate,
+            string? enddate,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? langfilter,
+            string? source,
             string? publishedonfilter,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken
+        )
         {
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
             return new EventHelper(
-                idfilter: idfilter, locfilter: locfilter, rancfilter: rancfilter, 
-                topicfilter: topicfilter, orgfilter: orgfilter, begindate: begindate, enddate: enddate,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, sourcefilter: source, 
-                languagefilter: langfilter, publishedonfilter: publishedonfilter, tourismusvereinids: tourismusvereinids);
+                idfilter: idfilter,
+                locfilter: locfilter,
+                rancfilter: rancfilter,
+                topicfilter: topicfilter,
+                orgfilter: orgfilter,
+                begindate: begindate,
+                enddate: enddate,
+                activefilter: activefilter,
+                smgactivefilter: smgactivefilter,
+                smgtags: smgtags,
+                lastchange: lastchange,
+                sourcefilter: source,
+                languagefilter: langfilter,
+                publishedonfilter: publishedonfilter,
+                tourismusvereinids: tourismusvereinids
+            );
         }
 
         private EventHelper(
-            string? idfilter, string? locfilter, string? rancfilter,
-            string? topicfilter, string? orgfilter,
-            string? begindate, string? enddate, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? lastchange, string? languagefilter, string? sourcefilter, string? publishedonfilter, 
-            IEnumerable<string>? tourismusvereinids)
+            string? idfilter,
+            string? locfilter,
+            string? rancfilter,
+            string? topicfilter,
+            string? orgfilter,
+            string? begindate,
+            string? enddate,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? languagefilter,
+            string? sourcefilter,
+            string? publishedonfilter,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
             idlist = CommonListCreator.CreateIdList(idfilter?.ToUpper());
 
@@ -66,9 +109,9 @@ namespace OdhApiCore.Controllers
             sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
-            orgidlist = CommonListCreator.CreateIdList(orgfilter);            
+            orgidlist = CommonListCreator.CreateIdList(orgfilter);
             rancidlist = CommonListCreator.CreateNumericIdList(rancfilter);
-           
+
             topicrids = EventListCreator.CreateEventTopicRidListfromFlag(topicfilter);
 
             tourismvereinlist = new List<string>();
@@ -110,7 +153,12 @@ namespace OdhApiCore.Controllers
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
 
-        public static string? GetEventSortExpression(string? sort, string? begindate, string? enddate, ref string? seed)
+        public static string? GetEventSortExpression(
+            string? sort,
+            string? begindate,
+            string? enddate,
+            ref string? seed
+        )
         {
             string? sortifseednull = null;
 
@@ -133,7 +181,12 @@ namespace OdhApiCore.Controllers
                     //TO CHECK Events with Eventdate interval vs singledays, how do we sort here?
                     if (sort.ToLower() == "upcoming")
                     {
-                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', false),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp))";
+                        sortifseednull =
+                            "get_nearest_tsrange_distance(gen_eventdatearray, ('"
+                            + sortfromdate
+                            + "')::timestamp, 'asc', false),lower(get_nearest_tsrange(gen_eventdatearray, ('"
+                            + sortfromdate
+                            + "')::timestamp))";
 
                         //if (sort.ToLower() == "asc")
                         //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc'),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
@@ -142,7 +195,12 @@ namespace OdhApiCore.Controllers
                     }
                     if (sort.ToLower() == "upcomingspecial")
                     {
-                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp))";
+                        sortifseednull =
+                            "get_nearest_tsrange_distance(gen_eventdatearray, ('"
+                            + sortfromdate
+                            + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('"
+                            + sortfromdate
+                            + "')::timestamp))";
 
                         //if (sort.ToLower() == "asc")
                         //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
@@ -151,7 +209,12 @@ namespace OdhApiCore.Controllers
                     }
                     if (sort.ToLower() == "upcomingspecial")
                     {
-                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp))";
+                        sortifseednull =
+                            "get_nearest_tsrange_distance(gen_eventdatearray, ('"
+                            + sortfromdate
+                            + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('"
+                            + sortfromdate
+                            + "')::timestamp))";
 
                         //if (sort.ToLower() == "asc")
                         //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";
@@ -160,7 +223,12 @@ namespace OdhApiCore.Controllers
                     }
                     if (sort.ToLower() == "upcomingspecialdesc")
                     {
-                        sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp)) DESC";
+                        sortifseednull =
+                            "get_nearest_tsrange_distance(gen_eventdatearray, ('"
+                            + sortfromdate
+                            + "')::timestamp, 'asc', true),lower(get_nearest_tsrange(gen_eventdatearray, ('"
+                            + sortfromdate
+                            + "')::timestamp)) DESC";
 
                         //if (sort.ToLower() == "asc")
                         //    sortifseednull = "get_nearest_tsrange_distance(gen_eventdatearray, ('" + sortfromdate + "')::timestamp, 'asc', true),get_nearest_tsrange(gen_eventdatearray, ('" + sortfromdate + "')::timestamp) DESC";

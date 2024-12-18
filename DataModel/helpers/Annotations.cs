@@ -24,11 +24,15 @@ namespace DataModel.Annotations
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
     public class SwaggerDeprecatedAttribute : Attribute
     {
-        public SwaggerDeprecatedAttribute(string? description = null, string? deprecationdate = null, string? removedafter = null)
+        public SwaggerDeprecatedAttribute(
+            string? description = null,
+            string? deprecationdate = null,
+            string? removedafter = null
+        )
         {
             Description = description;
 
-            if(DateTime.TryParse(deprecationdate, out DateTime deprecationdatetemp))
+            if (DateTime.TryParse(deprecationdate, out DateTime deprecationdatetemp))
                 DeprecationDate = deprecationdatetemp;
             else
                 DeprecationDate = null;
@@ -56,9 +60,7 @@ namespace DataModel.Annotations
     }
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class GetOnlyJsonPropertyAttribute : Attribute
-    {
-    }
+    public class GetOnlyJsonPropertyAttribute : Attribute { }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
     public class SwaggerReferenceAttribute : Attribute
@@ -72,5 +74,4 @@ namespace DataModel.Annotations
         public string Description { get; }
         public Type ReferenceTo { get; }
     }
-
 }

@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using GeoConverter;
 using System.Reflection;
+using GeoConverter;
 
 namespace GeoConverterTests
 {
@@ -17,7 +17,7 @@ namespace GeoConverterTests
         {
             string kml = GetContent(input, "kml");
             var actual = GeoJsonConverter.ConvertFromKml(kml);
-            string expected = GetContent(input ,"json");
+            string expected = GetContent(input, "json");
             Assert.Equal(expected, actual);
         }
 

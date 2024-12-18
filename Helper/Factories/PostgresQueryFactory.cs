@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using SqlKata;
 using SqlKata.Compilers;
 using SqlKata.Execution;
-using System;
 
 namespace Helper.Factories
 {
@@ -32,7 +32,8 @@ namespace Helper.Factories
         {
             Connection = new NpgsqlConnection(settings.PostgresConnectionString);
             Compiler = new OdhPostgresCompiler();
-            Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
+            Logger = info =>
+                logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
 
         public new void Dispose()

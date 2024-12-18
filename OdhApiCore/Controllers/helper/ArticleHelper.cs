@@ -21,23 +21,59 @@ namespace OdhApiCore.Controllers.api
         public string? lastchange;
         public DateTime? articledate;
         public DateTime? articledateto;
+
         //New Publishedonlist
         public List<string> publishedonlist;
         public List<string> sourcelist;
 
         public static ArticleHelper Create(
-            string? typefilter, string? subtypefilter, string? idfilter,
-            string? languagefilter, bool? highlightfilter, bool? activefilter, bool? smgactivefilter,
-            string? smgtags, string? articledate, string? articledateto, string? source, string? lastchange, string? publishedonfilter)
+            string? typefilter,
+            string? subtypefilter,
+            string? idfilter,
+            string? languagefilter,
+            bool? highlightfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? articledate,
+            string? articledateto,
+            string? source,
+            string? lastchange,
+            string? publishedonfilter
+        )
         {
-            return new ArticleHelper(typefilter, subtypefilter, idfilter, languagefilter, highlightfilter, activefilter, smgactivefilter, 
-                smgtags, articledate, articledateto, source, lastchange, publishedonfilter);
+            return new ArticleHelper(
+                typefilter,
+                subtypefilter,
+                idfilter,
+                languagefilter,
+                highlightfilter,
+                activefilter,
+                smgactivefilter,
+                smgtags,
+                articledate,
+                articledateto,
+                source,
+                lastchange,
+                publishedonfilter
+            );
         }
 
         private ArticleHelper(
-            string? typefilter, string? subtypefilter, string? idfilter, string? languagefilter,
-            bool? highlightfilter, bool? activefilter, bool? smgactivefilter, string? smgtags,
-            string? articledate, string? articledateto, string? source, string? lastchange, string? publishedonfilter)
+            string? typefilter,
+            string? subtypefilter,
+            string? idfilter,
+            string? languagefilter,
+            bool? highlightfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? articledate,
+            string? articledateto,
+            string? source,
+            string? lastchange,
+            string? publishedonfilter
+        )
         {
             typelist = new List<string>();
             int typeinteger = 0;
@@ -64,11 +100,17 @@ namespace OdhApiCore.Controllers.api
                 {
                     if (int.TryParse(subtypefilter, out subtypeinteger))
                     {
-                        subtypelist = Helper.ArticleListCreator.CreateArticleSubTypefromFlag(typelist.FirstOrDefault(), subtypefilter);
+                        subtypelist = Helper.ArticleListCreator.CreateArticleSubTypefromFlag(
+                            typelist.FirstOrDefault(),
+                            subtypefilter
+                        );
                     }
                     else
                     {
-                        subtypelist = Helper.ArticleListCreator.CreateArticleSubTypeList(typelist.FirstOrDefault(), subtypefilter);
+                        subtypelist = Helper.ArticleListCreator.CreateArticleSubTypeList(
+                            typelist.FirstOrDefault(),
+                            subtypefilter
+                        );
                     }
                 }
                 else
@@ -76,7 +118,6 @@ namespace OdhApiCore.Controllers.api
             }
             else
                 subtypelist = new List<string>();
-
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);

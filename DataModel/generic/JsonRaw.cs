@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Newtonsoft.Json;
-using Npgsql;
-using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Npgsql;
+using NpgsqlTypes;
 using static Dapper.SqlMapper;
 
 namespace DataModel
@@ -23,7 +23,13 @@ namespace DataModel
                 writer.WriteRawValue(value.Value);
         }
 
-        public override JsonRaw ReadJson(JsonReader reader, Type objectType, JsonRaw? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override JsonRaw ReadJson(
+            JsonReader reader,
+            Type objectType,
+            JsonRaw? existingValue,
+            bool hasExistingValue,
+            JsonSerializer serializer
+        )
         {
             string json = reader.ReadAsString();
             return new JsonRaw(json);
@@ -54,12 +60,14 @@ namespace DataModel
 
         public override string? ToString()
         {
-            throw new InvalidOperationException("ToString on JsonRaw shouldn't be called, there is somewhere an implicit ToString() happening (maybe from a manual JSON serialization).");
+            throw new InvalidOperationException(
+                "ToString on JsonRaw shouldn't be called, there is somewhere an implicit ToString() happening (maybe from a manual JSON serialization)."
+            );
         }
 
         public static explicit operator JsonRaw(string x) => new JsonRaw(x);
     }
-    
+
     public class JsonRawUtils
     {
         public static IEnumerable<JsonRaw> ConvertObjectToJsonRaw<T>(IEnumerable<T> obj)

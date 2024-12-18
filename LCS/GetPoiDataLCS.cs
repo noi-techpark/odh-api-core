@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.Text;
 using System.Xml.Linq;
+using Helper;
 
 namespace LCS
 {
@@ -31,7 +31,9 @@ namespace LCS
             basicHttpBinding.ReaderQuotas = System.Xml.XmlDictionaryReaderQuotas.Max;
             basicHttpBinding.AllowCookies = true;
 
-            EndpointAddress endpointAddress = new EndpointAddress("https://lcs.lts.it/api/data.svc/soap");
+            EndpointAddress endpointAddress = new EndpointAddress(
+                "https://lcs.lts.it/api/data.svc/soap"
+            );
 
             lcs = new ServiceReferenceLCS.DataClient(basicHttpBinding, endpointAddress);
             lcs.ClientCredentials.UserName.UserName = user;
@@ -54,14 +56,11 @@ namespace LCS
             return poidetail;
         }
 
-
         //Poi Changed Request
         public ServiceReferenceLCS.POIChangedItemsRS GetPoiChanged(XElement myrequest)
         {
             var poichanged = lcs.oPOIChangedItems(myrequest.ToXmlElement());
             return poichanged;
         }
-
-
     }
 }

@@ -2,16 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DSS;
 using System;
 using System.Collections.Generic;
+using DSS;
 
 namespace OdhApiImporter.Helpers.DSS
 {
     public class DSSImportUtil
     {
         public static string GetSourceId(dynamic input, string entitytype)
-        {       
+        {
             switch (entitytype.ToLower())
             {
                 case "lift":
@@ -52,11 +52,11 @@ namespace OdhApiImporter.Helpers.DSS
             switch (entitytype.ToLower())
             {
                 case "lift":
-                    return new Tuple<DSSRequestType, bool>(DSSRequestType.liftbase, false);                                                            
+                    return new Tuple<DSSRequestType, bool>(DSSRequestType.liftbase, false);
                 case "slope":
-                    return new Tuple<DSSRequestType, bool>(DSSRequestType.slopebase, false);                    
+                    return new Tuple<DSSRequestType, bool>(DSSRequestType.slopebase, false);
                 case "snowpark":
-                    return new Tuple<DSSRequestType, bool>(DSSRequestType.snowparks, true);                    
+                    return new Tuple<DSSRequestType, bool>(DSSRequestType.snowparks, true);
                 case "alpinehut":
                     return new Tuple<DSSRequestType, bool>(DSSRequestType.alpinehuts, true);
                 case "skicircuit":
@@ -77,7 +77,7 @@ namespace OdhApiImporter.Helpers.DSS
                     return new Tuple<DSSRequestType, bool>(DSSRequestType.weather, true);
                 default:
                     return null;
-            }            
+            }
         }
     }
 }

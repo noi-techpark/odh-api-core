@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace OdhApiCore.Controllers
 {
@@ -39,13 +39,15 @@ namespace OdhApiCore.Controllers
     {
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
-            var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+            var valueProviderResult = bindingContext.ValueProvider.GetValue(
+                bindingContext.ModelName
+            );
             var firstValue = valueProviderResult.FirstValue;
             if (firstValue == null || firstValue == "null") // "null" exists for compatibility reasons
             {
                 bindingContext.Result = ModelBindingResult.Success(new PageSize(10));
             }
-            else if (firstValue == "-1" || firstValue == "0") 
+            else if (firstValue == "-1" || firstValue == "0")
             {
                 bindingContext.Result = ModelBindingResult.Success(new PageSize(int.MaxValue));
             }
@@ -57,7 +59,9 @@ namespace OdhApiCore.Controllers
             {
                 bindingContext.ModelState.TryAddModelError(
                     bindingContext.ModelName,
-                    bindingContext.ModelMetadata.ModelBindingMessageProvider.ValueIsInvalidAccessor(firstValue)
+                    bindingContext.ModelMetadata.ModelBindingMessageProvider.ValueIsInvalidAccessor(
+                        firstValue
+                    )
                 );
                 bindingContext.Result = ModelBindingResult.Failed();
             }

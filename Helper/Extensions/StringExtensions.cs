@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Helper.Extensions
 {
-
     public static class StringExtensions
     {
         //TODO EXTEND THIS

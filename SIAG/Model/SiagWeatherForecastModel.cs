@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SIAG.Model
-{    
+{
     public class SiagWeatherForecastModel
     {
         public SiagForecastInfo info { get; set; }
@@ -67,12 +67,12 @@ namespace SIAG.Model
     }
 
     public class DatumFloat : Datum
-    {        
+    {
         public new float value { get; set; }
     }
 
     public class DatumString : Datum
-    {        
+    {
         public new string value { get; set; }
     }
 
@@ -85,7 +85,7 @@ namespace SIAG.Model
         public string unit { get; set; }
         public Datum[] data { get; set; }
     }
-    
+
     public class Temp3
     {
         public string nameDe { get; set; }
@@ -95,7 +95,7 @@ namespace SIAG.Model
         public string unit { get; set; }
         public DatumFloat[] data { get; set; }
     }
-    
+
     public class Ssd24
     {
         public string nameDe { get; set; }
@@ -104,7 +104,7 @@ namespace SIAG.Model
         public string nameRm { get; set; }
         public string unit { get; set; }
         public Datum[] data { get; set; }
-    }    
+    }
 
     public class Precprob3
     {
@@ -173,7 +173,7 @@ namespace SIAG.Model
         public string nameEn { get; set; }
         public string nameRm { get; set; }
         public string unit { get; set; }
-    }    
+    }
 
     public class Symbols24
     {

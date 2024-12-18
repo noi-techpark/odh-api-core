@@ -2,21 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Helper;
+using Microsoft.Extensions.Configuration;
 
 namespace OdhApiImporter
-{             
+{
     public class Settings : ISettings
     {
         private readonly IConfiguration configuration;
         private readonly Lazy<string> connectionString;
         private readonly Lazy<string> mongoDBConnectionString;
         private readonly MssConfig mssConfig;
-        private readonly LcsConfig lcsConfig; 
+        private readonly LcsConfig lcsConfig;
         private readonly CDBConfig cdbConfig;
         private readonly SiagConfig siagConfig;
         private readonly XmlConfig xmlConfig;
@@ -43,48 +43,120 @@ namespace OdhApiImporter
         public Settings(IConfiguration configuration)
         {
             this.configuration = configuration;
-            this.connectionString = new Lazy<string>(() =>
-            this.configuration.GetConnectionString("PGConnection"));
-            this.mongoDBConnectionString = new Lazy<string>(() =>
-            this.configuration.GetConnectionString("MongoDBConnection"));
+            this.connectionString = new Lazy<string>(
+                () => this.configuration.GetConnectionString("PGConnection")
+            );
+            this.mongoDBConnectionString = new Lazy<string>(
+                () => this.configuration.GetConnectionString("MongoDBConnection")
+            );
             var mss = this.configuration.GetSection("MssConfig");
-            this.mssConfig = new MssConfig(mss.GetValue<string>("Username", ""), mss.GetValue<string>("Password", ""), mss.GetValue<string>("ServiceUrl", ""));
+            this.mssConfig = new MssConfig(
+                mss.GetValue<string>("Username", ""),
+                mss.GetValue<string>("Password", ""),
+                mss.GetValue<string>("ServiceUrl", "")
+            );
             var lcs = this.configuration.GetSection("LcsConfig");
-            this.lcsConfig = new LcsConfig(lcs.GetValue<string>("Username", ""), lcs.GetValue<string>("Password", ""), lcs.GetValue<string>("MessagePassword", ""), lcs.GetValue<string>("ServiceUrl", ""));
+            this.lcsConfig = new LcsConfig(
+                lcs.GetValue<string>("Username", ""),
+                lcs.GetValue<string>("Password", ""),
+                lcs.GetValue<string>("MessagePassword", ""),
+                lcs.GetValue<string>("ServiceUrl", "")
+            );
             var cdb = this.configuration.GetSection("CDBConfig");
-            this.cdbConfig = new CDBConfig(cdb.GetValue<string>("Username", ""), cdb.GetValue<string>("Password", ""), cdb.GetValue<string>("ServiceUrl", ""));
+            this.cdbConfig = new CDBConfig(
+                cdb.GetValue<string>("Username", ""),
+                cdb.GetValue<string>("Password", ""),
+                cdb.GetValue<string>("ServiceUrl", "")
+            );
             var siag = this.configuration.GetSection("SiagConfig");
-            this.siagConfig = new SiagConfig(siag.GetValue<string>("Username", ""), siag.GetValue<string>("Password", ""), siag.GetValue<string>("ServiceUrl", ""));
+            this.siagConfig = new SiagConfig(
+                siag.GetValue<string>("Username", ""),
+                siag.GetValue<string>("Password", ""),
+                siag.GetValue<string>("ServiceUrl", "")
+            );
             var ebms = this.configuration.GetSection("EBMSConfig");
-            this.ebmsConfig = new EBMSConfig(ebms.GetValue<string>("Username", ""), ebms.GetValue<string>("Password", ""), ebms.GetValue<string>("ServiceUrl", ""));
+            this.ebmsConfig = new EBMSConfig(
+                ebms.GetValue<string>("Username", ""),
+                ebms.GetValue<string>("Password", ""),
+                ebms.GetValue<string>("ServiceUrl", "")
+            );
             var raven = this.configuration.GetSection("RavenConfig");
-            this.ravenConfig = new RavenConfig(raven.GetValue<string>("Username", ""), raven.GetValue<string>("Password", ""), raven.GetValue<string>("ServiceUrl", ""));
+            this.ravenConfig = new RavenConfig(
+                raven.GetValue<string>("Username", ""),
+                raven.GetValue<string>("Password", ""),
+                raven.GetValue<string>("ServiceUrl", "")
+            );
             var dss = this.configuration.GetSection("DSSConfig");
-            this.dssConfig = new DSSConfig(dss.GetValue<string>("Username", ""), dss.GetValue<string>("Password", ""), dss.GetValue<string>("ServiceUrl", ""));
+            this.dssConfig = new DSSConfig(
+                dss.GetValue<string>("Username", ""),
+                dss.GetValue<string>("Password", ""),
+                dss.GetValue<string>("ServiceUrl", "")
+            );
             var suedtirolwein = this.configuration.GetSection("SuedtirolWeinConfig");
-            this.suedtirolweinConfig = new SuedtirolWeinConfig(suedtirolwein.GetValue<string>("Username", ""), suedtirolwein.GetValue<string>("Password", ""), suedtirolwein.GetValue<string>("ServiceUrl", ""));
+            this.suedtirolweinConfig = new SuedtirolWeinConfig(
+                suedtirolwein.GetValue<string>("Username", ""),
+                suedtirolwein.GetValue<string>("Password", ""),
+                suedtirolwein.GetValue<string>("ServiceUrl", "")
+            );
             var feratel = this.configuration.GetSection("FeratelConfig");
-            this.feratelConfig = new FeratelConfig(feratel.GetValue<string>("Username", ""), feratel.GetValue<string>("Password", ""), feratel.GetValue<string>("ServiceUrl", ""));
+            this.feratelConfig = new FeratelConfig(
+                feratel.GetValue<string>("Username", ""),
+                feratel.GetValue<string>("Password", ""),
+                feratel.GetValue<string>("ServiceUrl", "")
+            );
             var panomax = this.configuration.GetSection("PanomaxConfig");
-            this.panomaxConfig = new PanomaxConfig(panomax.GetValue<string>("Username", ""), panomax.GetValue<string>("Password", ""), panomax.GetValue<string>("ServiceUrl", ""));
+            this.panomaxConfig = new PanomaxConfig(
+                panomax.GetValue<string>("Username", ""),
+                panomax.GetValue<string>("Password", ""),
+                panomax.GetValue<string>("ServiceUrl", "")
+            );
             var panocloud = this.configuration.GetSection("PanocloudConfig");
-            this.panocloudConfig = new PanocloudConfig(panocloud.GetValue<string>("Username", ""), panocloud.GetValue<string>("Password", ""), panocloud.GetValue<string>("ServiceUrl", ""));
+            this.panocloudConfig = new PanocloudConfig(
+                panocloud.GetValue<string>("Username", ""),
+                panocloud.GetValue<string>("Password", ""),
+                panocloud.GetValue<string>("ServiceUrl", "")
+            );
             var a22 = this.configuration.GetSection("A22Config");
-            this.a22Config = new A22Config(a22.GetValue<string>("Username", ""), a22.GetValue<string>("Password", ""), a22.GetValue<string>("ServiceUrl", ""));
+            this.a22Config = new A22Config(
+                a22.GetValue<string>("Username", ""),
+                a22.GetValue<string>("Password", ""),
+                a22.GetValue<string>("ServiceUrl", "")
+            );
             var musport = this.configuration.GetSection("MusportConfig");
-            this.musportConfig = new MusportConfig(musport.GetValue<string>("Username", ""), musport.GetValue<string>("Password", ""), musport.GetValue<string>("ServiceUrl", ""));
+            this.musportConfig = new MusportConfig(
+                musport.GetValue<string>("Username", ""),
+                musport.GetValue<string>("Password", ""),
+                musport.GetValue<string>("ServiceUrl", "")
+            );
             var ninja = this.configuration.GetSection("NinjaConfig");
-            this.ninjaConfig = new NinjaConfig(ninja.GetValue<string>("Username", ""), ninja.GetValue<string>("Password", ""), ninja.GetValue<string>("ServiceUrl", ""));
+            this.ninjaConfig = new NinjaConfig(
+                ninja.GetValue<string>("Username", ""),
+                ninja.GetValue<string>("Password", ""),
+                ninja.GetValue<string>("ServiceUrl", "")
+            );
             var looptec = this.configuration.GetSection("LoopTecConfig");
-            this.looptecConfig = new LoopTecConfig(looptec.GetValue<string>("Username", ""), looptec.GetValue<string>("Password", ""), looptec.GetValue<string>("ServiceUrl", ""));
+            this.looptecConfig = new LoopTecConfig(
+                looptec.GetValue<string>("Username", ""),
+                looptec.GetValue<string>("Password", ""),
+                looptec.GetValue<string>("ServiceUrl", "")
+            );
 
             var xml = this.configuration.GetSection("XmlConfig");
-            this.xmlConfig = new XmlConfig(xml.GetValue<string>("Xmldir", ""), xml.GetValue<string>("XmldirWeather", ""));
+            this.xmlConfig = new XmlConfig(
+                xml.GetValue<string>("Xmldir", ""),
+                xml.GetValue<string>("XmldirWeather", "")
+            );
             var json = this.configuration.GetSection("JsonConfig");
             this.jsonConfig = new JsonConfig(json.GetValue<string>("Jsondir", ""));
             var s3img = this.configuration.GetSection("S3ImageresizerConfig");
-            this.s3imageresizerConfig = new S3ImageresizerConfig(s3img.GetValue<string>("Url", ""), s3img.GetValue<string>("DocUrl", ""), s3img.GetValue<string>("BucketAccessPoint", ""), s3img.GetValue<string>("AccessKey", ""), s3img.GetValue<string>("SecretKey", ""));
-                      
+            this.s3imageresizerConfig = new S3ImageresizerConfig(
+                s3img.GetValue<string>("Url", ""),
+                s3img.GetValue<string>("DocUrl", ""),
+                s3img.GetValue<string>("BucketAccessPoint", ""),
+                s3img.GetValue<string>("AccessKey", ""),
+                s3img.GetValue<string>("SecretKey", "")
+            );
+
             this.notifierConfig = new List<NotifierConfig>();
 
             var notifierconfigdict = this.configuration.GetSection("NotifierConfig").GetChildren();
@@ -92,7 +164,14 @@ namespace OdhApiImporter
             {
                 foreach (var notifiercfg in notifierconfigdict)
                 {
-                    this.notifierConfig.Add(new NotifierConfig(notifiercfg.Key, notifiercfg.GetValue<string>("Url", ""), notifiercfg.GetValue<string>("User", ""), notifiercfg.GetValue<string>("Password", "")));
+                    this.notifierConfig.Add(
+                        new NotifierConfig(
+                            notifiercfg.Key,
+                            notifiercfg.GetValue<string>("Url", ""),
+                            notifiercfg.GetValue<string>("User", ""),
+                            notifiercfg.GetValue<string>("Password", "")
+                        )
+                    );
                 }
             }
 
@@ -103,12 +182,26 @@ namespace OdhApiImporter
             {
                 foreach (var s3cfg in s3configdict)
                 {
-                    this.s3Config.TryAddOrUpdate(s3cfg.Key, new S3Config(s3cfg.GetValue<string>("AccessKey", ""), s3cfg.GetValue<string>("AccessSecretKey", ""), s3cfg.Key, s3cfg.GetValue<string>("Filename", "")));
+                    this.s3Config.TryAddOrUpdate(
+                        s3cfg.Key,
+                        new S3Config(
+                            s3cfg.GetValue<string>("AccessKey", ""),
+                            s3cfg.GetValue<string>("AccessSecretKey", ""),
+                            s3cfg.Key,
+                            s3cfg.GetValue<string>("Filename", "")
+                        )
+                    );
                 }
             }
 
             var ltsapi = this.configuration.GetSection("LTSApiIDM");
-            this.ltsCredentials = new LTSCredentials(ltsapi.GetValue<string>("ServiceUrl", ""), ltsapi.GetValue<string>("Username", ""), ltsapi.GetValue<string>("Password", ""), ltsapi.GetValue<string>("XLSClientid", ""), ltsapi.GetValue<bool>("Opendata", false));
+            this.ltsCredentials = new LTSCredentials(
+                ltsapi.GetValue<string>("ServiceUrl", ""),
+                ltsapi.GetValue<string>("Username", ""),
+                ltsapi.GetValue<string>("Password", ""),
+                ltsapi.GetValue<string>("XLSClientid", ""),
+                ltsapi.GetValue<bool>("Opendata", false)
+            );
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -137,7 +230,8 @@ namespace OdhApiImporter
         public List<NotifierConfig> NotifierConfig => this.notifierConfig;
 
         public List<Field2HideConfig> Field2HideConfig => throw new NotImplementedException();
-        public List<RequestInterceptorConfig> RequestInterceptorConfig => throw new NotImplementedException();
+        public List<RequestInterceptorConfig> RequestInterceptorConfig =>
+            throw new NotImplementedException();
         public List<RateLimitConfig> RateLimitConfig => throw new NotImplementedException();
         public NoRateLimitConfig NoRateLimitConfig => throw new NotImplementedException();
         public List<FCMConfig> FCMConfig => throw new NotImplementedException();

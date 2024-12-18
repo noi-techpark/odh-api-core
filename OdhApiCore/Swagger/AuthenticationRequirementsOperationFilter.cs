@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
 
 namespace OdhApiCore.Swagger
 {
@@ -15,12 +15,17 @@ namespace OdhApiCore.Swagger
             if (operation.Security == null)
                 operation.Security = new List<OpenApiSecurityRequirement>();
 
-
-            var scheme = new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" } };
-            operation.Security.Add(new OpenApiSecurityRequirement
+            var scheme = new OpenApiSecurityScheme
             {
-                [scheme] = new List<string>()
-            });
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "oauth2",
+                },
+            };
+            operation.Security.Add(
+                new OpenApiSecurityRequirement { [scheme] = new List<string>() }
+            );
         }
     }
 }

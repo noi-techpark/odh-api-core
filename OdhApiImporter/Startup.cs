@@ -2,6 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Helper;
 using Helper.Factories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,10 +24,6 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 using SqlKata.Execution;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace OdhApiImporter
 {
@@ -39,16 +39,20 @@ namespace OdhApiImporter
         public IWebHostEnvironment CurrentEnvironment { get; }
 
         public void ConfigureServices(IServiceCollection services)
-        {     
+        {
             services.AddSingleton<ISettings, Settings>();
             services.AddScoped<QueryFactory, PostgresQueryFactory>();
             services.AddScoped<IOdhPushNotifier, OdhPushNotifier>();
             services.AddSingleton<IMongoDBFactory, MongoDBFactory>();
 
             //Adding HealthChecks
-            services.AddHealthChecks()
+            services
+                .AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
+                .AddNpgSql(
+                    Configuration.GetConnectionString("PgConnection"),
+                    tags: new[] { "services" }
+                );
 
             //Logging Config
             services.AddLogging(options =>
@@ -57,10 +61,9 @@ namespace OdhApiImporter
 
                 var levelSwitch = new LoggingLevelSwitch
                 {
-                    MinimumLevel =
-                        CurrentEnvironment.IsDevelopment() ?
-                            LogEventLevel.Debug:
-                            LogEventLevel.Warning
+                    MinimumLevel = CurrentEnvironment.IsDevelopment()
+                        ? LogEventLevel.Debug
+                        : LogEventLevel.Warning,
                 };
                 var loggerConfiguration = new LoggerConfiguration()
                     .MinimumLevel.ControlledBy(levelSwitch)
@@ -93,42 +96,47 @@ namespace OdhApiImporter
             //Initialize JWT Authentication
             services
                 .AddAuthentication(options =>
-                    {
-                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    })
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(jwtBearerOptions =>
+                {
+                    jwtBearerOptions.Authority = Configuration
+                        .GetSection("OauthServerConfig")
+                        .GetValue<string>("Authority");
+                    //jwtBearerOptions.Audience = "account";
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
-                        jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");
-                        //jwtBearerOptions.Audience = "account";                
-                        jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                        NameClaimType = "preferred_username",
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidIssuer = Configuration
+                            .GetSection("OauthServerConfig")
+                            .GetValue<string>("Authority"),
+                        ValidateIssuer = true,
+                    };
+                    jwtBearerOptions.Events = new JwtBearerEvents()
+                    {
+                        OnAuthenticationFailed = c =>
                         {
-                            NameClaimType = "preferred_username",
-                            ValidateAudience = false,
-                            ValidateLifetime = true,
-                            ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
-                            ValidateIssuer = true
-                        };
-                        jwtBearerOptions.Events = new JwtBearerEvents()
-                        {
-                            OnAuthenticationFailed = c =>
-                            {
-                                c.NoResult();
-                                c.Response.StatusCode = 401;
-                                c.Response.ContentType = "text/plain";
+                            c.NoResult();
+                            c.Response.StatusCode = 401;
+                            c.Response.ContentType = "text/plain";
 
-                                //Generate Log
-                                HttpRequestExtensions.GenerateLogResponse(c.HttpContext);
+                            //Generate Log
+                            HttpRequestExtensions.GenerateLogResponse(c.HttpContext);
 
-                                return c.Response.WriteAsync("");
-                            },                            
-                        };
-                    });
+                            return c.Response.WriteAsync("");
+                        },
+                    };
+                });
 
-            services.AddMvc();           
+            services.AddMvc();
         }
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {            
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -147,7 +155,7 @@ namespace OdhApiImporter
 
             ////LOG EVERY REQUEST WITH HEADERs
             app.UseODHCustomHttpRequestConfig(Configuration);
-            
+
             app.UseEndpoints(endpoints =>
             {
                 //endpoints.MapGet("/", async context =>
@@ -160,18 +168,18 @@ namespace OdhApiImporter
                 //        // call import
                 //});
                 //endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllers();                       
+                endpoints.MapControllers();
             });
 
-            app.UseHealthChecks("/self", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("self")
-            });
+            app.UseHealthChecks(
+                "/self",
+                new HealthCheckOptions { Predicate = r => r.Name.Contains("self") }
+            );
 
-            app.UseHealthChecks("/ready", new HealthCheckOptions
-            {
-                Predicate = r => r.Tags.Contains("services")
-            });
+            app.UseHealthChecks(
+                "/ready",
+                new HealthCheckOptions { Predicate = r => r.Tags.Contains("services") }
+            );
         }
     }
 }

@@ -2,24 +2,30 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using DataModel;
+using Helper;
 
 namespace SuedtirolWein.Parser
 {
     public class ParseAwardData
-    {      
-        public static WineLinked ParsetheAwardData(WineLinked mywine, XElement myawardde, XElement myawardit, XElement myawarden, List<string> haslanguage)
+    {
+        public static WineLinked ParsetheAwardData(
+            WineLinked mywine,
+            XElement myawardde,
+            XElement myawardit,
+            XElement myawarden,
+            List<string> haslanguage
+        )
         {
             mywine.LastChange = DateTime.Now;
 
             mywine.Id = myawardde.Element("id").Value.ToUpper();
-        
+
             string titlede = myawardde.Element("title").Value;
             string winenamede = myawardde.Element("wine").Value;
 
@@ -56,8 +62,12 @@ namespace SuedtirolWein.Parser
                 mywine.Detail.TryAddOrUpdate("en", mydetailen);
             }
 
-            mywine.Vintage = !String.IsNullOrEmpty(myawardde.Element("vintage").Value) ? Convert.ToInt32(myawardde.Element("vintage").Value) : 0;
-            mywine.Awardyear = !String.IsNullOrEmpty(myawardde.Element("awardyear").Value) ? Convert.ToInt32(myawardde.Element("awardyear").Value) : 0;
+            mywine.Vintage = !String.IsNullOrEmpty(myawardde.Element("vintage").Value)
+                ? Convert.ToInt32(myawardde.Element("vintage").Value)
+                : 0;
+            mywine.Awardyear = !String.IsNullOrEmpty(myawardde.Element("awardyear").Value)
+                ? Convert.ToInt32(myawardde.Element("awardyear").Value)
+                : 0;
 
             mywine.CompanyId = myawardde.Element("companyid").Value;
             mywine.Awards = myawardde.Element("awards").Value.Split(',').ToList();
@@ -66,10 +76,8 @@ namespace SuedtirolWein.Parser
 
             mywine.Shortname = myawardde.Element("title").Value;
 
-
             if (!String.IsNullOrEmpty(myawardde.Element("media").Value))
             {
-
                 List<ImageGallery> myimglist = new List<ImageGallery>();
 
                 if (mywine.ImageGallery != null)
@@ -89,7 +97,10 @@ namespace SuedtirolWein.Parser
 
                 if (myimage.ImageUrl.StartsWith("https://www.suedtirolwein.secure.consisto.net/"))
                 {
-                    myimage.ImageUrl.Replace("https://www.suedtirolwein.secure.consisto.net/", "https://intranet.suedtirolwein.com/");
+                    myimage.ImageUrl.Replace(
+                        "https://www.suedtirolwein.secure.consisto.net/",
+                        "https://intranet.suedtirolwein.com/"
+                    );
                 }
 
                 myimage.Height = 0;

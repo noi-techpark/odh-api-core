@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using DataModel;
 
 namespace Helper
 {
@@ -161,7 +161,9 @@ namespace Helper
             };
 
         public static async Task<IDictionary<string, string>> GetPoiTypeDescAsync(
-            string? key, IAsyncEnumerable<LTSTaggingType> ltstaggingtypes)
+            string? key,
+            IAsyncEnumerable<LTSTaggingType> ltstaggingtypes
+        )
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
 
@@ -174,7 +176,9 @@ namespace Helper
         }
 
         public static async Task<IDictionary<string, string>> GetActivityTypeDescAsync(
-            string? key, IAsyncEnumerable<LTSTaggingType> ltstaggingtypes)
+            string? key,
+            IAsyncEnumerable<LTSTaggingType> ltstaggingtypes
+        )
         {
             IDictionary<string, string> maintypedict = new Dictionary<string, string>();
 

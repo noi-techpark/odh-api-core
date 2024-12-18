@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace OdhApiImporter
 {
@@ -18,7 +18,11 @@ namespace OdhApiImporter
         private readonly ILogger<MonitorLoop> _logger;
         private readonly CancellationToken _cancellationToken;
 
-        public MonitorLoop(IBackgroundTaskQueue taskQueue, ILogger<MonitorLoop> logger, IHostApplicationLifetime applicationLifetime)
+        public MonitorLoop(
+            IBackgroundTaskQueue taskQueue,
+            ILogger<MonitorLoop> logger,
+            IHostApplicationLifetime applicationLifetime
+        )
         {
             _taskQueue = taskQueue;
             _logger = logger;
@@ -64,13 +68,17 @@ namespace OdhApiImporter
 
                 ++delayLoop;
 
-                _logger.LogInformation("Queued work item {Guid} is running. {DelayLoop}/3", guid, delayLoop);
+                _logger.LogInformation(
+                    "Queued work item {Guid} is running. {DelayLoop}/3",
+                    guid,
+                    delayLoop
+                );
             }
 
             string format = delayLoop switch
             {
                 3 => "Queued Background Task {Guid} is complete.",
-                _ => "Queued Background Task {Guid} was cancelled."
+                _ => "Queued Background Task {Guid} was cancelled.",
             };
 
             _logger.LogInformation(format, guid);

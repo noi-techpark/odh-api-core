@@ -2,21 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Distributed;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Claims;
-using Helper;
-using System.Net.Http.Headers;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Helper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -40,10 +40,10 @@ namespace Helper.Identity
             {
                 return;
             }
-            
+
             //GET BEARER TOKEN from Authorization Header
             var bearertoken = "";
-           
+
             if (context.Request.Headers.ContainsKey("Authorization"))
                 bearertoken = context.Request.Headers["Authorization"].ToString();
 
@@ -52,27 +52,42 @@ namespace Helper.Identity
                 var handler = new JwtSecurityTokenHandler();
                 var token = bearertoken.Replace("Bearer", "").Trim();
 
-                var permissions = await RequestAuthorizationEndpoint(token, configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"));
-                
+                var permissions = await RequestAuthorizationEndpoint(
+                    token,
+                    configuration.GetSection("OauthServerConfig").GetValue<string>("Authority")
+                );
+
                 //Store the permissions as claims
-                foreach(var permission in permissions)
+                foreach (var permission in permissions)
                 {
-                    foreach(var scope in permission.scopes)
+                    foreach (var scope in permission.scopes)
                     {
                         var resourceendpointsplitted = permission.rsname.Split('?');
-                        var additionalfilter = resourceendpointsplitted.Length > 1 ? "_" + resourceendpointsplitted[1] : "";
+                        var additionalfilter =
+                            resourceendpointsplitted.Length > 1
+                                ? "_" + resourceendpointsplitted[1]
+                                : "";
 
                         if (context.User.Identities.FirstOrDefault() != null)
-                            context.User.Identities.FirstOrDefault().AddClaim(new Claim(ClaimTypes.Role, resourceendpointsplitted[0] + "_" + scope + additionalfilter));
+                            context
+                                .User.Identities.FirstOrDefault()
+                                .AddClaim(
+                                    new Claim(
+                                        ClaimTypes.Role,
+                                        resourceendpointsplitted[0] + "_" + scope + additionalfilter
+                                    )
+                                );
                     }
                 }
-                
             }
 
             await _next(context);
         }
 
-        private static JwtSecurityToken? ReadMyJWTSecurityToken(string token, JwtSecurityTokenHandler handler)
+        private static JwtSecurityToken? ReadMyJWTSecurityToken(
+            string token,
+            JwtSecurityTokenHandler handler
+        )
         {
             try
             {
@@ -86,7 +101,10 @@ namespace Helper.Identity
             }
         }
 
-        private static async Task<IEnumerable<KeyCloakPermissions>> RequestAuthorizationEndpoint(string token, string authorizationendpoint)
+        private static async Task<IEnumerable<KeyCloakPermissions>> RequestAuthorizationEndpoint(
+            string token,
+            string authorizationendpoint
+        )
         {
             //TODO REQUEST AUTHORIZATION ON KEYCLOAK with grant_type=urn:ietf:params:oauth:grant-type:uma-ticket AND audience=odh-tourism-api
             //and pass the bearer token
@@ -98,30 +116,40 @@ namespace Helper.Identity
 
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                    "Bearer",
+                    token
+                );
 
-                using var request = new HttpRequestMessage(HttpMethod.Post, authorizationendpoint + "protocol/openid-connect/token") { Content = new FormUrlEncodedContent(body) };
+                using var request = new HttpRequestMessage(
+                    HttpMethod.Post,
+                    authorizationendpoint + "protocol/openid-connect/token"
+                )
+                {
+                    Content = new FormUrlEncodedContent(body),
+                };
                 using var response = await client.SendAsync(request);
 
                 //if (response.StatusCode != HttpStatusCode.OK)
                 //{
-                    //Return directly?? Handle Access Denied error when no Role defined in Permissions is found
+                //Return directly?? Handle Access Denied error when no Role defined in Permissions is found
 
-                    //throw new Exception("Error on getting data " + response.StatusCode.ToString());
+                //throw new Exception("Error on getting data " + response.StatusCode.ToString());
                 //}
 
                 var responseobject = new List<KeyCloakPermissions>();
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-
                     //Parse JSON Response to
                     var responsecontent = await response.Content.ReadAsStringAsync();
-                    responseobject = JsonConvert.DeserializeObject<List<KeyCloakPermissions>>(responsecontent);
+                    responseobject = JsonConvert.DeserializeObject<List<KeyCloakPermissions>>(
+                        responsecontent
+                    );
                 }
 
                 return responseobject;
-            }            
+            }
         }
     }
 
@@ -131,4 +159,3 @@ namespace Helper.Identity
         public string rsname { get; set; }
     }
 }
-

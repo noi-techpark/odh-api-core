@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using DataModel;
 using EBMS;
 using Helper;
@@ -9,40 +14,54 @@ using Helper.Extensions;
 using Helper.Tagging;
 using Newtonsoft.Json;
 using SqlKata.Execution;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace OdhApiImporter.Helpers
 {
     public class EbmsEventsImportHelper : ImportHelper, IImportHelper
-    {     
-        public EbmsEventsImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL) : base(settings, queryfactory, table, importerURL)
-        {
-
-        }
+    {
+        public EbmsEventsImportHelper(
+            ISettings settings,
+            QueryFactory queryfactory,
+            string table,
+            string importerURL
+        )
+            : base(settings, queryfactory, table, importerURL) { }
 
         #region EBMS Helpers
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged, List<string>? idlist = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(
+            DateTime? lastchanged,
+            List<string>? idlist = null,
+            CancellationToken cancellationToken = default
+        )
         {
-            var resulttuple = GetEBMSData.GetEbmsEvents(settings.EbmsConfig.ServiceUrl, settings.EbmsConfig.User, settings.EbmsConfig.Password);
+            var resulttuple = GetEBMSData.GetEbmsEvents(
+                settings.EbmsConfig.ServiceUrl,
+                settings.EbmsConfig.User,
+                settings.EbmsConfig.Password
+            );
 
             //To check we have to use here not DateTime.Now but DateTime now from our timezone
-            var currentdate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome"));
+            var currentdate = TimeZoneInfo.ConvertTime(
+                DateTime.UtcNow,
+                TimeZoneInfo.FindSystemTimeZoneById("Europe/Rome")
+            );
             var currenteventshort = await GetAllEventsShort(currentdate);
 
             var updateresult = await ImportData(resulttuple, cancellationToken);
-            
-            //todo check if resulttuple item1 is null
-            var  deleteresult = await DeleteDeletedEvents(resulttuple, currenteventshort.ToList());
 
-            return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
+            //todo check if resulttuple item1 is null
+            var deleteresult = await DeleteDeletedEvents(resulttuple, currenteventshort.ToList());
+
+            return GenericResultsHelper.MergeUpdateDetail(
+                new List<UpdateDetail>() { updateresult, deleteresult }
+            );
         }
 
-        private async Task<UpdateDetail> ImportData(List<Tuple<EventShortLinked, EBMSEventREST>> resulttuple, CancellationToken cancellationToken)
+        private async Task<UpdateDetail> ImportData(
+            List<Tuple<EventShortLinked, EBMSEventREST>> resulttuple,
+            CancellationToken cancellationToken
+        )
         {
             int updatecounter = 0;
             int newcounter = 0;
@@ -59,10 +78,19 @@ namespace OdhApiImporter.Helpers
                 errorcounter = errorcounter + importresult.error ?? errorcounter;
             }
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
+            return new UpdateDetail()
+            {
+                created = newcounter,
+                updated = updatecounter,
+                deleted = 0,
+                error = errorcounter,
+            };
         }
 
-        private async Task<UpdateDetail> ImportDataSingle(EventShortLinked eventshort, EBMSEventREST eventebms)
+        private async Task<UpdateDetail> ImportDataSingle(
+            EventShortLinked eventshort,
+            EBMSEventREST eventebms
+        )
         {
             string idtoreturn = "";
             int updatecounter = 0;
@@ -71,10 +99,10 @@ namespace OdhApiImporter.Helpers
 
             try
             {
-                var query =
-                   QueryFactory.Query("eventeuracnoi")
-                       .Select("data")
-                       .Where("id", eventshort.Id);
+                var query = QueryFactory
+                    .Query("eventeuracnoi")
+                    .Select("data")
+                    .Where("id", eventshort.Id);
 
                 var eventindb = await query.GetObjectSingleAsync<EventShortLinked>();
 
@@ -94,24 +122,26 @@ namespace OdhApiImporter.Helpers
                 List<string>? customtagging = null;
                 var webadress = "";
                 //List<DocumentPDF>? eventdocument = new List<DocumentPDF>();
-                IDictionary<string, List<Document>?> document = new Dictionary<string, List<Document>?>();
+                IDictionary<string, List<Document>?> document =
+                    new Dictionary<string, List<Document>?>();
 
                 bool? soldout = false;
                 bool? externalorganizer = false;
-                IDictionary<string, string> eventText = new Dictionary<string,string>();
+                IDictionary<string, string> eventText = new Dictionary<string, string>();
                 ICollection<string>? publishedon = new List<string>();
 
                 ICollection<string>? tagids = null;
 
                 if (eventindb == null)
-                {                    
+                {
                     eventshort.FirstImport = DateTime.Now;
                 }
 
                 if (eventindb != null)
-                {                 
+                {
                     changedonDB = eventindb.ChangedOn;
-                    imagegallery = eventindb.ImageGallery != null ? eventindb.ImageGallery.ToList() : null;
+                    imagegallery =
+                        eventindb.ImageGallery != null ? eventindb.ImageGallery.ToList() : null;
                     eventTextDE = eventindb.EventTextDE;
                     eventTextIT = eventindb.EventTextIT;
                     eventTextEN = eventindb.EventTextEN;
@@ -168,13 +198,19 @@ namespace OdhApiImporter.Helpers
                     eventshort.ExternalOrganizer = externalorganizer;
 
                     //New If CompanyName is Noi - blablabla assign TechnologyField automatically and Write to Display5 if not empty "NOI"
-                    if (!String.IsNullOrEmpty(eventshort.CompanyName) && eventshort.CompanyName.StartsWith("NOI - "))
+                    if (
+                        !String.IsNullOrEmpty(eventshort.CompanyName)
+                        && eventshort.CompanyName.StartsWith("NOI - ")
+                    )
                     {
                         if (String.IsNullOrEmpty(eventshort.Display5))
                             eventshort.Display5 = "NOI";
 
                         //MODIFIED
-                        eventshort.TagIds = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
+                        eventshort.TagIds = AssignTechnologyfieldsautomatically(
+                            eventshort.CompanyName,
+                            eventshort.TechnologyFields
+                        );
                         //eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 
@@ -185,46 +221,91 @@ namespace OdhApiImporter.Helpers
                         publishedon.TryRemoveOnList("today.noi.bz.it");
 
                     //Fix when TagIds are set lets update the Tags Object
-                    if(eventshort.TagIds != null && eventshort.TagIds.Count > 0)
+                    if (eventshort.TagIds != null && eventshort.TagIds.Count > 0)
                     {
                         //Populate Tags (Id/Source/Type)
                         await eventshort.UpdateTagsExtension(QueryFactory);
                     }
 
-                    var queryresult = await InsertDataToDB(eventshort, new KeyValuePair<string, EBMSEventREST>(eventebms.EventId.ToString(), eventebms));
+                    var queryresult = await InsertDataToDB(
+                        eventshort,
+                        new KeyValuePair<string, EBMSEventREST>(
+                            eventebms.EventId.ToString(),
+                            eventebms
+                        )
+                    );
 
                     newcounter = newcounter + queryresult.created ?? 0;
                     updatecounter = updatecounter + queryresult.updated ?? 0;
 
-                    WriteLog.LogToConsole(idtoreturn, "dataimport", "single.eventeuracnoi", new ImportLog() { sourceid = idtoreturn, sourceinterface = "ebms.eventeuracnoi", success = true, error = "" });
+                    WriteLog.LogToConsole(
+                        idtoreturn,
+                        "dataimport",
+                        "single.eventeuracnoi",
+                        new ImportLog()
+                        {
+                            sourceid = idtoreturn,
+                            sourceinterface = "ebms.eventeuracnoi",
+                            success = true,
+                            error = "",
+                        }
+                    );
                 }
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole(idtoreturn, "dataimport", "single.eventeuracnoi", new ImportLog() { sourceid = idtoreturn, sourceinterface = "ebms.eventeuracnoi", success = false, error = ex.Message });
+                WriteLog.LogToConsole(
+                    idtoreturn,
+                    "dataimport",
+                    "single.eventeuracnoi",
+                    new ImportLog()
+                    {
+                        sourceid = idtoreturn,
+                        sourceinterface = "ebms.eventeuracnoi",
+                        success = false,
+                        error = ex.Message,
+                    }
+                );
 
                 errorcounter = errorcounter + 1;
             }
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
-
+            return new UpdateDetail()
+            {
+                created = newcounter,
+                updated = updatecounter,
+                deleted = 0,
+                error = errorcounter,
+            };
         }
 
-        private async Task<PGCRUDResult> InsertDataToDB(EventShortLinked eventshort, KeyValuePair<string, EBMSEventREST> ebmsevent)
+        private async Task<PGCRUDResult> InsertDataToDB(
+            EventShortLinked eventshort,
+            KeyValuePair<string, EBMSEventREST> ebmsevent
+        )
         {
             try
-            {                
+            {
                 //Setting LicenseInfo
-                eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(eventshort, Helper.LicenseHelper.GetLicenseforEventShort);
+                eventshort.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<EventShort>(
+                    eventshort,
+                    Helper.LicenseHelper.GetLicenseforEventShort
+                );
                 //Check Languages
                 eventshort.CheckMyInsertedLanguages();
-                
+
                 //Remove Set PublishedOn not set automatically
                 //eventshort.CreatePublishedOnList();
 
                 var rawdataid = await InsertInRawDataDB(ebmsevent);
 
-                return await QueryFactory.UpsertData<EventShortLinked>(eventshort, "eventeuracnoi", rawdataid, "ebms.eventshort.import", importerURL);
+                return await QueryFactory.UpsertData<EventShortLinked>(
+                    eventshort,
+                    "eventeuracnoi",
+                    rawdataid,
+                    "ebms.eventshort.import",
+                    importerURL
+                );
             }
             catch (Exception ex)
             {
@@ -235,21 +316,25 @@ namespace OdhApiImporter.Helpers
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, EBMSEventREST> eventebms)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
-                        new RawDataStore()
-                        {
-                            datasource = "eurac",
-                            importdate = DateTime.Now,
-                            raw = JsonConvert.SerializeObject(eventebms.Value),
-                            sourceinterface = "ebms",
-                            sourceid = eventebms.Key,
-                            sourceurl = "https://emea-interface.ungerboeck.com",
-                            type = "event",
-                            license = "open",
-                            rawformat = "json"
-                        });
+                new RawDataStore()
+                {
+                    datasource = "eurac",
+                    importdate = DateTime.Now,
+                    raw = JsonConvert.SerializeObject(eventebms.Value),
+                    sourceinterface = "ebms",
+                    sourceid = eventebms.Key,
+                    sourceurl = "https://emea-interface.ungerboeck.com",
+                    type = "event",
+                    license = "open",
+                    rawformat = "json",
+                }
+            );
         }
 
-        private static List<string>? AssignTechnologyfieldsautomatically(string companyname, List<string>? technologyfields)
+        private static List<string>? AssignTechnologyfieldsautomatically(
+            string companyname,
+            List<string>? technologyfields
+        )
         {
             if (technologyfields == null)
                 technologyfields = new List<string>();
@@ -258,7 +343,12 @@ namespace OdhApiImporter.Helpers
 
             AssignTechnologyFields(companyname, "Digital", "Digital", technologyfields);
             AssignTechnologyFields(companyname, "Alpine", "Alpine", technologyfields);
-            AssignTechnologyFields(companyname, "Automotive", "Automotive/Automation", technologyfields);
+            AssignTechnologyFields(
+                companyname,
+                "Automotive",
+                "Automotive/Automation",
+                technologyfields
+            );
             AssignTechnologyFields(companyname, "Food", "Food", technologyfields);
             AssignTechnologyFields(companyname, "Green", "Green", technologyfields);
 
@@ -268,20 +358,30 @@ namespace OdhApiImporter.Helpers
                 return technologyfields;
         }
 
-        private static void AssignTechnologyFields(string companyname, string tocheck, string toassign, List<string> automatictechnologyfields)
+        private static void AssignTechnologyFields(
+            string companyname,
+            string tocheck,
+            string toassign,
+            List<string> automatictechnologyfields
+        )
         {
             if (companyname.Contains(tocheck))
                 if (!automatictechnologyfields.Contains(toassign))
                     automatictechnologyfields.Add(toassign);
         }
 
-        private async Task<UpdateDetail> DeleteDeletedEvents(List<Tuple<EventShortLinked, EBMSEventREST>> resulttuple, List<EventShortLinked> eventshortinDB)
+        private async Task<UpdateDetail> DeleteDeletedEvents(
+            List<Tuple<EventShortLinked, EBMSEventREST>> resulttuple,
+            List<EventShortLinked> eventshortinDB
+        )
         {
             var deletecounter = 0;
 
             if (resulttuple.Select(x => x.Item1).Count() > 0)
             {
-                List<EventShortLinked> eventshortfromnow = resulttuple.Select(x => x.Item1).ToList();
+                List<EventShortLinked> eventshortfromnow = resulttuple
+                    .Select(x => x.Item1)
+                    .ToList();
 
                 var idsonListinDB = eventshortinDB.Select(x => x.EventId).ToList();
                 var idsonService = eventshortfromnow.Select(x => x.EventId).ToList();
@@ -293,20 +393,41 @@ namespace OdhApiImporter.Helpers
                     foreach (var idtodelete in idstodelete)
                     {
                         //Set to inactive
-                        var eventshorttodeactivate = eventshortinDB.Where(x => x.EventId == idtodelete).FirstOrDefault();
+                        var eventshorttodeactivate = eventshortinDB
+                            .Where(x => x.EventId == idtodelete)
+                            .FirstOrDefault();
 
                         //TODO CHECK IF IT WORKS
                         if (eventshorttodeactivate != null)
                         {
-                           //Work With Active instead of deleting....
+                            //Work With Active instead of deleting....
                             eventshorttodeactivate.Active = false;
                             eventshorttodeactivate.LastChange = DateTime.Now;
 
-                            var updated = await QueryFactory.Query("eventeuracnoi").Where("id", eventshorttodeactivate.Id?.ToLower())
-                                .UpdateAsync(new JsonBData() { id = eventshorttodeactivate.Id?.ToLower() ?? "", data = new JsonRaw(eventshorttodeactivate) });
+                            var updated = await QueryFactory
+                                .Query("eventeuracnoi")
+                                .Where("id", eventshorttodeactivate.Id?.ToLower())
+                                .UpdateAsync(
+                                    new JsonBData()
+                                    {
+                                        id = eventshorttodeactivate.Id?.ToLower() ?? "",
+                                        data = new JsonRaw(eventshorttodeactivate),
+                                    }
+                                );
 
                             //LOG the Deletion
-                            WriteLog.LogToConsole(eventshorttodeactivate.Id, "dataimport", "single.eventeuracnoi.deactivate", new ImportLog() { sourceid = eventshorttodeactivate.Id, sourceinterface = "ebms.eventeuracnoi", success = updated > 0 ? true : false, error = "" });
+                            WriteLog.LogToConsole(
+                                eventshorttodeactivate.Id,
+                                "dataimport",
+                                "single.eventeuracnoi.deactivate",
+                                new ImportLog()
+                                {
+                                    sourceid = eventshorttodeactivate.Id,
+                                    sourceinterface = "ebms.eventeuracnoi",
+                                    success = updated > 0 ? true : false,
+                                    error = "",
+                                }
+                            );
 
                             deletecounter++;
                         }
@@ -314,24 +435,33 @@ namespace OdhApiImporter.Helpers
                 }
             }
 
-            return new UpdateDetail() { created = 0, updated = 0, deleted = deletecounter, error = 0 };
+            return new UpdateDetail()
+            {
+                created = 0,
+                updated = 0,
+                deleted = deletecounter,
+                error = 0,
+            };
         }
 
         private async Task<IEnumerable<EventShortLinked>> GetAllEventsShort(DateTime now)
         {
             var today = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
 
-            var query =
-                         QueryFactory.Query("eventeuracnoi")
-                             .Select("data")
-                             .WhereRaw("(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '" + String.Format("{0:yyyy-MM-dd}", today) + "'))) AND(data#>>'\\{Source\\}' = $$)", "ebms")
-                             .Where("gen_active", true);
-
+            var query = QueryFactory
+                .Query("eventeuracnoi")
+                .Select("data")
+                .WhereRaw(
+                    "(((to_date(data->> 'EndDate', 'YYYY-MM-DD') >= '"
+                        + String.Format("{0:yyyy-MM-dd}", today)
+                        + "'))) AND(data#>>'\\{Source\\}' = $$)",
+                    "ebms"
+                )
+                .Where("gen_active", true);
 
             return await query.GetObjectListAsync<EventShortLinked>();
         }
-        
-        #endregion
 
+        #endregion
     }
 }

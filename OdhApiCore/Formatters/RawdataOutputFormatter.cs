@@ -2,6 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Http;
@@ -9,11 +14,6 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using SqlKata.Execution;
-using System;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OdhApiCore.Formatters
 {
@@ -41,14 +41,16 @@ namespace OdhApiCore.Formatters
                     string table = ODHTypeHelper.TranslateTypeString2Table(odhtype);
 
                     //Load rawid
-                    var rawid = QueryFactory.Query()
-                           .Select("rawdataid")
-                           .From(table)
-                           .Where("id", id)
-                           .Get<string>()
-                           .FirstOrDefault();
+                    var rawid = QueryFactory
+                        .Query()
+                        .Select("rawdataid")
+                        .From(table)
+                        .Where("id", id)
+                        .Get<string>()
+                        .FirstOrDefault();
 
-                    var rawdata = QueryFactory.Query()
+                    var rawdata = QueryFactory
+                        .Query()
                         .Select("raw")
                         .From("rawdata")
                         .Where("id", rawid)
@@ -59,17 +61,20 @@ namespace OdhApiCore.Formatters
                 }
                 else
                     return null;
-                
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
-            }                       
+            }
         }
 
-        public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
+        public override async Task WriteResponseBodyAsync(
+            OutputFormatterWriteContext context,
+            Encoding selectedEncoding
+        )
         {
-            var queryFactory = (QueryFactory?)context.HttpContext.RequestServices.GetService(typeof(QueryFactory));
+            var queryFactory = (QueryFactory?)
+                context.HttpContext.RequestServices.GetService(typeof(QueryFactory));
 
             if (context.Object is JsonRaw jsonRaw && queryFactory is { })
             {

@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +9,9 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Helper.Identity
 {
@@ -24,7 +24,9 @@ namespace Helper.Identity
                 var claimsIdentity = principal.Identity as ClaimsIdentity;
                 if (claimsIdentity != null)
                 {
-                    JObject obj = JObject.Parse(claimsIdentity.Claims.First(c => c.Type == "resource_access").Value);
+                    JObject obj = JObject.Parse(
+                        claimsIdentity.Claims.First(c => c.Type == "resource_access").Value
+                    );
                     var roleAccess = obj.GetValue(client)!.ToObject<JObject>()!.GetValue("roles");
                     foreach (JToken role in roleAccess!)
                     {
@@ -33,11 +35,11 @@ namespace Helper.Identity
                             claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.ToString()));
                     }
 
-                    ////Get Roles from resource_access 
+                    ////Get Roles from resource_access
                     //if (claimsIdentity.Claims.Where(x => x.Type == "resource_access").FirstOrDefault() != null)
                     //{
                     //    var resourceroles = JsonConvert.DeserializeObject<Dictionary<string, Resource_Roles>>(claimsIdentity.Claims.Where(x => x.Type == "resource_access").FirstOrDefault().Value);
-                        
+
                     //    if(resourceroles != null && resourceroles.Where(x => x.Key == client).Count() > 0)
                     //    {
                     //        foreach (var resourcerole in resourceroles.Where(x => x.Key == client).FirstOrDefault().Value.roles)
@@ -50,11 +52,11 @@ namespace Helper.Identity
                     //}
                 }
             }
-        }        
+        }
     }
+
     public class Resource_Roles
     {
         public List<string> roles { get; set; }
     }
-
 }

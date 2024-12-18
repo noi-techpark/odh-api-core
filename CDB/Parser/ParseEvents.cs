@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using DataModel;
+using Helper;
 
 namespace CDB.Parser
 {
@@ -18,11 +18,48 @@ namespace CDB.Parser
     {
         public static CultureInfo myculture = new CultureInfo("en");
 
-        public static EventLinked GetEventData(EventLinked myevent, string eventRid, string publRidList, string ltsuser, string ltspswd, string serviceurl)
+        public static EventLinked GetEventData(
+            EventLinked myevent,
+            string eventRid,
+            string publRidList,
+            string ltsuser,
+            string ltspswd,
+            string serviceurl
+        )
         {
-            var eventresponsede = GetEvents.GetEventDetail("de", "SMG", eventRid, publRidList, "1", "1", ltsuser, ltspswd, serviceurl);
-            var eventresponseit = GetEvents.GetEventDetail("it", "SMG", eventRid, publRidList, "1", "1", ltsuser, ltspswd, serviceurl);
-            var eventresponseen = GetEvents.GetEventDetail("en", "SMG", eventRid, publRidList, "1", "1", ltsuser, ltspswd, serviceurl);
+            var eventresponsede = GetEvents.GetEventDetail(
+                "de",
+                "SMG",
+                eventRid,
+                publRidList,
+                "1",
+                "1",
+                ltsuser,
+                ltspswd,
+                serviceurl
+            );
+            var eventresponseit = GetEvents.GetEventDetail(
+                "it",
+                "SMG",
+                eventRid,
+                publRidList,
+                "1",
+                "1",
+                ltsuser,
+                ltspswd,
+                serviceurl
+            );
+            var eventresponseen = GetEvents.GetEventDetail(
+                "en",
+                "SMG",
+                eventRid,
+                publRidList,
+                "1",
+                "1",
+                ltsuser,
+                ltspswd,
+                serviceurl
+            );
 
             if (eventresponsede != null)
             {
@@ -54,23 +91,39 @@ namespace CDB.Parser
                     myevent.Id = eventRid;
                     //Set Event Languages to de,it,en
                     myevent.HasLanguage = availablelangs;
-                    //fallback no name 
+                    //fallback no name
                     string shortname = "no name";
 
                     myevent.Source = "LTS";
 
                     //Add LTS Id as Mapping
-                    var ltsriddict = new Dictionary<string, string>() { { "rid", eventRid.ToUpper() } };
+                    var ltsriddict = new Dictionary<string, string>()
+                    {
+                        { "rid", eventRid.ToUpper() },
+                    };
                     myevent.Mapping.TryAddOrUpdate("lts", ltsriddict);
 
                     if (eventresponsede.Element("Definition").Element("DefinitionLng") != null)
-                        shortname = eventresponsede.Element("Definition").Element("DefinitionLng").Attribute("Title").Value;
+                        shortname = eventresponsede
+                            .Element("Definition")
+                            .Element("DefinitionLng")
+                            .Attribute("Title")
+                            .Value;
 
                     myevent.Shortname = shortname;
 
-                    var definitionde = eventresponsede != null ? eventresponsede.Elements("Definition").FirstOrDefault() : null;
-                    var definitionit = eventresponseit != null ? eventresponseit.Elements("Definition").FirstOrDefault() : null;
-                    var definitionen = eventresponseen != null ? eventresponseen.Elements("Definition").FirstOrDefault() : null;
+                    var definitionde =
+                        eventresponsede != null
+                            ? eventresponsede.Elements("Definition").FirstOrDefault()
+                            : null;
+                    var definitionit =
+                        eventresponseit != null
+                            ? eventresponseit.Elements("Definition").FirstOrDefault()
+                            : null;
+                    var definitionen =
+                        eventresponseen != null
+                            ? eventresponseen.Elements("Definition").FirstOrDefault()
+                            : null;
 
                     //Active LTS Property TODO active = 3?
 
@@ -80,7 +133,10 @@ namespace CDB.Parser
                     //3 = out of time
 
                     bool active = true;
-                    if (definitionde.Attribute("Active").Value == "0" || definitionde.Attribute("Active").Value == "2")
+                    if (
+                        definitionde.Attribute("Active").Value == "0"
+                        || definitionde.Attribute("Active").Value == "2"
+                    )
                         active = false;
 
                     if (definitionde.Attribute("Active").Value == "3")
@@ -90,7 +146,9 @@ namespace CDB.Parser
 
                     //Classificationrid
                     if (definitionde.Attribute("ClassificationRID") != null)
-                        myevent.ClassificationRID = definitionde.Attribute("ClassificationRID").Value;
+                        myevent.ClassificationRID = definitionde
+                            .Attribute("ClassificationRID")
+                            .Value;
 
                     myevent.SmgActive = myevent.SmgActive;
                     myevent.Active = active;
@@ -158,7 +216,6 @@ namespace CDB.Parser
                         }
                     }
 
-
                     //Contactinfo
                     if (definitionde != null)
                     {
@@ -166,26 +223,41 @@ namespace CDB.Parser
                         GpsInfo eventgpsinfo = new GpsInfo();
 
                         eventgpsinfo.Gpstype = "position";
-                        eventgpsinfo.Latitude = Double.Parse(definitionde.Attribute("GNP").Value, myculture);
-                        eventgpsinfo.Longitude = Double.Parse(definitionde.Attribute("GEP").Value, myculture);
+                        eventgpsinfo.Latitude = Double.Parse(
+                            definitionde.Attribute("GNP").Value,
+                            myculture
+                        );
+                        eventgpsinfo.Longitude = Double.Parse(
+                            definitionde.Attribute("GEP").Value,
+                            myculture
+                        );
                         eventgpsinfo.AltitudeUnitofMeasure = "m";
 
                         myevent.GpsInfo.Add(eventgpsinfo);
 
-                        myevent.SignOn = definitionde.Attribute("SignOn") != null ? definitionde.Attribute("SignOn").Value : "";
+                        myevent.SignOn =
+                            definitionde.Attribute("SignOn") != null
+                                ? definitionde.Attribute("SignOn").Value
+                                : "";
 
                         //PayMet types
                         //0 = free
                         //1 = on site
                         //2 = free choice
                         //3 = at the moment of inscription
-                        myevent.PayMet = definitionde.Attribute("PayMet") != null ? definitionde.Attribute("PayMet").Value : "";
+                        myevent.PayMet =
+                            definitionde.Attribute("PayMet") != null
+                                ? definitionde.Attribute("PayMet").Value
+                                : "";
 
                         //Deprecated?? REMOVE?
                         //myevent.Ranc = definitionde.Attribute("Ranc") != null ? Convert.ToInt32(definitionde.Attribute("Ranc").Value) : 0;
 
                         //PDF Attribute
-                        myevent.Pdf = definitionde.Attribute("PDF") != null ? definitionde.Attribute("PDF").Value : "";
+                        myevent.Pdf =
+                            definitionde.Attribute("PDF") != null
+                                ? definitionde.Attribute("PDF").Value
+                                : "";
 
                         //Deprecated!
                         //myevent.Type = definitionde.Attribute("Type") != null ? definitionde.Attribute("Type").Value : "";
@@ -194,9 +266,15 @@ namespace CDB.Parser
                         myevent.Source = "LTS";
 
                         //CHeck if boolean parsing is working
-                        Boolean.TryParse(definitionde.Attribute("GrpEvent").Value, out var grpevent);
+                        Boolean.TryParse(
+                            definitionde.Attribute("GrpEvent").Value,
+                            out var grpevent
+                        );
                         myevent.GrpEvent = grpevent;
-                        Boolean.TryParse(definitionde.Attribute("EventBenefit").Value, out var eventbenefit);
+                        Boolean.TryParse(
+                            definitionde.Attribute("EventBenefit").Value,
+                            out var eventbenefit
+                        );
                         myevent.EventBenefit = eventbenefit;
 
                         myevent.Ticket = definitionde.Attribute("Ticket").Value;
@@ -352,16 +430,34 @@ namespace CDB.Parser
 
                             if (descriptionadditionalde != null)
                             {
-                                EventDescAdditional eventdescadditionalde = new EventDescAdditional();
-                                eventdescadditionalde.Type = descriptionadditionalde.Attribute("DType").Value;
+                                EventDescAdditional eventdescadditionalde =
+                                    new EventDescAdditional();
+                                eventdescadditionalde.Type = descriptionadditionalde
+                                    .Attribute("DType")
+                                    .Value;
                                 eventdescadditionalde.Language = "de";
-                                eventdescadditionalde.Order = descriptionadditionalde.Attribute("Order").Value;
-                                eventdescadditionalde.RQPlain = descriptionadditionalde.Attribute("RQPlain") != null ? descriptionadditionalde.Attribute("RQPlain").Value : descriptionadditionalde.Attribute("RQPlan").Value;
-                                eventdescadditionalde.RQHtml = descriptionadditionalde.Attribute("RQHtml").Value;
-                                eventdescadditionalde.RSPlain = descriptionadditionalde.Attribute("RSPlain") != null ? descriptionadditionalde.Attribute("RSPlain").Value : descriptionadditionalde.Attribute("RSPlan").Value;
-                                eventdescadditionalde.RSHtml = descriptionadditionalde.Attribute("RSHtml").Value;
+                                eventdescadditionalde.Order = descriptionadditionalde
+                                    .Attribute("Order")
+                                    .Value;
+                                eventdescadditionalde.RQPlain =
+                                    descriptionadditionalde.Attribute("RQPlain") != null
+                                        ? descriptionadditionalde.Attribute("RQPlain").Value
+                                        : descriptionadditionalde.Attribute("RQPlan").Value;
+                                eventdescadditionalde.RQHtml = descriptionadditionalde
+                                    .Attribute("RQHtml")
+                                    .Value;
+                                eventdescadditionalde.RSPlain =
+                                    descriptionadditionalde.Attribute("RSPlain") != null
+                                        ? descriptionadditionalde.Attribute("RSPlain").Value
+                                        : descriptionadditionalde.Attribute("RSPlan").Value;
+                                eventdescadditionalde.RSHtml = descriptionadditionalde
+                                    .Attribute("RSHtml")
+                                    .Value;
 
-                                myevent.EventDescAdditional.TryAddOrUpdate("de", eventdescadditionalde);
+                                myevent.EventDescAdditional.TryAddOrUpdate(
+                                    "de",
+                                    eventdescadditionalde
+                                );
                             }
                         }
                     }
@@ -392,16 +488,34 @@ namespace CDB.Parser
 
                             if (descriptionadditionalit != null)
                             {
-                                EventDescAdditional eventdescadditionalit = new EventDescAdditional();
-                                eventdescadditionalit.Type = descriptionadditionalit.Attribute("DType").Value;
+                                EventDescAdditional eventdescadditionalit =
+                                    new EventDescAdditional();
+                                eventdescadditionalit.Type = descriptionadditionalit
+                                    .Attribute("DType")
+                                    .Value;
                                 eventdescadditionalit.Language = "it";
-                                eventdescadditionalit.Order = descriptionadditionalit.Attribute("Order").Value;
-                                eventdescadditionalit.RQPlain = descriptionadditionalit.Attribute("RQPlain") != null ? descriptionadditionalit.Attribute("RQPlain").Value : descriptionadditionalit.Attribute("RQPlan").Value;
-                                eventdescadditionalit.RQHtml = descriptionadditionalit.Attribute("RQHtml").Value;
-                                eventdescadditionalit.RSPlain = descriptionadditionalit.Attribute("RSPlain") != null ? descriptionadditionalit.Attribute("RSPlain").Value : descriptionadditionalit.Attribute("RSPlan").Value;
-                                eventdescadditionalit.RSHtml = descriptionadditionalit.Attribute("RSHtml").Value;
+                                eventdescadditionalit.Order = descriptionadditionalit
+                                    .Attribute("Order")
+                                    .Value;
+                                eventdescadditionalit.RQPlain =
+                                    descriptionadditionalit.Attribute("RQPlain") != null
+                                        ? descriptionadditionalit.Attribute("RQPlain").Value
+                                        : descriptionadditionalit.Attribute("RQPlan").Value;
+                                eventdescadditionalit.RQHtml = descriptionadditionalit
+                                    .Attribute("RQHtml")
+                                    .Value;
+                                eventdescadditionalit.RSPlain =
+                                    descriptionadditionalit.Attribute("RSPlain") != null
+                                        ? descriptionadditionalit.Attribute("RSPlain").Value
+                                        : descriptionadditionalit.Attribute("RSPlan").Value;
+                                eventdescadditionalit.RSHtml = descriptionadditionalit
+                                    .Attribute("RSHtml")
+                                    .Value;
 
-                                myevent.EventDescAdditional.TryAddOrUpdate("it", eventdescadditionalit);
+                                myevent.EventDescAdditional.TryAddOrUpdate(
+                                    "it",
+                                    eventdescadditionalit
+                                );
                             }
                         }
                     }
@@ -431,16 +545,34 @@ namespace CDB.Parser
 
                             if (descriptionadditionalen != null)
                             {
-                                EventDescAdditional eventdescadditionalen = new EventDescAdditional();
-                                eventdescadditionalen.Type = descriptionadditionalen.Attribute("DType").Value;
+                                EventDescAdditional eventdescadditionalen =
+                                    new EventDescAdditional();
+                                eventdescadditionalen.Type = descriptionadditionalen
+                                    .Attribute("DType")
+                                    .Value;
                                 eventdescadditionalen.Language = "en";
-                                eventdescadditionalen.Order = descriptionadditionalen.Attribute("Order").Value;
-                                eventdescadditionalen.RQPlain = descriptionadditionalen.Attribute("RQPlain") != null ? descriptionadditionalen.Attribute("RQPlain").Value : descriptionadditionalen.Attribute("RQPlan").Value;
-                                eventdescadditionalen.RQHtml = descriptionadditionalen.Attribute("RQHtml").Value;
-                                eventdescadditionalen.RSPlain = descriptionadditionalen.Attribute("RSPlain") != null ? descriptionadditionalen.Attribute("RSPlain").Value : descriptionadditionalen.Attribute("RSPlan").Value;
-                                eventdescadditionalen.RSHtml = descriptionadditionalen.Attribute("RSHtml").Value;
+                                eventdescadditionalen.Order = descriptionadditionalen
+                                    .Attribute("Order")
+                                    .Value;
+                                eventdescadditionalen.RQPlain =
+                                    descriptionadditionalen.Attribute("RQPlain") != null
+                                        ? descriptionadditionalen.Attribute("RQPlain").Value
+                                        : descriptionadditionalen.Attribute("RQPlan").Value;
+                                eventdescadditionalen.RQHtml = descriptionadditionalen
+                                    .Attribute("RQHtml")
+                                    .Value;
+                                eventdescadditionalen.RSPlain =
+                                    descriptionadditionalen.Attribute("RSPlain") != null
+                                        ? descriptionadditionalen.Attribute("RSPlain").Value
+                                        : descriptionadditionalen.Attribute("RSPlan").Value;
+                                eventdescadditionalen.RSHtml = descriptionadditionalen
+                                    .Attribute("RSHtml")
+                                    .Value;
 
-                                myevent.EventDescAdditional.TryAddOrUpdate("en", eventdescadditionalen);
+                                myevent.EventDescAdditional.TryAddOrUpdate(
+                                    "en",
+                                    eventdescadditionalen
+                                );
                             }
                         }
                     }
@@ -450,8 +582,9 @@ namespace CDB.Parser
 
                     if (eventresponsede != null)
                     {
-
-                        var fotos = eventresponsede.Elements("Foto").OrderBy(x => Convert.ToInt32(x.Attribute("Order").Value));
+                        var fotos = eventresponsede
+                            .Elements("Foto")
+                            .OrderBy(x => Convert.ToInt32(x.Attribute("Order").Value));
                         if (fotos != null)
                         {
                             int i = 0;
@@ -460,12 +593,22 @@ namespace CDB.Parser
                                 ImageGallery myimggallery = new ImageGallery();
 
                                 myimggallery.ImageUrl = myfoto.Attribute("FPath").Value;
-                                myimggallery.ImageDesc.TryAddOrUpdate("de", myfoto.Attribute("CRight").Value);
-                                myimggallery.ListPosition = Convert.ToInt32(myfoto.Attribute("Order").Value) - 1;
+                                myimggallery.ImageDesc.TryAddOrUpdate(
+                                    "de",
+                                    myfoto.Attribute("CRight").Value
+                                );
+                                myimggallery.ListPosition =
+                                    Convert.ToInt32(myfoto.Attribute("Order").Value) - 1;
                                 myimggallery.ImageSource = "LTS";
                                 myimggallery.IsInGallery = true;
-                                myimggallery.CopyRight = myfoto.Attribute("CRight") != null ? myfoto.Attribute("CRight").Value : "";
-                                myimggallery.License = myfoto.Attribute("License") != null ? myfoto.Attribute("License").Value : "";
+                                myimggallery.CopyRight =
+                                    myfoto.Attribute("CRight") != null
+                                        ? myfoto.Attribute("CRight").Value
+                                        : "";
+                                myimggallery.License =
+                                    myfoto.Attribute("License") != null
+                                        ? myfoto.Attribute("License").Value
+                                        : "";
 
                                 myimagegalleryList.Add(myimggallery);
 
@@ -476,25 +619,48 @@ namespace CDB.Parser
 
                     if (eventresponseit != null)
                     {
-                        var fotosit = eventresponseit.Elements("Foto").OrderBy(x => Convert.ToInt32(x.Attribute("Order").Value)); ;
+                        var fotosit = eventresponseit
+                            .Elements("Foto")
+                            .OrderBy(x => Convert.ToInt32(x.Attribute("Order").Value));
+                        ;
                         if (fotosit != null)
                         {
-
                             foreach (XElement myfoto in fotosit)
                             {
-                                myimagegalleryList.Where(x => x.ListPosition == (Convert.ToInt32(myfoto.Attribute("Order").Value) - 1)).FirstOrDefault().ImageDesc.TryAddOrUpdate("it", myfoto.Attribute("CRight").Value);
+                                myimagegalleryList
+                                    .Where(x =>
+                                        x.ListPosition
+                                        == (Convert.ToInt32(myfoto.Attribute("Order").Value) - 1)
+                                    )
+                                    .FirstOrDefault()
+                                    .ImageDesc.TryAddOrUpdate(
+                                        "it",
+                                        myfoto.Attribute("CRight").Value
+                                    );
                             }
                         }
                     }
 
                     if (eventresponseen != null)
                     {
-                        var fotosen = eventresponseen.Elements("Foto").OrderBy(x => Convert.ToInt32(x.Attribute("Order").Value)); ;
+                        var fotosen = eventresponseen
+                            .Elements("Foto")
+                            .OrderBy(x => Convert.ToInt32(x.Attribute("Order").Value));
+                        ;
                         if (fotosen != null)
                         {
                             foreach (XElement myfoto in fotosen)
                             {
-                                myimagegalleryList.Where(x => x.ListPosition == (Convert.ToInt32(myfoto.Attribute("Order").Value) - 1)).FirstOrDefault().ImageDesc.TryAddOrUpdate("en", myfoto.Attribute("CRight").Value);
+                                myimagegalleryList
+                                    .Where(x =>
+                                        x.ListPosition
+                                        == (Convert.ToInt32(myfoto.Attribute("Order").Value) - 1)
+                                    )
+                                    .FirstOrDefault()
+                                    .ImageDesc.TryAddOrUpdate(
+                                        "en",
+                                        myfoto.Attribute("CRight").Value
+                                    );
                             }
                         }
                     }
@@ -503,7 +669,9 @@ namespace CDB.Parser
 
                     if (myevent.ImageGallery.Count() > 0)
                     {
-                        myevent.ImageGallery = myevent.ImageGallery.OrderBy(x => x.ListPosition).ToList();
+                        myevent.ImageGallery = myevent
+                            .ImageGallery.OrderBy(x => x.ListPosition)
+                            .ToList();
                     }
 
                     //Topic
@@ -588,9 +756,18 @@ namespace CDB.Parser
                         foreach (XElement mypublish in publisher)
                         {
                             EventPublisher myeventpublisher = new EventPublisher();
-                            myeventpublisher.Publish = mypublish.Attribute("Publish") != null ? Convert.ToInt32(mypublish.Attribute("Publish").Value) : 0;
-                            myeventpublisher.PublisherRID = mypublish.Attribute("PublRID") != null ? mypublish.Attribute("PublRID").Value : "";
-                            myeventpublisher.Ranc = mypublish.Attribute("Ranc") != null ? Convert.ToInt32(mypublish.Attribute("Ranc").Value) : 0;
+                            myeventpublisher.Publish =
+                                mypublish.Attribute("Publish") != null
+                                    ? Convert.ToInt32(mypublish.Attribute("Publish").Value)
+                                    : 0;
+                            myeventpublisher.PublisherRID =
+                                mypublish.Attribute("PublRID") != null
+                                    ? mypublish.Attribute("PublRID").Value
+                                    : "";
+                            myeventpublisher.Ranc =
+                                mypublish.Attribute("Ranc") != null
+                                    ? Convert.ToInt32(mypublish.Attribute("Ranc").Value)
+                                    : 0;
 
                             myevent.EventPublisher.Add(myeventpublisher);
                         }
@@ -604,17 +781,32 @@ namespace CDB.Parser
                         foreach (XElement myprice in eventprice)
                         {
                             EventPrice myeventprice = new EventPrice();
-                            myeventprice.Price = myprice.Attribute("PValue") != null ? Convert.ToDouble(myprice.Attribute("PValue").Value, myculture) : 0;
-                            myeventprice.Pstd = myprice.Attribute("PStd") != null ? myprice.Attribute("PStd").Value : "";
-                            myeventprice.Type = myprice.Attribute("PType") != null ? myprice.Attribute("PType").Value : "";
+                            myeventprice.Price =
+                                myprice.Attribute("PValue") != null
+                                    ? Convert.ToDouble(myprice.Attribute("PValue").Value, myculture)
+                                    : 0;
+                            myeventprice.Pstd =
+                                myprice.Attribute("PStd") != null
+                                    ? myprice.Attribute("PStd").Value
+                                    : "";
+                            myeventprice.Type =
+                                myprice.Attribute("PType") != null
+                                    ? myprice.Attribute("PType").Value
+                                    : "";
 
                             myeventprice.Language = "de";
 
                             var mypricelng = myprice.Element("PriceLng");
                             if (mypricelng != null)
                             {
-                                myeventprice.ShortDesc = mypricelng.Attribute("PShort") != null ? mypricelng.Attribute("PShort").Value : "";
-                                myeventprice.Description = mypricelng.Attribute("PDesc") != null ? mypricelng.Attribute("PDesc").Value : "";
+                                myeventprice.ShortDesc =
+                                    mypricelng.Attribute("PShort") != null
+                                        ? mypricelng.Attribute("PShort").Value
+                                        : "";
+                                myeventprice.Description =
+                                    mypricelng.Attribute("PDesc") != null
+                                        ? mypricelng.Attribute("PDesc").Value
+                                        : "";
                             }
 
                             myevent.EventPrice.TryAddOrUpdate("de", myeventprice);
@@ -630,17 +822,35 @@ namespace CDB.Parser
                             foreach (XElement myprice in eventpriceit)
                             {
                                 EventPrice myeventprice = new EventPrice();
-                                myeventprice.Price = myprice.Attribute("PValue") != null ? Convert.ToDouble(myprice.Attribute("PValue").Value, myculture) : 0;
-                                myeventprice.Pstd = myprice.Attribute("PStd") != null ? myprice.Attribute("PStd").Value : "";
-                                myeventprice.Type = myprice.Attribute("PType") != null ? myprice.Attribute("PType").Value : "";
+                                myeventprice.Price =
+                                    myprice.Attribute("PValue") != null
+                                        ? Convert.ToDouble(
+                                            myprice.Attribute("PValue").Value,
+                                            myculture
+                                        )
+                                        : 0;
+                                myeventprice.Pstd =
+                                    myprice.Attribute("PStd") != null
+                                        ? myprice.Attribute("PStd").Value
+                                        : "";
+                                myeventprice.Type =
+                                    myprice.Attribute("PType") != null
+                                        ? myprice.Attribute("PType").Value
+                                        : "";
 
                                 myeventprice.Language = "it";
 
                                 var mypricelng = myprice.Element("PriceLng");
                                 if (mypricelng != null)
                                 {
-                                    myeventprice.ShortDesc = mypricelng.Attribute("PShort") != null ? mypricelng.Attribute("PShort").Value : "";
-                                    myeventprice.Description = mypricelng.Attribute("PDesc") != null ? mypricelng.Attribute("PDesc").Value : "";
+                                    myeventprice.ShortDesc =
+                                        mypricelng.Attribute("PShort") != null
+                                            ? mypricelng.Attribute("PShort").Value
+                                            : "";
+                                    myeventprice.Description =
+                                        mypricelng.Attribute("PDesc") != null
+                                            ? mypricelng.Attribute("PDesc").Value
+                                            : "";
                                 }
 
                                 myevent.EventPrice.TryAddOrUpdate("it", myeventprice);
@@ -657,17 +867,35 @@ namespace CDB.Parser
                             foreach (XElement mypriceen in eventpriceen)
                             {
                                 EventPrice myeventprice = new EventPrice();
-                                myeventprice.Price = mypriceen.Attribute("PValue") != null ? Convert.ToDouble(mypriceen.Attribute("PValue").Value, myculture) : 0;
-                                myeventprice.Pstd = mypriceen.Attribute("PStd") != null ? mypriceen.Attribute("PStd").Value : "";
-                                myeventprice.Type = mypriceen.Attribute("PType") != null ? mypriceen.Attribute("PType").Value : "";
+                                myeventprice.Price =
+                                    mypriceen.Attribute("PValue") != null
+                                        ? Convert.ToDouble(
+                                            mypriceen.Attribute("PValue").Value,
+                                            myculture
+                                        )
+                                        : 0;
+                                myeventprice.Pstd =
+                                    mypriceen.Attribute("PStd") != null
+                                        ? mypriceen.Attribute("PStd").Value
+                                        : "";
+                                myeventprice.Type =
+                                    mypriceen.Attribute("PType") != null
+                                        ? mypriceen.Attribute("PType").Value
+                                        : "";
 
                                 myeventprice.Language = "en";
 
                                 var mypricelng = mypriceen.Element("PriceLng");
                                 if (mypricelng != null)
                                 {
-                                    myeventprice.ShortDesc = mypricelng.Attribute("PShort") != null ? mypricelng.Attribute("PShort").Value : "";
-                                    myeventprice.Description = mypricelng.Attribute("PDesc") != null ? mypricelng.Attribute("PDesc").Value : "";
+                                    myeventprice.ShortDesc =
+                                        mypricelng.Attribute("PShort") != null
+                                            ? mypricelng.Attribute("PShort").Value
+                                            : "";
+                                    myeventprice.Description =
+                                        mypricelng.Attribute("PDesc") != null
+                                            ? mypricelng.Attribute("PDesc").Value
+                                            : "";
                                 }
 
                                 myevent.EventPrice.TryAddOrUpdate("en", myeventprice);
@@ -692,15 +920,25 @@ namespace CDB.Parser
                             myeventdate.From = Convert.ToDateTime(myday.Attribute("Date").Value);
                             myeventdate.To = Convert.ToDateTime(myday.Attribute("DateTo").Value);
 
-                            myeventdate.SingleDays = myday.Attribute("SingleDays").Value == "0" ? false : true;
+                            myeventdate.SingleDays =
+                                myday.Attribute("SingleDays").Value == "0" ? false : true;
                             myeventdate.MinPersons = Convert.ToInt32(myday.Attribute("MinP").Value);
                             myeventdate.MaxPersons = Convert.ToInt32(myday.Attribute("MaxP").Value);
-                            myeventdate.Ticket = myday.Attribute("Ticket").Value == "0" ? false : true;
+                            myeventdate.Ticket =
+                                myday.Attribute("Ticket").Value == "0" ? false : true;
                             myeventdate.Begin = TimeSpan.Parse(myday.Attribute("Begin").Value);
                             myeventdate.End = TimeSpan.Parse(myday.Attribute("End").Value);
-                            myeventdate.Entrance = TimeSpan.Parse(myday.Attribute("Entrance").Value);
-                            myeventdate.GpsEast = myday.Attribute("GEP") != null ? Convert.ToDouble(myday.Attribute("GEP").Value, myculture) : 0;
-                            myeventdate.GpsNorth = myday.Attribute("GNP") != null ? Convert.ToDouble(myday.Attribute("GNP").Value, myculture) : 0;
+                            myeventdate.Entrance = TimeSpan.Parse(
+                                myday.Attribute("Entrance").Value
+                            );
+                            myeventdate.GpsEast =
+                                myday.Attribute("GEP") != null
+                                    ? Convert.ToDouble(myday.Attribute("GEP").Value, myculture)
+                                    : 0;
+                            myeventdate.GpsNorth =
+                                myday.Attribute("GNP") != null
+                                    ? Convert.ToDouble(myday.Attribute("GNP").Value, myculture)
+                                    : 0;
 
                             if (firstbegindate > myeventdate.From)
                                 firstbegindate = myeventdate.From;
@@ -713,30 +951,61 @@ namespace CDB.Parser
                             myeventdate.Active = dayactive;
                             myeventdate.DayRID = myday.Attribute("I6RID").Value;
 
-                            myeventdate.PriceFrom = myday.Attribute("PriceFrom") != null ? myday.Attribute("PriceFrom").Value : null;
-                            myeventdate.Cancelled = myday.Attribute("Cancelled") != null ? myday.Attribute("Cancelled").Value : null;
+                            myeventdate.PriceFrom =
+                                myday.Attribute("PriceFrom") != null
+                                    ? myday.Attribute("PriceFrom").Value
+                                    : null;
+                            myeventdate.Cancelled =
+                                myday.Attribute("Cancelled") != null
+                                    ? myday.Attribute("Cancelled").Value
+                                    : null;
 
                             //InscriptionTill
                             if (!String.IsNullOrEmpty(myday.Attribute("InscriptionTill").Value))
-                                myeventdate.InscriptionTill = myday.Attribute("InscriptionTill") != null ? Convert.ToDouble(myday.Attribute("InscriptionTill").Value, myculture) : 0;
+                                myeventdate.InscriptionTill =
+                                    myday.Attribute("InscriptionTill") != null
+                                        ? Convert.ToDouble(
+                                            myday.Attribute("InscriptionTill").Value,
+                                            myculture
+                                        )
+                                        : 0;
 
                             if (myday.Element("DayLng") != null)
                             {
                                 var maydayde = myday.Element("DayLng");
 
-                                EventDateAdditionalInfo eventdateadditionalinfode = new EventDateAdditionalInfo();
-                                eventdateadditionalinfode.Description = maydayde.Attribute("DDesc").Value;
-                                eventdateadditionalinfode.Guide = maydayde.Attribute("DGuide").Value;
-                                eventdateadditionalinfode.InscriptionLanguage = maydayde.Attribute("DLInsc").Value;
-                                eventdateadditionalinfode.Language = maydayde.Attribute("LngID").Value;
-                                eventdateadditionalinfode.Cancelled = maydayde.Attribute("DCancelled").Value;
+                                EventDateAdditionalInfo eventdateadditionalinfode =
+                                    new EventDateAdditionalInfo();
+                                eventdateadditionalinfode.Description = maydayde
+                                    .Attribute("DDesc")
+                                    .Value;
+                                eventdateadditionalinfode.Guide = maydayde
+                                    .Attribute("DGuide")
+                                    .Value;
+                                eventdateadditionalinfode.InscriptionLanguage = maydayde
+                                    .Attribute("DLInsc")
+                                    .Value;
+                                eventdateadditionalinfode.Language = maydayde
+                                    .Attribute("LngID")
+                                    .Value;
+                                eventdateadditionalinfode.Cancelled = maydayde
+                                    .Attribute("DCancelled")
+                                    .Value;
 
-                                myeventdate.EventDateAdditionalInfo.TryAddOrUpdate(eventdateadditionalinfode.Language, eventdateadditionalinfode);
+                                myeventdate.EventDateAdditionalInfo.TryAddOrUpdate(
+                                    eventdateadditionalinfode.Language,
+                                    eventdateadditionalinfode
+                                );
 
                                 //Do for the other languages
                                 if (eventresponseit != null)
                                 {
-                                    var eventresponseitday = eventresponseit.Elements("Day").Where(x => x.Attribute("I6RID").Value == myeventdate.DayRID).FirstOrDefault();
+                                    var eventresponseitday = eventresponseit
+                                        .Elements("Day")
+                                        .Where(x =>
+                                            x.Attribute("I6RID").Value == myeventdate.DayRID
+                                        )
+                                        .FirstOrDefault();
 
                                     if (eventresponseitday != null)
                                     {
@@ -744,19 +1013,36 @@ namespace CDB.Parser
                                         {
                                             var maydayit = eventresponseitday.Element("DayLng");
 
-                                            EventDateAdditionalInfo eventdateadditionalinfoit = new EventDateAdditionalInfo();
-                                            eventdateadditionalinfoit.Description = maydayit.Attribute("DDesc").Value;
-                                            eventdateadditionalinfoit.Guide = maydayit.Attribute("DGuide").Value;
-                                            eventdateadditionalinfoit.InscriptionLanguage = maydayit.Attribute("DLInsc").Value;
-                                            eventdateadditionalinfoit.Language = maydayit.Attribute("LngID").Value;
+                                            EventDateAdditionalInfo eventdateadditionalinfoit =
+                                                new EventDateAdditionalInfo();
+                                            eventdateadditionalinfoit.Description = maydayit
+                                                .Attribute("DDesc")
+                                                .Value;
+                                            eventdateadditionalinfoit.Guide = maydayit
+                                                .Attribute("DGuide")
+                                                .Value;
+                                            eventdateadditionalinfoit.InscriptionLanguage = maydayit
+                                                .Attribute("DLInsc")
+                                                .Value;
+                                            eventdateadditionalinfoit.Language = maydayit
+                                                .Attribute("LngID")
+                                                .Value;
 
-                                            myeventdate.EventDateAdditionalInfo.TryAddOrUpdate(eventdateadditionalinfoit.Language, eventdateadditionalinfoit);
+                                            myeventdate.EventDateAdditionalInfo.TryAddOrUpdate(
+                                                eventdateadditionalinfoit.Language,
+                                                eventdateadditionalinfoit
+                                            );
                                         }
                                     }
                                 }
                                 if (eventresponseen != null)
                                 {
-                                    var eventresponseenday = eventresponseen.Elements("Day").Where(x => x.Attribute("I6RID").Value == myeventdate.DayRID).FirstOrDefault();
+                                    var eventresponseenday = eventresponseen
+                                        .Elements("Day")
+                                        .Where(x =>
+                                            x.Attribute("I6RID").Value == myeventdate.DayRID
+                                        )
+                                        .FirstOrDefault();
 
                                     if (eventresponseenday != null)
                                     {
@@ -764,13 +1050,25 @@ namespace CDB.Parser
                                         {
                                             var maydayen = eventresponseenday.Element("DayLng");
 
-                                            EventDateAdditionalInfo eventdateadditionalinfoen = new EventDateAdditionalInfo();
-                                            eventdateadditionalinfoen.Description = maydayen.Attribute("DDesc").Value;
-                                            eventdateadditionalinfoen.Guide = maydayen.Attribute("DGuide").Value;
-                                            eventdateadditionalinfoen.InscriptionLanguage = maydayen.Attribute("DLInsc").Value;
-                                            eventdateadditionalinfoen.Language = maydayen.Attribute("LngID").Value;
+                                            EventDateAdditionalInfo eventdateadditionalinfoen =
+                                                new EventDateAdditionalInfo();
+                                            eventdateadditionalinfoen.Description = maydayen
+                                                .Attribute("DDesc")
+                                                .Value;
+                                            eventdateadditionalinfoen.Guide = maydayen
+                                                .Attribute("DGuide")
+                                                .Value;
+                                            eventdateadditionalinfoen.InscriptionLanguage = maydayen
+                                                .Attribute("DLInsc")
+                                                .Value;
+                                            eventdateadditionalinfoen.Language = maydayen
+                                                .Attribute("LngID")
+                                                .Value;
 
-                                            myeventdate.EventDateAdditionalInfo.TryAddOrUpdate(eventdateadditionalinfoen.Language, eventdateadditionalinfoen);
+                                            myeventdate.EventDateAdditionalInfo.TryAddOrUpdate(
+                                                eventdateadditionalinfoen.Language,
+                                                eventdateadditionalinfoen
+                                            );
                                         }
                                     }
                                 }
@@ -783,18 +1081,37 @@ namespace CDB.Parser
 
                                 foreach (var myotime in myotimes)
                                 {
-
-                                    EventDateAdditionalTime eventadditionaltime = new EventDateAdditionalTime();
+                                    EventDateAdditionalTime eventadditionaltime =
+                                        new EventDateAdditionalTime();
                                     eventadditionaltime.Days = myotime.Attribute("Days").Value; //Convert.ToDateTime(myotime.Attribute("Days").Value); //TODO FIND OUT DATATYPE
-                                    eventadditionaltime.Begin1 = myotime.Attribute("Begin1") != null ? TimeSpan.Parse(myotime.Attribute("Begin1").Value) : TimeSpan.Zero;
-                                    eventadditionaltime.Begin2 = myotime.Attribute("Begin2") != null ? TimeSpan.Parse(myotime.Attribute("Begin2").Value) : TimeSpan.Zero;
-                                    eventadditionaltime.End1 = myotime.Attribute("End1") != null ? TimeSpan.Parse(myotime.Attribute("End1").Value) : TimeSpan.Zero;
-                                    eventadditionaltime.End2 = myotime.Attribute("End2") != null ? TimeSpan.Parse(myotime.Attribute("End2").Value) : TimeSpan.Zero;
-                                    eventadditionaltime.Entrance1 = myotime.Attribute("Entrance1") != null ? TimeSpan.Parse(myotime.Attribute("Entrance1").Value) : TimeSpan.Zero;
-                                    eventadditionaltime.Entrance2 = myotime.Attribute("Entrance2") != null ? TimeSpan.Parse(myotime.Attribute("Entrance2").Value) : TimeSpan.Zero;
+                                    eventadditionaltime.Begin1 =
+                                        myotime.Attribute("Begin1") != null
+                                            ? TimeSpan.Parse(myotime.Attribute("Begin1").Value)
+                                            : TimeSpan.Zero;
+                                    eventadditionaltime.Begin2 =
+                                        myotime.Attribute("Begin2") != null
+                                            ? TimeSpan.Parse(myotime.Attribute("Begin2").Value)
+                                            : TimeSpan.Zero;
+                                    eventadditionaltime.End1 =
+                                        myotime.Attribute("End1") != null
+                                            ? TimeSpan.Parse(myotime.Attribute("End1").Value)
+                                            : TimeSpan.Zero;
+                                    eventadditionaltime.End2 =
+                                        myotime.Attribute("End2") != null
+                                            ? TimeSpan.Parse(myotime.Attribute("End2").Value)
+                                            : TimeSpan.Zero;
+                                    eventadditionaltime.Entrance1 =
+                                        myotime.Attribute("Entrance1") != null
+                                            ? TimeSpan.Parse(myotime.Attribute("Entrance1").Value)
+                                            : TimeSpan.Zero;
+                                    eventadditionaltime.Entrance2 =
+                                        myotime.Attribute("Entrance2") != null
+                                            ? TimeSpan.Parse(myotime.Attribute("Entrance2").Value)
+                                            : TimeSpan.Zero;
 
                                     if (myeventdate.EventDateAdditionalTime == null)
-                                        myeventdate.EventDateAdditionalTime = new List<EventDateAdditionalTime>();
+                                        myeventdate.EventDateAdditionalTime =
+                                            new List<EventDateAdditionalTime>();
 
                                     myeventdate.EventDateAdditionalTime.Add(eventadditionaltime);
                                 }
@@ -811,10 +1128,15 @@ namespace CDB.Parser
                                 var mcday = myday.Element("CDay");
 
                                 //CDAY Parsing
-                                EventDateCalculatedDay eventcalculated = new EventDateCalculatedDay();
+                                EventDateCalculatedDay eventcalculated =
+                                    new EventDateCalculatedDay();
                                 eventcalculated.CDayRID = mcday.Attribute("RID").Value;
-                                eventcalculated.Day = Convert.ToDateTime(mcday.Attribute("Day").Value);
-                                eventcalculated.Begin = TimeSpan.Parse(mcday.Attribute("Begin").Value);
+                                eventcalculated.Day = Convert.ToDateTime(
+                                    mcday.Attribute("Day").Value
+                                );
+                                eventcalculated.Begin = TimeSpan.Parse(
+                                    mcday.Attribute("Begin").Value
+                                );
                                 //eventcalculated.TicketsAvailable = mcday.Attribute("TicketsAv") != null ? Convert.ToInt32(mcday.Attribute("TicketsAv").Value) : -1;
                                 //eventcalculated.MaxSellableTickets = mcday.Attribute("MaxSellableTickets") != null ? Convert.ToInt32(mcday.Attribute("MaxSellableTickets").Value) : -1;
                                 //eventcalculated.AvailabilityCalculatedValue = mcday.Attribute("TicketsAv") != null ? Convert.ToInt32(mcday.Attribute("TicketsAv").Value) : -1;
@@ -836,7 +1158,7 @@ namespace CDB.Parser
                                 //            eventcalculated.EventDateCalculatedDayVariant = new List<EventDateCalculatedDayVariant>();
 
                                 //        eventcalculated.EventDateCalculatedDayVariant.Add(eventdatecalculateddayvariant);
-                                //    }                                                                
+                                //    }
                                 //}
 
 
@@ -884,7 +1206,6 @@ namespace CDB.Parser
 
                         if (eventresponsede.Elements("District").FirstOrDefault() != null)
                             myevent.DistrictId = districtlist.FirstOrDefault();
-
                     }
 
                     //Organizer
@@ -956,7 +1277,9 @@ namespace CDB.Parser
                                 {
                                     organizerinfos.Address = orgadresslng.Attribute("Street").Value;
                                     organizerinfos.City = orgadresslng.Attribute("City").Value;
-                                    organizerinfos.CompanyName = orgadresslng.Attribute("OName").Value;
+                                    organizerinfos.CompanyName = orgadresslng
+                                        .Attribute("OName")
+                                        .Value;
                                 }
 
                                 //OrganizerInfosList.Add(organizerinfos);
@@ -996,7 +1319,9 @@ namespace CDB.Parser
                                 {
                                     organizerinfos.Address = orgadresslng.Attribute("Street").Value;
                                     organizerinfos.City = orgadresslng.Attribute("City").Value;
-                                    organizerinfos.CompanyName = orgadresslng.Attribute("OName").Value;
+                                    organizerinfos.CompanyName = orgadresslng
+                                        .Attribute("OName")
+                                        .Value;
                                 }
 
                                 //OrganizerInfosList.Add(organizerinfos);
@@ -1012,14 +1337,36 @@ namespace CDB.Parser
 
                     if (operationscheduleoverview != null)
                     {
-                        EventOperationScheduleOverview eventoperationscheduleoverview = new EventOperationScheduleOverview();
-                        bool.TryParse(operationscheduleoverview.Attribute("Mon").Value, out var ovmonday);
-                        bool.TryParse(operationscheduleoverview.Attribute("Tue").Value, out var ovtuesday);
-                        bool.TryParse(operationscheduleoverview.Attribute("Weds").Value, out var ovwednesday);
-                        bool.TryParse(operationscheduleoverview.Attribute("Thu").Value, out var ovthursday);
-                        bool.TryParse(operationscheduleoverview.Attribute("Fri").Value, out var ovfriday);
-                        bool.TryParse(operationscheduleoverview.Attribute("Sat").Value, out var ovsaturday);
-                        bool.TryParse(operationscheduleoverview.Attribute("Sun").Value, out var ovsunday);
+                        EventOperationScheduleOverview eventoperationscheduleoverview =
+                            new EventOperationScheduleOverview();
+                        bool.TryParse(
+                            operationscheduleoverview.Attribute("Mon").Value,
+                            out var ovmonday
+                        );
+                        bool.TryParse(
+                            operationscheduleoverview.Attribute("Tue").Value,
+                            out var ovtuesday
+                        );
+                        bool.TryParse(
+                            operationscheduleoverview.Attribute("Weds").Value,
+                            out var ovwednesday
+                        );
+                        bool.TryParse(
+                            operationscheduleoverview.Attribute("Thu").Value,
+                            out var ovthursday
+                        );
+                        bool.TryParse(
+                            operationscheduleoverview.Attribute("Fri").Value,
+                            out var ovfriday
+                        );
+                        bool.TryParse(
+                            operationscheduleoverview.Attribute("Sat").Value,
+                            out var ovsaturday
+                        );
+                        bool.TryParse(
+                            operationscheduleoverview.Attribute("Sun").Value,
+                            out var ovsunday
+                        );
 
                         eventoperationscheduleoverview.Monday = ovmonday;
                         eventoperationscheduleoverview.Tuesday = ovtuesday;
@@ -1033,7 +1380,6 @@ namespace CDB.Parser
                     }
                     else
                         myevent.EventOperationScheduleOverview = null;
-
 
                     ////Variant Parsing
                     //List<EventVariant> eventvariantlistde = new List<EventVariant>();
@@ -1061,13 +1407,13 @@ namespace CDB.Parser
                     //            eventvariant.Description = variantinfode.Attribute("VDesc").Value;
                     //            eventvariant.Language = variantinfode.Attribute("LngID").Value;
                     //            eventvariant.LongDescription = variantinfode.Attribute("VLong").Value;
-                    //            eventvariant.ShortDescription = variantinfode.Attribute("VShort").Value;                            
+                    //            eventvariant.ShortDescription = variantinfode.Attribute("VShort").Value;
                     //        }
                     //        eventvariantlistde.Add(eventvariant);
 
 
                     //        if (eventresponseit != null)
-                    //        {                            
+                    //        {
                     //            //find variant with this RID //check null handling
                     //            var variantinfoitgeneral = eventresponseit.Elements("Variant").Where(x => x.Attribute("VarRID").Value == eventvariant.VarRID).FirstOrDefault();
 
@@ -1102,7 +1448,7 @@ namespace CDB.Parser
                     //            }
                     //            eventvariantlisten.Add(eventvarianten);
                     //        }
-                    //    }                    
+                    //    }
                     //}
 
                     //if(myevent.EventVariants != null)
@@ -1127,9 +1473,21 @@ namespace CDB.Parser
                         foreach (var priceinfo in priceinfos)
                         {
                             EventPrice eventpricenew = new EventPrice();
-                            eventpricenew.Price = priceinfo.Attribute("PValue") != null ? Convert.ToDouble(priceinfo.Attribute("PValue").Value, myculture) : 0;
-                            eventpricenew.Pstd = priceinfo.Attribute("PStd") != null ? priceinfo.Attribute("PStd").Value : "";
-                            eventpricenew.Type = priceinfo.Attribute("PType") != null ? priceinfo.Attribute("PType").Value : "";
+                            eventpricenew.Price =
+                                priceinfo.Attribute("PValue") != null
+                                    ? Convert.ToDouble(
+                                        priceinfo.Attribute("PValue").Value,
+                                        myculture
+                                    )
+                                    : 0;
+                            eventpricenew.Pstd =
+                                priceinfo.Attribute("PStd") != null
+                                    ? priceinfo.Attribute("PStd").Value
+                                    : "";
+                            eventpricenew.Type =
+                                priceinfo.Attribute("PType") != null
+                                    ? priceinfo.Attribute("PType").Value
+                                    : "";
 
                             eventpricenew.VarRID = priceinfo.Attribute("VarRID").Value;
                             eventpricenew.PriceRID = priceinfo.Attribute("I5RID").Value;
@@ -1139,18 +1497,31 @@ namespace CDB.Parser
 
                             if (priceinfode != null)
                             {
-                                eventpricenew.Description = priceinfode.Attribute("PDesc") != null ? priceinfode.Attribute("PDesc").Value : "";
+                                eventpricenew.Description =
+                                    priceinfode.Attribute("PDesc") != null
+                                        ? priceinfode.Attribute("PDesc").Value
+                                        : "";
                                 eventpricenew.Language = priceinfode.Attribute("LngID").Value;
-                                eventpricenew.LongDesc = priceinfode.Attribute("PLong") != null ? priceinfode.Attribute("PLong").Value : "";
-                                eventpricenew.ShortDesc = priceinfode.Attribute("PShort") != null ? priceinfode.Attribute("PShort").Value : "";
+                                eventpricenew.LongDesc =
+                                    priceinfode.Attribute("PLong") != null
+                                        ? priceinfode.Attribute("PLong").Value
+                                        : "";
+                                eventpricenew.ShortDesc =
+                                    priceinfode.Attribute("PShort") != null
+                                        ? priceinfode.Attribute("PShort").Value
+                                        : "";
                             }
                             eventpricelistde.Add(eventpricenew);
-
 
                             if (eventresponseit != null)
                             {
                                 //find price with this RID //check null handling
-                                var priceinfoitgeneral = eventresponseit.Elements("Price").Where(x => x.Attribute("I5RID").Value == eventpricenew.PriceRID).FirstOrDefault();
+                                var priceinfoitgeneral = eventresponseit
+                                    .Elements("Price")
+                                    .Where(x =>
+                                        x.Attribute("I5RID").Value == eventpricenew.PriceRID
+                                    )
+                                    .FirstOrDefault();
 
                                 EventPrice eventpriceitnew = new EventPrice();
                                 eventpriceitnew.Price = eventpricenew.Price;
@@ -1162,17 +1533,31 @@ namespace CDB.Parser
                                 var priceinfoit = priceinfoitgeneral.Element("PriceLng");
                                 if (priceinfoit != null)
                                 {
-                                    eventpriceitnew.Description = priceinfoit.Attribute("PDesc") != null ? priceinfoit.Attribute("PDesc").Value : "";
+                                    eventpriceitnew.Description =
+                                        priceinfoit.Attribute("PDesc") != null
+                                            ? priceinfoit.Attribute("PDesc").Value
+                                            : "";
                                     eventpriceitnew.Language = priceinfoit.Attribute("LngID").Value;
-                                    eventpriceitnew.LongDesc = priceinfoit.Attribute("PLong") != null ? priceinfoit.Attribute("PLong").Value : "";
-                                    eventpriceitnew.ShortDesc = priceinfoit.Attribute("PShort") != null ? priceinfoit.Attribute("PShort").Value : "";
+                                    eventpriceitnew.LongDesc =
+                                        priceinfoit.Attribute("PLong") != null
+                                            ? priceinfoit.Attribute("PLong").Value
+                                            : "";
+                                    eventpriceitnew.ShortDesc =
+                                        priceinfoit.Attribute("PShort") != null
+                                            ? priceinfoit.Attribute("PShort").Value
+                                            : "";
                                 }
                                 eventpricelistit.Add(eventpriceitnew);
                             }
                             if (eventresponseen != null)
                             {
                                 //find price with this RID //check null handling
-                                var priceinfoengeneral = eventresponseen.Elements("Price").Where(x => x.Attribute("I5RID").Value == eventpricenew.PriceRID).FirstOrDefault();
+                                var priceinfoengeneral = eventresponseen
+                                    .Elements("Price")
+                                    .Where(x =>
+                                        x.Attribute("I5RID").Value == eventpricenew.PriceRID
+                                    )
+                                    .FirstOrDefault();
 
                                 EventPrice eventpriceennew = new EventPrice();
                                 eventpriceennew.Price = eventpricenew.Price;
@@ -1184,10 +1569,19 @@ namespace CDB.Parser
                                 var priceinfoen = priceinfoengeneral.Element("PriceLng");
                                 if (priceinfoen != null)
                                 {
-                                    eventpriceennew.Description = priceinfoen.Attribute("PDesc") != null ? priceinfoen.Attribute("PDesc").Value : "";
+                                    eventpriceennew.Description =
+                                        priceinfoen.Attribute("PDesc") != null
+                                            ? priceinfoen.Attribute("PDesc").Value
+                                            : "";
                                     eventpriceennew.Language = priceinfoen.Attribute("LngID").Value;
-                                    eventpriceennew.LongDesc = priceinfoen.Attribute("PLong") != null ? priceinfoen.Attribute("PLong").Value : "";
-                                    eventpriceennew.ShortDesc = priceinfoen.Attribute("PShort") != null ? priceinfoen.Attribute("PShort").Value : "";
+                                    eventpriceennew.LongDesc =
+                                        priceinfoen.Attribute("PLong") != null
+                                            ? priceinfoen.Attribute("PLong").Value
+                                            : "";
+                                    eventpriceennew.ShortDesc =
+                                        priceinfoen.Attribute("PShort") != null
+                                            ? priceinfoen.Attribute("PShort").Value
+                                            : "";
                                 }
                                 eventpricelisten.Add(eventpriceennew);
                             }
@@ -1211,7 +1605,7 @@ namespace CDB.Parser
                     //            </Tag>
                     //        </Tags>
 
-                    //Tags             
+                    //Tags
                     var taglist = new List<LTSTagsLinked>();
 
                     var tagginginfos = eventresponsede.Element("Tags");
@@ -1230,31 +1624,46 @@ namespace CDB.Parser
                             Dictionary<string, string> tagname = new Dictionary<string, string>();
 
                             if (taginfode != null)
-                                tagname.TryAddOrUpdate(taginfode.Attribute("LngID").Value, taginfode.Attribute("Name").Value);
+                                tagname.TryAddOrUpdate(
+                                    taginfode.Attribute("LngID").Value,
+                                    taginfode.Attribute("Name").Value
+                                );
 
                             //Search in other languages
                             var tagginginfosit = eventresponseit.Element("Tags");
                             if (tagginginfosit != null)
                             {
-                                var tagginginfoit = tagginginfosit.Elements("Tag").Where(x => x.Attribute("RID").Value == mytag.Id).FirstOrDefault();
+                                var tagginginfoit = tagginginfosit
+                                    .Elements("Tag")
+                                    .Where(x => x.Attribute("RID").Value == mytag.Id)
+                                    .FirstOrDefault();
 
                                 if (tagginginfoit != null)
                                 {
                                     var taginfoit = tagginginfoit.Element("TagLng");
                                     if (taginfoit != null)
-                                        tagname.TryAddOrUpdate(taginfoit.Attribute("LngID").Value, taginfoit.Attribute("Name").Value);
+                                        tagname.TryAddOrUpdate(
+                                            taginfoit.Attribute("LngID").Value,
+                                            taginfoit.Attribute("Name").Value
+                                        );
                                 }
                             }
                             var tagginginfosen = eventresponseen.Element("Tags");
                             if (tagginginfosen != null)
                             {
-                                var tagginginfoen = tagginginfosen.Elements("Tag").Where(x => x.Attribute("RID").Value == mytag.Id).FirstOrDefault();
+                                var tagginginfoen = tagginginfosen
+                                    .Elements("Tag")
+                                    .Where(x => x.Attribute("RID").Value == mytag.Id)
+                                    .FirstOrDefault();
 
                                 if (tagginginfoen != null)
                                 {
                                     var taginfoen = tagginginfoen.Element("TagLng");
                                     if (taginfoen != null)
-                                        tagname.TryAddOrUpdate(taginfoen.Attribute("LngID").Value, taginfoen.Attribute("Name").Value);
+                                        tagname.TryAddOrUpdate(
+                                            taginfoen.Attribute("LngID").Value,
+                                            taginfoen.Attribute("Name").Value
+                                        );
                                 }
                             }
                             mytag.TagName = tagname;
@@ -1268,7 +1677,6 @@ namespace CDB.Parser
                     if (taglist.Count > 0)
                         myevent.LTSTags = taglist;
 
-
                     //BookingInformation
                     //<BookingData BookableFrom = "2021-01-01T00:00:00" BookableTo = "2021-08-25T23:59:00" AccommodationAssignment = "2" >
                     //    <BookingUrl LngID = "de" Web = "https://mysuedtirol.info/de/veranstaltungen?eventid=78D925DE2CC343FA8E92184DBE98B639" />
@@ -1280,9 +1688,18 @@ namespace CDB.Parser
 
                     if (bookinginfo != null)
                     {
-                        myeventbookingdata.BookableFrom = Convert.ToDateTime(bookinginfo.Attribute("BookableFrom").Value);
-                        myeventbookingdata.BookableTo = Convert.ToDateTime(bookinginfo.Attribute("BookableTo").Value);
-                        myeventbookingdata.AccommodationAssignment = bookinginfo.Attribute("AccommodationAssignment") != null ? Convert.ToInt32(bookinginfo.Attribute("AccommodationAssignment").Value) : (int?)null;
+                        myeventbookingdata.BookableFrom = Convert.ToDateTime(
+                            bookinginfo.Attribute("BookableFrom").Value
+                        );
+                        myeventbookingdata.BookableTo = Convert.ToDateTime(
+                            bookinginfo.Attribute("BookableTo").Value
+                        );
+                        myeventbookingdata.AccommodationAssignment =
+                            bookinginfo.Attribute("AccommodationAssignment") != null
+                                ? Convert.ToInt32(
+                                    bookinginfo.Attribute("AccommodationAssignment").Value
+                                )
+                                : (int?)null;
 
                         if (bookinginfo.Elements("BookingUrl").Count() > 0)
                         {
@@ -1291,7 +1708,10 @@ namespace CDB.Parser
                                 EventBookingDetail bookingdetailde = new EventBookingDetail();
                                 bookingdetailde.Url = bookinglanginfo.Attribute("Web").Value;
 
-                                myeventbookingdata.BookingUrl.TryAddOrUpdate(bookinglanginfo.Attribute("LngID").Value, bookingdetailde);
+                                myeventbookingdata.BookingUrl.TryAddOrUpdate(
+                                    bookinglanginfo.Attribute("LngID").Value,
+                                    bookingdetailde
+                                );
                             }
                         }
 
@@ -1305,12 +1725,17 @@ namespace CDB.Parser
                         {
                             if (bookinginfoit.Elements("BookingUrl").Count() > 0)
                             {
-                                foreach (var bookinglanginfoit in bookinginfoit.Elements("BookingUrl"))
+                                foreach (
+                                    var bookinglanginfoit in bookinginfoit.Elements("BookingUrl")
+                                )
                                 {
                                     EventBookingDetail bookingdetailit = new EventBookingDetail();
                                     bookingdetailit.Url = bookinglanginfoit.Attribute("Web").Value;
 
-                                    myeventbookingdata.BookingUrl.TryAddOrUpdate(bookinglanginfoit.Attribute("LngID").Value, bookingdetailit);
+                                    myeventbookingdata.BookingUrl.TryAddOrUpdate(
+                                        bookinglanginfoit.Attribute("LngID").Value,
+                                        bookingdetailit
+                                    );
                                 }
                             }
                         }
@@ -1322,12 +1747,17 @@ namespace CDB.Parser
                         {
                             if (bookinginfoen.Elements("BookingUrl").Count() > 0)
                             {
-                                foreach (var bookinglanginfoen in bookinginfoen.Elements("BookingUrl"))
+                                foreach (
+                                    var bookinglanginfoen in bookinginfoen.Elements("BookingUrl")
+                                )
                                 {
                                     EventBookingDetail bookingdetailen = new EventBookingDetail();
                                     bookingdetailen.Url = bookinglanginfoen.Attribute("Web").Value;
 
-                                    myeventbookingdata.BookingUrl.TryAddOrUpdate(bookinglanginfoen.Attribute("LngID").Value, bookingdetailen);
+                                    myeventbookingdata.BookingUrl.TryAddOrUpdate(
+                                        bookinglanginfoen.Attribute("LngID").Value,
+                                        bookingdetailen
+                                    );
                                 }
                             }
                         }

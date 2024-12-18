@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace EBMS
 {
-
     public class EBMSEventREST
     {
         public int EventId { get; set; }

@@ -2,13 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using DataModel;
 using Helper;
 
 namespace CDB.Parser
@@ -18,15 +18,19 @@ namespace CDB.Parser
         public static IndependentData ParseIndependentData(XDocument independentdata, string a0rid)
         {
             try
-            {               
+            {
                 var data = independentdata.Root.Element("Head").Element("Data");
 
                 if (data != null)
                 {
                     IndependentData mydata = new IndependentData();
 
-                    mydata.Enabled = !String.IsNullOrEmpty(data.Attribute("A22Ene").Value) ? Convert.ToBoolean(Convert.ToInt16(data.Attribute("A22Ene").Value)) : false;
-                    mydata.IndependentRating = !String.IsNullOrEmpty(data.Attribute("A22Rat").Value) ? Convert.ToInt32(data.Attribute("A22Rat").Value) : 0;
+                    mydata.Enabled = !String.IsNullOrEmpty(data.Attribute("A22Ene").Value)
+                        ? Convert.ToBoolean(Convert.ToInt16(data.Attribute("A22Ene").Value))
+                        : false;
+                    mydata.IndependentRating = !String.IsNullOrEmpty(data.Attribute("A22Rat").Value)
+                        ? Convert.ToInt32(data.Attribute("A22Rat").Value)
+                        : 0;
 
                     var mydatalnglist = data.Elements("DataLng");
 
@@ -54,7 +58,9 @@ namespace CDB.Parser
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error on Import Independent DAta A0RID " + a0rid + " " + ex.Message);
+                Console.WriteLine(
+                    "Error on Import Independent DAta A0RID " + a0rid + " " + ex.Message
+                );
 
                 return null;
             }

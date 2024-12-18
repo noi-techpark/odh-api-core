@@ -164,7 +164,6 @@ namespace SIAG.WeatherModel
         public double max { get; set; }
     }
 
-
     public class SiagWeatherDistrict
     {
         public DateTime date { get; set; }
@@ -196,5 +195,4 @@ namespace SIAG.WeatherModel
         public int? storms { get; set; }
         public Symbol symbol { get; set; }
     }
-
 }

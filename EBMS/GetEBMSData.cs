@@ -2,21 +2,25 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DataModel;
+using Helper;
+using Newtonsoft.Json;
 
 namespace EBMS
 {
     public class GetEBMSData
-    {        
-        public static async Task<string> GetEBMSEventsFromService(string serviceurl, string user, string pass)
+    {
+        public static async Task<string> GetEBMSEventsFromService(
+            string serviceurl,
+            string user,
+            string pass
+        )
         {
             CredentialCache wrCache = new CredentialCache();
             wrCache.Add(new Uri(serviceurl), "Basic", new NetworkCredential(user, pass));
@@ -34,10 +38,14 @@ namespace EBMS
             }
         }
 
-        public static List<Tuple<EventShortLinked, EBMSEventREST>> GetEbmsEvents(string serviceurl, string user, string pass)
+        public static List<Tuple<EventShortLinked, EBMSEventREST>> GetEbmsEvents(
+            string serviceurl,
+            string user,
+            string pass
+        )
         {
-
-            List<Tuple<EventShortLinked, EBMSEventREST>> myeventshortlist = new List<Tuple<EventShortLinked, EBMSEventREST>>();
+            List<Tuple<EventShortLinked, EBMSEventREST>> myeventshortlist =
+                new List<Tuple<EventShortLinked, EBMSEventREST>>();
 
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
@@ -58,9 +66,11 @@ namespace EBMS
                 eventtosave.Source = "ebms";
 
                 //ADD MAPPING
-                var ebmsrid = new Dictionary<string, string>() { { "id", myevent.EventId.ToString() } };
+                var ebmsrid = new Dictionary<string, string>()
+                {
+                    { "id", myevent.EventId.ToString() },
+                };
                 eventtosave.Mapping.TryAddOrUpdate("ebms", ebmsrid);
-
 
                 //Interface Props
 
@@ -77,18 +87,22 @@ namespace EBMS
                 if (!String.IsNullOrEmpty(myevent.EventDescriptionAlt3))
                     eventtosave.EventTitle.TryAddOrUpdate("en", myevent.EventDescriptionAlt3);
 
-
                 //Sonderfall
-                if(!String.IsNullOrEmpty(myevent.EventDescription) && !eventtosave.EventTitle.ContainsKey("de"))
+                if (
+                    !String.IsNullOrEmpty(myevent.EventDescription)
+                    && !eventtosave.EventTitle.ContainsKey("de")
+                )
                 {
                     eventtosave.EventTitle.TryAddOrUpdate("de", myevent.EventDescription);
                 }
                 //Sonderfall
-                if (!String.IsNullOrEmpty(myevent.EventDescription) && !eventtosave.EventTitle.ContainsKey("en"))
+                if (
+                    !String.IsNullOrEmpty(myevent.EventDescription)
+                    && !eventtosave.EventTitle.ContainsKey("en")
+                )
                 {
                     eventtosave.EventTitle.TryAddOrUpdate("en", myevent.EventDescription);
                 }
-
 
                 ////Beschreibung DE
                 //eventtosave.EventDescriptionDE = myevent.EventDescriptionAlt1 ?? "";
@@ -108,19 +122,37 @@ namespace EBMS
                 eventtosave.ChangedOn = myevent.ChangedOn;
                 eventtosave.LastChange = myevent.ChangedOn;
                 //Beginndatum
-                eventtosave.StartDate = new DateTime(myevent.StartDate.Year, myevent.StartDate.Month, myevent.StartDate.Day, myevent.StartTime.Hour, myevent.StartTime.Minute, myevent.StartTime.Second);
+                eventtosave.StartDate = new DateTime(
+                    myevent.StartDate.Year,
+                    myevent.StartDate.Month,
+                    myevent.StartDate.Day,
+                    myevent.StartTime.Hour,
+                    myevent.StartTime.Minute,
+                    myevent.StartTime.Second
+                );
                 //Beginnzeit
                 //eventtosave.StartTime = myevent.StartTime;
                 //Ende Datum
-                eventtosave.EndDate = new DateTime(myevent.EndDate.Year, myevent.EndDate.Month, myevent.EndDate.Day, myevent.EndTime.Hour, myevent.EndTime.Minute, myevent.EndTime.Second);
+                eventtosave.EndDate = new DateTime(
+                    myevent.EndDate.Year,
+                    myevent.EndDate.Month,
+                    myevent.EndDate.Day,
+                    myevent.EndTime.Hour,
+                    myevent.EndTime.Minute,
+                    myevent.EndTime.Second
+                );
                 //Endzeit
 
                 //UTC
                 //Int32 unixTimestampEStart = (Int32)(DateTime.UtcNow.Subtract(eventtosave.StartDate)).TotalSeconds;
                 //Int32 unixTimestampEEnd = (Int32)(DateTime.UtcNow.Subtract()).TotalSeconds;
-                eventtosave.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventtosave.EndDate);
-                eventtosave.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventtosave.StartDate);
-
+                eventtosave.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                    eventtosave.EndDate
+                );
+                eventtosave.StartDateUTC =
+                    Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                        eventtosave.StartDate
+                    );
 
                 //eventtosave.EndTime = myevent.EndTime;
                 //URL für externe Webseite (noch nicht ausgefüllt)
@@ -224,7 +256,7 @@ namespace EBMS
                 //gebuchten Sääle von spezifischen Event
                 //Space : Code für Raum von DB
                 //SpaceDesc: Beschreibung --> zu nehmen
-                //SpaceAbbrev: Abgekürzte Beschreibung 
+                //SpaceAbbrev: Abgekürzte Beschreibung
                 //SoaceType : EC = Eurac, NO = Noi
                 //Comnment: entweder x oder leer --> x bedeutet bitte nicht anzeigen!!!!!!!
                 //Subtitle: Untertitel vom Saal (anzeigen)
@@ -240,15 +272,34 @@ namespace EBMS
                     {
                         RoomBooked myroom = new RoomBooked();
                         myroom.Comment = bookingroom.Comment ?? "";
-                        myroom.EndDate = new DateTime(bookingroom.EndDate.Year, bookingroom.EndDate.Month, bookingroom.EndDate.Day, bookingroom.EndTime.Hour, bookingroom.EndTime.Minute, bookingroom.EndTime.Second);
-                        myroom.StartDate = new DateTime(bookingroom.StartDate.Year, bookingroom.StartDate.Month, bookingroom.StartDate.Day, bookingroom.StartTime.Hour, bookingroom.StartTime.Minute, bookingroom.StartTime.Second);
+                        myroom.EndDate = new DateTime(
+                            bookingroom.EndDate.Year,
+                            bookingroom.EndDate.Month,
+                            bookingroom.EndDate.Day,
+                            bookingroom.EndTime.Hour,
+                            bookingroom.EndTime.Minute,
+                            bookingroom.EndTime.Second
+                        );
+                        myroom.StartDate = new DateTime(
+                            bookingroom.StartDate.Year,
+                            bookingroom.StartDate.Month,
+                            bookingroom.StartDate.Day,
+                            bookingroom.StartTime.Hour,
+                            bookingroom.StartTime.Minute,
+                            bookingroom.StartTime.Second
+                        );
 
                         //Int32 unixTimestampStart = (Int32)(DateTime.UtcNow.Subtract(myroom.StartDate)).TotalSeconds;
                         //Int32 unixTimestampEnd = (Int32)(DateTime.UtcNow.Subtract(myroom.EndDate)).TotalSeconds;
 
-                        myroom.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(myroom.EndDate);
-                        myroom.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(myroom.StartDate);
-
+                        myroom.EndDateUTC =
+                            Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                                myroom.EndDate
+                            );
+                        myroom.StartDateUTC =
+                            Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                                myroom.StartDate
+                            );
 
                         myroom.Space = bookingroom.Space ?? "";
                         myroom.SpaceAbbrev = bookingroom.SpaceAbbrev ?? "";
@@ -270,7 +321,6 @@ namespace EBMS
 
                     if (eventlocation == "NOI")
                         eventtosave.Display1 = eventtosave.Display4;
-
 
                     //all das interessiert nicht
                     //eventtosave.AbstractsEN = myevent.AbstractsEN;

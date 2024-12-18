@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper.Location;
-using SqlKata.Execution;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +10,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
+using Helper.Location;
+using SqlKata.Execution;
 
 namespace Helper.Tagging
 {
@@ -23,30 +23,39 @@ namespace Helper.Tagging
         /// </summary>
         /// <param name="queryFactory"></param>
         /// <returns></returns>
-        public static async Task UpdateTagsExtension<T>(this T data, QueryFactory queryFactory) where T : IHasTagInfo
+        public static async Task UpdateTagsExtension<T>(this T data, QueryFactory queryFactory)
+            where T : IHasTagInfo
         {
             data.Tags = await UpdateTags(data.TagIds, queryFactory);
         }
 
-        private static async Task<ICollection<Tags>> UpdateTags(ICollection<string> tagIds, QueryFactory queryFactory)
+        private static async Task<ICollection<Tags>> UpdateTags(
+            ICollection<string> tagIds,
+            QueryFactory queryFactory
+        )
         {
             ICollection<Tags> tags = new HashSet<Tags>();
 
-            if(tagIds != null && tagIds.Count > 0)
+            if (tagIds != null && tagIds.Count > 0)
             {
                 //Load Tags from DB
-                var query =
-                 queryFactory.Query("tags")
-                     .Select("data")
-                     .WhereIn("id", tagIds);
+                var query = queryFactory.Query("tags").Select("data").WhereIn("id", tagIds);
 
                 var assignedtags = await query.GetObjectListAsync<TagLinked>();
 
                 //Create Tags object
                 foreach (var tag in assignedtags)
                 {
-                    tags.Add(new Tags() { Id = tag.Id, Source = tag.Source, Type = GetTypeFromTagTypes(tag.Types), Name = GetTagName(tag.TagName) });
-                }                
+                    tags.Add(
+                        new Tags()
+                        {
+                            Id = tag.Id,
+                            Source = tag.Source,
+                            Type = GetTypeFromTagTypes(tag.Types),
+                            Name = GetTagName(tag.TagName),
+                        }
+                    );
+                }
             }
 
             return tags;
@@ -55,11 +64,11 @@ namespace Helper.Tagging
         //TODO REFINE
         public static string? GetTypeFromTagTypes(ICollection<string> tagtypes)
         {
-            if(tagtypes == null || tagtypes.Count == 0)
+            if (tagtypes == null || tagtypes.Count == 0)
                 return null;
             else
             {
-                if(tagtypes.Count == 1)
+                if (tagtypes.Count == 1)
                 {
                     return tagtypes.FirstOrDefault();
                 }
@@ -73,7 +82,7 @@ namespace Helper.Tagging
             }
         }
 
-        public static string? GetTagName(IDictionary<string,string> tagnames)
+        public static string? GetTagName(IDictionary<string, string> tagnames)
         {
             if (tagnames == null || tagnames.Count == 0)
                 return null;

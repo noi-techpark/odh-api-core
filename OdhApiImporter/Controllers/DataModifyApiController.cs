@@ -2,27 +2,27 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DataModel;
+using EBMS;
 using Helper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SqlKata.Execution;
-using EBMS;
 using NINJA;
 using NINJA.Parser;
-using System.Net.Http;
-using RAVEN;
-using Microsoft.Extensions.Hosting;
 using OdhApiImporter.Helpers;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
+using RAVEN;
+using SqlKata.Execution;
 
 namespace OdhApiImporter.Controllers
 {
@@ -35,7 +35,12 @@ namespace OdhApiImporter.Controllers
         private readonly ILogger<DataModifyApiController> logger;
         private readonly IWebHostEnvironment env;
 
-        public DataModifyApiController(IWebHostEnvironment env, ISettings settings, ILogger<DataModifyApiController> logger, QueryFactory queryFactory)
+        public DataModifyApiController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<DataModifyApiController> logger,
+            QueryFactory queryFactory
+        )
         {
             this.env = env;
             this.settings = settings;
@@ -52,11 +57,14 @@ namespace OdhApiImporter.Controllers
         {
             var objectscount = 0;
 
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             //objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
             //objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
 
-            //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
+            //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();
 
             //objectscount = await customdataoperation.UpdateAllEventShortstEventDocumentField();
 
@@ -64,19 +72,21 @@ namespace OdhApiImporter.Controllers
 
             objectscount = await customdataoperation.UpdateAllEventShortstHasLanguage();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify EventShort",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify EventShort",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
@@ -85,27 +95,32 @@ namespace OdhApiImporter.Controllers
         {
             var objectscount = 0;
 
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             //objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
             //objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
 
-            //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
+            //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();
 
             objectscount = await customdataoperation.CleanEventShortstEventDocumentField();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Clean EventShort",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Clean EventShort",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
@@ -114,50 +129,61 @@ namespace OdhApiImporter.Controllers
         {
             var objectscount = 0;
 
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
 
             objectscount = await customdataoperation.FillEventShortTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "FillEventShortTags EventShort",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "FillEventShortTags EventShort",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ResaveEventShortWithTags")]
-        public async Task<IActionResult> ResaveEventShortWithTags(CancellationToken cancellationToken)
+        public async Task<IActionResult> ResaveEventShortWithTags(
+            CancellationToken cancellationToken
+        )
         {
             var objectscount = 0;
 
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
 
             objectscount = await customdataoperation.ResaveEventShortWithTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "ResaveEventShortWithTags EventShort",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "ResaveEventShortWithTags EventShort",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
-
 
         #endregion
 
@@ -165,27 +191,35 @@ namespace OdhApiImporter.Controllers
 
         [Authorize(Roles = "DataPush")]
         [HttpPost, Route("ModifyAccommodations")]
-        public async Task<IActionResult> ModifyAccommodations(bool trim, [FromBody] List<string> idlist)
+        public async Task<IActionResult> ModifyAccommodations(
+            bool trim,
+            [FromBody] List<string> idlist
+        )
         {
             var objectscount = 0;
 
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-          
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
+
             objectscount = await customdataoperation.AccommodationModify(idlist, trim);
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify Accommodation",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify Accommodation",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
@@ -194,23 +228,28 @@ namespace OdhApiImporter.Controllers
         {
             var objectscount = 0;
 
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
 
             objectscount = await customdataoperation.AccommodationRoomModify();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify Accommodation Array",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify Accommodation Array",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
@@ -219,23 +258,28 @@ namespace OdhApiImporter.Controllers
         {
             var objectscount = 0;
 
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
 
             objectscount = await customdataoperation.AccommodationModifyToV2(null);
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify Accommodation V2",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify Accommodation V2",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         #endregion
@@ -249,41 +293,48 @@ namespace OdhApiImporter.Controllers
             //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.FillDBWithDummyNews();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify Articles",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = 0,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify Articles",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = 0,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("NewsFeedUpdate")]
         public async Task<IActionResult> NewsFeedUpdate(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.NewsFeedUpdate();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify Articles",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = 0,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify Articles",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = 0,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         #endregion
@@ -297,19 +348,21 @@ namespace OdhApiImporter.Controllers
             //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.UpdateAllWeatherHistoryWithMetainfo();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify WeatherHistory",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = 0,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify WeatherHistory",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = 0,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         #endregion
@@ -318,26 +371,40 @@ namespace OdhApiImporter.Controllers
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ModifyODHActivityPoi")]
-        public async Task<IActionResult> ModifyODHActivityPoiTags(string? id, bool? forceupdate, int? takethefirst, CancellationToken cancellationToken)
+        public async Task<IActionResult> ModifyODHActivityPoiTags(
+            string? id,
+            bool? forceupdate,
+            int? takethefirst,
+            CancellationToken cancellationToken
+        )
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.UpdateAllODHActivityPoiTagIds(id, forceupdate, takethefirst);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
+            var objectscount = await customdataoperation.UpdateAllODHActivityPoiTagIds(
+                id,
+                forceupdate,
+                takethefirst
+            );
             //var objectscount2 = await customdataoperation.UpdateAllODHActivityPoiOldTags("dss");
 
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify ODHActivityPoi",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify ODHActivityPoi",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
@@ -347,19 +414,21 @@ namespace OdhApiImporter.Controllers
             //CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
             //var objectscount = await customdataoperation.UpdateAllSTAVendingpoints();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify STA Vendingpoint",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = 0,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify STA Vendingpoint",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = 0,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         #endregion
@@ -368,68 +437,88 @@ namespace OdhApiImporter.Controllers
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("UpdateMetaDataRecordCount")]
-        public async Task<IActionResult> UpdateMetaDataRecordCount(CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateMetaDataRecordCount(
+            CancellationToken cancellationToken
+        )
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.UpdateMetaDataApiRecordCount();            
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
+            var objectscount = await customdataoperation.UpdateMetaDataApiRecordCount();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify Metadata Record Count",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify Metadata Record Count",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ResaveMetaData")]
         public async Task<IActionResult> ResaveMetaData(bool correcturls = false)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
-            var objectscount = await customdataoperation.ResaveMetaData(Request.Host.ToString(), correcturls);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
+            var objectscount = await customdataoperation.ResaveMetaData(
+                Request.Host.ToString(),
+                correcturls
+            );
 
-            return Ok(new UpdateResult
-            {
-                operation = "Resave Metadata",
-                updatetype = "custom",
-                otherinfo = Request.Host.ToString(),
-                message = "Done",
-                recordsmodified = 0,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Resave Metadata",
+                    updatetype = "custom",
+                    otherinfo = Request.Host.ToString(),
+                    message = "Done",
+                    recordsmodified = 0,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ResaveTags")]
         public async Task<IActionResult> ResaveTags(bool correcturls = false)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.ResaveTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Resave Tags",
-                updatetype = "custom",
-                otherinfo = Request.Host.ToString(),
-                message = "Done",
-                recordsmodified = 0,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Resave Tags",
+                    updatetype = "custom",
+                    otherinfo = Request.Host.ToString(),
+                    message = "Done",
+                    recordsmodified = 0,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         #endregion
@@ -438,74 +527,162 @@ namespace OdhApiImporter.Controllers
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ResaveSourcefield")]
-        public async Task<IActionResult> ResaveSource(string odhtype, string sourcetofilter, string sourcetochange)
+        public async Task<IActionResult> ResaveSource(
+            string odhtype,
+            string sourcetofilter,
+            string sourcetochange
+        )
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
 
             var objectscount = 0;
-            
-            switch(odhtype)
+
+            switch (odhtype)
             {
-                case "accommodation": 
-                    objectscount = await customdataoperation.ResaveSourcesOnType<AccommodationLinked>(odhtype, sourcetofilter, sourcetochange); ; 
+                case "accommodation":
+                    objectscount =
+                        await customdataoperation.ResaveSourcesOnType<AccommodationLinked>(
+                            odhtype,
+                            sourcetofilter,
+                            sourcetochange
+                        );
+                    ;
                     break;
                 case "accommodationroom":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<AccommodationRoomLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount =
+                        await customdataoperation.ResaveSourcesOnType<AccommodationRoomLinked>(
+                            odhtype,
+                            sourcetofilter,
+                            sourcetochange
+                        );
+                    ;
                     break;
                 case "package":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<PackageLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<PackageLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "odhactivitypoi":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<ODHActivityPoiLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount =
+                        await customdataoperation.ResaveSourcesOnType<ODHActivityPoiLinked>(
+                            odhtype,
+                            sourcetofilter,
+                            sourcetochange
+                        );
+                    ;
                     break;
                 case "event":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<EventLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<EventLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "article":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<ArticlesLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<ArticlesLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "ltsactivity":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<LTSActivityLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<LTSActivityLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "ltspoi":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<LTSPoiLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<LTSPoiLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "ltsgastronomy":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<GastronomyLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<GastronomyLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "webcam":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<WebcamInfoLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<WebcamInfoLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "wineaward":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<WineLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<WineLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "venue":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<VenueLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<VenueLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "eventshort":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<EventShortLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<EventShortLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
                 case "weatherhistory":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<WeatherHistoryLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount =
+                        await customdataoperation.ResaveSourcesOnType<WeatherHistoryLinked>(
+                            odhtype,
+                            sourcetofilter,
+                            sourcetochange
+                        );
+                    ;
                     break;
                 case "area":
-                    objectscount = await customdataoperation.ResaveSourcesOnType<AreaLinked>(odhtype, sourcetofilter, sourcetochange); ;
+                    objectscount = await customdataoperation.ResaveSourcesOnType<AreaLinked>(
+                        odhtype,
+                        sourcetofilter,
+                        sourcetochange
+                    );
+                    ;
                     break;
             }
 
-            return Ok(new UpdateResult
-            {
-                operation = "Resave Source",
-                updatetype = "custom",
-                otherinfo = odhtype,
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Resave Source",
+                    updatetype = "custom",
+                    otherinfo = odhtype,
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         #endregion
@@ -516,22 +693,27 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("ModifyODHTags")]
         public async Task<IActionResult> ModifyODHTags(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.UpdateAllODHTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify ODHTags",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = 0,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify ODHTags",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = 0,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         #endregion
@@ -544,11 +726,14 @@ namespace OdhApiImporter.Controllers
         {
             var objectscount = 0;
 
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             //objectscount = await customdataoperation.UpdateAllEventShortstActiveTodayField();
             //objectscount = await customdataoperation.UpdateAllEventShortBrokenLinks();
 
-            //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();                        
+            //objectscount = await customdataoperation.UpdateAllEventShortPublisherInfo();
 
             //objectscount = await customdataoperation.UpdateAllEventShortstEventDocumentField();
 
@@ -556,21 +741,22 @@ namespace OdhApiImporter.Controllers
 
             objectscount = await customdataoperation.UpdateAllWineHasLanguage();
 
-            return Ok(new UpdateResult
-            {
-                operation = "Modify wines",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify wines",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
-
 
         #endregion
 
@@ -580,154 +766,189 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("EventTopicsToTags")]
         public async Task<IActionResult> EventTopicsToTags(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.EventTopicsToTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "EventTopicsToTags",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "EventTopicsToTags",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("EventShortTypesToTags")]
         public async Task<IActionResult> EventShortTypesToTags(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.EventShortTypesToTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "EventShortTypesToTags",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "EventShortTypesToTags",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("GastronomyTypesToTags")]
         public async Task<IActionResult> GastronomyTypesToTags(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.GastronomyTypesToTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "GastronomyTypesToTags",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "GastronomyTypesToTags",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("VenueTypesToTags")]
         public async Task<IActionResult> VenueTypesToTags(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.VenueTypesToTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "VenueTypesToTags",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "VenueTypesToTags",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("ArticleTypesToTags")]
         public async Task<IActionResult> ArticleTypesToTags(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.ArticleTypesToTags();
 
-            return Ok(new UpdateResult
-            {
-                operation = "ArticleTypesToTags",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "ArticleTypesToTags",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("TagSourceFix")]
         public async Task<IActionResult> TagSourceFix(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.TagSourceFix();
 
-            return Ok(new UpdateResult
-            {
-                operation = "TagSourceFix",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "TagSourceFix",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("TagTypesFix")]
         public async Task<IActionResult> TagTypesFix(CancellationToken cancellationToken)
         {
-            CustomDataOperation customdataoperation = new CustomDataOperation(settings, QueryFactory);
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
             var objectscount = await customdataoperation.TagTypesFix();
 
-            return Ok(new UpdateResult
-            {
-                operation = "TagTypesFix",
-                updatetype = "custom",
-                otherinfo = "",
-                message = "Done",
-                recordsmodified = objectscount,
-                created = 0,
-                deleted = 0,
-                id = "",
-                updated = 0,
-                success = true
-            });
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "TagTypesFix",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
         }
 
         #endregion

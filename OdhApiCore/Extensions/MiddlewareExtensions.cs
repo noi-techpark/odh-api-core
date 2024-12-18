@@ -14,7 +14,9 @@ namespace OdhApiCore
             return builder.UseMiddleware<RateLimitingMiddleware>();
         }
 
-        public static IApplicationBuilder UseKeycloakAuthorizationService(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseKeycloakAuthorizationService(
+            this IApplicationBuilder builder
+        )
         {
             return builder.UseMiddleware<AuthorizationMiddleware>();
         }

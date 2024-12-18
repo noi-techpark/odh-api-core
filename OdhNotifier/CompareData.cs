@@ -2,19 +2,19 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
-using Helper.Generic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
+using Helper;
+using Helper.Generic;
 
 namespace OdhNotifier
 {
     //public class CompareData
-    //{         
+    //{
 
     //    public static bool HasDataChanged<T>(T newdata, T olddata, List<string> propertytoskip) where T : new()
     //    {
@@ -28,7 +28,7 @@ namespace OdhNotifier
     //        bool ltsroomsequal = false;
     //        bool hgvroomsequal = false;
 
-    //        //Compare Accommodation Object only if Changed send to 
+    //        //Compare Accommodation Object only if Changed send to
     //        accoequal = EqualityHelper.CompareClassesTest<Accommodation>(myacco, oldacco, new List<string>() { "LastChange" });
 
     //        if (accoequal)
@@ -138,7 +138,7 @@ namespace OdhNotifier
     //        bool ltsroomsimageequal = false;
     //        bool hgvroomsimageequal = false;
 
-    //        //Compare Accommodation Object only if Changed send to 
+    //        //Compare Accommodation Object only if Changed send to
     //        accoimageoequal = EqualityHelper.CompareImageGallery(myacco.ImageGallery, oldacco.ImageGallery, null);
 
     //        if (accoimageoequal)
@@ -243,7 +243,7 @@ namespace OdhNotifier
 
     //    public static bool HasImageChanged(ICollection<ImageGallery> imggallery, ICollection<ImageGallery> oldimggallery)
     //    {
-    //        //Compare Accommodation Object only if Changed send to 
+    //        //Compare Accommodation Object only if Changed send to
     //        var result = EqualityHelper.CompareImageGallery(imggallery, oldimggallery, null);
 
     //        return !result;
