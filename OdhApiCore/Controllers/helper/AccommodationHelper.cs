@@ -132,7 +132,7 @@ namespace OdhApiCore.Controllers
                 ? new List<string>()
                 : CommonListCreator.CreateIdList(idfilter.ToUpper());
             smgtaglist = CommonListCreator.CreateIdList(smgtags);
-            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
+            sourcelist = Helper.CommonListCreator.CreateSourceList(sourcefilter);
 
             featureidlist = String.IsNullOrEmpty(featureidfilter)
                 ? new List<string>()

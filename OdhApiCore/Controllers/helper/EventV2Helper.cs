@@ -98,7 +98,7 @@ namespace OdhApiCore.Controllers
             idlist = CommonListCreator.CreateIdList(idfilter?.ToUpper());
             venueidlist = CommonListCreator.CreateIdList(venueidfilter?.ToUpper());
 
-            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
+            sourcelist = Helper.CommonListCreator.CreateSourceList(sourcefilter);
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
             tourismvereinlist = new List<string>();

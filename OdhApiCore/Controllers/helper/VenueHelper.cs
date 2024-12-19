@@ -108,7 +108,7 @@ namespace OdhApiCore.Controllers
             IEnumerable<string>? tourismusvereinids
         )
         {
-            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
+            sourcelist = Helper.CommonListCreator.CreateSourceList(sourcefilter);
 
             setuptypelist = Helper.VenueListCreator.CreateVenueSeatTypeListfromFlag(
                 setuptypefilter
@@ -117,7 +117,7 @@ namespace OdhApiCore.Controllers
             categorylist = Helper.VenueListCreator.CreateVenueCategoryListfromFlag(categoryfilter);
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
-            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
+            sourcelist = Helper.CommonListCreator.CreateSourceList(sourcefilter);
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
             odhtaglist = Helper.CommonListCreator.CreateIdList(odhtags);

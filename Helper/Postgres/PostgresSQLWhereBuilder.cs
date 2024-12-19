@@ -523,7 +523,9 @@ namespace Helper
                     level3typelist.Count > 0,
                     q => q.SmgTagFilterOr_GeneratedColumn(level3typelist)
                 ) //.ODHActivityPoiSubTypeFilterOnTags(subtypelist)
-                .SyncSourceInterfaceFilter_GeneratedColumn(sourcelist) //.SourceFilter(sourcelist)
+                //.SyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
+                //.SourceFilter_GeneratedColumn(sourcelist)
+                .SourceOrSyncSourceInterfaceFilter_GeneratedColumn(sourcelist)
                 .When(
                     languagelist.Count > 0,
                     q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)

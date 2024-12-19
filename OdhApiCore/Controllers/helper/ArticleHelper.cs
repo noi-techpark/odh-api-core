@@ -121,7 +121,7 @@ namespace OdhApiCore.Controllers.api
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
-            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(source);
+            sourcelist = Helper.CommonListCreator.CreateSourceList(source);
             smgtaglist = Helper.CommonListCreator.CreateIdList(smgtags);
 
             //highlight

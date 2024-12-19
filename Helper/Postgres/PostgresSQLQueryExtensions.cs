@@ -1519,6 +1519,20 @@ namespace Helper
                 return q;
             });
 
+        //Source Filter (SyncSourceInterface OR Source)
+        public static Query SourceOrSyncSourceInterfaceFilter_GeneratedColumn(
+            this Query query,
+            IReadOnlyCollection<string> sourcelist
+        ) =>
+            query.Where(q =>
+            {
+                foreach (var source in sourcelist)
+                {
+                    q = q.OrWhere("gen_syncsourceinterface", "ILIKE", source).OrWhere("gen_source", "ILIKE", source);
+                }
+                return q;
+            });
+
         public static Query ODHTagSourcesFilter_GeneratedColumn(
             this Query query,
             IReadOnlyCollection<string> sourcelist

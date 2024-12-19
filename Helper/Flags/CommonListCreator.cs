@@ -97,7 +97,7 @@ namespace Helper
             return listToReturn;
         }
 
-        public static List<string> CreateSmgPoiSourceList(string? sourcestring)
+        public static List<string> CreateSourceList(string? sourcestring)
         {
             List<string> activityIds = new List<string>();
 

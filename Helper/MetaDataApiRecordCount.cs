@@ -85,10 +85,11 @@ namespace Helper
                     }
                 }
 
-                if (sources.Count > 0 && odhtype == "odhactivitypoi")
-                {
-                    sources = SourceFilterHelper.ExtendSourceFilterODHActivityPois(sources);
-                }
+                //Obsolete replaced in the query
+                //if (sources.Count > 0 && odhtype == "odhactivitypoi")
+                //{
+                //    sources = SourceFilterHelper.ExtendSourceFilterODHActivityPois(sources);
+                //}
 
                 //Get Reduced
                 var reducedcount = await QueryFactory

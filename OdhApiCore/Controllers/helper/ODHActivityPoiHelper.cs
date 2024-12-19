@@ -219,10 +219,11 @@ namespace OdhApiCore.Controllers.api
                 level3typelist = new();
 
             idlist = Helper.CommonListCreator.CreateIdList(idfilter?.ToUpper());
-            var sourcelisttemp = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
+            sourcelist = Helper.CommonListCreator.CreateSourceList(sourcefilter);
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
 
-            sourcelist = SourceFilterHelper.ExtendSourceFilterODHActivityPois(sourcelisttemp);
+            //obsolete
+            //sourcelist = SourceFilterHelper.ExtendSourceFilterODHActivityPois(sourcelisttemp);
 
             this.arealist = arealist.ToList();
 
