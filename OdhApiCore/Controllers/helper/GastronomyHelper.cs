@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
-using SqlKata.Execution;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Helper;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
@@ -29,44 +29,89 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
 
         public static async Task<GastronomyHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, string? categorycodefilter, string? dishcodefilter,
-            string? ceremonycodefilter, string? facilitycodefilter, string? cuisinecodefilter,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? langfilter,
-            CancellationToken cancellationToken)
+            QueryFactory queryFactory,
+            string? idfilter,
+            string? locfilter,
+            string? categorycodefilter,
+            string? dishcodefilter,
+            string? ceremonycodefilter,
+            string? facilitycodefilter,
+            string? cuisinecodefilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? langfilter,
+            CancellationToken cancellationToken
+        )
         {
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
             return new GastronomyHelper(
-                idfilter: idfilter, locfilter: locfilter, dishcodefilter: dishcodefilter, ceremonycodefilter: ceremonycodefilter,
-                categorycodefilter: categorycodefilter, facilitycodefilter: facilitycodefilter, cuisinecodefilter: cuisinecodefilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, languagefilter: langfilter,
-                tourismusvereinids: tourismusvereinids);
+                idfilter: idfilter,
+                locfilter: locfilter,
+                dishcodefilter: dishcodefilter,
+                ceremonycodefilter: ceremonycodefilter,
+                categorycodefilter: categorycodefilter,
+                facilitycodefilter: facilitycodefilter,
+                cuisinecodefilter: cuisinecodefilter,
+                activefilter: activefilter,
+                smgactivefilter: smgactivefilter,
+                smgtags: smgtags,
+                lastchange: lastchange,
+                languagefilter: langfilter,
+                tourismusvereinids: tourismusvereinids
+            );
         }
 
         private GastronomyHelper(
-            string? idfilter, string? locfilter, string? dishcodefilter,
-            string? ceremonycodefilter, string? categorycodefilter, string? facilitycodefilter,
-            string? cuisinecodefilter, bool? activefilter, bool? smgactivefilter, string? smgtags,
-            string? lastchange, string? languagefilter, IEnumerable<string>? tourismusvereinids)
+            string? idfilter,
+            string? locfilter,
+            string? dishcodefilter,
+            string? ceremonycodefilter,
+            string? categorycodefilter,
+            string? facilitycodefilter,
+            string? cuisinecodefilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? languagefilter,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
             idlist = CommonListCreator.CreateIdList(idfilter?.ToUpper());
 
             smgtaglist = CommonListCreator.CreateIdList(smgtags);
 
             dishcodesids = GastronomyListCreator.CreateGastroDishCodeListfromFlag(dishcodefilter);
-            ceremonycodesids = GastronomyListCreator.CreateGastroCeremonyCodeListfromFlag(ceremonycodefilter);
-            categorycodesids = GastronomyListCreator.CreateGastroCategoryCodeListfromFlag(categorycodefilter);
-            facilitycodesids = GastronomyListCreator.CreateGastroFacilityCodeListfromFlag(facilitycodefilter);
-            cuisinecodesids = GastronomyListCreator.CreateGastroCusineCodeListfromFlag(cuisinecodefilter);
+            ceremonycodesids = GastronomyListCreator.CreateGastroCeremonyCodeListfromFlag(
+                ceremonycodefilter
+            );
+            categorycodesids = GastronomyListCreator.CreateGastroCategoryCodeListfromFlag(
+                categorycodefilter
+            );
+            facilitycodesids = GastronomyListCreator.CreateGastroFacilityCodeListfromFlag(
+                facilitycodefilter
+            );
+            cuisinecodesids = GastronomyListCreator.CreateGastroCusineCodeListfromFlag(
+                cuisinecodefilter
+            );
             facilitycodesids.AddRange(cuisinecodesids);
 
             languagelist = Helper.CommonListCreator.CreateIdList(languagefilter);
-
 
             tourismvereinlist = new List<string>();
             regionlist = new List<string>();
@@ -93,7 +138,5 @@ namespace OdhApiCore.Controllers
 
             this.lastchange = lastchange;
         }
-
-
     }
 }

@@ -2,22 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using OdhApiCoreTests.IntegrationTets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using OdhApiCoreTests.IntegrationTets;
 using Xunit;
 
 namespace OdhApiCoreTests.IntegrationTests
 {
     [Trait("Category", "Integration")]
     public class FilterTests : IClassFixture<CustomWebApplicationFactory<OdhApiCore.Startup>>
-
     {
         private readonly HttpClient _client;
         private readonly CustomWebApplicationFactory<OdhApiCore.Startup> _factory;
@@ -25,20 +24,22 @@ namespace OdhApiCoreTests.IntegrationTests
         public FilterTests(CustomWebApplicationFactory<OdhApiCore.Startup> factory)
         {
             _factory = factory;
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false
-            });
+            _client = factory.CreateClient(
+                new WebApplicationFactoryClientOptions { AllowAutoRedirect = false }
+            );
         }
 
         [Fact]
         public async Task TestFields()
         {
-            var url = "/v1/Accommodation?pagesize=20&pagenumber=1&fields=AccoDetail.de.Name,Features[*].Name,HgvId,Test";
+            var url =
+                "/v1/Accommodation?pagesize=20&pagenumber=1&fields=AccoDetail.de.Name,Features[*].Name,HgvId,Test";
             var response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
-            Assert.Equal("application/json; charset=utf-8",
-                response.Content.Headers.ContentType?.ToString());
+            Assert.Equal(
+                "application/json; charset=utf-8",
+                response.Content.Headers.ContentType?.ToString()
+            );
             string json = await response.Content.ReadAsStringAsync();
             dynamic? data = JsonConvert.DeserializeObject(json);
             Assert.NotNull(data);

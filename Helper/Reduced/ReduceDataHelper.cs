@@ -19,27 +19,69 @@ namespace Helper
         }
 
         //Check if data should be reduced
-        public static bool ReduceDataCheck<T>(T myobject) where T : ISource, ILicenseInfo
+        public static bool ReduceDataCheck<T>(T myobject)
+            where T : ISource, ILicenseInfo
         {
             return myobject switch
             {
-                Accommodation or AccommodationLinked or AccommodationV2 => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                LTSActivityLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                LTSPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                GastronomyLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                Event or EventLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                ODHActivityPoi or ODHActivityPoiLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                Measuringpoint or MeasuringpointLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                WebcamInfo or WebcamInfoLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                VenueLinked => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                DDVenue => myobject.Source != null ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData ? true : false : false,
-                _ => false
+                Accommodation or AccommodationLinked or AccommodationV2 => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                LTSActivityLinked => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                LTSPoiLinked => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                GastronomyLinked => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                Event or EventLinked => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                ODHActivityPoi or ODHActivityPoiLinked => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                Measuringpoint or MeasuringpointLinked => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                WebcamInfo or WebcamInfoLinked => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                VenueLinked => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                DDVenue => myobject.Source != null
+                    ? myobject.Source.ToLower() == "lts" && !myobject.LicenseInfo.ClosedData
+                        ? true
+                        : false
+                    : false,
+                _ => false,
             };
         }
 
-
         //LTS ActivityData
-        public static LTSActivityLinkedReduced CopyLTSActivityToReducedObject(LTSActivityLinked myactivity)
+        public static LTSActivityLinkedReduced CopyLTSActivityToReducedObject(
+            LTSActivityLinked myactivity
+        )
         {
             var reduced = new LTSActivityLinkedReduced();
 
@@ -66,11 +108,16 @@ namespace Helper
             //Name
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(myactivity.Detail);
             //ContactInfo/URL
-            reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForActivity(myactivity.ContactInfos);
+            reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForActivity(
+                myactivity.ContactInfos
+            );
 
             //Tag
             reduced.SmgTags = myactivity.SmgTags;
-            reduced.LTSTags = myactivity.LTSTags != null ? ReducedDataHelper.ReduceLtsTags(myactivity.LTSTags).ToList() : null;
+            reduced.LTSTags =
+                myactivity.LTSTags != null
+                    ? ReducedDataHelper.ReduceLtsTags(myactivity.LTSTags).ToList()
+                    : null;
 
             //ODH Fields
             reduced.Shortname = myactivity.Shortname;
@@ -88,11 +135,19 @@ namespace Helper
             reduced.HasLanguage = myactivity.HasLanguage;
 
             ///LocationInfo, ODH Object calculated with
-            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(myactivity.LocationInfo);
+            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(
+                myactivity.LocationInfo
+            );
 
             //License + Meta
             reduced.LicenseInfo = myactivity.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "ltsactivity", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "ltsactivity",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltsactivity", reduced.SmgActive);
 
             //ImageGallery
@@ -111,14 +166,17 @@ namespace Helper
             reduced.HasFreeEntrance = mypoi.HasFreeEntrance; //Features/HasFreeEntrance
             //Position/Longitude,Latitude,Altitude
             reduced.GpsInfo = mypoi.GpsInfo;
-            //reduced.GpsPoints = mypoi.GpsPoints;            
+            //reduced.GpsPoints = mypoi.GpsPoints;
 
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
             reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForPoi(mypoi.ContactInfos);
 
             //Tag
             reduced.SmgTags = mypoi.SmgTags;
-            reduced.LTSTags = mypoi.LTSTags != null ? ReducedDataHelper.ReduceLtsTags(mypoi.LTSTags).ToList() : null;
+            reduced.LTSTags =
+                mypoi.LTSTags != null
+                    ? ReducedDataHelper.ReduceLtsTags(mypoi.LTSTags).ToList()
+                    : null;
 
             //ODH Fields
             reduced.Active = mypoi.Active;
@@ -138,7 +196,13 @@ namespace Helper
 
             //License + Meta
             reduced.LicenseInfo = mypoi.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "ltspoi", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "ltspoi",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltspoi", reduced.SmgActive);
 
             //ImageGallery
@@ -148,7 +212,9 @@ namespace Helper
         }
 
         //LTS Gastronomic Data ACTIVE: (IsEnabled=1 and RepresentationRestricition=1)
-        public static GastronomyLinkedReduced CopyLTSGastronomyToReducedObject(GastronomyLinked mypoi)
+        public static GastronomyLinkedReduced CopyLTSGastronomyToReducedObject(
+            GastronomyLinked mypoi
+        )
         {
             var reduced = new GastronomyLinkedReduced();
 
@@ -164,9 +230,11 @@ namespace Helper
             //ContactInfo/CompanyName
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
             //ContactInfo/CompanyName
-            reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForGastronomy(mypoi.ContactInfos);
+            reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForGastronomy(
+                mypoi.ContactInfos
+            );
 
-            //CategoryCodes/GastronomicCategory 
+            //CategoryCodes/GastronomicCategory
             reduced.CategoryCodes = mypoi.CategoryCodes;
 
             //ODH Fields
@@ -183,7 +251,13 @@ namespace Helper
 
             //License + Meta
             reduced.LicenseInfo = mypoi.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "ltsgastronomy", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "ltsgastronomy",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             //reduced.PublishedOn = HelperClass.GetPublishenOnList("ltsgastronomy", reduced.SmgActive);
 
             //ImageGallery
@@ -193,7 +267,9 @@ namespace Helper
         }
 
         //LTS PoiData ActivityData
-        public static LTSODHActivityPoiReduced CopyLTSODHActivtyPoiToReducedObject(ODHActivityPoiLinked mypoi)
+        public static LTSODHActivityPoiReduced CopyLTSODHActivtyPoiToReducedObject(
+            ODHActivityPoiLinked mypoi
+        )
         {
             var reduced = new LTSODHActivityPoiReduced();
 
@@ -232,14 +308,20 @@ namespace Helper
 
             //Tag
             reduced.SmgTags = mypoi.SmgTags;
-            reduced.LTSTags = mypoi.LTSTags != null ? ReducedDataHelper.ReduceLtsTags(mypoi.LTSTags).ToList() : null;
+            reduced.LTSTags =
+                mypoi.LTSTags != null
+                    ? ReducedDataHelper.ReduceLtsTags(mypoi.LTSTags).ToList()
+                    : null;
 
             //Tagging
             reduced.Tags = mypoi.Tags;
             reduced.TagIds = mypoi.TagIds;
 
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(mypoi.Detail);
-            reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForODHActivityPoi(mypoi.ContactInfos, mypoi.SyncSourceInterface);
+            reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForODHActivityPoi(
+                mypoi.ContactInfos,
+                mypoi.SyncSourceInterface
+            );
 
             //Position/Longitude,Latitude,Altitude
             //reduced.GpsPoints = mypoi.GpsPoints;
@@ -267,7 +349,13 @@ namespace Helper
 
             //License + Meta
             reduced.LicenseInfo = mypoi.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "odhactivitypoi", reduced.Source?.ToLower(), reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "odhactivitypoi",
+                reduced.Source?.ToLower(),
+                reduced.LastChange,
+                true
+            );
             reduced.PublishedOn = mypoi.PublishedOn;
 
             //ImageGallery
@@ -277,13 +365,17 @@ namespace Helper
         }
 
         //LTS Accommodation OK ACTIVE (IDMActive=1)
-        public static AccommodationLinkedReduced CopyLTSAccommodationToReducedObject(AccommodationV2 myacco)
+        public static AccommodationLinkedReduced CopyLTSAccommodationToReducedObject(
+            AccommodationV2 myacco
+        )
         {
             var reduced = new AccommodationLinkedReduced();
 
             reduced.Id = myacco.Id + "_REDUCED";
 
-            reduced.AccoDetail = ReducedDataHelper.ReduceAccoDetail(myacco.AccoDetail ?? new Dictionary<string, AccoDetail>());
+            reduced.AccoDetail = ReducedDataHelper.ReduceAccoDetail(
+                myacco.AccoDetail ?? new Dictionary<string, AccoDetail>()
+            );
 
             //A1GEP, A1GNP, A0Alt
             //reduced.Gpstype = myacco.Gpstype;
@@ -300,7 +392,7 @@ namespace Helper
             //A0App
             reduced.AccoProperties.HasApartment = myacco.HasApartment;
 
-            //fix 
+            //fix
             reduced.AccoProperties.IsBookable = false;
 
             //T6RID
@@ -318,11 +410,19 @@ namespace Helper
             reduced.Source = myacco.Source;
 
             ///LocationInfo, ODH Object calculated with
-            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(myacco.LocationInfo);
+            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(
+                myacco.LocationInfo
+            );
 
             //License + Meta
             reduced.LicenseInfo = myacco.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "accommodation", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "accommodation",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             reduced.PublishedOn = myacco.PublishedOn;
 
             //ImageGallery
@@ -350,7 +450,9 @@ namespace Helper
             //DefinitionLng/Title
             reduced.Detail = ReducedDataHelper.ReduceDetailInfo(myevent.Detail);
 
-            reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForEvent(myevent.ContactInfos);
+            reduced.ContactInfos = ReducedDataHelper.ReduceContactInfoForEvent(
+                myevent.ContactInfos
+            );
 
             //Day/Date, DateTo, SingleDays, Begin, End
             reduced.DateBegin = myevent.DateBegin;
@@ -361,10 +463,15 @@ namespace Helper
             reduced.Ticket = reduced.Ticket;
 
             //BookingData/BookingUrl
-            reduced.EventBooking = myevent.EventBooking != null ? ReducedDataHelper.ReduceEventBooking(myevent.EventBooking) : null;
+            reduced.EventBooking =
+                myevent.EventBooking != null
+                    ? ReducedDataHelper.ReduceEventBooking(myevent.EventBooking)
+                    : null;
 
             //Evendate
-            reduced.EventDate = ReducedDataHelper.ReduceEventDateCollection(myevent.EventDate ?? new List<EventDate>());
+            reduced.EventDate = ReducedDataHelper.ReduceEventDateCollection(
+                myevent.EventDate ?? new List<EventDate>()
+            );
 
             //ODH Fields
             reduced.Active = myevent.Active;
@@ -376,22 +483,31 @@ namespace Helper
             reduced.Source = myevent.Source;
 
             ///LocationInfo, ODH Object calculated with
-            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(myevent.LocationInfo);
+            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(
+                myevent.LocationInfo
+            );
 
             //License + Meta
             reduced.LicenseInfo = myevent.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "event", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "event",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             reduced.PublishedOn = myevent.PublishedOn;
 
             //ImageGallery
             reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(myevent.ImageGallery);
 
-            
             return reduced;
         }
 
         //LTS Measuringpoint (Status/IsEnabled=1)
-        public static MeasuringpointLinkedReduced CopyLTSMeasuringpointToReducedObject(MeasuringpointLinked measuringpoint)
+        public static MeasuringpointLinkedReduced CopyLTSMeasuringpointToReducedObject(
+            MeasuringpointLinked measuringpoint
+        )
         {
             var reduced = new MeasuringpointLinkedReduced();
 
@@ -420,23 +536,30 @@ namespace Helper
             //Snow / DateLastSnow
             reduced.LastSnowDate = measuringpoint.LastSnowDate;
 
-
             //ODH Fields
             reduced.Active = measuringpoint.Active;
             reduced.SmgActive = measuringpoint.SmgActive;
             reduced.LastChange = measuringpoint.LastChange;
             reduced.LastUpdate = measuringpoint.LastUpdate;
             reduced.FirstImport = measuringpoint.FirstImport;
-            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(measuringpoint.LocationInfo);
+            reduced.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(
+                measuringpoint.LocationInfo
+            );
             reduced.Source = measuringpoint.Source;
 
             //License + Meta
             reduced.LicenseInfo = measuringpoint.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "measuringpoint", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "measuringpoint",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             reduced.PublishedOn = measuringpoint.PublishedOn;
-            
+
             reduced.SkiAreaIds = measuringpoint.SkiAreaIds;
-    
+
             return reduced;
         }
 
@@ -457,7 +580,10 @@ namespace Helper
             if (reduced.relationships != null)
             {
                 reduced.relationships.multimediaDescriptions = null;
-                reduced.relationships.subVenues = venue.relationships?.subVenues != null ? ReducedDataHelper.ReduceSubVenues(venue.relationships.subVenues) : null;
+                reduced.relationships.subVenues =
+                    venue.relationships?.subVenues != null
+                        ? ReducedDataHelper.ReduceSubVenues(venue.relationships.subVenues)
+                        : null;
             }
 
             reduced.odhdata = new ODHData();
@@ -476,15 +602,25 @@ namespace Helper
                 reduced.odhdata.RoomCount = venue.odhdata.RoomCount;
                 reduced.odhdata.SyncSourceInterface = venue.odhdata.SyncSourceInterface;
                 reduced.odhdata.VenueCategory = venue.odhdata.VenueCategory;
-                reduced.odhdata.RoomDetails = ReducedDataHelper.ReduceVenueRoomDetails(venue.odhdata.RoomDetails);
+                reduced.odhdata.RoomDetails = ReducedDataHelper.ReduceVenueRoomDetails(
+                    venue.odhdata.RoomDetails
+                );
             }
 
             ///LocationInfo, ODH Object calculated with
-            reduced.odhdata.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(reduced.odhdata.LocationInfo);
+            reduced.odhdata.LocationInfo = ReducedDataHelper.RemoveAreafromLocationInfo(
+                reduced.odhdata.LocationInfo
+            );
 
             //License + Meta
             reduced.odhdata.LicenseInfo = venue.odhdata?.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "venue", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "venue",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             reduced.odhdata.PublishedOn = venue.odhdata?.PublishedOn;
 
             return reduced;
@@ -501,9 +637,13 @@ namespace Helper
 
             //TODO
             //REDUCE DETAIL
-            reduced.Detail = venue.Detail != null ? ReducedDataHelper.ReduceDetailInfo(venue.Detail) : null;
+            reduced.Detail =
+                venue.Detail != null ? ReducedDataHelper.ReduceDetailInfo(venue.Detail) : null;
             //REDUCE CONTACTINFO
-            reduced.ContactInfos = venue.ContactInfos != null ? ReducedDataHelper.ReduceContactInfoForVenue(venue.ContactInfos) : null;
+            reduced.ContactInfos =
+                venue.ContactInfos != null
+                    ? ReducedDataHelper.ReduceContactInfoForVenue(venue.ContactInfos)
+                    : null;
 
             //if (reduced.relationships != null)
             //{
@@ -532,18 +672,25 @@ namespace Helper
 
             //License + Meta
             reduced.LicenseInfo = venue.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "venue", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "venue",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             reduced.PublishedOn = venue.PublishedOn;
 
             //ImageGallery
-            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(venue.ImageGallery);            
+            reduced.ImageGallery = ReducedDataHelper.ReduceImagesToCC0Only(venue.ImageGallery);
 
             return reduced;
         }
 
-
         //LTS WebcamInfo
-        public static WebcamInfoLinkedReduced CopyLTSWebcamInfoToReducedObject(WebcamInfoLinked webcam)
+        public static WebcamInfoLinkedReduced CopyLTSWebcamInfoToReducedObject(
+            WebcamInfoLinked webcam
+        )
         {
             var reduced = new WebcamInfoLinkedReduced();
 
@@ -555,7 +702,7 @@ namespace Helper
             reduced.WebCamProperties.WebcamUrl = webcam.WebCamProperties.WebcamUrl;
             reduced.WebCamProperties.StreamUrl = webcam.WebCamProperties.StreamUrl;
 
-            //ODH Fields            
+            //ODH Fields
             reduced.Active = webcam.Active;
             reduced.SmgActive = webcam.SmgActive;
             reduced.LastChange = webcam.LastChange;
@@ -569,18 +716,24 @@ namespace Helper
 
             //License + Meta
             reduced.LicenseInfo = webcam.LicenseInfo;
-            reduced._Meta = MetadataHelper.GetMetadata(reduced.Id, "webcam", "lts", reduced.LastChange, true);
+            reduced._Meta = MetadataHelper.GetMetadata(
+                reduced.Id,
+                "webcam",
+                "lts",
+                reduced.LastChange,
+                true
+            );
             reduced.PublishedOn = webcam.PublishedOn;
 
             return reduced;
         }
-
-
     }
 
     public class ReducedDataHelper
     {
-        public static IDictionary<string, Detail> ReduceDetailInfo(IDictionary<string, Detail> mydetail)
+        public static IDictionary<string, Detail> ReduceDetailInfo(
+            IDictionary<string, Detail> mydetail
+        )
         {
             foreach (var value in mydetail.Values)
             {
@@ -607,7 +760,9 @@ namespace Helper
             return mydetail;
         }
 
-        public static IDictionary<string, ContactInfos> ReduceContactInfoForActivity(IDictionary<string, ContactInfos> mycontactinfo)
+        public static IDictionary<string, ContactInfos> ReduceContactInfoForActivity(
+            IDictionary<string, ContactInfos> mycontactinfo
+        )
         {
             foreach (var value in mycontactinfo.Values)
             {
@@ -632,7 +787,9 @@ namespace Helper
             return mycontactinfo;
         }
 
-        public static IDictionary<string, ContactInfos> ReduceContactInfoForPoi(IDictionary<string, ContactInfos> mycontactinfo)
+        public static IDictionary<string, ContactInfos> ReduceContactInfoForPoi(
+            IDictionary<string, ContactInfos> mycontactinfo
+        )
         {
             foreach (var value in mycontactinfo.Values)
             {
@@ -657,7 +814,10 @@ namespace Helper
             return mycontactinfo;
         }
 
-        public static IDictionary<string, ContactInfos> ReduceContactInfoForODHActivityPoi(IDictionary<string, ContactInfos> mycontactinfo, string? source)
+        public static IDictionary<string, ContactInfos> ReduceContactInfoForODHActivityPoi(
+            IDictionary<string, ContactInfos> mycontactinfo,
+            string? source
+        )
         {
             foreach (var value in mycontactinfo.Values)
             {
@@ -684,8 +844,9 @@ namespace Helper
             return mycontactinfo;
         }
 
-
-        public static IDictionary<string, ContactInfos> ReduceContactInfoForEvent(IDictionary<string, ContactInfos> mycontactinfo)
+        public static IDictionary<string, ContactInfos> ReduceContactInfoForEvent(
+            IDictionary<string, ContactInfos> mycontactinfo
+        )
         {
             foreach (var value in mycontactinfo.Values)
             {
@@ -693,7 +854,7 @@ namespace Helper
                 //value.City = null;         DefinitionLng/City
                 value.CompanyName = null;
                 //value.CountryCode = null;  Definition / NatID
-                //value.CountryName = null;   
+                //value.CountryName = null;
                 value.Email = null;
                 value.Faxnumber = null;
                 value.Givenname = null;
@@ -710,7 +871,9 @@ namespace Helper
             return mycontactinfo;
         }
 
-        public static IDictionary<string, ContactInfos> ReduceContactInfoForGastronomy(IDictionary<string, ContactInfos> mycontactinfo)
+        public static IDictionary<string, ContactInfos> ReduceContactInfoForGastronomy(
+            IDictionary<string, ContactInfos> mycontactinfo
+        )
         {
             foreach (var value in mycontactinfo.Values)
             {
@@ -735,7 +898,9 @@ namespace Helper
             return mycontactinfo;
         }
 
-        public static IDictionary<string, ContactInfos> ReduceContactInfoForVenue(IDictionary<string, ContactInfos> mycontactinfo)
+        public static IDictionary<string, ContactInfos> ReduceContactInfoForVenue(
+            IDictionary<string, ContactInfos> mycontactinfo
+        )
         {
             foreach (var value in mycontactinfo.Values)
             {
@@ -760,8 +925,9 @@ namespace Helper
             return mycontactinfo;
         }
 
-
-        public static IDictionary<string, AccoDetail> ReduceAccoDetail(IDictionary<string, AccoDetail> mydetail)
+        public static IDictionary<string, AccoDetail> ReduceAccoDetail(
+            IDictionary<string, AccoDetail> mydetail
+        )
         {
             foreach (var value in mydetail.Values)
             {
@@ -823,9 +989,10 @@ namespace Helper
             return eventBooking;
         }
 
-        public static ICollection<EventDate> ReduceEventDateCollection(ICollection<EventDate> eventdates)
+        public static ICollection<EventDate> ReduceEventDateCollection(
+            ICollection<EventDate> eventdates
+        )
         {
-
             foreach (var eventdate in eventdates)
             {
                 //eventdate.From = null;    Day/Date
@@ -852,11 +1019,15 @@ namespace Helper
 
         public static DDAttributes ReduceVenueAttributes(DDAttributes attributes)
         {
-            attributes.address = ReduceVenueAttributesAddress(attributes.address ?? new List<DDAddress>());
+            attributes.address = ReduceVenueAttributesAddress(
+                attributes.address ?? new List<DDAddress>()
+            );
             attributes.beds = null;
             //attributes.categories = null; //attributes.categories
             attributes.description = null;
-            attributes.geometries = ReduceVenueAttributesGeometries(attributes.geometries ?? new List<DDGeometry>());
+            attributes.geometries = ReduceVenueAttributesGeometries(
+                attributes.geometries ?? new List<DDGeometry>()
+            );
             attributes.howToArrive = null;
 
             //attributes.name = null;   attributes.name
@@ -867,7 +1038,9 @@ namespace Helper
             return attributes;
         }
 
-        public static ICollection<DDAddress> ReduceVenueAttributesAddress(ICollection<DDAddress> addresses)
+        public static ICollection<DDAddress> ReduceVenueAttributesAddress(
+            ICollection<DDAddress> addresses
+        )
         {
             foreach (var address in addresses)
             {
@@ -878,13 +1051,15 @@ namespace Helper
                 //address.country = null;     //attributes.address.country
                 address.region = null;
                 //address.street = null;    //attributes.address.street
-                address.zipcode = null;     //attributes.address.zipcode
+                address.zipcode = null; //attributes.address.zipcode
             }
 
             return addresses;
         }
 
-        public static ICollection<DDGeometry> ReduceVenueAttributesGeometries(ICollection<DDGeometry> geometries)
+        public static ICollection<DDGeometry> ReduceVenueAttributesGeometries(
+            ICollection<DDGeometry> geometries
+        )
         {
             List<DDGeometry> allowedgeometries = new List<DDGeometry>();
 
@@ -932,7 +1107,9 @@ namespace Helper
             return subvenues;
         }
 
-        public static ICollection<VenueRoomDetails> ReduceVenueRoomDetails(ICollection<VenueRoomDetails> roomdetails)
+        public static ICollection<VenueRoomDetails> ReduceVenueRoomDetails(
+            ICollection<VenueRoomDetails> roomdetails
+        )
         {
             foreach (var roomdetail in roomdetails)
             {
@@ -944,14 +1121,17 @@ namespace Helper
                 //roomdetail.Shortname = null;
                 //
 
-                roomdetail.Detail = roomdetail.Detail != null ? ReduceDetailInfo(roomdetail.Detail) : null;
+                roomdetail.Detail =
+                    roomdetail.Detail != null ? ReduceDetailInfo(roomdetail.Detail) : null;
                 roomdetail.ImageGallery = ReduceImagesToCC0Only(roomdetail.ImageGallery);
             }
 
             return roomdetails;
         }
 
-        public static ICollection<ImageGallery> ReduceImagesToCC0Only(ICollection<ImageGallery> imagegallery)
+        public static ICollection<ImageGallery> ReduceImagesToCC0Only(
+            ICollection<ImageGallery> imagegallery
+        )
         {
             if (imagegallery != null)
             {
@@ -966,5 +1146,4 @@ namespace Helper
                 return null;
         }
     }
-
 }

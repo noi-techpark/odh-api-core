@@ -2,6 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
 using AspNetCore.CacheOutput.InMemory.Extensions;
 using Helper;
 using Helper.Factories;
@@ -32,13 +39,6 @@ using Serilog.Events;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
 
 namespace OdhApiCore
 {
@@ -49,6 +49,7 @@ namespace OdhApiCore
             Configuration = configuration;
             CurrentEnvironment = env;
         }
+
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment CurrentEnvironment { get; }
 
@@ -68,14 +69,20 @@ namespace OdhApiCore
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddHttpClient("mss", client =>
-            {
-                //client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
-            }).ConfigureHttpMessageHandlerBuilder(config => new HttpClientHandler()
-            {
-                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
-            });
-            services.AddHttpClient("lcs"); // TODO: put LCS config here            
+            services
+                .AddHttpClient(
+                    "mss",
+                    client =>
+                    {
+                        //client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
+                    }
+                )
+                .ConfigureHttpMessageHandlerBuilder(config => new HttpClientHandler()
+                {
+                    AutomaticDecompression =
+                        DecompressionMethods.GZip | DecompressionMethods.Deflate,
+                });
+            services.AddHttpClient("lcs"); // TODO: put LCS config here
 
             //Adding Cache Service in Memory
             services.AddInMemoryCacheOutput();
@@ -83,9 +90,13 @@ namespace OdhApiCore
 
             services.AddDistributedMemoryCache();
 
-            services.AddHealthChecks()
+            services
+                .AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddNpgSql(Configuration.GetConnectionString("PgConnection"), tags: new[] { "services" });
+                .AddNpgSql(
+                    Configuration.GetConnectionString("PgConnection"),
+                    tags: new[] { "services" }
+                );
 
             //TO Remove old Quota Config
 
@@ -153,7 +164,7 @@ namespace OdhApiCore
             //    options.HttpStatusCode = 429;
             //    options.ClientIdHeader = "Referer";
             //    options.ClientWhitelist = new List<string> { "Anonymous", "Authenticated" };
-            //    //General Rule from 
+            //    //General Rule from
             //    options.GeneralRules = new List<RateLimitRule>
             //    {
             //        new RateLimitRule()
@@ -207,8 +218,8 @@ namespace OdhApiCore
 
             //services.AddInMemoryRateLimiting();
 
-            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();                        
-            //services.AddSingleton<IRateLimitConfiguration, Middleware.OdhRateLimitConfiguration>();            
+            //services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            //services.AddSingleton<IRateLimitConfiguration, Middleware.OdhRateLimitConfiguration>();
 
             services.AddLogging(options =>
             {
@@ -216,10 +227,9 @@ namespace OdhApiCore
 
                 var levelSwitch = new LoggingLevelSwitch
                 {
-                    MinimumLevel =
-                        CurrentEnvironment.IsDevelopment() ?
-                            LogEventLevel.Debug :
-                            LogEventLevel.Warning
+                    MinimumLevel = CurrentEnvironment.IsDevelopment()
+                        ? LogEventLevel.Debug
+                        : LogEventLevel.Warning,
                 };
                 var loggerConfiguration = new LoggerConfiguration()
                     .MinimumLevel.ControlledBy(levelSwitch)
@@ -249,7 +259,9 @@ namespace OdhApiCore
                 Log.Logger = loggerConfiguration;
             });
 
-            services.Configure<GzipCompressionProviderOptions>(options => options.Level = System.IO.Compression.CompressionLevel.Optimal);
+            services.Configure<GzipCompressionProviderOptions>(options =>
+                options.Level = System.IO.Compression.CompressionLevel.Optimal
+            );
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
@@ -258,23 +270,29 @@ namespace OdhApiCore
 
             services.AddCors(o =>
             {
-                o.AddPolicy("CorsPolicy", builder =>
-                {
-                    builder.AllowAnyMethod()
+                o.AddPolicy(
+                    "CorsPolicy",
+                    builder =>
+                    {
+                        builder
+                            .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials()
                             .SetIsOriginAllowed(hostName => true);
-                });
+                    }
+                );
             });
 
-            services.AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                //{
-                //    CamelCaseText = true
-                //});
-            });
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    //{
+                    //    CamelCaseText = true
+                    //});
+                });
 
             services.AddRazorPages();
 
@@ -283,24 +301,29 @@ namespace OdhApiCore
             services.AddScoped<IOdhPushNotifier, OdhPushNotifier>();
 
             //Initialize JWT Authentication
-            services.AddAuthentication(options =>
+            services
+                .AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                    .AddJwtBearer(jwtBearerOptions =>
+                .AddJwtBearer(jwtBearerOptions =>
                 {
-                    jwtBearerOptions.Authority = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority");
-                    //jwtBearerOptions.Audience = "account";                
+                    jwtBearerOptions.Authority = Configuration
+                        .GetSection("OauthServerConfig")
+                        .GetValue<string>("Authority");
+                    //jwtBearerOptions.Audience = "account";
                     jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         NameClaimType = "preferred_username",
                         ValidateAudience = false,
                         ValidateLifetime = true,
-                        ValidIssuer = Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority"),
+                        ValidIssuer = Configuration
+                            .GetSection("OauthServerConfig")
+                            .GetValue<string>("Authority"),
                         ValidateIssuer = true,
                         //RoleClaimTypeRetriever
-                        //RoleClaimType = "resource_access.odh-api-core.roles"  //TO TEST 
+                        //RoleClaimType = "resource_access.odh-api-core.roles"  //TO TEST
                     };
                     jwtBearerOptions.Events = new JwtBearerEvents()
                     {
@@ -331,17 +354,23 @@ namespace OdhApiCore
                 });
 
             services.AddMvc(options =>
-                {
-                    options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
-                    options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
+            {
+                options.OutputFormatters.Add(new Formatters.CsvOutputFormatter());
+                options.FormatterMappings.SetMediaTypeMappingForFormat("csv", "text/csv");
 
-                    options.OutputFormatters.Add(new Formatters.JsonLdOutputFormatter());
-                    //Hack only ldjson accepted
-                    options.FormatterMappings.SetMediaTypeMappingForFormat("json-ld", "application/ldjson");
+                options.OutputFormatters.Add(new Formatters.JsonLdOutputFormatter());
+                //Hack only ldjson accepted
+                options.FormatterMappings.SetMediaTypeMappingForFormat(
+                    "json-ld",
+                    "application/ldjson"
+                );
 
-                    options.OutputFormatters.Add(new Formatters.RawdataOutputFormatter());
-                    options.FormatterMappings.SetMediaTypeMappingForFormat("rawdata", "application/rawdata");
-                });
+                options.OutputFormatters.Add(new Formatters.RawdataOutputFormatter());
+                options.FormatterMappings.SetMediaTypeMappingForFormat(
+                    "rawdata",
+                    "application/rawdata"
+                );
+            });
             //.AddJsonOptions(options =>
             //{
             //    options.JsonSerializerOptions.PropertyNameCaseInsensitive = new DefaultContractResolver();
@@ -349,51 +378,64 @@ namespace OdhApiCore
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Open Data Hub Tourism Api",
-                    Version = "v1",
-                    Description = "Open Data Hub Tourism Api based on .Net Core with PostgreSQL",
-                    TermsOfService = new System.Uri("https://opendatahub.readthedocs.io/en/latest/"),
-                    Contact = new OpenApiContact
+                c.SwaggerDoc(
+                    "v1",
+                    new OpenApiInfo
                     {
-                        Name = "Open Data Hub Team",
-                        Email = "help@opendatahub.com",
-                        Url = new System.Uri("https://opendatahub.com/"),
-                    },
-                });
-                c.MapType<LegacyBool>(() => new OpenApiSchema
-                {
-                    Type = "boolean"
-                });
-                c.MapType<PageSize>(() => new OpenApiSchema
-                {
-                    Type = "integer"
-                });
+                        Title = "Open Data Hub Tourism Api",
+                        Version = "v1",
+                        Description =
+                            "Open Data Hub Tourism Api based on .Net Core with PostgreSQL",
+                        TermsOfService = new System.Uri(
+                            "https://opendatahub.readthedocs.io/en/latest/"
+                        ),
+                        Contact = new OpenApiContact
+                        {
+                            Name = "Open Data Hub Team",
+                            Email = "help@opendatahub.com",
+                            Url = new System.Uri("https://opendatahub.com/"),
+                        },
+                    }
+                );
+                c.MapType<LegacyBool>(() => new OpenApiSchema { Type = "boolean" });
+                c.MapType<PageSize>(() => new OpenApiSchema { Type = "integer" });
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 //var xmlPathdatamodel = Path.Combine(AppContext.BaseDirectory, $"DataModel.xml");
                 c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
                 //c.IncludeXmlComments(xmlPathdatamodel, includeControllerXmlComments: true);
-                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
+                c.AddSecurityDefinition(
+                    "oauth2",
+                    new OpenApiSecurityScheme
                     {
-                        Password = new OpenApiOAuthFlow
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.OAuth2,
+                        Flows = new OpenApiOAuthFlows
                         {
-                            TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
+                            Password = new OpenApiOAuthFlow
+                            {
+                                TokenUrl = new Uri(
+                                    Configuration
+                                        .GetSection("OauthServerConfig")
+                                        .GetValue<string>("Authority")
+                                        + "protocol/openid-connect/token"
+                                ),
+                            },
+                            ClientCredentials = new OpenApiOAuthFlow
+                            {
+                                TokenUrl = new Uri(
+                                    Configuration
+                                        .GetSection("OauthServerConfig")
+                                        .GetValue<string>("Authority")
+                                        + "protocol/openid-connect/token"
+                                ),
+                            },
                         },
-                        ClientCredentials = new OpenApiOAuthFlow
-                        {
-                            TokenUrl = new Uri(Configuration.GetSection("OauthServerConfig").GetValue<string>("Authority") + "protocol/openid-connect/token")
-                        }
-                    },
-                    BearerFormat = "JWT",
-                    Scheme = "Bearer"
-                });
+                        BearerFormat = "JWT",
+                        Scheme = "Bearer",
+                    }
+                );
                 c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 c.OperationFilter<AuthenticationRequirementsOperationFilter>();
                 c.SchemaFilter<DeprecatedAttributeSchemaFilter>();
@@ -412,12 +454,14 @@ namespace OdhApiCore
                 //            }
                 //        }, new List<string>()
                 //    }
-                //});                
+                //});
             });
             services.AddSwaggerGenNewtonsoftSupport();
 
             //Use server side caching of the swagger doc
-            services.Replace(ServiceDescriptor.Transient<ISwaggerProvider, CachingSwaggerProvider>());
+            services.Replace(
+                ServiceDescriptor.Transient<ISwaggerProvider, CachingSwaggerProvider>()
+            );
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -447,19 +491,27 @@ namespace OdhApiCore
             app.UseResponseCompression();
             //app.UseHttpsRedirection();
 
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                OnPrepareResponse = ctx =>
+            app.UseStaticFiles(
+                new StaticFileOptions()
                 {
-                    //Activate Browser Cache of the swagger file for 1 day                                        
-                    if (ctx.File.Name.ToLower() == "swagger.json")
+                    OnPrepareResponse = ctx =>
                     {
-                        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=86400");
-                    }
-                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-                    ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-                },
-            });
+                        //Activate Browser Cache of the swagger file for 1 day
+                        if (ctx.File.Name.ToLower() == "swagger.json")
+                        {
+                            ctx.Context.Response.Headers.Append(
+                                "Cache-Control",
+                                "public,max-age=86400"
+                            );
+                        }
+                        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+                        ctx.Context.Response.Headers.Append(
+                            "Access-Control-Allow-Headers",
+                            "Origin, X-Requested-With, Content-Type, Accept"
+                        );
+                    },
+                }
+            );
 
             app.UseRouting();
 
@@ -473,13 +525,21 @@ namespace OdhApiCore
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(c =>
             {
-                c.PreSerializeFilters.Add((swagger, httpReq) =>
-                {
-                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
-                });
+                c.PreSerializeFilters.Add(
+                    (swagger, httpReq) =>
+                    {
+                        swagger.Servers = new List<OpenApiServer>
+                        {
+                            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" },
+                        };
+                    }
+                );
             });
 
-            app.ApplicationServices.SaveSwaggerJson(Configuration.GetSection("ApiConfig").GetValue<string>("Url"), Configuration.GetSection("JsonConfig").GetValue<string>("Jsondir"));
+            app.ApplicationServices.SaveSwaggerJson(
+                Configuration.GetSection("ApiConfig").GetValue<string>("Url"),
+                Configuration.GetSection("JsonConfig").GetValue<string>("Jsondir")
+            );
             //app.UseSaveSwaggerJson(Configuration);
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
@@ -514,10 +574,9 @@ namespace OdhApiCore
             //skipRemainingRules: true)
 
             app.UseRewriter(
-                new RewriteOptions()
-                .AddRedirect("api/(.*)", "v1/$1")
-                //.AddRewrite(@"^(?=/api)", "/v1", skipRemainingRules: true)
-                );
+                new RewriteOptions().AddRedirect("api/(.*)", "v1/$1")
+            //.AddRewrite(@"^(?=/api)", "/v1", skipRemainingRules: true)
+            );
 
             //Not needed at moment
             //app.UseHttpContext();
@@ -528,17 +587,15 @@ namespace OdhApiCore
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
-            app.UseHealthChecks("/self", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("self")
-            });
+            app.UseHealthChecks(
+                "/self",
+                new HealthCheckOptions { Predicate = r => r.Name.Contains("self") }
+            );
 
-            app.UseHealthChecks("/ready", new HealthCheckOptions
-            {
-                Predicate = r => r.Tags.Contains("services")
-            });
+            app.UseHealthChecks(
+                "/ready",
+                new HealthCheckOptions { Predicate = r => r.Tags.Contains("services") }
+            );
         }
     }
-
-   
 }

@@ -2,8 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using DataModel;
+using Helper;
 
 namespace CDB.Parser
 {
@@ -24,9 +24,16 @@ namespace CDB.Parser
         /// <param name="myresponse"></param>
         /// <param name="languages"></param>
         /// <param name="A0RID"></param>
-        /// <param name="xmldir"></param>        
+        /// <param name="xmldir"></param>
         /// <returns></returns>
-        public static List<AccoRoom> ParseMyAccoRoom(XDocument myresponse, XDocument myfeatures, XDocument roomamenities, List<string> languages, string A0RID, string xmldir)
+        public static List<AccoRoom> ParseMyAccoRoom(
+            XDocument myresponse,
+            XDocument myfeatures,
+            XDocument roomamenities,
+            List<string> languages,
+            string A0RID,
+            string xmldir
+        )
         {
             try
             {
@@ -46,7 +53,11 @@ namespace CDB.Parser
                     if (myroom.Attribute("B0RID") != null)
                     {
                         string b0rid = myroom.Attribute("B0RID").Value;
-                        string typ = myroom.Elements("Data").FirstOrDefault().Attribute("B0Typ").Value;
+                        string typ = myroom
+                            .Elements("Data")
+                            .FirstOrDefault()
+                            .Attribute("B0Typ")
+                            .Value;
 
                         AccoRoom theroom = new AccoRoom();
                         theroom.A0RID = A0RID;
@@ -54,21 +65,24 @@ namespace CDB.Parser
                         theroom.Roomtype = GetRoomType(typ);
 
                         theroom.RoomtypeInt = Convert.ToInt32(typ);
-                        theroom.RoomClassificationCodes = AlpineBitsHelper.GetRoomClassificationCode(theroom.Roomtype);
+                        theroom.RoomClassificationCodes =
+                            AlpineBitsHelper.GetRoomClassificationCode(theroom.Roomtype);
 
                         //NEU
                         theroom.Source = "LTS";
                         theroom.LTSId = b0rid;
                         theroom.HGVId = "";
 
-
                         if (myroom.Elements("Data").FirstOrDefault().Attribute("B0Cod") != null)
-                            theroom.RoomCode = myroom.Elements("Data").FirstOrDefault().Attribute("B0Cod").Value;
+                            theroom.RoomCode = myroom
+                                .Elements("Data")
+                                .FirstOrDefault()
+                                .Attribute("B0Cod")
+                                .Value;
                         else
                             theroom.RoomCode = "";
 
                         theroom.PriceFrom = null;
-
 
                         //Room numbers
                         var roomnumbers = new List<string>();
@@ -78,11 +92,16 @@ namespace CDB.Parser
                             //Is the B0RID Attribute Set
                             if (grouprdata.Elements("Data").Attributes("B0RID").Count() > 0)
                             {
-                                var roomnumberobject = grouprdata.Elements("Data").Where(x => x.Attribute("B0RID").Value == b0rid).ToList();
+                                var roomnumberobject = grouprdata
+                                    .Elements("Data")
+                                    .Where(x => x.Attribute("B0RID").Value == b0rid)
+                                    .ToList();
 
                                 if (roomnumberobject != null)
                                 {
-                                    var roomnumberobjeclist = roomnumberobject.Select(x => x.Attribute("F1Nam").Value).ToList();
+                                    var roomnumberobjeclist = roomnumberobject
+                                        .Select(x => x.Attribute("F1Nam").Value)
+                                        .ToList();
 
                                     if (roomnumberobjeclist != null)
                                         roomnumbers = roomnumberobjeclist;
@@ -92,10 +111,26 @@ namespace CDB.Parser
 
                         theroom.RoomNumbers = roomnumbers;
 
-                        string roommax = myroom.Elements("Data").FirstOrDefault().Attribute("B0Max").Value;
-                        string roommin = myroom.Elements("Data").FirstOrDefault().Attribute("B0Min").Value;
-                        string roomstd = myroom.Elements("Data").FirstOrDefault().Attribute("B0Std").Value;
-                        string roomqty = myroom.Elements("Data").FirstOrDefault().Attribute("B0Qty").Value;
+                        string roommax = myroom
+                            .Elements("Data")
+                            .FirstOrDefault()
+                            .Attribute("B0Max")
+                            .Value;
+                        string roommin = myroom
+                            .Elements("Data")
+                            .FirstOrDefault()
+                            .Attribute("B0Min")
+                            .Value;
+                        string roomstd = myroom
+                            .Elements("Data")
+                            .FirstOrDefault()
+                            .Attribute("B0Std")
+                            .Value;
+                        string roomqty = myroom
+                            .Elements("Data")
+                            .FirstOrDefault()
+                            .Attribute("B0Qty")
+                            .Value;
 
                         if (!String.IsNullOrEmpty(roommax))
                             theroom.Roommax = Convert.ToInt32(roommax);
@@ -116,9 +151,26 @@ namespace CDB.Parser
                             theroom.RoomQuantity = Convert.ToInt32(roomqty);
                         else
                             theroom.RoomQuantity = null;
-                        
 
-                        var myparsedroom = ParseMyRoomDetails(theroom, languages, groupname.Where(x => x.Attribute("B0RID").Value == b0rid).FirstOrDefault(), grouptin.Where(x => x.Attribute("B0RID").Value == b0rid).FirstOrDefault(), grouppublicity.Where(x => x.Attribute("B0RID").Value == b0rid).FirstOrDefault(), groupfoto.Where(x => x.Attribute("B0RID").Value == b0rid).FirstOrDefault(), myfeatures, roomamenities, xmldir);
+                        var myparsedroom = ParseMyRoomDetails(
+                            theroom,
+                            languages,
+                            groupname
+                                .Where(x => x.Attribute("B0RID").Value == b0rid)
+                                .FirstOrDefault(),
+                            grouptin
+                                .Where(x => x.Attribute("B0RID").Value == b0rid)
+                                .FirstOrDefault(),
+                            grouppublicity
+                                .Where(x => x.Attribute("B0RID").Value == b0rid)
+                                .FirstOrDefault(),
+                            groupfoto
+                                .Where(x => x.Attribute("B0RID").Value == b0rid)
+                                .FirstOrDefault(),
+                            myfeatures,
+                            roomamenities,
+                            xmldir
+                        );
 
                         myparsedroom.LastChange = DateTime.Now;
 
@@ -129,20 +181,40 @@ namespace CDB.Parser
                 return myroomlist;
             }
             catch (Exception ex)
-            {                
+            {
                 Console.WriteLine(ex.Message);
 
                 return null;
             }
         }
 
-        public static AccoRoom ParseMyRoomDetails(AccoRoom myroom, List<string> languages, XElement groupname, XElement grouptin, XElement grouppublicity, XElement groupfoto, XDocument myfeatures, XDocument roomamenities, string xmldir)
+        public static AccoRoom ParseMyRoomDetails(
+            AccoRoom myroom,
+            List<string> languages,
+            XElement groupname,
+            XElement grouptin,
+            XElement grouppublicity,
+            XElement groupfoto,
+            XDocument myfeatures,
+            XDocument roomamenities,
+            string xmldir
+        )
         {
-            myroom.Shortname = groupname.Elements("Data").Where(x => x.Attribute("LngID").Value.ToUpper() == "DE").Count() > 0 ? groupname.Elements("Data").Where(x => x.Attribute("LngID").Value.ToUpper() == "DE").FirstOrDefault().Attribute("B1Des").Value : "not defined";
+            myroom.Shortname =
+                groupname
+                    .Elements("Data")
+                    .Where(x => x.Attribute("LngID").Value.ToUpper() == "DE")
+                    .Count() > 0
+                    ? groupname
+                        .Elements("Data")
+                        .Where(x => x.Attribute("LngID").Value.ToUpper() == "DE")
+                        .FirstOrDefault()
+                        .Attribute("B1Des")
+                        .Value
+                    : "not defined";
 
             if (grouptin.Elements("Data").Count() > 0)
             {
-
                 List<AccoFeature> featurelist = new List<AccoFeature>();
 
                 //Features
@@ -150,18 +222,32 @@ namespace CDB.Parser
                 {
                     string tinrid = thetin.Attribute("T0RID").Value;
 
-                    var myfeature = myfeatures.Root.Elements("Data").Where(x => x.Attribute("T0RID").Value == tinrid).FirstOrDefault().Elements("DataLng").Where(x => x.Attribute("LngID").Value.ToUpper() == "EN").FirstOrDefault().Attribute("T1Des").Value;
+                    var myfeature = myfeatures
+                        .Root.Elements("Data")
+                        .Where(x => x.Attribute("T0RID").Value == tinrid)
+                        .FirstOrDefault()
+                        .Elements("DataLng")
+                        .Where(x => x.Attribute("LngID").Value.ToUpper() == "EN")
+                        .FirstOrDefault()
+                        .Attribute("T1Des")
+                        .Value;
 
                     //HGV ID Feature + OTA Code
                     string hgvamenityid = "";
                     string otacodes = "";
 
-                    var myamenity = roomamenities.Root.Elements("amenity").Where(x => x.Element("ltsrid").Value == tinrid).FirstOrDefault();
+                    var myamenity = roomamenities
+                        .Root.Elements("amenity")
+                        .Where(x => x.Element("ltsrid").Value == tinrid)
+                        .FirstOrDefault();
 
                     if (myamenity != null)
                     {
                         hgvamenityid = myamenity.Element("hgvid").Value;
-                        otacodes = myamenity.Element("ota_codes") != null ? myamenity.Element("ota_codes").Value : "";
+                        otacodes =
+                            myamenity.Element("ota_codes") != null
+                                ? myamenity.Element("ota_codes").Value
+                                : "";
                     }
 
                     List<int> amenitycodes = null;
@@ -178,7 +264,16 @@ namespace CDB.Parser
                     }
 
                     if (myfeature != null)
-                        featurelist.Add(new AccoFeature() { Id = tinrid, Name = myfeature, HgvId = hgvamenityid, OtaCodes = otacodes, RoomAmenityCodes = amenitycodes });
+                        featurelist.Add(
+                            new AccoFeature()
+                            {
+                                Id = tinrid,
+                                Name = myfeature,
+                                HgvId = hgvamenityid,
+                                OtaCodes = otacodes,
+                                RoomAmenityCodes = amenitycodes,
+                            }
+                        );
                 }
                 myroom.Features = featurelist.ToList();
 
@@ -189,7 +284,7 @@ namespace CDB.Parser
 
             myroom.HasLanguage = new List<string>();
 
-            //Details            
+            //Details
             foreach (string mylang in languages)
             {
                 AccoRoomDetail mydetail = new AccoRoomDetail();
@@ -201,14 +296,28 @@ namespace CDB.Parser
 
                     if (!myroom.HasLanguage.Contains(mylang))
                         myroom.HasLanguage.Add(mylang);
-          
-                    mydetail.Name = groupname.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).Count() > 0 ? groupname.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).FirstOrDefault().Attribute("B1Des").Value : "";
+
+                    mydetail.Name =
+                        groupname
+                            .Elements("Data")
+                            .Where(x => x.Attribute("LngID").Value == mylang.ToUpper())
+                            .Count() > 0
+                            ? groupname
+                                .Elements("Data")
+                                .Where(x => x.Attribute("LngID").Value == mylang.ToUpper())
+                                .FirstOrDefault()
+                                .Attribute("B1Des")
+                                .Value
+                            : "";
 
                     Console.WriteLine("Name imported!");
                 }
                 if (grouppublicity.Elements("Data").Count() > 0)
                 {
-                    var mydesc = grouppublicity.Elements("Data").Where(x => x.Attribute("LngID").Value == mylang.ToUpper()).FirstOrDefault();
+                    var mydesc = grouppublicity
+                        .Elements("Data")
+                        .Where(x => x.Attribute("LngID").Value == mylang.ToUpper())
+                        .FirstOrDefault();
 
                     if (mydesc != null)
                     {
@@ -221,7 +330,6 @@ namespace CDB.Parser
 
                 myroom.AccoRoomDetail.TryAddOrUpdate(mylang, mydetail);
             }
-
 
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
@@ -239,13 +347,18 @@ namespace CDB.Parser
                     mainimage.ImageSource = "LTS";
                     mainimage.ListPosition = i;
 
-                    mainimage.CopyRight = theimage.Attribute("B4Cop") != null ? theimage.Attribute("B4Cop").Value : "";
-                    mainimage.License = theimage.Attribute("S31Cod") != null ? theimage.Attribute("S31Cod").Value : "";
+                    mainimage.CopyRight =
+                        theimage.Attribute("B4Cop") != null
+                            ? theimage.Attribute("B4Cop").Value
+                            : "";
+                    mainimage.License =
+                        theimage.Attribute("S31Cod") != null
+                            ? theimage.Attribute("S31Cod").Value
+                            : "";
 
                     imagegallerylist.Add(mainimage);
                     i++;
                 }
-
             }
 
             myroom.ImageGallery = imagegallerylist.ToList();
@@ -275,21 +388,21 @@ namespace CDB.Parser
                     myroomtype = "dorm";
                     break;
 
-                    //case "3":
-                    //    myroomtype = "campsite";
-                    //    break;
-                    //case "4":
-                    //    myroomtype = "caravan";
-                    //    break;
-                    //case "5":
-                    //    myroomtype = "tentarea";
-                    //    break;
-                    //case "6":
-                    //    myroomtype = "bungalow";
-                    //    break;
-                    //case "7":
-                    //    myroomtype = "camp";
-                    //    break;
+                //case "3":
+                //    myroomtype = "campsite";
+                //    break;
+                //case "4":
+                //    myroomtype = "caravan";
+                //    break;
+                //case "5":
+                //    myroomtype = "tentarea";
+                //    break;
+                //case "6":
+                //    myroomtype = "bungalow";
+                //    break;
+                //case "7":
+                //    myroomtype = "camp";
+                //    break;
             }
 
             return myroomtype;
@@ -359,6 +472,5 @@ namespace CDB.Parser
                     return 0;
             }
         }
-
     }
 }

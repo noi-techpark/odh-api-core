@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 
 namespace Helper
 {
@@ -23,7 +23,9 @@ namespace Helper
             // http://stackoverflow.com/a/43554000/538763
             //
             if (tryUseXForwardHeader)
-                ip = GetHeaderValueAs<string>("X-Forwarded-For", context)?.SplitCsv()?.FirstOrDefault();
+                ip = GetHeaderValueAs<string>("X-Forwarded-For", context)
+                    ?.SplitCsv()
+                    ?.FirstOrDefault();
 
             // RemoteIpAddress is always null in DNX RC1 Update1 (bug).
             if (ip.IsNullOrWhitespace() && context?.Connection?.RemoteIpAddress != null)
@@ -50,7 +52,7 @@ namespace Helper
 
             if (context?.Request?.Headers?.TryGetValue(headerName, out values) ?? false)
             {
-                string rawValues = values.ToString();   // writes out as Csv when there are multiple.
+                string rawValues = values.ToString(); // writes out as Csv when there are multiple.
 
                 if (!rawValues.IsNullOrWhitespace())
                     return (T)Convert.ChangeType(values.ToString(), typeof(T));
@@ -58,7 +60,10 @@ namespace Helper
             return default(T);
         }
 
-        private static List<string>? SplitCsv(this string csvList, bool nullOrWhitespaceInputReturnsNull = false)
+        private static List<string>? SplitCsv(
+            this string csvList,
+            bool nullOrWhitespaceInputReturnsNull = false
+        )
         {
             if (string.IsNullOrWhiteSpace(csvList))
                 return nullOrWhitespaceInputReturnsNull ? null : new List<string>();

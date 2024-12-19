@@ -15,7 +15,7 @@ namespace OdhApiCore.Controllers.helper
         public readonly string[] mybokchannels;
         public readonly List<string> accoidlist;
         public readonly string idsofchannel;
-        public readonly List<Tuple<string,string,List<string>>> myroomdata;
+        public readonly List<Tuple<string, string, List<string>>> myroomdata;
         public readonly XElement xoffertype;
         public readonly XElement xhoteldetails;
         public readonly DateTime arrival;
@@ -27,23 +27,47 @@ namespace OdhApiCore.Controllers.helper
         public readonly string mssversion;
 
         public static MssHelper Create(
-            List<string> accoidlist, string idsofchannel,
-            string bokfilter, string language, string roominfo, string boardfilter,
-            string arrival, string departure, int? detail, 
-            string requestsource, string mssversion)
+            List<string> accoidlist,
+            string idsofchannel,
+            string bokfilter,
+            string language,
+            string roominfo,
+            string boardfilter,
+            string arrival,
+            string departure,
+            int? detail,
+            string requestsource,
+            string mssversion
+        )
         {
             return new MssHelper(
-                accoidlist: accoidlist, idsofchannel: idsofchannel, bokfilter: bokfilter, language: language,
-                roominfo: roominfo, boardfilter: boardfilter, arrival: arrival, 
-                departure: departure, detail: detail,
-                requestsource: requestsource, mssversion: mssversion);
+                accoidlist: accoidlist,
+                idsofchannel: idsofchannel,
+                bokfilter: bokfilter,
+                language: language,
+                roominfo: roominfo,
+                boardfilter: boardfilter,
+                arrival: arrival,
+                departure: departure,
+                detail: detail,
+                requestsource: requestsource,
+                mssversion: mssversion
+            );
         }
 
         private MssHelper(
-            List<string> accoidlist, string idsofchannel,
-            string bokfilter, string language, string roominfo, string boardfilter,
-            string arrival, string departure, int? detail, string requestsource,
-            string mssversion)
+            List<string> accoidlist,
+            string idsofchannel,
+            string bokfilter,
+            string language,
+            string roominfo,
+            string boardfilter,
+            string arrival,
+            string departure,
+            int? detail,
+            string requestsource,
+            string mssversion
+        )
         {
             if (bokfilter.EndsWith(","))
                 bokfilter = bokfilter.Substring(0, bokfilter.Length - 1);
@@ -80,15 +104,23 @@ namespace OdhApiCore.Controllers.helper
             this.requestsource = requestsource;
             this.mssversion = mssversion;
 
-            if (language.ToLower() == "nl" || language.ToLower() == "cs" || language.ToLower() == "pl" || language.ToLower() == "fr" || language.ToLower() == "ru")
+            if (
+                language.ToLower() == "nl"
+                || language.ToLower() == "cs"
+                || language.ToLower() == "pl"
+                || language.ToLower() == "fr"
+                || language.ToLower() == "ru"
+            )
                 mssrequestlanguage = "en";
             else
                 mssrequestlanguage = language.ToLower();
 
-            this.accoidlist = accoidlist != null && accoidlist.Count > 0 ? accoidlist.Select(x => x.ToUpper()).ToList() : accoidlist ?? new();            
+            this.accoidlist =
+                accoidlist != null && accoidlist.Count > 0
+                    ? accoidlist.Select(x => x.ToUpper()).ToList()
+                    : accoidlist ?? new();
 
             this.idsofchannel = idsofchannel;
         }
-
     }
 }

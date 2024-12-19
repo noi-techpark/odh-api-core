@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Xunit;
 using Helper;
+using Xunit;
 
 namespace OdhApiCoreTests.Helper
 {
@@ -36,7 +36,11 @@ namespace OdhApiCoreTests.Helper
             string orderby = "";
             string? invalidseed = "invalidnumber";
 
-            PostgresSQLOrderByBuilder.BuildSeedOrderBy(ref orderby, ref invalidseed, "orderbyclause");
+            PostgresSQLOrderByBuilder.BuildSeedOrderBy(
+                ref orderby,
+                ref invalidseed,
+                "orderbyclause"
+            );
             // CHECK: Is this the correct behavior?
             Assert.Equal("md5(id || '')", orderby);
         }

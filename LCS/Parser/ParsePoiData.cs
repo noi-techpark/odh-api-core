@@ -2,14 +2,14 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Helper;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
+using Helper;
 
 namespace LCS.Parser
 {
@@ -18,15 +18,74 @@ namespace LCS.Parser
         public static CultureInfo myculture = new CultureInfo("en");
 
         //Get the POI Detail Information //string activitytype
-        public static PoiBaseInfos GetPoiDetailLTSNEW(string rid, PoiBaseInfos hike, string ltsuser, string ltspswd, string ltsmsgpswd)
+        public static PoiBaseInfos GetPoiDetailLTSNEW(
+            string rid,
+            PoiBaseInfos hike,
+            string ltsuser,
+            string ltspswd,
+            string ltsmsgpswd
+        )
         {
-
             List<string> myactivitylist = new List<string>();
             myactivitylist.Add(rid);
 
-            var mypoirequestde = GetLCSRequests.GetPoiDetailRequest("de", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
-            var mypoirequestit = GetLCSRequests.GetPoiDetailRequest("it", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
-            var mypoirequesten = GetLCSRequests.GetPoiDetailRequest("en", "0", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", myactivitylist, "SMG", ltsmsgpswd);
+            var mypoirequestde = GetLCSRequests.GetPoiDetailRequest(
+                "de",
+                "0",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                myactivitylist,
+                "SMG",
+                ltsmsgpswd
+            );
+            var mypoirequestit = GetLCSRequests.GetPoiDetailRequest(
+                "it",
+                "0",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                myactivitylist,
+                "SMG",
+                ltsmsgpswd
+            );
+            var mypoirequesten = GetLCSRequests.GetPoiDetailRequest(
+                "en",
+                "0",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                "1",
+                myactivitylist,
+                "SMG",
+                ltsmsgpswd
+            );
 
             GetPoiDataLCS mypoisearch = new GetPoiDataLCS(ltsuser, ltspswd);
             var myactivityresponsede = mypoisearch.GetPoiDetail(mypoirequestde);
@@ -45,7 +104,6 @@ namespace LCS.Parser
             var thepoiit = myactivityresponseit.POIs.POI.FirstOrDefault();
             var thepoien = myactivityresponseen.POIs.POI.FirstOrDefault();
 
-
             string nome = "";
 
             if (thepoide.Name != null)
@@ -60,12 +118,14 @@ namespace LCS.Parser
                 if (thepoide.ID.StartsWith("SMG-"))
                     hike.SmgId = thepoide.ID.Replace("SMG-", "");
 
-            //SMG ACtive übernehmen  
+            //SMG ACtive übernehmen
             hike.Active = true;
             hike.SmgActive = hike.SmgActive;
 
             if (thepoide.GeoDatas.GeoData.FirstOrDefault().Altitude != null)
-                hike.AltitudeDifference = thepoide.GeoDatas.GeoData.FirstOrDefault().Altitude.Difference;
+                hike.AltitudeDifference = thepoide
+                    .GeoDatas.GeoData.FirstOrDefault()
+                    .Altitude.Difference;
             else
                 hike.AltitudeDifference = 0;
 
@@ -84,7 +144,9 @@ namespace LCS.Parser
                     //Ondere Meglichkeit
                     string duration = thepoide.GeoDatas.GeoData.FirstOrDefault().Distance.Duration;
                     var durationsplittet = duration.Split(':');
-                    hike.DistanceDuration = Convert.ToDouble(durationsplittet[0] + "," + durationsplittet[1]);
+                    hike.DistanceDuration = Convert.ToDouble(
+                        durationsplittet[0] + "," + durationsplittet[1]
+                    );
                 }
                 else
                     hike.DistanceDuration = 0;
@@ -113,30 +175,45 @@ namespace LCS.Parser
                 var parsedcontactinfode = thepoide.ContactInfos.ContactInfo.FirstOrDefault();
                 if (parsedcontactinfode != null)
                 {
-
                     ContactInfos mycontactinfo = new ContactInfos();
 
                     var myadresselement = parsedcontactinfode.Addresses;
 
                     mycontactinfo.Address = myadresselement.Address.FirstOrDefault().AddressLine;
 
-                    mycontactinfo.City = parsedcontactinfode.Addresses.Address.FirstOrDefault().CityName;
-                    mycontactinfo.CountryCode = parsedcontactinfode.Addresses.Address.FirstOrDefault().CountryName.Code;
-                    mycontactinfo.CountryName = parsedcontactinfode.Addresses.Address.FirstOrDefault().CountryName.InnerText;
-                    mycontactinfo.ZipCode = parsedcontactinfode.Addresses.Address.FirstOrDefault().PostalCode;
+                    mycontactinfo.City = parsedcontactinfode
+                        .Addresses.Address.FirstOrDefault()
+                        .CityName;
+                    mycontactinfo.CountryCode = parsedcontactinfode
+                        .Addresses.Address.FirstOrDefault()
+                        .CountryName.Code;
+                    mycontactinfo.CountryName = parsedcontactinfode
+                        .Addresses.Address.FirstOrDefault()
+                        .CountryName.InnerText;
+                    mycontactinfo.ZipCode = parsedcontactinfode
+                        .Addresses.Address.FirstOrDefault()
+                        .PostalCode;
 
-                    mycontactinfo.Email = parsedcontactinfode.Emails.Email.FirstOrDefault().InnerText;
+                    mycontactinfo.Email = parsedcontactinfode
+                        .Emails.Email.FirstOrDefault()
+                        .InnerText;
                     mycontactinfo.Faxnumber = "";
 
-                    mycontactinfo.Givenname = parsedcontactinfode.Names.Name.FirstOrDefault().GivenName;
+                    mycontactinfo.Givenname = parsedcontactinfode
+                        .Names.Name.FirstOrDefault()
+                        .GivenName;
                     mycontactinfo.Surname = parsedcontactinfode.Names.Name.FirstOrDefault().Surname;
-                    mycontactinfo.NamePrefix = parsedcontactinfode.Names.Name.FirstOrDefault().NamePrefix;
+                    mycontactinfo.NamePrefix = parsedcontactinfode
+                        .Names.Name.FirstOrDefault()
+                        .NamePrefix;
 
                     mycontactinfo.CompanyName = parsedcontactinfode.CompanyName.InnerText;
 
                     mycontactinfo.Language = "de";
 
-                    mycontactinfo.Phonenumber = parsedcontactinfode.Phones.Phone.FirstOrDefault().PhoneNumber;
+                    mycontactinfo.Phonenumber = parsedcontactinfode
+                        .Phones.Phone.FirstOrDefault()
+                        .PhoneNumber;
                     mycontactinfo.Url = parsedcontactinfode.URLs.URL.FirstOrDefault().InnerText;
 
                     //contactinfolist.Add(mycontactinfo);
@@ -150,30 +227,45 @@ namespace LCS.Parser
                 var parsedcontactinfoit = thepoiit.ContactInfos.ContactInfo.FirstOrDefault();
                 if (parsedcontactinfoit != null)
                 {
-
                     ContactInfos mycontactinfo = new ContactInfos();
 
                     var myadresselement = parsedcontactinfoit.Addresses;
 
                     mycontactinfo.Address = myadresselement.Address.FirstOrDefault().AddressLine;
 
-                    mycontactinfo.City = parsedcontactinfoit.Addresses.Address.FirstOrDefault().CityName;
-                    mycontactinfo.CountryCode = parsedcontactinfoit.Addresses.Address.FirstOrDefault().CountryName.Code;
-                    mycontactinfo.CountryName = parsedcontactinfoit.Addresses.Address.FirstOrDefault().CountryName.InnerText;
-                    mycontactinfo.ZipCode = parsedcontactinfoit.Addresses.Address.FirstOrDefault().PostalCode;
+                    mycontactinfo.City = parsedcontactinfoit
+                        .Addresses.Address.FirstOrDefault()
+                        .CityName;
+                    mycontactinfo.CountryCode = parsedcontactinfoit
+                        .Addresses.Address.FirstOrDefault()
+                        .CountryName.Code;
+                    mycontactinfo.CountryName = parsedcontactinfoit
+                        .Addresses.Address.FirstOrDefault()
+                        .CountryName.InnerText;
+                    mycontactinfo.ZipCode = parsedcontactinfoit
+                        .Addresses.Address.FirstOrDefault()
+                        .PostalCode;
 
-                    mycontactinfo.Email = parsedcontactinfoit.Emails.Email.FirstOrDefault().InnerText;
+                    mycontactinfo.Email = parsedcontactinfoit
+                        .Emails.Email.FirstOrDefault()
+                        .InnerText;
                     mycontactinfo.Faxnumber = "";
 
-                    mycontactinfo.Givenname = parsedcontactinfoit.Names.Name.FirstOrDefault().GivenName;
+                    mycontactinfo.Givenname = parsedcontactinfoit
+                        .Names.Name.FirstOrDefault()
+                        .GivenName;
                     mycontactinfo.Surname = parsedcontactinfoit.Names.Name.FirstOrDefault().Surname;
-                    mycontactinfo.NamePrefix = parsedcontactinfoit.Names.Name.FirstOrDefault().NamePrefix;
+                    mycontactinfo.NamePrefix = parsedcontactinfoit
+                        .Names.Name.FirstOrDefault()
+                        .NamePrefix;
 
                     mycontactinfo.CompanyName = parsedcontactinfoit.CompanyName.InnerText;
 
                     mycontactinfo.Language = "it";
 
-                    mycontactinfo.Phonenumber = parsedcontactinfoit.Phones.Phone.FirstOrDefault().PhoneNumber;
+                    mycontactinfo.Phonenumber = parsedcontactinfoit
+                        .Phones.Phone.FirstOrDefault()
+                        .PhoneNumber;
                     mycontactinfo.Url = parsedcontactinfoit.URLs.URL.FirstOrDefault().InnerText;
 
                     //contactinfolist.Add(mycontactinfo);
@@ -187,30 +279,45 @@ namespace LCS.Parser
                 var parsedcontactinfoen = thepoien.ContactInfos.ContactInfo.FirstOrDefault();
                 if (parsedcontactinfoen != null)
                 {
-
                     ContactInfos mycontactinfo = new ContactInfos();
 
                     var myadresselement = parsedcontactinfoen.Addresses;
 
                     mycontactinfo.Address = myadresselement.Address.FirstOrDefault().AddressLine;
 
-                    mycontactinfo.City = parsedcontactinfoen.Addresses.Address.FirstOrDefault().CityName;
-                    mycontactinfo.CountryCode = parsedcontactinfoen.Addresses.Address.FirstOrDefault().CountryName.Code;
-                    mycontactinfo.CountryName = parsedcontactinfoen.Addresses.Address.FirstOrDefault().CountryName.InnerText;
-                    mycontactinfo.ZipCode = parsedcontactinfoen.Addresses.Address.FirstOrDefault().PostalCode;
+                    mycontactinfo.City = parsedcontactinfoen
+                        .Addresses.Address.FirstOrDefault()
+                        .CityName;
+                    mycontactinfo.CountryCode = parsedcontactinfoen
+                        .Addresses.Address.FirstOrDefault()
+                        .CountryName.Code;
+                    mycontactinfo.CountryName = parsedcontactinfoen
+                        .Addresses.Address.FirstOrDefault()
+                        .CountryName.InnerText;
+                    mycontactinfo.ZipCode = parsedcontactinfoen
+                        .Addresses.Address.FirstOrDefault()
+                        .PostalCode;
 
-                    mycontactinfo.Email = parsedcontactinfoen.Emails.Email.FirstOrDefault().InnerText;
+                    mycontactinfo.Email = parsedcontactinfoen
+                        .Emails.Email.FirstOrDefault()
+                        .InnerText;
                     mycontactinfo.Faxnumber = "";
 
-                    mycontactinfo.Givenname = parsedcontactinfoen.Names.Name.FirstOrDefault().GivenName;
+                    mycontactinfo.Givenname = parsedcontactinfoen
+                        .Names.Name.FirstOrDefault()
+                        .GivenName;
                     mycontactinfo.Surname = parsedcontactinfoen.Names.Name.FirstOrDefault().Surname;
-                    mycontactinfo.NamePrefix = parsedcontactinfoen.Names.Name.FirstOrDefault().NamePrefix;
+                    mycontactinfo.NamePrefix = parsedcontactinfoen
+                        .Names.Name.FirstOrDefault()
+                        .NamePrefix;
 
                     mycontactinfo.CompanyName = parsedcontactinfoen.CompanyName.InnerText;
 
                     mycontactinfo.Language = "en";
 
-                    mycontactinfo.Phonenumber = parsedcontactinfoen.Phones.Phone.FirstOrDefault().PhoneNumber;
+                    mycontactinfo.Phonenumber = parsedcontactinfoen
+                        .Phones.Phone.FirstOrDefault()
+                        .PhoneNumber;
                     mycontactinfo.Url = parsedcontactinfoen.URLs.URL.FirstOrDefault().InnerText;
 
                     //contactinfolist.Add(mycontactinfo);
@@ -227,7 +334,8 @@ namespace LCS.Parser
             //List<Detail> detaillist = new List<Detail>();
             List<ImageGallery> imagegallerylist = new List<ImageGallery>();
 
-            var parsedmultimediainfode = thepoide.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
+            var parsedmultimediainfode =
+                thepoide.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
             if (parsedmultimediainfode != null)
             {
                 if (parsedmultimediainfode.ImageItems.ImageItem != null)
@@ -237,7 +345,10 @@ namespace LCS.Parser
                     {
                         ImageGallery myimggallery = new ImageGallery();
                         myimggallery.Height = imageelement.ImageFormat.Height;
-                        myimggallery.ImageDesc.TryAddOrUpdate("de", imageelement.Description.FirstOrDefault().InnerText);
+                        myimggallery.ImageDesc.TryAddOrUpdate(
+                            "de",
+                            imageelement.Description.FirstOrDefault().InnerText
+                        );
                         myimggallery.ImageName = imageelement.RID;
                         myimggallery.ImageUrl = imageelement.ImageFormat.URL.InnerText;
                         myimggallery.IsInGallery = true;
@@ -257,7 +368,10 @@ namespace LCS.Parser
 
                 Detail mydetailde = new Detail();
 
-                mydetailde.Title = thepoide.Name.FirstOrDefault() != null ? thepoide.Name.FirstOrDefault().InnerText.Trim() : "";
+                mydetailde.Title =
+                    thepoide.Name.FirstOrDefault() != null
+                        ? thepoide.Name.FirstOrDefault().InnerText.Trim()
+                        : "";
                 mydetailde.Header = "";
                 mydetailde.Language = "de";
                 mydetailde.AdditionalText = "";
@@ -269,49 +383,121 @@ namespace LCS.Parser
                     foreach (var textelement in mytextitems.TextItem)
                     {
                         //Allgemeine Beschreibung
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "732512C9492340F4AB30FFB800461BE7")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "732512C9492340F4AB30FFB800461BE7"
+                        )
                         {
-                            mydetailde.BaseText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.BaseText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Anfahrtstext
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C26C826A239C47BDB773B4E4B3F27547")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "C26C826A239C47BDB773B4E4B3F27547"
+                        )
                         {
-                            mydetailde.GetThereText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.GetThereText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Wegbeschreibung
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "ECEB7021321445648CE37A9A84D64930")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "ECEB7021321445648CE37A9A84D64930"
+                        )
                         {
-                            mydetailde.AdditionalText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.AdditionalText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Kurzbeschreibung A143F1FF0A0A4185A907208D643D3BB8 --> Placing in Introtext
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "A143F1FF0A0A4185A907208D643D3BB8")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "A143F1FF0A0A4185A907208D643D3BB8"
+                        )
                         {
-                            mydetailde.IntroText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.IntroText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Parken AFB5C1F8662949108105DAC81DD8B18F
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "AFB5C1F8662949108105DAC81DD8B18F")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "AFB5C1F8662949108105DAC81DD8B18F"
+                        )
                         {
-                            mydetailde.ParkingInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.ParkingInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Öffentliche Verkehrsmittel C67DBA804FAD4B4EB64A4A758771B723
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C67DBA804FAD4B4EB64A4A758771B723")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "C67DBA804FAD4B4EB64A4A758771B723"
+                        )
                         {
-                            mydetailde.PublicTransportationInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.PublicTransportationInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Tipp des Autors 643EDEE9CE2D44AC932FC714256B6C9C
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "643EDEE9CE2D44AC932FC714256B6C9C")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "643EDEE9CE2D44AC932FC714256B6C9C"
+                        )
                         {
-                            mydetailde.AuthorTip = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.AuthorTip =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Sicherheitshinweise 73EC4F8F7AAC48CE82A23E8EBDCA750E
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E"
+                        )
                         {
-                            mydetailde.SafetyInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.SafetyInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Ausrüstung 933D29E15E82415DBEDE877C477212D2
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "933D29E15E82415DBEDE877C477212D2")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "933D29E15E82415DBEDE877C477212D2"
+                        )
                         {
-                            mydetailde.EquipmentInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailde.EquipmentInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                     }
                 }
@@ -321,7 +507,8 @@ namespace LCS.Parser
             }
 
             //it
-            var parsedmultimediainfoit = thepoiit.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
+            var parsedmultimediainfoit =
+                thepoiit.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
             if (parsedmultimediainfoit != null)
             {
                 if (parsedmultimediainfoit.ImageItems.ImageItem != null)
@@ -329,7 +516,13 @@ namespace LCS.Parser
                     int i = 0;
                     foreach (var imageelement in parsedmultimediainfoit.ImageItems.ImageItem)
                     {
-                        imagegallerylist.Where(x => x.ListPosition == i && x.ImageSource == "LTS").FirstOrDefault().ImageDesc.TryAddOrUpdate("it", imageelement.Description.FirstOrDefault().InnerText);
+                        imagegallerylist
+                            .Where(x => x.ListPosition == i && x.ImageSource == "LTS")
+                            .FirstOrDefault()
+                            .ImageDesc.TryAddOrUpdate(
+                                "it",
+                                imageelement.Description.FirstOrDefault().InnerText
+                            );
                         i++;
                         //ImageGallery myimggallery = new ImageGallery();
                         //myimggallery.Height = imageelement.ImageFormat.Height;
@@ -349,7 +542,10 @@ namespace LCS.Parser
 
                 Detail mydetailit = new Detail();
 
-                mydetailit.Title = thepoiit.Name.FirstOrDefault() != null ? thepoiit.Name.FirstOrDefault().InnerText.Trim() : "";
+                mydetailit.Title =
+                    thepoiit.Name.FirstOrDefault() != null
+                        ? thepoiit.Name.FirstOrDefault().InnerText.Trim()
+                        : "";
                 mydetailit.Header = "";
                 mydetailit.Language = "it";
                 mydetailit.AdditionalText = "";
@@ -361,49 +557,121 @@ namespace LCS.Parser
                     foreach (var textelement in mytextitems.TextItem)
                     {
                         //Allgemeine Beschreibung
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "732512C9492340F4AB30FFB800461BE7")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "732512C9492340F4AB30FFB800461BE7"
+                        )
                         {
-                            mydetailit.BaseText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.BaseText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Anfahrtstext
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C26C826A239C47BDB773B4E4B3F27547")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "C26C826A239C47BDB773B4E4B3F27547"
+                        )
                         {
-                            mydetailit.GetThereText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.GetThereText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Wegbeschreibung
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "ECEB7021321445648CE37A9A84D64930")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "ECEB7021321445648CE37A9A84D64930"
+                        )
                         {
-                            mydetailit.AdditionalText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.AdditionalText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Kurzbeschreibung A143F1FF0A0A4185A907208D643D3BB8 --> Placing in Introtext
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "A143F1FF0A0A4185A907208D643D3BB8")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "A143F1FF0A0A4185A907208D643D3BB8"
+                        )
                         {
-                            mydetailit.IntroText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.IntroText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Parken AFB5C1F8662949108105DAC81DD8B18F
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "AFB5C1F8662949108105DAC81DD8B18F")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "AFB5C1F8662949108105DAC81DD8B18F"
+                        )
                         {
-                            mydetailit.ParkingInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.ParkingInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Öffentliche Verkehrsmittel C67DBA804FAD4B4EB64A4A758771B723
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C67DBA804FAD4B4EB64A4A758771B723")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "C67DBA804FAD4B4EB64A4A758771B723"
+                        )
                         {
-                            mydetailit.PublicTransportationInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.PublicTransportationInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Tipp des Autors 643EDEE9CE2D44AC932FC714256B6C9C
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "643EDEE9CE2D44AC932FC714256B6C9C")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "643EDEE9CE2D44AC932FC714256B6C9C"
+                        )
                         {
-                            mydetailit.AuthorTip = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.AuthorTip =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Sicherheitshinweise 73EC4F8F7AAC48CE82A23E8EBDCA750E
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E"
+                        )
                         {
-                            mydetailit.SafetyInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.SafetyInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Ausrüstung 933D29E15E82415DBEDE877C477212D2
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "933D29E15E82415DBEDE877C477212D2")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "933D29E15E82415DBEDE877C477212D2"
+                        )
                         {
-                            mydetailit.EquipmentInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailit.EquipmentInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                     }
                 }
@@ -413,16 +681,22 @@ namespace LCS.Parser
             }
 
             //en
-            var parsedmultimediainfoen = thepoien.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
+            var parsedmultimediainfoen =
+                thepoien.MultimediaDescriptions.MultimediaDescription.FirstOrDefault();
             if (parsedmultimediainfoen != null)
             {
-
                 if (parsedmultimediainfoen.ImageItems.ImageItem != null)
                 {
                     int i = 0;
                     foreach (var imageelement in parsedmultimediainfoen.ImageItems.ImageItem)
                     {
-                        imagegallerylist.Where(x => x.ListPosition == i && x.ImageSource == "LTS").FirstOrDefault().ImageDesc.TryAddOrUpdate("en", imageelement.Description.FirstOrDefault().InnerText);
+                        imagegallerylist
+                            .Where(x => x.ListPosition == i && x.ImageSource == "LTS")
+                            .FirstOrDefault()
+                            .ImageDesc.TryAddOrUpdate(
+                                "en",
+                                imageelement.Description.FirstOrDefault().InnerText
+                            );
                         i++;
 
                         //ImageGallery myimggallery = new ImageGallery();
@@ -439,12 +713,14 @@ namespace LCS.Parser
                     }
                 }
 
-
                 var mytextitems = parsedmultimediainfoen.TextItems;
 
                 Detail mydetailen = new Detail();
 
-                mydetailen.Title = thepoien.Name.FirstOrDefault() != null ? thepoien.Name.FirstOrDefault().InnerText.Trim() : "";
+                mydetailen.Title =
+                    thepoien.Name.FirstOrDefault() != null
+                        ? thepoien.Name.FirstOrDefault().InnerText.Trim()
+                        : "";
                 mydetailen.Header = "";
                 mydetailen.Language = "en";
                 mydetailen.AdditionalText = "";
@@ -456,49 +732,121 @@ namespace LCS.Parser
                     foreach (var textelement in mytextitems.TextItem)
                     {
                         //Allgemeine Beschreibung
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "732512C9492340F4AB30FFB800461BE7")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "732512C9492340F4AB30FFB800461BE7"
+                        )
                         {
-                            mydetailen.BaseText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.BaseText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Anfahrtstext
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C26C826A239C47BDB773B4E4B3F27547")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "C26C826A239C47BDB773B4E4B3F27547"
+                        )
                         {
-                            mydetailen.GetThereText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.GetThereText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Wegbeschreibung
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "ECEB7021321445648CE37A9A84D64930")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "ECEB7021321445648CE37A9A84D64930"
+                        )
                         {
-                            mydetailen.AdditionalText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.AdditionalText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Kurzbeschreibung A143F1FF0A0A4185A907208D643D3BB8 --> Placing in Introtext
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "A143F1FF0A0A4185A907208D643D3BB8")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "A143F1FF0A0A4185A907208D643D3BB8"
+                        )
                         {
-                            mydetailen.IntroText = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.IntroText =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Parken AFB5C1F8662949108105DAC81DD8B18F
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "AFB5C1F8662949108105DAC81DD8B18F")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "AFB5C1F8662949108105DAC81DD8B18F"
+                        )
                         {
-                            mydetailen.ParkingInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.ParkingInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Öffentliche Verkehrsmittel C67DBA804FAD4B4EB64A4A758771B723
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "C67DBA804FAD4B4EB64A4A758771B723")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "C67DBA804FAD4B4EB64A4A758771B723"
+                        )
                         {
-                            mydetailen.PublicTransportationInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.PublicTransportationInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Tipp des Autors 643EDEE9CE2D44AC932FC714256B6C9C
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "643EDEE9CE2D44AC932FC714256B6C9C")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "643EDEE9CE2D44AC932FC714256B6C9C"
+                        )
                         {
-                            mydetailen.AuthorTip = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.AuthorTip =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Sicherheitshinweise 73EC4F8F7AAC48CE82A23E8EBDCA750E
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "73EC4F8F7AAC48CE82A23E8EBDCA750E"
+                        )
                         {
-                            mydetailen.SafetyInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.SafetyInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                         //Ausrüstung 933D29E15E82415DBEDE877C477212D2
-                        if (textelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().RID == "933D29E15E82415DBEDE877C477212D2")
+                        if (
+                            textelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .RID == "933D29E15E82415DBEDE877C477212D2"
+                        )
                         {
-                            mydetailen.EquipmentInfo = textelement.Description.Count() > 0 ? textelement.Description.FirstOrDefault().InnerText : "";
+                            mydetailen.EquipmentInfo =
+                                textelement.Description.Count() > 0
+                                    ? textelement.Description.FirstOrDefault().InnerText
+                                    : "";
                         }
                     }
                 }
@@ -510,8 +858,8 @@ namespace LCS.Parser
             hike.ImageGallery = imagegallerylist.ToList();
             //hike.Detail = detaillist.ToList();
 
-            //Multimedia Infos VIDEOITEMS   
-          
+            //Multimedia Infos VIDEOITEMS
+
             if (parsedmultimediainfode != null)
             {
                 if (parsedmultimediainfode.VideoItems.VideoItem != null)
@@ -536,11 +884,36 @@ namespace LCS.Parser
                         videoItem.Active = true;
                         videoItem.Language = "de";
                         //Set videotype & videosource in english
-                        if (videoelement.EnumCodes != null && videoelement.EnumCodes.EnumCode != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
-                            videoItem.VideoType = videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText; //TODO PARSE VideoType
+                        if (
+                            videoelement.EnumCodes != null
+                            && videoelement.EnumCodes.EnumCode != null
+                            && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null
+                            && videoelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name != null
+                        )
+                            videoItem.VideoType = videoelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText; //TODO PARSE VideoType
 
-                        if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
-                            videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
+                        if (
+                            videoelement.VideoFormat.EnumCodes != null
+                            && videoelement.VideoFormat.EnumCodes.EnumCode != null
+                            && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code
+                                != null
+                            && videoelement
+                                .VideoFormat.EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name != null
+                        )
+                            videoItem.VideoSource = videoelement
+                                .VideoFormat.EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText;
 
                         videoitemlistde.Add(videoItem);
                         i++;
@@ -575,11 +948,36 @@ namespace LCS.Parser
                         videoItem.Active = true;
                         videoItem.Language = "it";
                         //Set videotype & videosource in english
-                        if (videoelement.EnumCodes != null && videoelement.EnumCodes.EnumCode != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
-                            videoItem.VideoType = videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText; //TODO PARSE VideoType
+                        if (
+                            videoelement.EnumCodes != null
+                            && videoelement.EnumCodes.EnumCode != null
+                            && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null
+                            && videoelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name != null
+                        )
+                            videoItem.VideoType = videoelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText; //TODO PARSE VideoType
 
-                        if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
-                            videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
+                        if (
+                            videoelement.VideoFormat.EnumCodes != null
+                            && videoelement.VideoFormat.EnumCodes.EnumCode != null
+                            && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code
+                                != null
+                            && videoelement
+                                .VideoFormat.EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name != null
+                        )
+                            videoItem.VideoSource = videoelement
+                                .VideoFormat.EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText;
 
                         videoitemlistit.Add(videoItem);
                         i++;
@@ -592,7 +990,6 @@ namespace LCS.Parser
             //en
             if (parsedmultimediainfoen != null)
             {
-
                 if (parsedmultimediainfoen.VideoItems.VideoItem != null)
                 {
                     List<VideoItems> videoitemlisten = new List<VideoItems>();
@@ -615,11 +1012,36 @@ namespace LCS.Parser
                         videoItem.Active = true;
                         videoItem.Language = "en";
                         //Set videotype & videosource in english
-                        if (videoelement.EnumCodes != null && videoelement.EnumCodes.EnumCode != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
-                            videoItem.VideoType = videoelement.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText; //TODO PARSE VideoType
+                        if (
+                            videoelement.EnumCodes != null
+                            && videoelement.EnumCodes.EnumCode != null
+                            && videoelement.EnumCodes.EnumCode.FirstOrDefault().Code != null
+                            && videoelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name != null
+                        )
+                            videoItem.VideoType = videoelement
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText; //TODO PARSE VideoType
 
-                        if (videoelement.VideoFormat.EnumCodes != null && videoelement.VideoFormat.EnumCodes.EnumCode != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code != null && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name != null)
-                            videoItem.VideoSource = videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
+                        if (
+                            videoelement.VideoFormat.EnumCodes != null
+                            && videoelement.VideoFormat.EnumCodes.EnumCode != null
+                            && videoelement.VideoFormat.EnumCodes.EnumCode.FirstOrDefault().Code
+                                != null
+                            && videoelement
+                                .VideoFormat.EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name != null
+                        )
+                            videoItem.VideoSource = videoelement
+                                .VideoFormat.EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText;
 
                         videoitemlisten.Add(videoItem);
                         i++;
@@ -635,7 +1057,7 @@ namespace LCS.Parser
             //hike.SubType = thepoide.EnumCodes.EnumCode != null ?  thepoide.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText : "";
 
 
-            //Tags beibehalten. Maintyp + Subtyp als Tag übernehmen     
+            //Tags beibehalten. Maintyp + Subtyp als Tag übernehmen
             //List<string> currenttags = new List<string>();
 
             //if (thepoide.EnumCodes.EnumCode != null)
@@ -646,7 +1068,7 @@ namespace LCS.Parser
             //    if (!currenttags.Contains(type))
             //        currenttags.Add(type);
             //    //if (!currenttags.Contains(subtype))
-            //    //    currenttags.Add(subtype);                
+            //    //    currenttags.Add(subtype);
             //}
 
             //NEU gehe alle LTS Tags durch
@@ -665,7 +1087,10 @@ namespace LCS.Parser
                 myltstag.LTSRID = ltstag.RID;
                 myltstag.Id = ltstag.Name.FirstOrDefault().InnerText.Trim().Replace("/", "");
 
-                myltstag.TagName.TryAddOrUpdate("de", ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : "");
+                myltstag.TagName.TryAddOrUpdate(
+                    "de",
+                    ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : ""
+                );
 
                 //Sonderfix Tag DE enthält /
                 if (myltstag.TagName["de"].Contains("/"))
@@ -677,7 +1102,10 @@ namespace LCS.Parser
                     foreach (var ltstin in ltstag.Tins.Tin)
                     {
                         LTSTins mytin = new LTSTins();
-                        mytin.TinName.TryAddOrUpdate("de", ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : "");
+                        mytin.TinName.TryAddOrUpdate(
+                            "de",
+                            ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : ""
+                        );
                         mytin.LTSRID = ltstin.RID;
 
                         myltstag.LTSTins.Add(mytin);
@@ -689,34 +1117,56 @@ namespace LCS.Parser
 
             foreach (var ltstag in thepoiit.Tags.Tag)
             {
-                var currentltstagit = ltstaglist.Where(x => x.LTSRID == ltstag.RID).FirstOrDefault();
-                currentltstagit.TagName.TryAddOrUpdate("it", ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : "");
+                var currentltstagit = ltstaglist
+                    .Where(x => x.LTSRID == ltstag.RID)
+                    .FirstOrDefault();
+                currentltstagit.TagName.TryAddOrUpdate(
+                    "it",
+                    ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : ""
+                );
 
                 //add the tin info in IT
                 if (ltstag.Tins != null)
                 {
                     foreach (var ltstin in ltstag.Tins.Tin)
                     {
-                        var currentltstinit = currentltstagit.LTSTins.Where(x => x.LTSRID == ltstin.RID).FirstOrDefault();
-                        currentltstinit.TinName.TryAddOrUpdate("it", ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : "");
+                        var currentltstinit = currentltstagit
+                            .LTSTins.Where(x => x.LTSRID == ltstin.RID)
+                            .FirstOrDefault();
+                        currentltstinit.TinName.TryAddOrUpdate(
+                            "it",
+                            ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : ""
+                        );
                     }
                 }
             }
             foreach (var ltstag in thepoien.Tags.Tag)
             {
-                var currentltstagen = ltstaglist.Where(x => x.LTSRID == ltstag.RID).FirstOrDefault();
-                currentltstagen.TagName.TryAddOrUpdate("en", ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : "");
+                var currentltstagen = ltstaglist
+                    .Where(x => x.LTSRID == ltstag.RID)
+                    .FirstOrDefault();
+                currentltstagen.TagName.TryAddOrUpdate(
+                    "en",
+                    ltstag.Name != null ? ltstag.Name.FirstOrDefault().InnerText : ""
+                );
 
                 //add the tin info in EN and set the id to EN object
                 if (ltstag.Tins != null)
                 {
                     foreach (var ltstin in ltstag.Tins.Tin)
                     {
-                        var currentltstinen = currentltstagen.LTSTins.Where(x => x.LTSRID == ltstin.RID).FirstOrDefault();
-                        currentltstinen.TinName.TryAddOrUpdate("en", ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : "");
+                        var currentltstinen = currentltstagen
+                            .LTSTins.Where(x => x.LTSRID == ltstin.RID)
+                            .FirstOrDefault();
+                        currentltstinen.TinName.TryAddOrUpdate(
+                            "en",
+                            ltstin.Name != null ? ltstin.Name.FirstOrDefault().InnerText : ""
+                        );
 
                         //Set ID
-                        currentltstinen.Id = ltstin.Name.FirstOrDefault().InnerText.ComputeSHA1Hash();
+                        currentltstinen.Id = ltstin
+                            .Name.FirstOrDefault()
+                            .InnerText.ComputeSHA1Hash();
                     }
                 }
             }
@@ -788,7 +1238,11 @@ namespace LCS.Parser
                     {
                         GpsInfo mygpsinfo = new GpsInfo();
 
-                        mygpsinfo.Gpstype = position.EnumCodes.EnumCode.FirstOrDefault().Code.FirstOrDefault().Name.FirstOrDefault().InnerText;
+                        mygpsinfo.Gpstype = position
+                            .EnumCodes.EnumCode.FirstOrDefault()
+                            .Code.FirstOrDefault()
+                            .Name.FirstOrDefault()
+                            .InnerText;
                         mygpsinfo.AltitudeUnitofMeasure = "m";
                         mygpsinfo.Altitude = position.Altitude;
                         mygpsinfo.Longitude = Convert.ToDouble(position.Longitude, myculture);
@@ -820,7 +1274,15 @@ namespace LCS.Parser
 
                         //EN und IT Info?
 
-                        mygpstrack.GpxTrackDesc.TryAddOrUpdate("de", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
+                        mygpstrack.GpxTrackDesc.TryAddOrUpdate(
+                            "de",
+                            gpstrack
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.Where(x => x.Level == "1")
+                                .FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText
+                        );
 
                         mygpstracklist.Add(mygpstrack);
                     }
@@ -837,8 +1299,18 @@ namespace LCS.Parser
                 {
                     foreach (var gpstrack in gpstracksit)
                     {
-                        GpsTrack mygpstrack = mygpstracklist.Where(x => x.Id == gpstrack.RID).FirstOrDefault();
-                        mygpstrack.GpxTrackDesc.TryAddOrUpdate("it", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
+                        GpsTrack mygpstrack = mygpstracklist
+                            .Where(x => x.Id == gpstrack.RID)
+                            .FirstOrDefault();
+                        mygpstrack.GpxTrackDesc.TryAddOrUpdate(
+                            "it",
+                            gpstrack
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.Where(x => x.Level == "1")
+                                .FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText
+                        );
                         //mygpstracklist.Add(mygpstrack);
                     }
                 }
@@ -854,15 +1326,24 @@ namespace LCS.Parser
                 {
                     foreach (var gpstrack in gpstracksen)
                     {
-                        GpsTrack mygpstrack = mygpstracklist.Where(x => x.Id == gpstrack.RID).FirstOrDefault();
-                        mygpstrack.GpxTrackDesc.TryAddOrUpdate("en", gpstrack.EnumCodes.EnumCode.FirstOrDefault().Code.Where(x => x.Level == "1").FirstOrDefault().Name.FirstOrDefault().InnerText);
+                        GpsTrack mygpstrack = mygpstracklist
+                            .Where(x => x.Id == gpstrack.RID)
+                            .FirstOrDefault();
+                        mygpstrack.GpxTrackDesc.TryAddOrUpdate(
+                            "en",
+                            gpstrack
+                                .EnumCodes.EnumCode.FirstOrDefault()
+                                .Code.Where(x => x.Level == "1")
+                                .FirstOrDefault()
+                                .Name.FirstOrDefault()
+                                .InnerText
+                        );
                         //mygpstracklist.Add(mygpstrack);
                     }
                 }
             }
 
             hike.GpsTrack = mygpstracklist.ToList();
-
 
             HashSet<string> arearidlist = new HashSet<string>();
 
@@ -886,7 +1367,6 @@ namespace LCS.Parser
                     {
                         foreach (var myarea in member.Area)
                         {
-
                             string z = myarea.RID;
                             arearidlist.Add(z);
                         }
@@ -894,7 +1374,6 @@ namespace LCS.Parser
                 }
 
                 hike.AreaId = arearidlist;
-
             }
 
             //Neu Smg Favorit über Area
@@ -910,23 +1389,35 @@ namespace LCS.Parser
             {
                 if (thepoide.OperationSchedules.OperationSchedule != null)
                 {
-                    foreach (var myoperationschedule in thepoide.OperationSchedules.OperationSchedule)
+                    foreach (
+                        var myoperationschedule in thepoide.OperationSchedules.OperationSchedule
+                    )
                     {
                         OperationSchedule theoperationschedule = new OperationSchedule();
-                        theoperationschedule.OperationscheduleName["de"] = myoperationschedule.Name != null ? myoperationschedule.Name.FirstOrDefault().InnerText : "";
+                        theoperationschedule.OperationscheduleName["de"] =
+                            myoperationschedule.Name != null
+                                ? myoperationschedule.Name.FirstOrDefault().InnerText
+                                : "";
                         theoperationschedule.Start = DateTime.Parse(myoperationschedule.Start);
                         theoperationschedule.Stop = DateTime.Parse(myoperationschedule.End);
                         theoperationschedule.Type = myoperationschedule.Type;
 
-                        List<OperationScheduleTime> myopeningtimes = new List<OperationScheduleTime>();
+                        List<OperationScheduleTime> myopeningtimes =
+                            new List<OperationScheduleTime>();
 
                         if (myoperationschedule.OperationTime != null)
                         {
                             foreach (var operationscheduletime in myoperationschedule.OperationTime)
                             {
                                 OperationScheduleTime mytime = new OperationScheduleTime();
-                                mytime.Start = operationscheduletime.Start == null ? TimeSpan.Parse("00:00:00") : TimeSpan.Parse(operationscheduletime.Start);
-                                mytime.End = operationscheduletime.End == null ? TimeSpan.Parse("23:59:00") : TimeSpan.Parse(operationscheduletime.End);
+                                mytime.Start =
+                                    operationscheduletime.Start == null
+                                        ? TimeSpan.Parse("00:00:00")
+                                        : TimeSpan.Parse(operationscheduletime.Start);
+                                mytime.End =
+                                    operationscheduletime.End == null
+                                        ? TimeSpan.Parse("23:59:00")
+                                        : TimeSpan.Parse(operationscheduletime.End);
                                 mytime.Monday = operationscheduletime.Mon;
                                 mytime.Tuesday = operationscheduletime.Tue;
                                 mytime.Wednesday = operationscheduletime.Weds;
@@ -976,9 +1467,8 @@ namespace LCS.Parser
             }
             hike.ChildPoiIds = childpois.ToList();
 
-
             //Add The available Languages
-            //Check wo überall in Details sprachknoten enthalten sind     
+            //Check wo überall in Details sprachknoten enthalten sind
             var availablelanguages = hike.Detail.Select(x => x.Key).ToList();
             hike.HasLanguage = availablelanguages;
 
@@ -1040,6 +1530,5 @@ namespace LCS.Parser
 
             return maintypedict;
         }
-
     }
 }

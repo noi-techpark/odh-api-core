@@ -2,35 +2,61 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
+using Microsoft.AspNetCore.Identity;
 
 namespace Helper
 {
     public class MetadataHelper
     {
         //Simple Method to reset the Metainfo
-        public static Metadata GetMetadata(string id, string type, string? source, DateTime? lastupdated = null, bool reduced = false)
+        public static Metadata GetMetadata(
+            string id,
+            string type,
+            string? source,
+            DateTime? lastupdated = null,
+            bool reduced = false
+        )
         {
-            return new Metadata() { Id = id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
+            return new Metadata()
+            {
+                Id = id,
+                Type = type,
+                LastUpdate = lastupdated,
+                Source = source,
+                Reduced = reduced,
+            };
         }
 
-        public static Metadata GetMetadata<T>(T data, string source, DateTime? lastupdated = null, bool reduced = false) where T : IIdentifiable, IMetaData
+        public static Metadata GetMetadata<T>(
+            T data,
+            string source,
+            DateTime? lastupdated = null,
+            bool reduced = false
+        )
+            where T : IIdentifiable, IMetaData
         {
             string type = ODHTypeHelper.TranslateType2TypeString<T>(data);
 
             //If source is already set use the old source
             //if (data._Meta != null && !string.IsNullOrEmpty(data._Meta.Source))
-            //    source = data._Meta.Source;            
-            
-            return new Metadata() { Id = data.Id, Type = type, LastUpdate = lastupdated, Source = source, Reduced = reduced };
+            //    source = data._Meta.Source;
+
+            return new Metadata()
+            {
+                Id = data.Id,
+                Type = type,
+                LastUpdate = lastupdated,
+                Source = source,
+                Reduced = reduced,
+            };
         }
-               
+
         public static Metadata GetMetadataobject<T>(T myobject, Func<T, Metadata> metadataganerator)
         {
             return metadataganerator(myobject);
@@ -41,7 +67,7 @@ namespace Helper
         {
             return myobject switch
             {
-                AccommodationV2 al => GetMetadataforAccommodation(al),                 
+                AccommodationV2 al => GetMetadataforAccommodation(al),
                 AccommodationRoomLinked al => GetMetadataforAccommodationRoom(al),
                 LTSActivityLinked ltsal => GetMetadataforActivity(ltsal),
                 LTSPoiLinked ltspl => GetMetadataforPoi(ltspl),
@@ -78,8 +104,8 @@ namespace Helper
                 TourismMetaData tm => GetMetaDataForMetaData(tm),
                 EventV2 ev => GetMetadataforEvent(ev),
                 VenueV2 ev => GetMetadataforVenue(ev),
-                _ => throw new Exception("not known odh type")
-            };            
+                _ => throw new Exception("not known odh type"),
+            };
         }
 
         public static Metadata GetMetadataforAccommodation(AccommodationV2 data)
@@ -92,7 +118,7 @@ namespace Helper
             string? datasource = data.Source;
 
             if (datasource == null)
-            {                
+            {
                 datasource = "unknown";
             }
             else
@@ -100,9 +126,8 @@ namespace Helper
                 datasource = datasource.ToLower();
             }
 
-
             return GetMetadata(data, datasource, data.LastChange, reduced);
-        }        
+        }
 
         public static Metadata GetMetadataforAccommodationRoom(AccommodationRoomLinked data)
         {
@@ -131,7 +156,7 @@ namespace Helper
                 reduced = (bool)data._Meta.Reduced;
 
             var sourcemeta = "lts";
-            if(data.Source != null) 
+            if (data.Source != null)
                 sourcemeta = data.Source.ToLower();
 
             return GetMetadata(data, sourcemeta, data.LastChange, reduced);
@@ -201,7 +226,7 @@ namespace Helper
 
         public static Metadata GetMetadataforTag(TagLinked data)
         {
-            string sourcemeta = data.Source.ToLower();            
+            string sourcemeta = data.Source.ToLower();
 
             return GetMetadata(data, sourcemeta, data.LastChange);
         }
@@ -209,7 +234,7 @@ namespace Helper
         public static Metadata GetMetadataforPublisher(PublisherLinked data)
         {
             string sourcemeta = "noi";
-            
+
             return GetMetadata(data, sourcemeta, data.LastChange);
         }
 
@@ -250,8 +275,8 @@ namespace Helper
         public static Metadata GetMetadataforArticle(ArticlesLinked data)
         {
             string sourcemeta = "noi";
-            
-            if(!String.IsNullOrEmpty(data.Source))
+
+            if (!String.IsNullOrEmpty(data.Source))
                 sourcemeta = data.Source.ToLower();
 
             if (sourcemeta == "content")
@@ -346,13 +371,13 @@ namespace Helper
         }
 
         public static Metadata GetMetadataforArea(AreaLinked data)
-        {            
+        {
             return GetMetadata(data, "lts", data.LastChange, false);
         }
 
         public static Metadata GetMetadataforWineAward(WineLinked data)
         {
-           return GetMetadata(data, "suedtirolwein", data.LastChange, false);
+            return GetMetadata(data, "suedtirolwein", data.LastChange, false);
         }
 
         public static Metadata GetMetaDataForWeatherHistory(WeatherHistoryLinked data)
@@ -365,7 +390,14 @@ namespace Helper
         {
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherLinked>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };            
+            return new Metadata()
+            {
+                Id = data.Id.ToString(),
+                Type = type,
+                LastUpdate = data.Date,
+                Source = "siag",
+                Reduced = false,
+            };
         }
 
         //Hack because WeatherLinked is not IIdentifiable so return directly
@@ -373,28 +405,56 @@ namespace Helper
         {
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherDistrictLinked>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };
+            return new Metadata()
+            {
+                Id = data.Id.ToString(),
+                Type = type,
+                LastUpdate = data.Date,
+                Source = "siag",
+                Reduced = false,
+            };
         }
 
         public static Metadata GetMetaDataForWeatherRealTime(WeatherRealTimeLinked data)
         {
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherRealTimeLinked>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.lastUpdated, Source = "siag", Reduced = false };
+            return new Metadata()
+            {
+                Id = data.Id.ToString(),
+                Type = type,
+                LastUpdate = data.lastUpdated,
+                Source = "siag",
+                Reduced = false,
+            };
         }
 
         public static Metadata GetMetaDataForWeatherForecast(WeatherForecastLinked data)
         {
             string type = ODHTypeHelper.TranslateType2TypeString<WeatherForecastLinked>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.Date, Source = "siag", Reduced = false };
+            return new Metadata()
+            {
+                Id = data.Id.ToString(),
+                Type = type,
+                LastUpdate = data.Date,
+                Source = "siag",
+                Reduced = false,
+            };
         }
 
         public static Metadata GetMetaDataForSnowReport(SnowReportBaseData data)
         {
             string type = ODHTypeHelper.TranslateType2TypeString<SnowReportBaseData>(data);
 
-            return new Metadata() { Id = data.Id.ToString(), Type = type, LastUpdate = data.LastUpdate, Source = "lts", Reduced = false };
+            return new Metadata()
+            {
+                Id = data.Id.ToString(),
+                Type = type,
+                LastUpdate = data.LastUpdate,
+                Source = "lts",
+                Reduced = false,
+            };
         }
 
         public static Metadata GetMetaDataForMetaData(TourismMetaData data)

@@ -2,21 +2,22 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 using static OdhApiCoreTests.IntegrationTets.Helpers;
 
 namespace OdhApiCoreTests.IntegrationTets
 {
     [Trait("Category", "Integration")]
-    public class PoiApiControllerTests : IClassFixture<CustomWebApplicationFactory<OdhApiCore.Startup>>
+    public class PoiApiControllerTests
+        : IClassFixture<CustomWebApplicationFactory<OdhApiCore.Startup>>
     {
         private readonly HttpClient _client;
         private readonly CustomWebApplicationFactory<OdhApiCore.Startup> _factory;
@@ -24,10 +25,9 @@ namespace OdhApiCoreTests.IntegrationTets
         public PoiApiControllerTests(CustomWebApplicationFactory<OdhApiCore.Startup> factory)
         {
             _factory = factory;
-            _client = factory.CreateClient(new WebApplicationFactoryClientOptions
-            {
-                AllowAutoRedirect = false
-            });
+            _client = factory.CreateClient(
+                new WebApplicationFactoryClientOptions { AllowAutoRedirect = false }
+            );
         }
 
         [Theory]
@@ -36,17 +36,23 @@ namespace OdhApiCoreTests.IntegrationTets
         [InlineData("/v1/Poi?poitype=12")]
         [InlineData("/v1/Poi?language=de")]
         [InlineData("/v1/Poi?language=en")]
-        [InlineData("/v1/Poi?pagenumber=1&pagesize=100&poitype=511&locfilter=tvs522822F751CA11D18F1400A02427D15E&active=true&seed=null")]
+        [InlineData(
+            "/v1/Poi?pagenumber=1&pagesize=100&poitype=511&locfilter=tvs522822F751CA11D18F1400A02427D15E&active=true&seed=null"
+        )]
         //[InlineData("/v1/Poi?pagenumber=1&pagesize=100&poitype=511&areafilter=tvs522822F751CA11D18F1400A02427D15E&active=true&seed=null")]
         //[InlineData("/v1/Poi?pagenumber=1&pagesize=10&poitype=11&locfilter=tvs5228229651CA11D18F1400A02427D15E&odhactive=true&active=true&seed=null")]
         [InlineData("/v1/Poi?pagenumber=1&pagesize=10&poitype=511&seed=null")]
-        [InlineData("/v1/Poi?pagenumber=1&pagesize=20&poitype=Sport%20und%20Freizeit&subtype=null&idlist=null&locfilter=null&areafilter=null&highlight=null&active=null&odhactive=null&odhtagfilter=null&seed=null")]
+        [InlineData(
+            "/v1/Poi?pagenumber=1&pagesize=20&poitype=Sport%20und%20Freizeit&subtype=null&idlist=null&locfilter=null&areafilter=null&highlight=null&active=null&odhactive=null&odhtagfilter=null&seed=null"
+        )]
         public async Task Get_Pois(string url)
         {
             var response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
-            Assert.Equal("application/json; charset=utf-8",
-                response.Content.Headers.ContentType?.ToString());
+            Assert.Equal(
+                "application/json; charset=utf-8",
+                response.Content.Headers.ContentType?.ToString()
+            );
             string json = await response.Content.ReadAsStringAsync();
             dynamic? data = JsonConvert.DeserializeObject(json);
             Assert.NotNull(data);
@@ -73,8 +79,10 @@ namespace OdhApiCoreTests.IntegrationTets
         {
             var response = await _client.GetAsync(url);
             response.EnsureSuccessStatusCode();
-            Assert.Equal("application/json; charset=utf-8",
-                response.Content.Headers.ContentType?.ToString());
+            Assert.Equal(
+                "application/json; charset=utf-8",
+                response.Content.Headers.ContentType?.ToString()
+            );
             string json = await response.Content.ReadAsStringAsync();
             dynamic? data = JsonConvert.DeserializeObject(json);
             Assert.NotNull(data);
@@ -114,8 +122,10 @@ namespace OdhApiCoreTests.IntegrationTets
         {
             var response = await _client.GetAsync("/v1/PoiTypes");
             response.EnsureSuccessStatusCode();
-            Assert.Equal("application/json; charset=utf-8",
-                response.Content.Headers.ContentType?.ToString());
+            Assert.Equal(
+                "application/json; charset=utf-8",
+                response.Content.Headers.ContentType?.ToString()
+            );
             string json = await response.Content.ReadAsStringAsync();
             dynamic? data = JsonConvert.DeserializeObject<PoiTypes[]>(json);
             Assert.NotEmpty(data);

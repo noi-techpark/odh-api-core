@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper.GetData;
 using System.Net;
 using System.Xml.Linq;
+using Helper.GetData;
 
 namespace PANOMAX
 {
@@ -14,7 +14,13 @@ namespace PANOMAX
         {
             string requesturl = url + "instances/lists/public";
 
-            GetData getdata = new GetData(requesturl, null, null, null, GetDataAuthenticationOptions.None);
+            GetData getdata = new GetData(
+                requesturl,
+                null,
+                null,
+                null,
+                GetDataAuthenticationOptions.None
+            );
 
             return await getdata.GetDataAsJsonAsync();
         }
@@ -23,10 +29,15 @@ namespace PANOMAX
         {
             string requesturl = url + "cams/videos/public";
 
-            GetData getdata = new GetData(requesturl, null, null, null, GetDataAuthenticationOptions.None);
+            GetData getdata = new GetData(
+                requesturl,
+                null,
+                null,
+                null,
+                GetDataAuthenticationOptions.None
+            );
 
             return await getdata.GetDataAsJsonAsync();
         }
-
     }
 }

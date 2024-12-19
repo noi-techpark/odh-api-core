@@ -2,16 +2,16 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using Amazon.Auth.AccessControlPolicy;
 using DataModel;
 using Helper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIAG.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
 
 namespace SIAG
 {
@@ -19,16 +19,34 @@ namespace SIAG
     {
         //string urlfrom indicates 'siag' old parsing, 'opendata' new url
 
-        public static WeatherLinked ParsemyWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string source)
+        public static WeatherLinked ParsemyWeatherResponse(
+            string lang,
+            XDocument weatherdataxml,
+            XDocument weatherresponse,
+            string source
+        )
         {
             try
             {
                 WeatherLinked myweather = new WeatherLinked();
 
                 myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("Id").Value);
-                myweather.Date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
-                myweather.Evolution = weatherresponse.Root.Element("evolution") != null ? weatherresponse.Root.Element("evolution").Value : null;
-                myweather.EvolutionTitle = weatherresponse.Root.Element("evolutionTitle") != null ? weatherresponse.Root.Element("evolutionTitle").Value : null;
+                myweather.Date = Convert.ToDateTime(
+                    weatherresponse
+                        .Root.Element("date")
+                        .Value.Replace(
+                            "00:00:00",
+                            weatherresponse.Root.Element("hour").Value + ":00"
+                        )
+                );
+                myweather.Evolution =
+                    weatherresponse.Root.Element("evolution") != null
+                        ? weatherresponse.Root.Element("evolution").Value
+                        : null;
+                myweather.EvolutionTitle =
+                    weatherresponse.Root.Element("evolutionTitle") != null
+                        ? weatherresponse.Root.Element("evolutionTitle").Value
+                        : null;
                 myweather.Language = lang;
 
                 myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
@@ -51,14 +69,28 @@ namespace SIAG
                         myforecast.Reliability = forecast.Element("reliability").Value;
 
                         myforecast.WeatherCode = forecast.Element("symbol").Element("code").Value;
-                        myforecast.WeatherDesc = forecast.Element("symbol").Element("description").Value;
-                        myforecast.WeatherImgUrl = forecast.Element("symbol").Element("imageURL").Value;
+                        myforecast.WeatherDesc = forecast
+                            .Element("symbol")
+                            .Element("description")
+                            .Value;
+                        myforecast.WeatherImgUrl = forecast
+                            .Element("symbol")
+                            .Element("imageURL")
+                            .Value;
 
-                        myforecast.TempMaxmax = Convert.ToInt32(forecast.Element("tempMax").Element("max").Value);
-                        myforecast.TempMaxmin = Convert.ToInt32(forecast.Element("tempMax").Element("min").Value);
+                        myforecast.TempMaxmax = Convert.ToInt32(
+                            forecast.Element("tempMax").Element("max").Value
+                        );
+                        myforecast.TempMaxmin = Convert.ToInt32(
+                            forecast.Element("tempMax").Element("min").Value
+                        );
 
-                        myforecast.TempMinmax = Convert.ToInt32(forecast.Element("tempMin").Element("max").Value);
-                        myforecast.TempMinmin = Convert.ToInt32(forecast.Element("tempMin").Element("min").Value);
+                        myforecast.TempMinmax = Convert.ToInt32(
+                            forecast.Element("tempMin").Element("max").Value
+                        );
+                        myforecast.TempMinmin = Convert.ToInt32(
+                            forecast.Element("tempMin").Element("min").Value
+                        );
 
                         myweather.Forecast.Add(myforecast);
                     }
@@ -70,31 +102,87 @@ namespace SIAG
                 {
                     Mountain mymountaintoday = new Mountain();
                     mymountaintoday.Date = Convert.ToDateTime(mountaintoday.Element("date").Value);
-                    mymountaintoday.Title = mountaintoday.Element("title") != null ? mountaintoday.Element("title").Value : "";
-                    mymountaintoday.Zerolimit = mountaintoday.Element("zerolimit") != null ? mountaintoday.Element("zerolimit").Value : "";
-                    mymountaintoday.WeatherDesc = mountaintoday.Element("weather") != null ? mountaintoday.Element("weather").Value : "";
+                    mymountaintoday.Title =
+                        mountaintoday.Element("title") != null
+                            ? mountaintoday.Element("title").Value
+                            : "";
+                    mymountaintoday.Zerolimit =
+                        mountaintoday.Element("zerolimit") != null
+                            ? mountaintoday.Element("zerolimit").Value
+                            : "";
+                    mymountaintoday.WeatherDesc =
+                        mountaintoday.Element("weather") != null
+                            ? mountaintoday.Element("weather").Value
+                            : "";
 
-                    mymountaintoday.Conditions = mountaintoday.Element("conditions") != null ? mountaintoday.Element("conditions").Value : "";
+                    mymountaintoday.Conditions =
+                        mountaintoday.Element("conditions") != null
+                            ? mountaintoday.Element("conditions").Value
+                            : "";
                     mymountaintoday.MountainImgUrl = mountaintoday.Element("imageURL").Value;
-                    mymountaintoday.Moonrise = mountaintoday.Elements("moonRise").Count() > 0 ? mountaintoday.Element("moonRise").Value : "";
-                    mymountaintoday.Moonset = mountaintoday.Elements("moonSet").Count() > 0 ? mountaintoday.Element("moonSet").Value : "";
-                    mymountaintoday.Sunrise = mountaintoday.Elements("sunRise").Count() > 0 ? mountaintoday.Element("sunRise").Value : "";
-                    mymountaintoday.Sunset = mountaintoday.Elements("sunSet").Count() > 0 ? mountaintoday.Element("sunSet").Value : "";
+                    mymountaintoday.Moonrise =
+                        mountaintoday.Elements("moonRise").Count() > 0
+                            ? mountaintoday.Element("moonRise").Value
+                            : "";
+                    mymountaintoday.Moonset =
+                        mountaintoday.Elements("moonSet").Count() > 0
+                            ? mountaintoday.Element("moonSet").Value
+                            : "";
+                    mymountaintoday.Sunrise =
+                        mountaintoday.Elements("sunRise").Count() > 0
+                            ? mountaintoday.Element("sunRise").Value
+                            : "";
+                    mymountaintoday.Sunset =
+                        mountaintoday.Elements("sunSet").Count() > 0
+                            ? mountaintoday.Element("sunSet").Value
+                            : "";
                     mymountaintoday.Reliability = mountaintoday.Element("reliability").Value;
-                    mymountaintoday.Temp1000 = Convert.ToInt32(mountaintoday.Element("temp1000").Value);
-                    mymountaintoday.Temp2000 = Convert.ToInt32(mountaintoday.Element("temp2000").Value);
-                    mymountaintoday.Temp3000 = Convert.ToInt32(mountaintoday.Element("temp3000").Value);
-                    mymountaintoday.Temp4000 = Convert.ToInt32(mountaintoday.Element("temp4000").Value);
+                    mymountaintoday.Temp1000 = Convert.ToInt32(
+                        mountaintoday.Element("temp1000").Value
+                    );
+                    mymountaintoday.Temp2000 = Convert.ToInt32(
+                        mountaintoday.Element("temp2000").Value
+                    );
+                    mymountaintoday.Temp3000 = Convert.ToInt32(
+                        mountaintoday.Element("temp3000").Value
+                    );
+                    mymountaintoday.Temp4000 = Convert.ToInt32(
+                        mountaintoday.Element("temp4000").Value
+                    );
 
-                    mymountaintoday.NorthCode = mountaintoday.Element("north").Element("code").Value;
-                    mymountaintoday.NorthDesc = mountaintoday.Element("north").Element("description").Value;
-                    mymountaintoday.NorthImgUrl = mountaintoday.Element("north").Element("imageURL").Value;
-                    mymountaintoday.SouthCode = mountaintoday.Element("south").Element("code").Value;
-                    mymountaintoday.SouthDesc = mountaintoday.Element("south").Element("description").Value;
-                    mymountaintoday.SouthImgUrl = mountaintoday.Element("south").Element("imageURL").Value;
+                    mymountaintoday.NorthCode = mountaintoday
+                        .Element("north")
+                        .Element("code")
+                        .Value;
+                    mymountaintoday.NorthDesc = mountaintoday
+                        .Element("north")
+                        .Element("description")
+                        .Value;
+                    mymountaintoday.NorthImgUrl = mountaintoday
+                        .Element("north")
+                        .Element("imageURL")
+                        .Value;
+                    mymountaintoday.SouthCode = mountaintoday
+                        .Element("south")
+                        .Element("code")
+                        .Value;
+                    mymountaintoday.SouthDesc = mountaintoday
+                        .Element("south")
+                        .Element("description")
+                        .Value;
+                    mymountaintoday.SouthImgUrl = mountaintoday
+                        .Element("south")
+                        .Element("imageURL")
+                        .Value;
                     mymountaintoday.WindCode = mountaintoday.Element("wind").Element("code").Value;
-                    mymountaintoday.WindDesc = mountaintoday.Element("wind").Element("description").Value;
-                    mymountaintoday.WindImgUrl = mountaintoday.Element("wind").Element("imageURL").Value;
+                    mymountaintoday.WindDesc = mountaintoday
+                        .Element("wind")
+                        .Element("description")
+                        .Value;
+                    mymountaintoday.WindImgUrl = mountaintoday
+                        .Element("wind")
+                        .Element("imageURL")
+                        .Value;
 
                     myweather.Mountain.Add(mymountaintoday);
                 }
@@ -105,32 +193,103 @@ namespace SIAG
                     if (mountaintomorrow.HasElements)
                     {
                         Mountain mymountaintomorrow = new Mountain();
-                        mymountaintomorrow.Date = Convert.ToDateTime(mountaintomorrow.Element("date").Value);
-                        mymountaintomorrow.Title = mountaintomorrow.Element("title") != null ? mountaintomorrow.Element("title").Value : "";
-                        mymountaintomorrow.Zerolimit = mountaintomorrow.Element("zerolimit") != null ? mountaintomorrow.Element("zerolimit").Value : "";
-                        mymountaintomorrow.WeatherDesc = mountaintomorrow.Element("weather") != null ? mountaintomorrow.Element("weather").Value : "";
+                        mymountaintomorrow.Date = Convert.ToDateTime(
+                            mountaintomorrow.Element("date").Value
+                        );
+                        mymountaintomorrow.Title =
+                            mountaintomorrow.Element("title") != null
+                                ? mountaintomorrow.Element("title").Value
+                                : "";
+                        mymountaintomorrow.Zerolimit =
+                            mountaintomorrow.Element("zerolimit") != null
+                                ? mountaintomorrow.Element("zerolimit").Value
+                                : "";
+                        mymountaintomorrow.WeatherDesc =
+                            mountaintomorrow.Element("weather") != null
+                                ? mountaintomorrow.Element("weather").Value
+                                : "";
 
-                        mymountaintomorrow.Conditions = mountaintomorrow.Element("conditions") != null ? mountaintomorrow.Element("conditions").Value : "";
-                        mymountaintomorrow.MountainImgUrl = mountaintomorrow.Element("imageURL") != null ? mountaintomorrow.Element("imageURL").Value : "";
-                        mymountaintomorrow.Moonrise = mountaintomorrow.Elements("moonRise").Count() > 0 ? mountaintomorrow.Element("moonRise").Value : "";
-                        mymountaintomorrow.Moonset = mountaintomorrow.Elements("moonSet").Count() > 0 ? mountaintomorrow.Element("moonSet").Value : "";
-                        mymountaintomorrow.Sunrise = mountaintomorrow.Elements("sunRise").Count() > 0 ? mountaintomorrow.Element("sunRise").Value : "";
-                        mymountaintomorrow.Sunset = mountaintomorrow.Elements("sunSet").Count() > 0 ? mountaintomorrow.Element("sunSet").Value : "";
-                        mymountaintomorrow.Reliability = mountaintomorrow.Element("reliability") != null ? mountaintomorrow.Element("reliability").Value : "";
-                        mymountaintomorrow.Temp1000 = mountaintomorrow.Element("temp1000") != null ? Convert.ToInt32(mountaintomorrow.Element("temp1000").Value) : 0;
-                        mymountaintomorrow.Temp2000 = mountaintomorrow.Element("temp2000") != null ? Convert.ToInt32(mountaintomorrow.Element("temp2000").Value) : 0;
-                        mymountaintomorrow.Temp3000 = mountaintomorrow.Element("temp3000") != null ? Convert.ToInt32(mountaintomorrow.Element("temp3000").Value) : 0;
-                        mymountaintomorrow.Temp4000 = mountaintomorrow.Element("temp4000") != null ? Convert.ToInt32(mountaintomorrow.Element("temp4000").Value) : 0;
+                        mymountaintomorrow.Conditions =
+                            mountaintomorrow.Element("conditions") != null
+                                ? mountaintomorrow.Element("conditions").Value
+                                : "";
+                        mymountaintomorrow.MountainImgUrl =
+                            mountaintomorrow.Element("imageURL") != null
+                                ? mountaintomorrow.Element("imageURL").Value
+                                : "";
+                        mymountaintomorrow.Moonrise =
+                            mountaintomorrow.Elements("moonRise").Count() > 0
+                                ? mountaintomorrow.Element("moonRise").Value
+                                : "";
+                        mymountaintomorrow.Moonset =
+                            mountaintomorrow.Elements("moonSet").Count() > 0
+                                ? mountaintomorrow.Element("moonSet").Value
+                                : "";
+                        mymountaintomorrow.Sunrise =
+                            mountaintomorrow.Elements("sunRise").Count() > 0
+                                ? mountaintomorrow.Element("sunRise").Value
+                                : "";
+                        mymountaintomorrow.Sunset =
+                            mountaintomorrow.Elements("sunSet").Count() > 0
+                                ? mountaintomorrow.Element("sunSet").Value
+                                : "";
+                        mymountaintomorrow.Reliability =
+                            mountaintomorrow.Element("reliability") != null
+                                ? mountaintomorrow.Element("reliability").Value
+                                : "";
+                        mymountaintomorrow.Temp1000 =
+                            mountaintomorrow.Element("temp1000") != null
+                                ? Convert.ToInt32(mountaintomorrow.Element("temp1000").Value)
+                                : 0;
+                        mymountaintomorrow.Temp2000 =
+                            mountaintomorrow.Element("temp2000") != null
+                                ? Convert.ToInt32(mountaintomorrow.Element("temp2000").Value)
+                                : 0;
+                        mymountaintomorrow.Temp3000 =
+                            mountaintomorrow.Element("temp3000") != null
+                                ? Convert.ToInt32(mountaintomorrow.Element("temp3000").Value)
+                                : 0;
+                        mymountaintomorrow.Temp4000 =
+                            mountaintomorrow.Element("temp4000") != null
+                                ? Convert.ToInt32(mountaintomorrow.Element("temp4000").Value)
+                                : 0;
 
-                        mymountaintomorrow.NorthCode = mountaintomorrow.Element("north").Element("code").Value;
-                        mymountaintomorrow.NorthDesc = mountaintomorrow.Element("north").Element("description").Value;
-                        mymountaintomorrow.NorthImgUrl = mountaintomorrow.Element("north").Element("imageURL").Value;
-                        mymountaintomorrow.SouthCode = mountaintomorrow.Element("south").Element("code").Value;
-                        mymountaintomorrow.SouthDesc = mountaintomorrow.Element("south").Element("description").Value;
-                        mymountaintomorrow.SouthImgUrl = mountaintomorrow.Element("south").Element("imageURL").Value;
-                        mymountaintomorrow.WindCode = mountaintomorrow.Element("wind").Element("code").Value;
-                        mymountaintomorrow.WindDesc = mountaintomorrow.Element("wind").Element("description").Value;
-                        mymountaintomorrow.WindImgUrl = mountaintomorrow.Element("wind").Element("imageURL").Value;
+                        mymountaintomorrow.NorthCode = mountaintomorrow
+                            .Element("north")
+                            .Element("code")
+                            .Value;
+                        mymountaintomorrow.NorthDesc = mountaintomorrow
+                            .Element("north")
+                            .Element("description")
+                            .Value;
+                        mymountaintomorrow.NorthImgUrl = mountaintomorrow
+                            .Element("north")
+                            .Element("imageURL")
+                            .Value;
+                        mymountaintomorrow.SouthCode = mountaintomorrow
+                            .Element("south")
+                            .Element("code")
+                            .Value;
+                        mymountaintomorrow.SouthDesc = mountaintomorrow
+                            .Element("south")
+                            .Element("description")
+                            .Value;
+                        mymountaintomorrow.SouthImgUrl = mountaintomorrow
+                            .Element("south")
+                            .Element("imageURL")
+                            .Value;
+                        mymountaintomorrow.WindCode = mountaintomorrow
+                            .Element("wind")
+                            .Element("code")
+                            .Value;
+                        mymountaintomorrow.WindDesc = mountaintomorrow
+                            .Element("wind")
+                            .Element("description")
+                            .Value;
+                        mymountaintomorrow.WindImgUrl = mountaintomorrow
+                            .Element("wind")
+                            .Element("imageURL")
+                            .Value;
 
                         myweather.Mountain.Add(mymountaintomorrow);
                     }
@@ -142,11 +301,20 @@ namespace SIAG
                     Conditions myconditiontoday = new Conditions();
 
                     myconditiontoday.Date = Convert.ToDateTime(today.Element("date").Value);
-                    myconditiontoday.WeatherCondition = today.Element("conditions") != null ? today.Element("conditions").Value : "";
-                    myconditiontoday.WeatherImgUrl = today.Element("imageURL") != null ? today.Element("imageURL").Value : "";
-                    myconditiontoday.WeatherDesc = today.Element("weather") != null ? today.Element("weather").Value : "";
-                    myconditiontoday.Title = today.Element("title") != null ? today.Element("title").Value : "";
-                    myconditiontoday.Temperatures = today.Element("temperatures") != null ? today.Element("temperatures").Value : "";
+                    myconditiontoday.WeatherCondition =
+                        today.Element("conditions") != null
+                            ? today.Element("conditions").Value
+                            : "";
+                    myconditiontoday.WeatherImgUrl =
+                        today.Element("imageURL") != null ? today.Element("imageURL").Value : "";
+                    myconditiontoday.WeatherDesc =
+                        today.Element("weather") != null ? today.Element("weather").Value : "";
+                    myconditiontoday.Title =
+                        today.Element("title") != null ? today.Element("title").Value : "";
+                    myconditiontoday.Temperatures =
+                        today.Element("temperatures") != null
+                            ? today.Element("temperatures").Value
+                            : "";
 
                     myweather.Conditions.Add(myconditiontoday);
                 }
@@ -161,34 +329,63 @@ namespace SIAG
                         {
                             Stationdata mystationdatatoday = new Stationdata();
 
-                            mystationdatatoday.Date = Convert.ToDateTime(today.Element("date").Value);
+                            mystationdatatoday.Date = Convert.ToDateTime(
+                                today.Element("date").Value
+                            );
 
-                            mystationdatatoday.Id = Convert.ToInt32(stationtoday.Element("Id").Value);
-                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(stationtoday.Element("Id").Value)).FirstOrDefault();
-                            mystationdatatoday.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                            mystationdatatoday.Id = Convert.ToInt32(
+                                stationtoday.Element("Id").Value
+                            );
+                            var mystationdatacity = weatherdataxml
+                                .Root.Elements("Station")
+                                .Where(x =>
+                                    x.Attribute("Id").Value.Equals(stationtoday.Element("Id").Value)
+                                )
+                                .FirstOrDefault();
+                            mystationdatatoday.CityName = mystationdatacity
+                                .Attribute("Name" + lang.ToUpper())
+                                .Value;
 
                             if (lang == "en")
                             {
                                 if (mystationdatatoday.CityName.Contains("/"))
                                 {
-                                    mystationdatatoday.CityName = mystationdatatoday.CityName.Replace("/", " / ");
+                                    mystationdatatoday.CityName =
+                                        mystationdatatoday.CityName.Replace("/", " / ");
                                 }
                             }
                             //mystationdatatoday.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
 
-                            mystationdatatoday.WeatherCode = stationtoday.Element("symbol").Element("code").Value;
-                            mystationdatatoday.WeatherDesc = stationtoday.Element("symbol").Element("description").Value;
-                            mystationdatatoday.WeatherImgUrl = stationtoday.Element("symbol").Element("imageURL").Value;
+                            mystationdatatoday.WeatherCode = stationtoday
+                                .Element("symbol")
+                                .Element("code")
+                                .Value;
+                            mystationdatatoday.WeatherDesc = stationtoday
+                                .Element("symbol")
+                                .Element("description")
+                                .Value;
+                            mystationdatatoday.WeatherImgUrl = stationtoday
+                                .Element("symbol")
+                                .Element("imageURL")
+                                .Value;
 
                             if (source == "siag")
                             {
-                                mystationdatatoday.MaxTemp = Convert.ToInt32(stationtoday.Element("temperature").Element("max").Value);
-                                mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.Element("temperature").Element("min").Value);
+                                mystationdatatoday.MaxTemp = Convert.ToInt32(
+                                    stationtoday.Element("temperature").Element("max").Value
+                                );
+                                mystationdatatoday.MinTemp = Convert.ToInt32(
+                                    stationtoday.Element("temperature").Element("min").Value
+                                );
                             }
                             else
                             {
-                                mystationdatatoday.MaxTemp = Convert.ToInt32(stationtoday.Element("max").Value);
-                                mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.Element("min").Value);
+                                mystationdatatoday.MaxTemp = Convert.ToInt32(
+                                    stationtoday.Element("max").Value
+                                );
+                                mystationdatatoday.MinTemp = Convert.ToInt32(
+                                    stationtoday.Element("min").Value
+                                );
                             }
 
                             myweather.Stationdata.Add(mystationdatatoday);
@@ -203,12 +400,29 @@ namespace SIAG
                     {
                         Conditions myconditiontomorrow = new Conditions();
 
-                        myconditiontomorrow.Date = Convert.ToDateTime(tomorrow.Element("date").Value);
-                        myconditiontomorrow.WeatherCondition = tomorrow.Element("conditions") != null ? tomorrow.Element("conditions").Value : "";
-                        myconditiontomorrow.WeatherImgUrl = tomorrow.Element("imageURL") != null ? tomorrow.Element("imageURL").Value : "";
-                        myconditiontomorrow.WeatherDesc = tomorrow.Element("weather") != null ? tomorrow.Element("weather").Value : "";
-                        myconditiontomorrow.Title = tomorrow.Element("title") != null ? tomorrow.Element("title").Value : "";
-                        myconditiontomorrow.Temperatures = tomorrow.Element("temperatures") != null ? tomorrow.Element("temperatures").Value : "";
+                        myconditiontomorrow.Date = Convert.ToDateTime(
+                            tomorrow.Element("date").Value
+                        );
+                        myconditiontomorrow.WeatherCondition =
+                            tomorrow.Element("conditions") != null
+                                ? tomorrow.Element("conditions").Value
+                                : "";
+                        myconditiontomorrow.WeatherImgUrl =
+                            tomorrow.Element("imageURL") != null
+                                ? tomorrow.Element("imageURL").Value
+                                : "";
+                        myconditiontomorrow.WeatherDesc =
+                            tomorrow.Element("weather") != null
+                                ? tomorrow.Element("weather").Value
+                                : "";
+                        myconditiontomorrow.Title =
+                            tomorrow.Element("title") != null
+                                ? tomorrow.Element("title").Value
+                                : "";
+                        myconditiontomorrow.Temperatures =
+                            tomorrow.Element("temperatures") != null
+                                ? tomorrow.Element("temperatures").Value
+                                : "";
 
                         myweather.Conditions.Add(myconditiontomorrow);
                     }
@@ -226,34 +440,64 @@ namespace SIAG
                             {
                                 Stationdata mystationdatatomorrow = new Stationdata();
 
-                                mystationdatatomorrow.Date = Convert.ToDateTime(tomorrow.Element("date").Value);
+                                mystationdatatomorrow.Date = Convert.ToDateTime(
+                                    tomorrow.Element("date").Value
+                                );
 
-                                mystationdatatomorrow.Id = Convert.ToInt32(stationtomorrow.Element("Id").Value);
-                                var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(stationtomorrow.Element("Id").Value)).FirstOrDefault();
-                                mystationdatatomorrow.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                                mystationdatatomorrow.Id = Convert.ToInt32(
+                                    stationtomorrow.Element("Id").Value
+                                );
+                                var mystationdatacity = weatherdataxml
+                                    .Root.Elements("Station")
+                                    .Where(x =>
+                                        x.Attribute("Id")
+                                            .Value.Equals(stationtomorrow.Element("Id").Value)
+                                    )
+                                    .FirstOrDefault();
+                                mystationdatatomorrow.CityName = mystationdatacity
+                                    .Attribute("Name" + lang.ToUpper())
+                                    .Value;
                                 //mystationdatatomorrow.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
 
                                 if (lang == "en")
                                 {
                                     if (mystationdatatomorrow.CityName.Contains("/"))
                                     {
-                                        mystationdatatomorrow.CityName = mystationdatatomorrow.CityName.Replace("/", " / ");
+                                        mystationdatatomorrow.CityName =
+                                            mystationdatatomorrow.CityName.Replace("/", " / ");
                                     }
                                 }
 
-                                mystationdatatomorrow.WeatherCode = stationtomorrow.Element("symbol").Element("code").Value;
-                                mystationdatatomorrow.WeatherDesc = stationtomorrow.Element("symbol").Element("description").Value;
-                                mystationdatatomorrow.WeatherImgUrl = stationtomorrow.Element("symbol").Element("imageURL").Value;
+                                mystationdatatomorrow.WeatherCode = stationtomorrow
+                                    .Element("symbol")
+                                    .Element("code")
+                                    .Value;
+                                mystationdatatomorrow.WeatherDesc = stationtomorrow
+                                    .Element("symbol")
+                                    .Element("description")
+                                    .Value;
+                                mystationdatatomorrow.WeatherImgUrl = stationtomorrow
+                                    .Element("symbol")
+                                    .Element("imageURL")
+                                    .Value;
 
                                 if (source == "siag")
                                 {
-                                    mystationdatatomorrow.MaxTemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("max").Value);
-                                    mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("min").Value);
+                                    mystationdatatomorrow.MaxTemp = Convert.ToInt32(
+                                        stationtomorrow.Element("temperature").Element("max").Value
+                                    );
+                                    mystationdatatomorrow.MinTemp = Convert.ToInt32(
+                                        stationtomorrow.Element("temperature").Element("min").Value
+                                    );
                                 }
                                 else
                                 {
-                                    mystationdatatomorrow.MaxTemp = Convert.ToInt32(stationtomorrow.Element("max").Value);
-                                    mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.Element("min").Value);
+                                    mystationdatatomorrow.MaxTemp = Convert.ToInt32(
+                                        stationtomorrow.Element("max").Value
+                                    );
+                                    mystationdatatomorrow.MinTemp = Convert.ToInt32(
+                                        stationtomorrow.Element("min").Value
+                                    );
                                 }
 
                                 myweather.Stationdata.Add(mystationdatatomorrow);
@@ -270,12 +514,22 @@ namespace SIAG
             }
         }
 
-        public static WeatherLinked ParsemyStationWeatherResponse(string lang, XDocument weatherdataxml, XDocument weatherresponse, string stationid, string source)
+        public static WeatherLinked ParsemyStationWeatherResponse(
+            string lang,
+            XDocument weatherdataxml,
+            XDocument weatherresponse,
+            string stationid,
+            string source
+        )
         {
             WeatherLinked myweather = new WeatherLinked();
 
             myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("Id").Value);
-            myweather.Date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
+            myweather.Date = Convert.ToDateTime(
+                weatherresponse
+                    .Root.Element("date")
+                    .Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00")
+            );
             myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
 
             var today = weatherresponse.Root.Element("today");
@@ -288,39 +542,70 @@ namespace SIAG
 
                 if (stationstoday != null)
                 {
-                    foreach (XElement stationtoday in stationstoday.Where(x => x.Element("Id").Value == stationid))
+                    foreach (
+                        XElement stationtoday in stationstoday.Where(x =>
+                            x.Element("Id").Value == stationid
+                        )
+                    )
                     {
                         Stationdata mystationdatatoday = new Stationdata();
 
                         mystationdatatoday.Date = Convert.ToDateTime(today.Element("date").Value);
 
                         mystationdatatoday.Id = Convert.ToInt32(stationtoday.Element("Id").Value);
-                        var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(stationtoday.Element("Id").Value)).FirstOrDefault();
-                        mystationdatatoday.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                        var mystationdatacity = weatherdataxml
+                            .Root.Elements("Station")
+                            .Where(x =>
+                                x.Attribute("Id").Value.Equals(stationtoday.Element("Id").Value)
+                            )
+                            .FirstOrDefault();
+                        mystationdatatoday.CityName = mystationdatacity
+                            .Attribute("Name" + lang.ToUpper())
+                            .Value;
 
                         if (lang == "en")
                         {
                             if (mystationdatatoday.CityName.Contains("/"))
                             {
-                                mystationdatatoday.CityName = mystationdatatoday.CityName.Replace("/", " / ");
+                                mystationdatatoday.CityName = mystationdatatoday.CityName.Replace(
+                                    "/",
+                                    " / "
+                                );
                             }
                         }
 
                         //mystationdatatoday.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
 
-                        mystationdatatoday.WeatherCode = stationtoday.Element("symbol").Element("code").Value;
-                        mystationdatatoday.WeatherDesc = stationtoday.Element("symbol").Element("description").Value;
-                        mystationdatatoday.WeatherImgUrl = stationtoday.Element("symbol").Element("imageURL").Value;
+                        mystationdatatoday.WeatherCode = stationtoday
+                            .Element("symbol")
+                            .Element("code")
+                            .Value;
+                        mystationdatatoday.WeatherDesc = stationtoday
+                            .Element("symbol")
+                            .Element("description")
+                            .Value;
+                        mystationdatatoday.WeatherImgUrl = stationtoday
+                            .Element("symbol")
+                            .Element("imageURL")
+                            .Value;
 
                         if (source == "siag")
                         {
-                            mystationdatatoday.MaxTemp = Convert.ToInt32(stationtoday.Element("temperature").Element("max").Value);
-                            mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.Element("temperature").Element("min").Value);
+                            mystationdatatoday.MaxTemp = Convert.ToInt32(
+                                stationtoday.Element("temperature").Element("max").Value
+                            );
+                            mystationdatatoday.MinTemp = Convert.ToInt32(
+                                stationtoday.Element("temperature").Element("min").Value
+                            );
                         }
                         else
                         {
-                            mystationdatatoday.MaxTemp = Convert.ToInt32(stationtoday.Element("max").Value);
-                            mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.Element("min").Value);
+                            mystationdatatoday.MaxTemp = Convert.ToInt32(
+                                stationtoday.Element("max").Value
+                            );
+                            mystationdatatoday.MinTemp = Convert.ToInt32(
+                                stationtoday.Element("min").Value
+                            );
                         }
 
                         myweather.Stationdata.Add(mystationdatatoday);
@@ -334,38 +619,71 @@ namespace SIAG
                 var stationstomorrow = tomorrow.Elements("stationData");
                 if (stationstomorrow != null)
                 {
-                    foreach (XElement stationtomorrow in stationstomorrow.Where(x => x.Element("Id").Value == stationid))
+                    foreach (
+                        XElement stationtomorrow in stationstomorrow.Where(x =>
+                            x.Element("Id").Value == stationid
+                        )
+                    )
                     {
                         Stationdata mystationdatatomorrow = new Stationdata();
 
-                        mystationdatatomorrow.Date = Convert.ToDateTime(tomorrow.Element("date").Value);
+                        mystationdatatomorrow.Date = Convert.ToDateTime(
+                            tomorrow.Element("date").Value
+                        );
 
-                        mystationdatatomorrow.Id = Convert.ToInt32(stationtomorrow.Element("Id").Value);
-                        var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(stationtomorrow.Element("Id").Value)).FirstOrDefault();
-                        mystationdatatomorrow.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                        mystationdatatomorrow.Id = Convert.ToInt32(
+                            stationtomorrow.Element("Id").Value
+                        );
+                        var mystationdatacity = weatherdataxml
+                            .Root.Elements("Station")
+                            .Where(x =>
+                                x.Attribute("Id").Value.Equals(stationtomorrow.Element("Id").Value)
+                            )
+                            .FirstOrDefault();
+                        mystationdatatomorrow.CityName = mystationdatacity
+                            .Attribute("Name" + lang.ToUpper())
+                            .Value;
 
                         if (lang == "en")
                         {
                             if (mystationdatatomorrow.CityName.Contains("/"))
                             {
-                                mystationdatatomorrow.CityName = mystationdatatomorrow.CityName.Replace("/", " / ");
+                                mystationdatatomorrow.CityName =
+                                    mystationdatatomorrow.CityName.Replace("/", " / ");
                             }
                         }
                         //mystationdatatomorrow.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
 
-                        mystationdatatomorrow.WeatherCode = stationtomorrow.Element("symbol").Element("code").Value;
-                        mystationdatatomorrow.WeatherDesc = stationtomorrow.Element("symbol").Element("description").Value;
-                        mystationdatatomorrow.WeatherImgUrl = stationtomorrow.Element("symbol").Element("imageURL").Value;
+                        mystationdatatomorrow.WeatherCode = stationtomorrow
+                            .Element("symbol")
+                            .Element("code")
+                            .Value;
+                        mystationdatatomorrow.WeatherDesc = stationtomorrow
+                            .Element("symbol")
+                            .Element("description")
+                            .Value;
+                        mystationdatatomorrow.WeatherImgUrl = stationtomorrow
+                            .Element("symbol")
+                            .Element("imageURL")
+                            .Value;
 
                         if (source == "siag")
                         {
-                            mystationdatatomorrow.MaxTemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("max").Value);
-                            mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.Element("temperature").Element("min").Value);
+                            mystationdatatomorrow.MaxTemp = Convert.ToInt32(
+                                stationtomorrow.Element("temperature").Element("max").Value
+                            );
+                            mystationdatatomorrow.MinTemp = Convert.ToInt32(
+                                stationtomorrow.Element("temperature").Element("min").Value
+                            );
                         }
                         else
                         {
-                            mystationdatatomorrow.MaxTemp = Convert.ToInt32(stationtomorrow.Element("max").Value);
-                            mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.Element("min").Value);
+                            mystationdatatomorrow.MaxTemp = Convert.ToInt32(
+                                stationtomorrow.Element("max").Value
+                            );
+                            mystationdatatomorrow.MinTemp = Convert.ToInt32(
+                                stationtomorrow.Element("min").Value
+                            );
                         }
 
                         myweather.Stationdata.Add(mystationdatatomorrow);
@@ -376,15 +694,25 @@ namespace SIAG
             return myweather;
         }
 
-        public static WeatherDistrictLinked ParsemyBezirksWeatherResponse(string lang, XDocument weatherresponse, string source)
+        public static WeatherDistrictLinked ParsemyBezirksWeatherResponse(
+            string lang,
+            XDocument weatherresponse,
+            string source
+        )
         {
             WeatherDistrictLinked myweather = new WeatherDistrictLinked();
 
-            myweather.Id = Convert.ToInt32(weatherresponse.Root.Element("district").Element("Id").Value);
+            myweather.Id = Convert.ToInt32(
+                weatherresponse.Root.Element("district").Element("Id").Value
+            );
             myweather.DistrictName = weatherresponse.Root.Element("district").Element("name").Value;
             myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
 
-            myweather.Date = Convert.ToDateTime(weatherresponse.Root.Element("date").Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00"));
+            myweather.Date = Convert.ToDateTime(
+                weatherresponse
+                    .Root.Element("date")
+                    .Value.Replace("00:00:00", weatherresponse.Root.Element("hour").Value + ":00")
+            );
 
             var mybezirkforecasts = weatherresponse.Root.Elements("forecast");
 
@@ -393,65 +721,140 @@ namespace SIAG
             //Tomorrow info
             foreach (var mybezirkforecast in mybezirkforecasts)
             {
-
                 BezirksForecast bezirksforecast = new BezirksForecast();
 
                 bezirksforecast.Date = Convert.ToDateTime(mybezirkforecast.Element("date").Value);
 
-                bezirksforecast.WeatherCode = mybezirkforecast.Element("symbol").Element("code").Value;
-                bezirksforecast.WeatherDesc = mybezirkforecast.Element("symbol").Element("description").Value;
-                bezirksforecast.WeatherImgUrl = mybezirkforecast.Element("symbol").Element("imageURL").Value;
+                bezirksforecast.WeatherCode = mybezirkforecast
+                    .Element("symbol")
+                    .Element("code")
+                    .Value;
+                bezirksforecast.WeatherDesc = mybezirkforecast
+                    .Element("symbol")
+                    .Element("description")
+                    .Value;
+                bezirksforecast.WeatherImgUrl = mybezirkforecast
+                    .Element("symbol")
+                    .Element("imageURL")
+                    .Value;
 
                 bezirksforecast.Freeze = Convert.ToInt16(mybezirkforecast.Element("freeze").Value);
-                bezirksforecast.RainFrom = Convert.ToInt16(mybezirkforecast.Element("rainFrom").Value);
+                bezirksforecast.RainFrom = Convert.ToInt16(
+                    mybezirkforecast.Element("rainFrom").Value
+                );
                 bezirksforecast.RainTo = Convert.ToInt16(mybezirkforecast.Element("rainTo").Value);
 
                 if (source == "siag")
                 {
-                    bezirksforecast.MaxTemp = Convert.ToInt16(mybezirkforecast.Element("temperature").Element("max").Value);
-                    bezirksforecast.MinTemp = Convert.ToInt16(mybezirkforecast.Element("temperature").Element("min").Value);
+                    bezirksforecast.MaxTemp = Convert.ToInt16(
+                        mybezirkforecast.Element("temperature").Element("max").Value
+                    );
+                    bezirksforecast.MinTemp = Convert.ToInt16(
+                        mybezirkforecast.Element("temperature").Element("min").Value
+                    );
 
-                    bezirksforecast.Part1 = mybezirkforecast.Element("part1") != null ? Convert.ToInt16(mybezirkforecast.Element("part1").Value) : 0;
-                    bezirksforecast.Part2 = mybezirkforecast.Element("part2") != null ? Convert.ToInt16(mybezirkforecast.Element("part2").Value) : 0;
-                    bezirksforecast.Part3 = mybezirkforecast.Element("part3") != null ? Convert.ToInt16(mybezirkforecast.Element("part3").Value) : 0;
-                    bezirksforecast.Part4 = mybezirkforecast.Element("part4") != null ? Convert.ToInt16(mybezirkforecast.Element("part4").Value) : 0;
+                    bezirksforecast.Part1 =
+                        mybezirkforecast.Element("part1") != null
+                            ? Convert.ToInt16(mybezirkforecast.Element("part1").Value)
+                            : 0;
+                    bezirksforecast.Part2 =
+                        mybezirkforecast.Element("part2") != null
+                            ? Convert.ToInt16(mybezirkforecast.Element("part2").Value)
+                            : 0;
+                    bezirksforecast.Part3 =
+                        mybezirkforecast.Element("part3") != null
+                            ? Convert.ToInt16(mybezirkforecast.Element("part3").Value)
+                            : 0;
+                    bezirksforecast.Part4 =
+                        mybezirkforecast.Element("part4") != null
+                            ? Convert.ToInt16(mybezirkforecast.Element("part4").Value)
+                            : 0;
 
-                    if (mybezirkforecast.Element("part3") == null && mybezirkforecast.Element("part4") == null)
+                    if (
+                        mybezirkforecast.Element("part3") == null
+                        && mybezirkforecast.Element("part4") == null
+                    )
                     {
-                        bezirksforecast.Part1 = mybezirkforecast.Element("part1") != null ? Convert.ToInt16(mybezirkforecast.Element("part1").Value) : 0;
-                        bezirksforecast.Part2 = mybezirkforecast.Element("part1") != null ? Convert.ToInt16(mybezirkforecast.Element("part1").Value) : 0;
-                        bezirksforecast.Part3 = mybezirkforecast.Element("part2") != null ? Convert.ToInt16(mybezirkforecast.Element("part2").Value) : 0;
-                        bezirksforecast.Part4 = mybezirkforecast.Element("part2") != null ? Convert.ToInt16(mybezirkforecast.Element("part2").Value) : 0;
+                        bezirksforecast.Part1 =
+                            mybezirkforecast.Element("part1") != null
+                                ? Convert.ToInt16(mybezirkforecast.Element("part1").Value)
+                                : 0;
+                        bezirksforecast.Part2 =
+                            mybezirkforecast.Element("part1") != null
+                                ? Convert.ToInt16(mybezirkforecast.Element("part1").Value)
+                                : 0;
+                        bezirksforecast.Part3 =
+                            mybezirkforecast.Element("part2") != null
+                                ? Convert.ToInt16(mybezirkforecast.Element("part2").Value)
+                                : 0;
+                        bezirksforecast.Part4 =
+                            mybezirkforecast.Element("part2") != null
+                                ? Convert.ToInt16(mybezirkforecast.Element("part2").Value)
+                                : 0;
                     }
 
-                    bezirksforecast.Thunderstorm = Convert.ToInt16(mybezirkforecast.Element("thunderStorm").Value);
+                    bezirksforecast.Thunderstorm = Convert.ToInt16(
+                        mybezirkforecast.Element("thunderStorm").Value
+                    );
                 }
                 else
                 {
-                    bezirksforecast.MaxTemp = Convert.ToInt16(mybezirkforecast.Element("temperatureMax").Value);
-                    bezirksforecast.MinTemp = Convert.ToInt16(mybezirkforecast.Element("temperatureMin").Value);
+                    bezirksforecast.MaxTemp = Convert.ToInt16(
+                        mybezirkforecast.Element("temperatureMax").Value
+                    );
+                    bezirksforecast.MinTemp = Convert.ToInt16(
+                        mybezirkforecast.Element("temperatureMin").Value
+                    );
 
-                    bezirksforecast.Part1 = mybezirkforecast.Element("rainTimespan1") != null ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan1").Value) : 0;
-                    bezirksforecast.Part2 = mybezirkforecast.Element("rainTimespan2") != null ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan2").Value) : 0;
-                    bezirksforecast.Part3 = mybezirkforecast.Element("rainTimespan3") != null ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan3").Value) : 0;
-                    bezirksforecast.Part4 = mybezirkforecast.Element("rainTimespan4") != null ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan4").Value) : 0;
+                    bezirksforecast.Part1 =
+                        mybezirkforecast.Element("rainTimespan1") != null
+                            ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan1").Value)
+                            : 0;
+                    bezirksforecast.Part2 =
+                        mybezirkforecast.Element("rainTimespan2") != null
+                            ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan2").Value)
+                            : 0;
+                    bezirksforecast.Part3 =
+                        mybezirkforecast.Element("rainTimespan3") != null
+                            ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan3").Value)
+                            : 0;
+                    bezirksforecast.Part4 =
+                        mybezirkforecast.Element("rainTimespan4") != null
+                            ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan4").Value)
+                            : 0;
 
-                    if (mybezirkforecast.Element("rainTimespan3") == null && mybezirkforecast.Element("rainTimespan4") == null)
+                    if (
+                        mybezirkforecast.Element("rainTimespan3") == null
+                        && mybezirkforecast.Element("rainTimespan4") == null
+                    )
                     {
-                        bezirksforecast.Part1 = mybezirkforecast.Element("rainTimespan1") != null ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan1").Value) : 0;
-                        bezirksforecast.Part2 = mybezirkforecast.Element("rainTimespan1") != null ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan1").Value) : 0;
-                        bezirksforecast.Part3 = mybezirkforecast.Element("rainTimespan2") != null ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan2").Value) : 0;
-                        bezirksforecast.Part4 = mybezirkforecast.Element("rainTimespan2") != null ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan2").Value) : 0;
+                        bezirksforecast.Part1 =
+                            mybezirkforecast.Element("rainTimespan1") != null
+                                ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan1").Value)
+                                : 0;
+                        bezirksforecast.Part2 =
+                            mybezirkforecast.Element("rainTimespan1") != null
+                                ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan1").Value)
+                                : 0;
+                        bezirksforecast.Part3 =
+                            mybezirkforecast.Element("rainTimespan2") != null
+                                ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan2").Value)
+                                : 0;
+                        bezirksforecast.Part4 =
+                            mybezirkforecast.Element("rainTimespan2") != null
+                                ? Convert.ToInt16(mybezirkforecast.Element("rainTimespan2").Value)
+                                : 0;
                     }
 
-                    bezirksforecast.Thunderstorm = Convert.ToInt16(mybezirkforecast.Element("storms").Value);
+                    bezirksforecast.Thunderstorm = Convert.ToInt16(
+                        mybezirkforecast.Element("storms").Value
+                    );
                 }
 
-                //TODO no 
+                //TODO no
 
 
                 mybezirksforecastlist.Add(bezirksforecast);
-
             }
 
             myweather.BezirksForecast = mybezirksforecastlist.ToList();
@@ -461,16 +864,25 @@ namespace SIAG
 
         //JSON Response Parser
 
-        public static WeatherLinked ParsemyWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson, string source)
+        public static WeatherLinked ParsemyWeatherJsonResponse(
+            string lang,
+            XDocument weatherdataxml,
+            string weatherresponsejson,
+            string source
+        )
         {
-            var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(weatherresponsejson);
+            var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(
+                weatherresponsejson
+            );
 
             try
             {
                 WeatherLinked myweather = new WeatherLinked();
 
                 myweather.Id = Convert.ToInt32(siagweather.id);
-                myweather.Date = Convert.ToDateTime(siagweather.date.ToShortDateString() + " " + siagweather.hour);
+                myweather.Date = Convert.ToDateTime(
+                    siagweather.date.ToShortDateString() + " " + siagweather.hour
+                );
                 myweather.Evolution = siagweather.evolution;
                 myweather.EvolutionTitle = siagweather.evolutionTitle;
                 myweather.Language = lang;
@@ -504,7 +916,9 @@ namespace SIAG
                     mymountaintoday.Date = siagweather.mountainToday.date;
                     mymountaintoday.Title = siagweather.mountainToday.title;
                     mymountaintoday.Zerolimit = siagweather.mountainToday.zeroLimit.ToString();
-                    mymountaintoday.Snowlimit = siagweather.mountainToday.snowLimit.Select(x => x.ToString()).ToList<string>();
+                    mymountaintoday.Snowlimit = siagweather
+                        .mountainToday.snowLimit.Select(x => x.ToString())
+                        .ToList<string>();
 
                     mymountaintoday.WeatherDesc = siagweather.mountainToday.weather;
 
@@ -540,8 +954,11 @@ namespace SIAG
                     Mountain mymountaintomorrow = new Mountain();
                     mymountaintomorrow.Date = siagweather.mountainTomorrow.date;
                     mymountaintomorrow.Title = siagweather.mountainTomorrow.title;
-                    mymountaintomorrow.Zerolimit = siagweather.mountainTomorrow.zeroLimit.ToString();
-                    mymountaintomorrow.Snowlimit = siagweather.mountainTomorrow.snowLimit.Select(x => x.ToString()).ToList<string>();
+                    mymountaintomorrow.Zerolimit =
+                        siagweather.mountainTomorrow.zeroLimit.ToString();
+                    mymountaintomorrow.Snowlimit = siagweather
+                        .mountainTomorrow.snowLimit.Select(x => x.ToString())
+                        .ToList<string>();
 
                     mymountaintomorrow.WeatherDesc = siagweather.mountainTomorrow.weather;
 
@@ -551,11 +968,20 @@ namespace SIAG
                     mymountaintomorrow.Moonset = siagweather.mountainTomorrow.moonSet;
                     mymountaintomorrow.Sunrise = siagweather.mountainTomorrow.sunRise;
                     mymountaintomorrow.Sunset = siagweather.mountainTomorrow.sunSet;
-                    mymountaintomorrow.Reliability = siagweather.mountainTomorrow.reliability.ToString();
-                    mymountaintomorrow.Temp1000 = Convert.ToInt32(siagweather.mountainTomorrow.temp1000);
-                    mymountaintomorrow.Temp2000 = Convert.ToInt32(siagweather.mountainTomorrow.temp2000);
-                    mymountaintomorrow.Temp3000 = Convert.ToInt32(siagweather.mountainTomorrow.temp3000);
-                    mymountaintomorrow.Temp4000 = Convert.ToInt32(siagweather.mountainTomorrow.temp4000);
+                    mymountaintomorrow.Reliability =
+                        siagweather.mountainTomorrow.reliability.ToString();
+                    mymountaintomorrow.Temp1000 = Convert.ToInt32(
+                        siagweather.mountainTomorrow.temp1000
+                    );
+                    mymountaintomorrow.Temp2000 = Convert.ToInt32(
+                        siagweather.mountainTomorrow.temp2000
+                    );
+                    mymountaintomorrow.Temp3000 = Convert.ToInt32(
+                        siagweather.mountainTomorrow.temp3000
+                    );
+                    mymountaintomorrow.Temp4000 = Convert.ToInt32(
+                        siagweather.mountainTomorrow.temp4000
+                    );
 
                     mymountaintomorrow.NorthCode = siagweather.mountainTomorrow.north.code;
                     mymountaintomorrow.NorthDesc = siagweather.mountainTomorrow.north.description;
@@ -575,7 +1001,9 @@ namespace SIAG
                 {
                     Conditions myconditiontoday = new Conditions();
 
-                    myconditiontoday.Date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
+                    myconditiontoday.Date = Convert.ToDateTime(
+                        siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour
+                    ); //TODO CHeck
                     myconditiontoday.WeatherCondition = siagweather.today.conditions;
                     myconditiontoday.WeatherImgUrl = siagweather.today.imageUrl;
                     myconditiontoday.WeatherDesc = siagweather.today.weather;
@@ -604,17 +1032,27 @@ namespace SIAG
                         {
                             DataModel.Stationdata mystationdatatoday = new DataModel.Stationdata();
 
-                            mystationdatatoday.Date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
+                            mystationdatatoday.Date = Convert.ToDateTime(
+                                siagweather.today.date.ToShortDateString()
+                                    + " "
+                                    + siagweather.today.hour
+                            ); //TODO CHeck
 
                             mystationdatatoday.Id = i;
-                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(i.ToString())).FirstOrDefault();
-                            mystationdatatoday.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                            var mystationdatacity = weatherdataxml
+                                .Root.Elements("Station")
+                                .Where(x => x.Attribute("Id").Value.Equals(i.ToString()))
+                                .FirstOrDefault();
+                            mystationdatatoday.CityName = mystationdatacity
+                                .Attribute("Name" + lang.ToUpper())
+                                .Value;
 
                             if (lang == "en")
                             {
                                 if (mystationdatatoday.CityName.Contains("/"))
                                 {
-                                    mystationdatatoday.CityName = mystationdatatoday.CityName.Replace("/", " / ");
+                                    mystationdatatoday.CityName =
+                                        mystationdatatoday.CityName.Replace("/", " / ");
                                 }
                             }
                             //mystationdatatoday.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
@@ -637,7 +1075,11 @@ namespace SIAG
                 {
                     Conditions myconditiontomorrow = new Conditions();
 
-                    myconditiontomorrow.Date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour); //TODO CHeck
+                    myconditiontomorrow.Date = Convert.ToDateTime(
+                        siagweather.tomorrow.date.ToShortDateString()
+                            + " "
+                            + siagweather.tomorrow.hour
+                    ); //TODO CHeck
                     myconditiontomorrow.WeatherCondition = siagweather.tomorrow.conditions;
                     myconditiontomorrow.WeatherImgUrl = siagweather.tomorrow.imageUrl;
                     myconditiontomorrow.WeatherDesc = siagweather.tomorrow.weather;
@@ -665,20 +1107,31 @@ namespace SIAG
 
                         foreach (var stationtomorrow in stationstomorrow)
                         {
-                            DataModel.Stationdata mystationdatatomorrow = new DataModel.Stationdata();
+                            DataModel.Stationdata mystationdatatomorrow =
+                                new DataModel.Stationdata();
 
-                            mystationdatatomorrow.Date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour);
+                            mystationdatatomorrow.Date = Convert.ToDateTime(
+                                siagweather.tomorrow.date.ToShortDateString()
+                                    + " "
+                                    + siagweather.tomorrow.hour
+                            );
 
                             mystationdatatomorrow.Id = j;
-                            var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(j.ToString())).FirstOrDefault();
-                            mystationdatatomorrow.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                            var mystationdatacity = weatherdataxml
+                                .Root.Elements("Station")
+                                .Where(x => x.Attribute("Id").Value.Equals(j.ToString()))
+                                .FirstOrDefault();
+                            mystationdatatomorrow.CityName = mystationdatacity
+                                .Attribute("Name" + lang.ToUpper())
+                                .Value;
                             //mystationdatatomorrow.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
 
                             if (lang == "en")
                             {
                                 if (mystationdatatomorrow.CityName.Contains("/"))
                                 {
-                                    mystationdatatomorrow.CityName = mystationdatatomorrow.CityName.Replace("/", " / ");
+                                    mystationdatatomorrow.CityName =
+                                        mystationdatatomorrow.CityName.Replace("/", " / ");
                                 }
                             }
 
@@ -704,21 +1157,30 @@ namespace SIAG
             }
         }
 
-        public static WeatherLinked ParsemyStationWeatherJsonResponse(string lang, XDocument weatherdataxml, string weatherresponsejson, string source, string stationid)
+        public static WeatherLinked ParsemyStationWeatherJsonResponse(
+            string lang,
+            XDocument weatherdataxml,
+            string weatherresponsejson,
+            string source,
+            string stationid
+        )
         {
-            var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(weatherresponsejson);
+            var siagweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeather>(
+                weatherresponsejson
+            );
 
             try
             {
                 WeatherLinked myweather = new WeatherLinked();
 
                 myweather.Id = Convert.ToInt32(siagweather.id);
-                myweather.Date = Convert.ToDateTime(siagweather.date.ToShortDateString() + " " + siagweather.hour);
+                myweather.Date = Convert.ToDateTime(
+                    siagweather.date.ToShortDateString() + " " + siagweather.hour
+                );
                 myweather.Language = lang;
                 myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
 
                 var stationindex = Convert.ToInt32(stationid);
-
 
                 //Stationdata today
                 if (siagweather.today != null)
@@ -727,22 +1189,33 @@ namespace SIAG
 
                     if (stationstoday != null)
                     {
-
                         var stationtoday = stationstoday[stationindex - 1];
 
                         DataModel.Stationdata mystationdatatoday = new DataModel.Stationdata();
 
-                        mystationdatatoday.Date = Convert.ToDateTime(siagweather.today.date.ToShortDateString() + " " + siagweather.today.hour); //TODO CHeck
+                        mystationdatatoday.Date = Convert.ToDateTime(
+                            siagweather.today.date.ToShortDateString()
+                                + " "
+                                + siagweather.today.hour
+                        ); //TODO CHeck
 
                         mystationdatatoday.Id = stationindex;
-                        var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(stationindex)).FirstOrDefault();
-                        mystationdatatoday.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                        var mystationdatacity = weatherdataxml
+                            .Root.Elements("Station")
+                            .Where(x => x.Attribute("Id").Value.Equals(stationindex))
+                            .FirstOrDefault();
+                        mystationdatatoday.CityName = mystationdatacity
+                            .Attribute("Name" + lang.ToUpper())
+                            .Value;
 
                         if (lang == "en")
                         {
                             if (mystationdatatoday.CityName.Contains("/"))
                             {
-                                mystationdatatoday.CityName = mystationdatatoday.CityName.Replace("/", " / ");
+                                mystationdatatoday.CityName = mystationdatatoday.CityName.Replace(
+                                    "/",
+                                    " / "
+                                );
                             }
                         }
                         //mystationdatatoday.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
@@ -754,8 +1227,6 @@ namespace SIAG
                         mystationdatatoday.MinTemp = Convert.ToInt32(stationtoday.min);
 
                         myweather.Stationdata.Add(mystationdatatoday);
-
-
                     }
                 }
                 //Stationdata today
@@ -765,23 +1236,32 @@ namespace SIAG
 
                     if (stationstomorrow != null)
                     {
-
                         var stationtomorrow = stationstomorrow[stationindex - 1];
 
                         DataModel.Stationdata mystationdatatomorrow = new DataModel.Stationdata();
 
-                        mystationdatatomorrow.Date = Convert.ToDateTime(siagweather.tomorrow.date.ToShortDateString() + " " + siagweather.tomorrow.hour);
+                        mystationdatatomorrow.Date = Convert.ToDateTime(
+                            siagweather.tomorrow.date.ToShortDateString()
+                                + " "
+                                + siagweather.tomorrow.hour
+                        );
 
                         mystationdatatomorrow.Id = stationindex;
-                        var mystationdatacity = weatherdataxml.Root.Elements("Station").Where(x => x.Attribute("Id").Value.Equals(stationindex.ToString())).FirstOrDefault();
-                        mystationdatatomorrow.CityName = mystationdatacity.Attribute("Name" + lang.ToUpper()).Value;
+                        var mystationdatacity = weatherdataxml
+                            .Root.Elements("Station")
+                            .Where(x => x.Attribute("Id").Value.Equals(stationindex.ToString()))
+                            .FirstOrDefault();
+                        mystationdatatomorrow.CityName = mystationdatacity
+                            .Attribute("Name" + lang.ToUpper())
+                            .Value;
                         //mystationdatatomorrow.stationdatacityrid = mystationdatacity.Attribute("RID").Value;
 
                         if (lang == "en")
                         {
                             if (mystationdatatomorrow.CityName.Contains("/"))
                             {
-                                mystationdatatomorrow.CityName = mystationdatatomorrow.CityName.Replace("/", " / ");
+                                mystationdatatomorrow.CityName =
+                                    mystationdatatomorrow.CityName.Replace("/", " / ");
                             }
                         }
 
@@ -793,7 +1273,6 @@ namespace SIAG
                         mystationdatatomorrow.MinTemp = Convert.ToInt32(stationtomorrow.min);
 
                         myweather.Stationdata.Add(mystationdatatomorrow);
-
                     }
                 }
 
@@ -803,13 +1282,18 @@ namespace SIAG
             {
                 return null;
             }
-
         }
 
-
-        public static WeatherDistrictLinked ParsemyBezirksWeatherJsonResponse(string lang, string weatherresponsejson, string source)
+        public static WeatherDistrictLinked ParsemyBezirksWeatherJsonResponse(
+            string lang,
+            string weatherresponsejson,
+            string source
+        )
         {
-            var siagdistrictweather = JsonConvert.DeserializeObject<WeatherModel.SiagWeatherDistrict>(weatherresponsejson);
+            var siagdistrictweather =
+                JsonConvert.DeserializeObject<WeatherModel.SiagWeatherDistrict>(
+                    weatherresponsejson
+                );
 
             try
             {
@@ -818,7 +1302,9 @@ namespace SIAG
                 myweather.Id = siagdistrictweather.district.id;
                 myweather.DistrictName = siagdistrictweather.district.name;
                 myweather.LicenseInfo = Helper.LicenseHelper.GetLicenseforWeather(source);
-                myweather.Date = Convert.ToDateTime(siagdistrictweather.date.ToShortDateString() + " " + siagdistrictweather.hour);
+                myweather.Date = Convert.ToDateTime(
+                    siagdistrictweather.date.ToShortDateString() + " " + siagdistrictweather.hour
+                );
                 myweather.Language = lang;
 
                 List<BezirksForecast> mybezirksforecastlist = new List<BezirksForecast>();
@@ -826,7 +1312,6 @@ namespace SIAG
                 //Tomorrow info
                 foreach (var mybezirkforecast in siagdistrictweather.forecasts)
                 {
-
                     BezirksForecast bezirksforecast = new BezirksForecast();
 
                     bezirksforecast.Date = mybezirkforecast.date;
@@ -849,12 +1334,27 @@ namespace SIAG
 
                     //TO CHECK WHAT THIS IS FOR
                     //HACK
-                    if (mybezirkforecast.rainTimespan3 == null && mybezirkforecast.rainTimespan4 == null)
+                    if (
+                        mybezirkforecast.rainTimespan3 == null
+                        && mybezirkforecast.rainTimespan4 == null
+                    )
                     {
-                        bezirksforecast.Part1 = mybezirkforecast.rainTimespan1 != null ? Convert.ToInt32(mybezirkforecast.rainTimespan1) : 0;
-                        bezirksforecast.Part2 = mybezirkforecast.rainTimespan1 != null ? Convert.ToInt32(mybezirkforecast.rainTimespan1) : 0;
-                        bezirksforecast.Part3 = mybezirkforecast.rainTimespan2 != null ? Convert.ToInt32(mybezirkforecast.rainTimespan2) : 0;
-                        bezirksforecast.Part4 = mybezirkforecast.rainTimespan2 != null ? Convert.ToInt32(mybezirkforecast.rainTimespan2) : 0;
+                        bezirksforecast.Part1 =
+                            mybezirkforecast.rainTimespan1 != null
+                                ? Convert.ToInt32(mybezirkforecast.rainTimespan1)
+                                : 0;
+                        bezirksforecast.Part2 =
+                            mybezirkforecast.rainTimespan1 != null
+                                ? Convert.ToInt32(mybezirkforecast.rainTimespan1)
+                                : 0;
+                        bezirksforecast.Part3 =
+                            mybezirkforecast.rainTimespan2 != null
+                                ? Convert.ToInt32(mybezirkforecast.rainTimespan2)
+                                : 0;
+                        bezirksforecast.Part4 =
+                            mybezirkforecast.rainTimespan2 != null
+                                ? Convert.ToInt32(mybezirkforecast.rainTimespan2)
+                                : 0;
                     }
 
                     bezirksforecast.Thunderstorm = Convert.ToInt32(mybezirkforecast.freeze);
@@ -873,8 +1373,6 @@ namespace SIAG
             {
                 return null;
             }
-
-
         }
 
         //public static WeatherDistrictLinked MergeBezirksWetterIntoOne(IEnumerable<WeatherDistrictLinked> weatherDistrictlist)
@@ -885,7 +1383,7 @@ namespace SIAG
         //    //District name
         //    foreach (var weatherDistrict in weatherDistrictlist)
         //    {
-        //        weatherDistrictmerged.District.TryAddOrUpdate(weatherDistrict.Language, weatherDistrict.DistrictName);                
+        //        weatherDistrictmerged.District.TryAddOrUpdate(weatherDistrict.Language, weatherDistrict.DistrictName);
 
         //        for(int i = 0; i <= weatherDistrict.BezirksForecast.Count; i++)
         //        {
@@ -901,7 +1399,11 @@ namespace SIAG
         //    return weatherDistrictmerged;
         //}
 
-        public static WeatherForecastLinked ParseWeatherForecastFromJsonFile(string lang, SiagMunicipality siagforecast, SiagForecastInfo siagforecastinfo)
+        public static WeatherForecastLinked ParseWeatherForecastFromJsonFile(
+            string lang,
+            SiagMunicipality siagforecast,
+            SiagForecastInfo siagforecastinfo
+        )
         {
             WeatherForecastLinked weatherforecast = new WeatherForecastLinked();
 
@@ -925,7 +1427,7 @@ namespace SIAG
                 { "de", siagforecast.nameDe },
                 { "it", siagforecast.nameIt },
                 { "en", siagforecast.nameEn },
-                { "ld", siagforecast.nameRm }
+                { "ld", siagforecast.nameRm },
             };
 
             weatherforecast.ForeCastDaily = new List<Forecast24Hours>();
@@ -936,33 +1438,51 @@ namespace SIAG
                 Forecast24Hours forecast24Hours = new Forecast24Hours();
 
                 forecast24Hours.Date = measurement24.Key;
-                
-                foreach(var grouped in measurement24)
+
+                foreach (var grouped in measurement24)
                 {
                     if (grouped.forecastdata.ContainsKey("ssd24"))
                         forecast24Hours.SunshineDuration = grouped.forecastdata["ssd24"];
-                    if(grouped.forecastdata.ContainsKey("tempMin24"))
+                    if (grouped.forecastdata.ContainsKey("tempMin24"))
                         forecast24Hours.MinTemp = grouped.forecastdata["tempMin24"];
                     if (grouped.forecastdata.ContainsKey("tempMax24"))
                         forecast24Hours.MaxTemp = grouped.forecastdata["tempMax24"];
-                    if(grouped.forecastdata.ContainsKey("precProb24"))
-                        forecast24Hours.PrecipitationProbability =  grouped.forecastdata["precProb24"];
+                    if (grouped.forecastdata.ContainsKey("precProb24"))
+                        forecast24Hours.PrecipitationProbability = grouped.forecastdata[
+                            "precProb24"
+                        ];
                     if (grouped.forecastdata.ContainsKey("precSum24"))
                         forecast24Hours.Precipitation = grouped.forecastdata["precSum24"];
-                    if (grouped.forecastdatastr.ContainsKey("symbols24")) 
-                        forecast24Hours.WeatherCode = GetWeatherCodeTrimmed(grouped.forecastdatastr["symbols24"]);
-                    if (grouped.forecastdatastr.ContainsKey("symbols24")) 
-                        forecast24Hours.WeatherImgUrl = String.Format("https://daten.buergernetz.bz.it/services/weather/graphics/icons/imgsource/wetter/icon_{0}.png", GetWeatherCodeAsInteger(grouped.forecastdatastr["symbols24"]));
-                    if (grouped.forecastdatastr.ContainsKey("symbols24")) 
-                        forecast24Hours.WeatherDesc = GetMappedWeatherDesc(lang, grouped.forecastdatastr["symbols24"]);
+                    if (grouped.forecastdatastr.ContainsKey("symbols24"))
+                        forecast24Hours.WeatherCode = GetWeatherCodeTrimmed(
+                            grouped.forecastdatastr["symbols24"]
+                        );
+                    if (grouped.forecastdatastr.ContainsKey("symbols24"))
+                        forecast24Hours.WeatherImgUrl = String.Format(
+                            "https://daten.buergernetz.bz.it/services/weather/graphics/icons/imgsource/wetter/icon_{0}.png",
+                            GetWeatherCodeAsInteger(grouped.forecastdatastr["symbols24"])
+                        );
+                    if (grouped.forecastdatastr.ContainsKey("symbols24"))
+                        forecast24Hours.WeatherDesc = GetMappedWeatherDesc(
+                            lang,
+                            grouped.forecastdatastr["symbols24"]
+                        );
                     if (grouped.forecastdatastr.ContainsKey("symbols24"))
                         forecast24Hours.WeatherDescription = new Dictionary<string, string>()
-                                                                {
-                                                                    { "de", GetMappedWeatherDesc("de", grouped.forecastdatastr["symbols24"]) },
-                                                                    { "it", GetMappedWeatherDesc("it", grouped.forecastdatastr["symbols24"]) },
-                                                                    { "en", GetMappedWeatherDesc("en", grouped.forecastdatastr["symbols24"]) }
-                                                                };
-
+                        {
+                            {
+                                "de",
+                                GetMappedWeatherDesc("de", grouped.forecastdatastr["symbols24"])
+                            },
+                            {
+                                "it",
+                                GetMappedWeatherDesc("it", grouped.forecastdatastr["symbols24"])
+                            },
+                            {
+                                "en",
+                                GetMappedWeatherDesc("en", grouped.forecastdatastr["symbols24"])
+                            },
+                        };
                     ;
                 }
 
@@ -977,36 +1497,53 @@ namespace SIAG
 
                 forecast3Hours.Date = measurement3.Key;
 
-                foreach(var grouped in  measurement3)
+                foreach (var grouped in measurement3)
                 {
-                    if (grouped.forecastdatafloat.ContainsKey("precSum3")) 
-                        forecast3Hours.Precipitation =  grouped.forecastdatafloat["precSum3"];
-                    if (grouped.forecastdata.ContainsKey("precProb3")) 
-                        forecast3Hours.PrecipitationProbability =  grouped.forecastdata["precProb3"];
-                    if (grouped.forecastdatafloat.ContainsKey("temp3")) 
-                        forecast3Hours.Temperature =  grouped.forecastdatafloat["temp3"];
-                    if (grouped.forecastdata.ContainsKey("windDir3")) 
-                        forecast3Hours.WindDirection =  grouped.forecastdata["windDir3"];
-                    if (grouped.forecastdata.ContainsKey("windSpd3")) 
-                        forecast3Hours.WindSpeed =  grouped.forecastdata["windSpd3"];
-                    if (grouped.forecastdatastr.ContainsKey("symbols3")) 
-                        forecast3Hours.WeatherCode =  GetWeatherCodeTrimmed(grouped.forecastdatastr["symbols3"]);
-                    if (grouped.forecastdatastr.ContainsKey("symbols3")) 
-                        forecast3Hours.WeatherImgUrl =  String.Format("https://daten.buergernetz.bz.it/services/weather/graphics/icons/imgsource/wetter/icon_{0}.png", GetWeatherCodeAsInteger(grouped.forecastdatastr["symbols3"]));
-                    if (grouped.forecastdatastr.ContainsKey("symbols3")) 
-                        forecast3Hours.WeatherDesc =  GetMappedWeatherDesc(lang, grouped.forecastdatastr["symbols3"]);
+                    if (grouped.forecastdatafloat.ContainsKey("precSum3"))
+                        forecast3Hours.Precipitation = grouped.forecastdatafloat["precSum3"];
+                    if (grouped.forecastdata.ContainsKey("precProb3"))
+                        forecast3Hours.PrecipitationProbability = grouped.forecastdata["precProb3"];
+                    if (grouped.forecastdatafloat.ContainsKey("temp3"))
+                        forecast3Hours.Temperature = grouped.forecastdatafloat["temp3"];
+                    if (grouped.forecastdata.ContainsKey("windDir3"))
+                        forecast3Hours.WindDirection = grouped.forecastdata["windDir3"];
+                    if (grouped.forecastdata.ContainsKey("windSpd3"))
+                        forecast3Hours.WindSpeed = grouped.forecastdata["windSpd3"];
+                    if (grouped.forecastdatastr.ContainsKey("symbols3"))
+                        forecast3Hours.WeatherCode = GetWeatherCodeTrimmed(
+                            grouped.forecastdatastr["symbols3"]
+                        );
+                    if (grouped.forecastdatastr.ContainsKey("symbols3"))
+                        forecast3Hours.WeatherImgUrl = String.Format(
+                            "https://daten.buergernetz.bz.it/services/weather/graphics/icons/imgsource/wetter/icon_{0}.png",
+                            GetWeatherCodeAsInteger(grouped.forecastdatastr["symbols3"])
+                        );
+                    if (grouped.forecastdatastr.ContainsKey("symbols3"))
+                        forecast3Hours.WeatherDesc = GetMappedWeatherDesc(
+                            lang,
+                            grouped.forecastdatastr["symbols3"]
+                        );
                     if (grouped.forecastdatastr.ContainsKey("symbols24"))
                         forecast3Hours.WeatherDescription = new Dictionary<string, string>()
-                                                                {
-                                                                    { "de", GetMappedWeatherDesc("de", grouped.forecastdatastr["symbols24"]) },
-                                                                    { "it", GetMappedWeatherDesc("it", grouped.forecastdatastr["symbols24"]) },
-                                                                    { "en", GetMappedWeatherDesc("en", grouped.forecastdatastr["symbols24"]) }
-                                                                };
+                        {
+                            {
+                                "de",
+                                GetMappedWeatherDesc("de", grouped.forecastdatastr["symbols24"])
+                            },
+                            {
+                                "it",
+                                GetMappedWeatherDesc("it", grouped.forecastdatastr["symbols24"])
+                            },
+                            {
+                                "en",
+                                GetMappedWeatherDesc("en", grouped.forecastdatastr["symbols24"])
+                            },
+                        };
                 }
 
                 weatherforecast.Forecast3HoursInterval.Add(forecast3Hours);
             }
-            
+
             return weatherforecast;
         }
 
@@ -1026,7 +1563,7 @@ namespace SIAG
         }
 
         public static string GetWeatherCodeTrimmed(string weathercode)
-        {            
+        {
             if (weathercode.Contains("_n"))
                 return weathercode.Replace("_n", "");
             if (weathercode.Contains("_d"))
@@ -1052,11 +1589,13 @@ namespace SIAG
             return "";
         }
 
-        public static IEnumerable<IGrouping<DateTime, SiagForecastMeasurement>> GetAllPossible24hDates(SiagMunicipality siagforecast)
+        public static IEnumerable<
+            IGrouping<DateTime, SiagForecastMeasurement>
+        > GetAllPossible24hDates(SiagMunicipality siagforecast)
         {
             var mylist = new List<SiagForecastMeasurement>();
 
-            foreach(var data in siagforecast.tempMin24.data)
+            foreach (var data in siagforecast.tempMin24.data)
             {
                 mylist.Add(new SiagForecastMeasurement(data.date, "tempMin24", data.value));
             }
@@ -1078,13 +1617,17 @@ namespace SIAG
             }
             foreach (var data in siagforecast.symbols24.data)
             {
-                mylist.Add(new SiagForecastMeasurement(data.date, "symbols24", null, null, data.value));
+                mylist.Add(
+                    new SiagForecastMeasurement(data.date, "symbols24", null, null, data.value)
+                );
             }
 
             return mylist.OrderBy(x => x.forecastdate).GroupBy(x => x.forecastdate).ToList();
         }
 
-        public static IEnumerable<IGrouping<DateTime, SiagForecastMeasurement>> GetAllPossible3hDates(SiagMunicipality siagforecast)
+        public static IEnumerable<
+            IGrouping<DateTime, SiagForecastMeasurement>
+        > GetAllPossible3hDates(SiagMunicipality siagforecast)
         {
             var mylist = new List<SiagForecastMeasurement>();
 
@@ -1110,7 +1653,9 @@ namespace SIAG
             }
             foreach (var data in siagforecast.symbols3.data)
             {
-                mylist.Add(new SiagForecastMeasurement(data.date, "symbols3", null, null, data.value));
+                mylist.Add(
+                    new SiagForecastMeasurement(data.date, "symbols3", null, null, data.value)
+                );
             }
 
             return mylist.OrderBy(x => x.forecastdate).GroupBy(x => x.forecastdate).ToList();
@@ -1120,7 +1665,7 @@ namespace SIAG
         {
             return (GetWeatherCodeTrimmed(code), lang) switch
             {
-                ("a","de") => "Wolkenlos",
+                ("a", "de") => "Wolkenlos",
                 ("a", "it") => "Sereno",
                 ("a", "en") => "sunny",
 
@@ -1132,7 +1677,7 @@ namespace SIAG
                 ("c", "it") => "Nuvoloso",
                 ("c", "en") => "cloudy",
 
-                ("d", "de") => "Stark bewölkt",
+                ("d", "de") => "Stark bewï¿½lkt",
                 ("d", "it") => "Molto nuvoloso",
                 ("d", "en") => "very cloudy",
 
@@ -1140,7 +1685,7 @@ namespace SIAG
                 ("e", "it") => "Coperto",
                 ("e", "en") => "overcast",
 
-                ("f", "de") => "Wolkig, mäßiger Regen",
+                ("f", "de") => "Wolkig, mï¿½ï¿½iger Regen",
                 ("f", "it") => "Nuvoloso, piogge moderate",
                 ("f", "en") => "cloudy with moderate rain",
 
@@ -1148,7 +1693,7 @@ namespace SIAG
                 ("g", "it") => "Nuvoloso, piogge intense",
                 ("g", "en") => "cloudy with intense rain",
 
-                ("h", "de") => "Bedeckt, mäßiger Regen",
+                ("h", "de") => "Bedeckt, mï¿½ï¿½iger Regen",
                 ("h", "it") => "Coperto, piogge moderate",
                 ("h", "en") => "overcast with moderate rain",
 
@@ -1160,8 +1705,8 @@ namespace SIAG
                 ("j", "it") => "Coperto, piogge deboli",
                 ("j", "en") => "overcast with light rain",
 
-                ("k", "de") => "Durchscheinende Bewölkung",
-                ("k", "it") => "Nuvolositá translucida",
+                ("k", "de") => "Durchscheinende Bewï¿½lkung",
+                ("k", "it") => "Nuvolositï¿½ translucida",
                 ("k", "en") => "translucent cloudy",
 
                 ("l", "de") => "Wolkig, leichter Schneefall",
@@ -1176,7 +1721,7 @@ namespace SIAG
                 ("n", "it") => "Coperto, nevicate deboli",
                 ("n", "en") => "overcast with light snow",
 
-                ("o", "de") => "Bedeckt, mäßiger Schneefall",
+                ("o", "de") => "Bedeckt, mï¿½ï¿½iger Schneefall",
                 ("o", "it") => "Coperto, nevicate moderate",
                 ("o", "en") => "overcast with moderate snow",
 
@@ -1193,14 +1738,14 @@ namespace SIAG
                 ("r", "en") => "overcast with rain and snow",
 
                 ("s", "de") => "Hochnebel",
-                ("s", "it") => "Nuvolosità bassa",
+                ("s", "it") => "Nuvolositï¿½ bassa",
                 ("s", "en") => "low cloudiness",
 
                 ("t", "de") => "Nebel",
                 ("t", "it") => "Nebbia",
                 ("t", "en") => "Fog",
 
-                ("u", "de") => "Wolkig, Gewitter mit mäßigen Schauern",
+                ("u", "de") => "Wolkig, Gewitter mit mï¿½ï¿½igen Schauern",
                 ("u", "it") => "Nuvoloso, temporali con moderati rovesci",
                 ("u", "en") => "cloudy, thunderstorms with moderate showers",
 
@@ -1208,7 +1753,7 @@ namespace SIAG
                 ("v", "it") => "Coperto, temporali con rovesci intensi",
                 ("v", "en") => "cloudy, thunderstorms with intense showers",
 
-                ("w", "de") => "Wolkig, Gewitter mit mäßigen Schneeregenschauern",
+                ("w", "de") => "Wolkig, Gewitter mit mï¿½ï¿½igen Schneeregenschauern",
                 ("w", "it") => "Nuvoloso, temporali con moderati rovesci nevosi e piovosi",
                 ("w", "en") => "cloudy, thunderstorms with moderate snowy and rainy showers",
 
@@ -1216,13 +1761,12 @@ namespace SIAG
                 ("x", "it") => "Coperto, temporali con intensi rovesci nevosi e piovosi",
                 ("x", "en") => "cloudy, thunderstorms with intense snowy and rainy showers",
 
-                ("y", "de") => "Wolkig, Gewitter mit mäßigen Schneeschauern",
+                ("y", "de") => "Wolkig, Gewitter mit mï¿½ï¿½igen Schneeschauern",
                 ("y", "it") => "Nuvoloso, temporali con moderati rovesci nevosi",
                 ("y", "en") => "cloudy, thunderstorms with moderate snowy showers",
 
-                _ => ""
+                _ => "",
             };
-
         }
 
         #endregion
@@ -1230,7 +1774,13 @@ namespace SIAG
 
     public class SiagForecastMeasurement
     {
-        public SiagForecastMeasurement(DateTime _forecastdate, string _type, int? _forecastvalue, float? _forecastvaluefloat = null, string? _forecastvaluestr = null)
+        public SiagForecastMeasurement(
+            DateTime _forecastdate,
+            string _type,
+            int? _forecastvalue,
+            float? _forecastvaluefloat = null,
+            string? _forecastvaluestr = null
+        )
         {
             forecastdate = _forecastdate;
             if (_forecastvalue != null)
@@ -1238,15 +1788,16 @@ namespace SIAG
             else
                 forecastdata = new Dictionary<string, int>();
 
-
             if (_forecastvaluestr != null)
                 forecastdatastr = new Dictionary<string, string> { { _type, _forecastvaluestr } };
             else
                 forecastdatastr = new Dictionary<string, string>();
 
-
             if (_forecastvaluefloat != null)
-                forecastdatafloat= new Dictionary<string, float> { { _type, _forecastvaluefloat.Value } };
+                forecastdatafloat = new Dictionary<string, float>
+                {
+                    { _type, _forecastvaluefloat.Value },
+                };
             else
                 forecastdatafloat = new Dictionary<string, float>();
         }

@@ -2,11 +2,11 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
-using System;
 
 namespace Helper.Factories
 {
@@ -21,8 +21,8 @@ namespace Helper.Factories
         T GetDocumentById<T>(string databasename, string collectionname, string documentId);
     }
 
-    public class MongoDBFactory : IMongoDBFactory,IDisposable
-    {       
+    public class MongoDBFactory : IMongoDBFactory, IDisposable
+    {
         public MongoDBFactory(ISettings settings) //, ILogger<QueryFactory> logger)
         {
             if (!string.IsNullOrEmpty(settings.MongoDBConnectionString))
@@ -32,10 +32,10 @@ namespace Helper.Factories
             //Logger = info => logger.LogDebug("SQL: {sql} {@parameters}", info.RawSql, info.NamedBindings);
         }
 
-        private MongoClient mongoDBClient;        
+        private MongoClient mongoDBClient;
 
         public void Dispose()
-        {            
+        {
             if (mongoDBClient != null)
             {
                 mongoDBClient.Cluster.Dispose();
@@ -60,15 +60,15 @@ namespace Helper.Factories
 
         public T GetDocumentById<T>(string databasename, string collectionname, string documentId)
         {
-            var collection =  mongoDBClient.GetDatabase(databasename).GetCollection<T>(collectionname);
-            var document = collection.Find(
-                         Builders<T>.Filter.Eq("_id", ObjectId.Parse(documentId))
-                     ).FirstOrDefault();
-            
+            var collection = mongoDBClient
+                .GetDatabase(databasename)
+                .GetCollection<T>(collectionname);
+            var document = collection
+                .Find(Builders<T>.Filter.Eq("_id", ObjectId.Parse(documentId)))
+                .FirstOrDefault();
+
             return document;
         }
-
-
     }
 
     public class MongoDBDocument

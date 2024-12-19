@@ -2,18 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
 
 namespace Helper
 {
     public class ODHActivityPoiHelper
     {
-        public static void SetSustainableHikingTag(ODHActivityPoiLinked mysmgpoi, List<string> languagelist)
+        public static void SetSustainableHikingTag(
+            ODHActivityPoiLinked mysmgpoi,
+            List<string> languagelist
+        )
         {
             //NEW if the field "PublicTransportationInfo" is not empty, set the new ODHTag "sustainable-hiking".
 
@@ -24,7 +27,12 @@ namespace Helper
                 {
                     foreach (var languagecategory in languagelist)
                     {
-                        if (mysmgpoi.Detail.ContainsKey(languagecategory) && !String.IsNullOrEmpty(mysmgpoi.Detail[languagecategory].PublicTransportationInfo))
+                        if (
+                            mysmgpoi.Detail.ContainsKey(languagecategory)
+                            && !String.IsNullOrEmpty(
+                                mysmgpoi.Detail[languagecategory].PublicTransportationInfo
+                            )
+                        )
                         {
                             haspublictrasportationinfo = true;
                         }
@@ -75,7 +83,11 @@ namespace Helper
             if (smgpoi.SyncSourceInterface.ToLower() == "magnolia")
                 maintype = "poi";
 
-            if (!smgpoi.SmgTags.Contains("activity") && !smgpoi.SmgTags.Contains("poi") && !smgpoi.SmgTags.Contains("gastronomy"))
+            if (
+                !smgpoi.SmgTags.Contains("activity")
+                && !smgpoi.SmgTags.Contains("poi")
+                && !smgpoi.SmgTags.Contains("gastronomy")
+            )
             {
                 //Assign to SMGTags if not there
                 if (!smgpoi.SmgTags.Contains(maintype))

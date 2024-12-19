@@ -30,7 +30,10 @@ namespace Helper
             return typeids;
         }
 
-        public static List<string> CreateArticleSubTypeList(string? articletype, string? subtypefilter)
+        public static List<string> CreateArticleSubTypeList(
+            string? articletype,
+            string? subtypefilter
+        )
         {
             List<string> typeids = new List<string>();
 
@@ -219,10 +222,7 @@ namespace Helper
                                     break;
                             }
                             break;
-
                     }
-
-
                 }
             }
 
@@ -256,7 +256,10 @@ namespace Helper
             return typelist;
         }
 
-        public static List<string> CreateArticleSubTypefromFlag(string? typefiltertext, string? subtypefilter)
+        public static List<string> CreateArticleSubTypefromFlag(
+            string? typefiltertext,
+            string? subtypefilter
+        )
         {
             List<string> subtypelist = new List<string>();
 
@@ -265,11 +268,11 @@ namespace Helper
                 long typefilterint = 0;
                 if (long.TryParse(subtypefilter, out typefilterint))
                 {
-
                     switch (typefiltertext)
                     {
                         case "basisartikel":
-                            ArticleBasisArticleFlag mypoitypeflag1 = (ArticleBasisArticleFlag)typefilterint;
+                            ArticleBasisArticleFlag mypoitypeflag1 =
+                                (ArticleBasisArticleFlag)typefilterint;
                             subtypelist.AddRange(mypoitypeflag1.GetFlags().GetDescriptionList());
 
                             break;
@@ -279,17 +282,20 @@ namespace Helper
 
                             break;
                         case "contentartikel":
-                            ArticleContentArticleFlag mypoitypeflag3 = (ArticleContentArticleFlag)typefilterint;
+                            ArticleContentArticleFlag mypoitypeflag3 =
+                                (ArticleContentArticleFlag)typefilterint;
                             subtypelist.AddRange(mypoitypeflag3.GetFlags().GetDescriptionList());
 
                             break;
                         case "veranstaltungsartikel":
-                            ArticleVeranstaltungsArticleFlag mypoitypeflag4 = (ArticleVeranstaltungsArticleFlag)typefilterint;
+                            ArticleVeranstaltungsArticleFlag mypoitypeflag4 =
+                                (ArticleVeranstaltungsArticleFlag)typefilterint;
                             subtypelist.AddRange(mypoitypeflag4.GetFlags().GetDescriptionList());
 
                             break;
                         case "presseartikel":
-                            ArticlePresseArticleFlag mypoitypeflag5 = (ArticlePresseArticleFlag)typefilterint;
+                            ArticlePresseArticleFlag mypoitypeflag5 =
+                                (ArticlePresseArticleFlag)typefilterint;
                             subtypelist.AddRange(mypoitypeflag5.GetFlags().GetDescriptionList());
 
                             break;
@@ -307,11 +313,11 @@ namespace Helper
                         //    break;
 
                         case "b2bartikel":
-                            ArticleB2BArticleFlag mypoitypeflag8 = (ArticleB2BArticleFlag)typefilterint;
+                            ArticleB2BArticleFlag mypoitypeflag8 =
+                                (ArticleB2BArticleFlag)typefilterint;
                             subtypelist.AddRange(mypoitypeflag8.GetFlags().GetDescriptionList());
 
                             break;
-
                     }
                 }
                 else
@@ -320,6 +326,5 @@ namespace Helper
 
             return subtypelist;
         }
-
     }
 }

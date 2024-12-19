@@ -21,7 +21,10 @@ namespace Helper.Extensions
                 .ToList();
         }
 
-        public static void TryAddOrUpdateOnList(this ICollection<string> smgtags, ICollection<string> tagsToAdd)
+        public static void TryAddOrUpdateOnList(
+            this ICollection<string> smgtags,
+            ICollection<string> tagsToAdd
+        )
         {
             foreach (var tag in tagsToAdd)
             {
@@ -35,7 +38,10 @@ namespace Helper.Extensions
                 smgtags.Remove(tagToRemove);
         }
 
-        public static void TryRemoveOnList(this ICollection<string> smgtags, ICollection<string> tagsToRemove)
+        public static void TryRemoveOnList(
+            this ICollection<string> smgtags,
+            ICollection<string> tagsToRemove
+        )
         {
             foreach (var tag in tagsToRemove)
             {
@@ -49,7 +55,10 @@ namespace Helper.Extensions
                 smgtags.Add(tagToAdd);
         }
 
-        public static IEnumerable<string> UnionIfNotNull(this ICollection<string>? sourceunion, ICollection<string>? listtounion)
+        public static IEnumerable<string> UnionIfNotNull(
+            this ICollection<string>? sourceunion,
+            ICollection<string>? listtounion
+        )
         {
             if (sourceunion != null && listtounion != null)
                 return sourceunion.Union(listtounion);

@@ -2,6 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 using DataModel;
 using Helper.Extensions;
 using Helper.Generic;
@@ -11,14 +18,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using Newtonsoft.Json;
 using SqlKata;
 using SqlKata.Execution;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Channels;
-using System.Threading.Tasks;
-
 
 namespace Helper
 {
@@ -31,7 +30,7 @@ namespace Helper
         //public static async Task<T?> GetFirstOrDefaultAsObject<T>(this Query query) {
 
         //    var rawdata = await query.FirstOrDefaultAsync<JsonRaw>();
-        //    return rawdata != null ? JsonConvert.DeserializeObject<T>(rawdata.Value) : default(T);            
+        //    return rawdata != null ? JsonConvert.DeserializeObject<T>(rawdata.Value) : default(T);
         //}
 
         //public static async Task<IEnumerable<T>> GetAllAsObject<T>(this Query query)
@@ -52,13 +51,22 @@ namespace Helper
 
 
         //Using Newtonsoft
-        public static async Task<T?> GetObjectSingleAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
+        public static async Task<T?> GetObjectSingleAsync<T>(
+            this Query query,
+            CancellationToken cancellationToken = default
+        )
+            where T : notnull
         {
             //using this ContractResolver avoids duplicate Lists
-            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new GetOnlyContractResolver(),
+            };
 
             var result = await query.FirstOrDefaultAsync<JsonRaw>();
-            return result != null ? JsonConvert.DeserializeObject<T>(result.Value, settings) : default!;
+            return result != null
+                ? JsonConvert.DeserializeObject<T>(result.Value, settings)
+                : default!;
             //return JsonConvert.DeserializeObject<T>(result.Value, settings) ?? default(T);
         }
 
@@ -70,20 +78,35 @@ namespace Helper
         //}
 
         //Using Newtonsoft
-        public static async Task<IEnumerable<T>> GetObjectListAsync<T>(this Query query, CancellationToken cancellationToken = default) where T : notnull
+        public static async Task<IEnumerable<T>> GetObjectListAsync<T>(
+            this Query query,
+            CancellationToken cancellationToken = default
+        )
+            where T : notnull
         {
             //using this ContractResolver avoids duplicate Lists
-            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new GetOnlyContractResolver(),
+            };
 
             var result = await query.GetAsync<JsonRaw>();
-            return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value, settings)!) ?? default!;
+            return result.Select(x => JsonConvert.DeserializeObject<T>(x.Value, settings)!)
+                ?? default!;
         }
 
         #region Using Reflection
-        public static async Task<IIdentifiable> GetObjectSingleAsync<T>(this Query query, Type type, CancellationToken cancellationToken = default)
+        public static async Task<IIdentifiable> GetObjectSingleAsync<T>(
+            this Query query,
+            Type type,
+            CancellationToken cancellationToken = default
+        )
         {
             //using this ContractResolver avoids duplicate Lists
-            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new GetOnlyContractResolver(),
+            };
             var method = typeof(JsonConvert)
                 .GetMethods()
                 .Where(x => x.Name == "DeserializeObject")
@@ -97,16 +120,23 @@ namespace Helper
             var parseddata = methodinfo.Invoke(null, new object[] { resultraw.Value, settings });
             if (parseddata != null)
                 return parseddata as IIdentifiable;
-            else 
+            else
                 return null;
         }
 
         //Implementation with refletion not using Generics
-        public static async Task<IEnumerable<IIdentifiable>> GetObjectListAsync(this Query query, Type type, CancellationToken cancellationToken = default)
+        public static async Task<IEnumerable<IIdentifiable>> GetObjectListAsync(
+            this Query query,
+            Type type,
+            CancellationToken cancellationToken = default
+        )
         {
             //using this ContractResolver avoids duplicate Lists
             //Reflection Json Deserialize
-            var settings = new JsonSerializerSettings { ContractResolver = new GetOnlyContractResolver() };
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new GetOnlyContractResolver(),
+            };
             List<IIdentifiable> datalist = new List<IIdentifiable>();
 
             var method = typeof(JsonConvert)
@@ -122,7 +152,7 @@ namespace Helper
                 var methodinfo = method.FirstOrDefault()!.MakeGenericMethod(type);
                 //var parseddata = methodinfo.Invoke(null, new object[] { datar.Value });
                 var parseddata = methodinfo.Invoke(null, new object[] { datar.Value, settings });
-                if(parseddata != null)
+                if (parseddata != null)
                     datalist.Add(parseddata as IIdentifiable);
             }
 
@@ -130,8 +160,6 @@ namespace Helper
 
             return datalist;
         }
-
-
 
         #endregion
 
@@ -143,14 +171,17 @@ namespace Helper
         //}
 
         //Insert also data in Raw table
-        public static async Task<int> InsertInRawtableAndGetIdAsync(this QueryFactory queryfactory, RawDataStore rawData, CancellationToken cancellationToken = default)
+        public static async Task<int> InsertInRawtableAndGetIdAsync(
+            this QueryFactory queryfactory,
+            RawDataStore rawData,
+            CancellationToken cancellationToken = default
+        )
         {
-            return await queryfactory.Query("rawdata")
-                 .InsertGetIdAsync<int>(rawData);
+            return await queryfactory.Query("rawdata").InsertGetIdAsync<int>(rawData);
         }
 
         #region PG CRUD Helpers
-      
+
         /// <summary>
         /// Inserts or Updates the Data
         /// </summary>
@@ -162,7 +193,15 @@ namespace Helper
         /// <param name="constraints"></param>
         /// <param name="compareConfig"></param>
         /// <returns></returns>
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, DataInfo dataconfig, EditInfo editinfo, CRUDConstraints constraints, CompareConfig compareConfig) where T : IIdentifiable, IImportDateassigneable, IMetaData, new()
+        public static async Task<PGCRUDResult> UpsertData<T>(
+            this QueryFactory QueryFactory,
+            T data,
+            DataInfo dataconfig,
+            EditInfo editinfo,
+            CRUDConstraints constraints,
+            CompareConfig compareConfig
+        )
+            where T : IIdentifiable, IImportDateassigneable, IMetaData, new()
         {
             //TOCHECK: What if no id is passed? Generate ID?
             //TOCHECK: Id Uppercase or Lowercase depending on table
@@ -172,26 +211,42 @@ namespace Helper
             int? objectchangedcount = null;
             int? objectimagechangedcount = null;
 
-
             //If no data is passed return error
             if (data == null)
-                return new PGCRUDResult() { id = "", odhtype = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "No Data", operation = dataconfig.Operation.ToString(), changes = 0, compareobject = false, objectchanged = 0, objectimagechanged = 0, pushchannels = channelstopublish };
-
+                return new PGCRUDResult()
+                {
+                    id = "",
+                    odhtype = "",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    error = 1,
+                    errorreason = "No Data",
+                    operation = dataconfig.Operation.ToString(),
+                    changes = 0,
+                    compareobject = false,
+                    objectchanged = 0,
+                    objectimagechanged = 0,
+                    pushchannels = channelstopublish,
+                };
 
             //Check if data exists already
-            var queryresult = await QueryFactory.Query(dataconfig.Table)
-                      .Select("data")
-                      .Where("id", data.Id)
-                      .When(constraints.AccessRole.Count() > 0, q => q.FilterDataByAccessRoles(constraints.AccessRole))
-                      //.When(!String.IsNullOrEmpty(constraints.Condition), q => q.FilterAdditionalDataByCondition(constraints.Condition))
-                      .GetObjectSingleAsync<T>();
+            var queryresult = await QueryFactory
+                .Query(dataconfig.Table)
+                .Select("data")
+                .Where("id", data.Id)
+                .When(
+                    constraints.AccessRole.Count() > 0,
+                    q => q.FilterDataByAccessRoles(constraints.AccessRole)
+                )
+                //.When(!String.IsNullOrEmpty(constraints.Condition), q => q.FilterAdditionalDataByCondition(constraints.Condition))
+                .GetObjectSingleAsync<T>();
 
             int createresult = 0;
             int updateresult = 0;
             int errorresult = 0;
             string errorreason = "";
 
-         
             bool imagesequal = false;
             EqualityResult equalityresult = new EqualityResult() { isequal = false, patch = null };
 
@@ -200,7 +255,11 @@ namespace Helper
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
             //Setting Editinfo
-            data._Meta.UpdateInfo = new UpdateInfo() { UpdatedBy = editinfo.Editor, UpdateSource = editinfo.Source };
+            data._Meta.UpdateInfo = new UpdateInfo()
+            {
+                UpdatedBy = editinfo.Editor,
+                UpdateSource = editinfo.Source,
+            };
             //Setting Firstimport
             if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
@@ -210,16 +269,47 @@ namespace Helper
             //Check data condition return not allowed if it fails
             if (!CheckCRUDCondition.CRUDOperationAllowed(data, constraints.Condition))
             {
-                return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
+                return new PGCRUDResult()
+                {
+                    id = data.Id,
+                    odhtype = data._Meta.Type,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    error = 1,
+                    errorreason = "Not Allowed",
+                    operation = dataconfig.Operation.ToString(),
+                    changes = null,
+                    compareobject = false,
+                    objectchanged = objectchangedcount,
+                    objectimagechanged = objectimagechangedcount,
+                    pushchannels = channelstopublish,
+                };
             }
 
             if (queryresult == null)
             {
                 if (dataconfig.ErrorWhendataIsNew)
-                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Data to update Not Found", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
+                    return new PGCRUDResult()
+                    {
+                        id = data.Id,
+                        odhtype = data._Meta.Type,
+                        created = 0,
+                        updated = 0,
+                        deleted = 0,
+                        error = 1,
+                        errorreason = "Data to update Not Found",
+                        operation = dataconfig.Operation.ToString(),
+                        changes = null,
+                        compareobject = false,
+                        objectchanged = objectchangedcount,
+                        objectimagechanged = objectimagechangedcount,
+                        pushchannels = channelstopublish,
+                    };
 
-                createresult = await QueryFactory.Query(dataconfig.Table)
-                   .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                createresult = await QueryFactory
+                    .Query(dataconfig.Table)
+                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
 
                 dataconfig.Operation = CRUDOperation.Create;
 
@@ -231,7 +321,6 @@ namespace Helper
                     channelstopublish.AddRange((data as IPublishedOn).PublishedOn);
                 }
 
-
                 //On insert always set the object and image to changed only if compareresult deactivated
                 if (compareConfig.CompareData)
                 {
@@ -242,23 +331,51 @@ namespace Helper
             else
             {
                 if (dataconfig.ErrorWhendataExists)
-                    return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Data exists already", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
+                    return new PGCRUDResult()
+                    {
+                        id = data.Id,
+                        odhtype = data._Meta.Type,
+                        created = 0,
+                        updated = 0,
+                        deleted = 0,
+                        error = 1,
+                        errorreason = "Data exists already",
+                        operation = dataconfig.Operation.ToString(),
+                        changes = null,
+                        compareobject = false,
+                        objectchanged = objectchangedcount,
+                        objectimagechanged = objectimagechangedcount,
+                        pushchannels = channelstopublish,
+                    };
 
                 //Compare the data
                 if (compareConfig.CompareData && queryresult != null)
                 {
-                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
+                    equalityresult = EqualityHelper.CompareClassesTest<T>(
+                        queryresult,
+                        data,
+                        new List<string>() { "LastChange", "_Meta", "FirstImport" },
+                        true
+                    );
                     if (equalityresult.isequal)
                         objectchangedcount = 0;
                     else
                         objectchangedcount = 1;
                 }
 
-
                 //Compare Image Gallery Check if this works with a cast to IImageGalleryAware
-                if (compareConfig.CompareImages && queryresult != null && data is IImageGalleryAware && queryresult is IImageGalleryAware)
+                if (
+                    compareConfig.CompareImages
+                    && queryresult != null
+                    && data is IImageGalleryAware
+                    && queryresult is IImageGalleryAware
+                )
                 {
-                    imagesequal = EqualityHelper.CompareImageGallery((data as IImageGalleryAware).ImageGallery, (queryresult as IImageGalleryAware).ImageGallery, new List<string>() { });
+                    imagesequal = EqualityHelper.CompareImageGallery(
+                        (data as IImageGalleryAware).ImageGallery,
+                        (queryresult as IImageGalleryAware).ImageGallery,
+                        new List<string>() { }
+                    );
                     if (imagesequal)
                         objectimagechangedcount = 0;
                     else
@@ -271,94 +388,223 @@ namespace Helper
                     if ((data as IPublishedOn).PublishedOn == null)
                         (data as IPublishedOn).PublishedOn = new List<string>();
 
-                    channelstopublish.AddRange((data as IPublishedOn).PublishedOn.UnionIfNotNull((queryresult as IPublishedOn).PublishedOn));
+                    channelstopublish.AddRange(
+                        (data as IPublishedOn).PublishedOn.UnionIfNotNull(
+                            (queryresult as IPublishedOn).PublishedOn
+                        )
+                    );
                 }
-
 
                 updateresult = await QueryFactory
                     .Query(dataconfig.Table)
-                    .Where("id", data.Id)                    
+                    .Where("id", data.Id)
                     .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
 
                 dataconfig.Operation = CRUDOperation.Update;
             }
 
             if (createresult == 0 && updateresult == 0)
-                return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish };
+                return new PGCRUDResult()
+                {
+                    id = data.Id,
+                    odhtype = data._Meta.Type,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    error = 1,
+                    errorreason = "Internal Error",
+                    operation = dataconfig.Operation.ToString(),
+                    changes = null,
+                    compareobject = false,
+                    objectchanged = objectchangedcount,
+                    objectimagechanged = objectimagechangedcount,
+                    pushchannels = channelstopublish,
+                };
 
-            return new PGCRUDResult() { id = data.Id, odhtype = data._Meta.Type, created = createresult, updated = updateresult, deleted = 0, error = errorresult, errorreason = errorreason, operation = dataconfig.Operation.ToString(), compareobject = compareConfig.CompareData, objectchanged = objectchangedcount, objectimagechanged = objectimagechangedcount, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult()
+            {
+                id = data.Id,
+                odhtype = data._Meta.Type,
+                created = createresult,
+                updated = updateresult,
+                deleted = 0,
+                error = errorresult,
+                errorreason = errorreason,
+                operation = dataconfig.Operation.ToString(),
+                compareobject = compareConfig.CompareData,
+                objectchanged = objectchangedcount,
+                objectimagechanged = objectimagechangedcount,
+                pushchannels = channelstopublish,
+                changes = equalityresult.patch,
+            };
         }
 
-
-       /// <summary>
-       /// Deletes the data
-       /// </summary>
-       /// <typeparam name="T"></typeparam>
-       /// <param name="QueryFactory"></param>
-       /// <param name="id"></param>
-       /// <param name="dataconfig"></param>
-       /// <param name="condition"></param>
-       /// <returns></returns>
-        public static async Task<PGCRUDResult> DeleteData<T>(this QueryFactory QueryFactory, string id, DataInfo dataconfig, CRUDConstraints constraints) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        /// <summary>
+        /// Deletes the data
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="QueryFactory"></param>
+        /// <param name="id"></param>
+        /// <param name="dataconfig"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static async Task<PGCRUDResult> DeleteData<T>(
+            this QueryFactory QueryFactory,
+            string id,
+            DataInfo dataconfig,
+            CRUDConstraints constraints
+        )
+            where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             List<string> channelstopublish = new List<string>();
 
             if (string.IsNullOrEmpty(id))
-                return new PGCRUDResult() { id = "", odhtype = "", created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Bad Request", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
+                return new PGCRUDResult()
+                {
+                    id = "",
+                    odhtype = "",
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    error = 1,
+                    errorreason = "Bad Request",
+                    operation = dataconfig.Operation.ToString(),
+                    changes = null,
+                    compareobject = false,
+                    objectchanged = null,
+                    objectimagechanged = null,
+                    pushchannels = channelstopublish,
+                };
 
             var idtodelete = Helper.IdGenerator.CheckIdFromType<T>(id);
 
             //Check if data exists
-            var queryresult = await QueryFactory.Query(dataconfig.Table)
-                      .Select("data")
-                      .Where("id", idtodelete)
-                      .When(constraints.AccessRole.Count() > 0, q => q.FilterDataByAccessRoles(constraints.AccessRole))
-                      .GetObjectSingleAsync<T>();
+            var queryresult = await QueryFactory
+                .Query(dataconfig.Table)
+                .Select("data")
+                .Where("id", idtodelete)
+                .When(
+                    constraints.AccessRole.Count() > 0,
+                    q => q.FilterDataByAccessRoles(constraints.AccessRole)
+                )
+                .GetObjectSingleAsync<T>();
 
             var deleteresult = 0;
             var errorreason = "";
 
             if (queryresult == null)
             {
-                return new PGCRUDResult() { id = idtodelete, odhtype = null, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Data Not Found", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
+                return new PGCRUDResult()
+                {
+                    id = idtodelete,
+                    odhtype = null,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    error = 1,
+                    errorreason = "Data Not Found",
+                    operation = dataconfig.Operation.ToString(),
+                    changes = null,
+                    compareobject = false,
+                    objectchanged = null,
+                    objectimagechanged = null,
+                    pushchannels = channelstopublish,
+                };
             }
             else
             {
                 //Check data condition
                 if (!CheckCRUDCondition.CRUDOperationAllowed(queryresult, constraints.Condition))
                 {
-                    return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Not Allowed", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
+                    return new PGCRUDResult()
+                    {
+                        id = idtodelete,
+                        odhtype = queryresult._Meta.Type,
+                        created = 0,
+                        updated = 0,
+                        deleted = 0,
+                        error = 1,
+                        errorreason = "Not Allowed",
+                        operation = dataconfig.Operation.ToString(),
+                        changes = null,
+                        compareobject = false,
+                        objectchanged = null,
+                        objectimagechanged = null,
+                        pushchannels = channelstopublish,
+                    };
                 }
 
                 if (queryresult is IPublishedOn && ((IPublishedOn)queryresult).PublishedOn != null)
                 {
                     channelstopublish.AddRange(((IPublishedOn)queryresult).PublishedOn);
-                }                    
+                }
 
-                deleteresult = await QueryFactory.Query(dataconfig.Table).Where("id", idtodelete)
-                        .DeleteAsync();
+                deleteresult = await QueryFactory
+                    .Query(dataconfig.Table)
+                    .Where("id", idtodelete)
+                    .DeleteAsync();
             }
 
             if (deleteresult == 0)
-                return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = 0, error = 1, errorreason = "Internal Error", operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
+                return new PGCRUDResult()
+                {
+                    id = idtodelete,
+                    odhtype = queryresult._Meta.Type,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    error = 1,
+                    errorreason = "Internal Error",
+                    operation = dataconfig.Operation.ToString(),
+                    changes = null,
+                    compareobject = false,
+                    objectchanged = null,
+                    objectimagechanged = null,
+                    pushchannels = channelstopublish,
+                };
 
-            return new PGCRUDResult() { id = idtodelete, odhtype = queryresult._Meta.Type, created = 0, updated = 0, deleted = deleteresult, error = 0, errorreason = errorreason, operation = dataconfig.Operation.ToString(), changes = null, compareobject = false, objectchanged = null, objectimagechanged = null, pushchannels = channelstopublish };
+            return new PGCRUDResult()
+            {
+                id = idtodelete,
+                odhtype = queryresult._Meta.Type,
+                created = 0,
+                updated = 0,
+                deleted = deleteresult,
+                error = 0,
+                errorreason = errorreason,
+                operation = dataconfig.Operation.ToString(),
+                changes = null,
+                compareobject = false,
+                objectchanged = null,
+                objectimagechanged = null,
+                pushchannels = channelstopublish,
+            };
         }
 
-
         //TODO
-        public static async Task<PGCRUDResult> UpsertDataDestinationData<T,V>(this QueryFactory QueryFactory, T data, V destinationdata, string table, bool errorwhendataexists = false, bool errorwhendataisnew = false, bool comparedata = false, bool compareimagedata = false) 
-            where T : IIdentifiable, IImportDateassigneable, IMetaData, IPublishedOn, IImageGalleryAware, new()
+        public static async Task<PGCRUDResult> UpsertDataDestinationData<T, V>(
+            this QueryFactory QueryFactory,
+            T data,
+            V destinationdata,
+            string table,
+            bool errorwhendataexists = false,
+            bool errorwhendataisnew = false,
+            bool comparedata = false,
+            bool compareimagedata = false
+        )
+            where T : IIdentifiable,
+                IImportDateassigneable,
+                IMetaData,
+                IPublishedOn,
+                IImageGalleryAware,
+                new()
             where V : IIdentifiable, IImportDateassigneable, IMetaData
         {
-         
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
 
             //Check if data exists
-            var query = QueryFactory.Query(table)
-                      .Select("data")
-                      .Where("id", data.Id);
+            var query = QueryFactory.Query(table).Select("data").Where("id", data.Id);
 
             var queryresult = await query.GetObjectSingleAsync<T>();
 
@@ -372,7 +618,6 @@ namespace Helper
 
             bool imagecompareresult = false;
             List<string> channelstopublish = new List<string>();
-
 
             data.LastChange = DateTime.Now;
             destinationdata.LastChange = DateTime.Now;
@@ -391,51 +636,98 @@ namespace Helper
                 if (errorwhendataisnew)
                     throw new ArgumentNullException(nameof(data.Id), "Id does not exist");
 
-                createresult = await QueryFactory.Query(table)
-                   .InsertAsync(new JsonBDataDestinationData() { id = data.Id, data = new JsonRaw(data), destinationdata = new JsonRaw(destinationdata) });
+                createresult = await QueryFactory
+                    .Query(table)
+                    .InsertAsync(
+                        new JsonBDataDestinationData()
+                        {
+                            id = data.Id,
+                            data = new JsonRaw(data),
+                            destinationdata = new JsonRaw(destinationdata),
+                        }
+                    );
                 operation = "INSERT";
             }
             else
             {
                 //Compare the data
                 if (comparedata && queryresult != null)
-                    equalityresult = EqualityHelper.CompareClassesTest<T>(queryresult, data, new List<string>() { "LastChange", "_Meta", "FirstImport" }, true);
+                    equalityresult = EqualityHelper.CompareClassesTest<T>(
+                        queryresult,
+                        data,
+                        new List<string>() { "LastChange", "_Meta", "FirstImport" },
+                        true
+                    );
 
                 //Compare Image Gallery
                 if (compareimagedata && queryresult != null)
-                    imagecompareresult = EqualityHelper.CompareImageGallery(data.ImageGallery, queryresult.ImageGallery, new List<string>() { });
+                    imagecompareresult = EqualityHelper.CompareImageGallery(
+                        data.ImageGallery,
+                        queryresult.ImageGallery,
+                        new List<string>() { }
+                    );
 
                 //Check if Publishedon List changed and populate channels to publish information
-                channelstopublish.AddRange(data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn));                
+                channelstopublish.AddRange(
+                    data.PublishedOn.UnionIfNotNull(queryresult.PublishedOn)
+                );
 
                 if (errorwhendataexists)
                     throw new ArgumentNullException(nameof(data.Id), "Id exists already");
 
-                updateresult = await QueryFactory.Query(table).Where("id", data.Id)
-                        .UpdateAsync(new JsonBDataDestinationData() { id = data.Id, data = new JsonRaw(data), destinationdata = new JsonRaw(destinationdata) });
+                updateresult = await QueryFactory
+                    .Query(table)
+                    .Where("id", data.Id)
+                    .UpdateAsync(
+                        new JsonBDataDestinationData()
+                        {
+                            id = data.Id,
+                            data = new JsonRaw(data),
+                            destinationdata = new JsonRaw(destinationdata),
+                        }
+                    );
                 operation = "UPDATE";
             }
 
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation, compareobject = comparedata, objectchanged = equalityresult.isequal ? 0 : 1, objectimagechanged = imagecompareresult ? 0 : 1, pushchannels = channelstopublish, changes = equalityresult.patch };
+            return new PGCRUDResult()
+            {
+                id = data.Id,
+                created = createresult,
+                updated = updateresult,
+                deleted = 0,
+                error = errorresult,
+                operation = operation,
+                compareobject = comparedata,
+                objectchanged = equalityresult.isequal ? 0 : 1,
+                objectimagechanged = imagecompareresult ? 0 : 1,
+                pushchannels = channelstopublish,
+                changes = equalityresult.patch,
+            };
         }
-      
-     
+
         #endregion
 
         #region RawDataStore
 
-        public static async Task<PGCRUDResult> UpsertData<T>(this QueryFactory QueryFactory, T data, string table, int rawdataid, string editor, string editsource, bool errorwhendataexists = false) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static async Task<PGCRUDResult> UpsertData<T>(
+            this QueryFactory QueryFactory,
+            T data,
+            string table,
+            int rawdataid,
+            string editor,
+            string editsource,
+            bool errorwhendataexists = false
+        )
+            where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data), "no data");
 
             //Check if data exists
-            var query = QueryFactory.Query(table)
-                      .Select("data")
-                      .Where("id", data.Id);
+            var query = QueryFactory.Query(table).Select("data").Where("id", data.Id);
 
             var queryresult = await query.GetAsync<T>();
 
@@ -453,33 +745,59 @@ namespace Helper
                 data.FirstImport = DateTime.Now;
 
             //Setting Editinfo
-            data._Meta.UpdateInfo = new UpdateInfo() { UpdatedBy = editor, UpdateSource = editsource };
+            data._Meta.UpdateInfo = new UpdateInfo()
+            {
+                UpdatedBy = editor,
+                UpdateSource = editsource,
+            };
 
             if (queryresult == null || queryresult.Count() == 0)
             {
-                createresult = await QueryFactory.Query(table)
-                   .InsertAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
+                createresult = await QueryFactory
+                    .Query(table)
+                    .InsertAsync(
+                        new JsonBDataRaw()
+                        {
+                            id = data.Id,
+                            data = new JsonRaw(data),
+                            rawdataid = rawdataid,
+                        }
+                    );
                 operation = "INSERT";
             }
             else
             {
                 if (errorwhendataexists)
                     throw new ArgumentNullException(nameof(data), "Id exists already");
-                
-                updateresult = await QueryFactory.Query(table).Where("id", data.Id)
-                        .UpdateAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid });
+
+                updateresult = await QueryFactory
+                    .Query(table)
+                    .Where("id", data.Id)
+                    .UpdateAsync(
+                        new JsonBDataRaw()
+                        {
+                            id = data.Id,
+                            data = new JsonRaw(data),
+                            rawdataid = rawdataid,
+                        }
+                    );
                 operation = "UPDATE";
             }
 
             if (createresult == 0 && updateresult == 0)
                 errorresult = 1;
 
-            return new PGCRUDResult() { id = data.Id, created = createresult, updated = updateresult, deleted = 0, error = errorresult, operation = operation };                    
+            return new PGCRUDResult()
+            {
+                id = data.Id,
+                created = createresult,
+                updated = updateresult,
+                deleted = 0,
+                error = errorresult,
+                operation = operation,
+            };
         }
 
         #endregion
-
     }
-
-
 }

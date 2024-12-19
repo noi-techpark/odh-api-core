@@ -2,15 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace DataModel
 {
-    public class DDVenue : IIdentifiable, IMetaData, IImportDateassigneable, ILicenseInfo, ISource, IMappingAware
+    public class DDVenue
+        : IIdentifiable,
+            IMetaData,
+            IImportDateassigneable,
+            ILicenseInfo,
+            ISource,
+            IMappingAware
     {
         public DDVenue()
         {
@@ -20,14 +26,12 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "Venue/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "Venue/" + Uri.EscapeDataString(this.Id); }
         }
 
         public Metadata? _Meta { get; set; }
         public string? type { get; set; }
+
         //public string id { get; set; }
         [JsonProperty("id")]
         public string? Id { get; set; }
@@ -42,10 +46,13 @@ namespace DataModel
 
         [JsonIgnore]
         public string? Shortname { get; set; }
+
         [JsonIgnore]
         public DateTime? FirstImport { get; set; }
-        [JsonIgnore]        
+
+        [JsonIgnore]
         public DateTime? LastChange { get; set; }
+
         [JsonIgnore]
         public LicenseInfo? LicenseInfo { get; set; }
 
@@ -72,13 +79,18 @@ namespace DataModel
 
         public bool Active { get; set; }
         public bool ODHActive { get; set; }
+
         //public ICollection<ODHTags> ODHTags { get; set; }
 
         public ICollection<ODHTags> ODHTags
         {
             get
             {
-                return this.SmgTags != null ? this.SmgTags.Select(x => new ODHTags() { Id = x, Self = "ODHTag/" + x }).ToList() : new List<ODHTags>();
+                return this.SmgTags != null
+                    ? this
+                        .SmgTags.Select(x => new ODHTags() { Id = x, Self = "ODHTag/" + x })
+                        .ToList()
+                    : new List<ODHTags>();
             }
         }
 
@@ -99,11 +111,9 @@ namespace DataModel
         public ICollection<VenueRoomDetails> RoomDetails { get; set; }
 
         //added
-        public IDictionary<string, GpsInfo> GpsPoints {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary(true);
-            }
+        public IDictionary<string, GpsInfo> GpsPoints
+        {
+            get { return this.GpsInfo.ToGpsPointsDictionary(true); }
         }
 
         public List<string>? PublishedOn { get; set; }
@@ -122,7 +132,7 @@ namespace DataModel
         public int? Beds { get; set; }
 
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
-    }   
+    }
 
     public class VenueType
     {
@@ -131,10 +141,7 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "VenueTypes/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "VenueTypes/" + Uri.EscapeDataString(this.Id); }
         }
     }
 
@@ -146,10 +153,7 @@ namespace DataModel
 
         public string Self
         {
-            get
-            {
-                return "VenueTypes/" + Uri.EscapeDataString(this.Id);
-            }
+            get { return "VenueTypes/" + Uri.EscapeDataString(this.Id); }
         }
     }
 
@@ -164,6 +168,7 @@ namespace DataModel
         public string? Shortname { get; set; }
 
         public int? SquareMeters { get; set; }
+
         //public int maxCapacity { get; set; }
 
         public bool? Indoor { get; set; }
@@ -269,7 +274,10 @@ namespace DataModel
 
     public class DDRelationships
     {
-        public IDictionary<string, ICollection<DDMultimediadescriptions>>? multimediaDescriptions { get; set; }
+        public IDictionary<
+            string,
+            ICollection<DDMultimediadescriptions>
+        >? multimediaDescriptions { get; set; }
         public ICollection<DDSubVenue>? subVenues { get; set; }
     }
 
@@ -280,9 +288,9 @@ namespace DataModel
         public ICollection<string> categories { get; set; }
         public DDAttributesMultimedia attributes { get; set; }
         public DDLinks links { get; set; }
+
         //public DDRelationships relationships { get; set; }
         public DDRelationshipsMultiMedia relationships { get; set; }
-
     }
 
     public class DDAttributesMultimedia

@@ -2,6 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.ComponentModel;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Reflection;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Components.RenderTree;
@@ -12,25 +21,48 @@ using OdhNotifier;
 using SqlKata;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.ComponentModel;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Reflection;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace OdhNotifier
 {
     public interface IOdhPushNotifier
     {
-        Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, IDictionary<string, bool>? additionalpushinfo, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null);
-        Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, IDictionary<string, bool>? additionalpushinfo, bool isdelete, string origin, List<string> publishedonlist, string? referer = null);
-        Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, int elementstoprocess, string? referer = null);
-        Task<IDictionary<string, ICollection<NotifierResponse>>> PushCustomObjectsToPublishedonService(List<string> publishedonlist, List<string> idlist, string odhtype, IDictionary<string, bool>? additionalpushinfo, string? referer = null);
+        Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(
+            string id,
+            string type,
+            string updatemode,
+            IDictionary<string, bool>? additionalpushinfo,
+            bool isdelete,
+            string origin,
+            string? referer = null,
+            List<string>? excludeservices = null
+        );
+        Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(
+            string id,
+            string type,
+            string updatemode,
+            IDictionary<string, bool>? additionalpushinfo,
+            bool isdelete,
+            string origin,
+            List<string> publishedonlist,
+            string? referer = null
+        );
+        Task<
+            IDictionary<string, ICollection<NotifierResponse>>
+        > PushFailureQueueToPublishedonService(
+            List<string> publishedonlist,
+            int elementstoprocess,
+            string? referer = null
+        );
+        Task<
+            IDictionary<string, ICollection<NotifierResponse>>
+        > PushCustomObjectsToPublishedonService(
+            List<string> publishedonlist,
+            List<string> idlist,
+            string odhtype,
+            IDictionary<string, bool>? additionalpushinfo,
+            string? referer = null
+        );
     }
 
     public class OdhPushNotifier : IOdhPushNotifier, IDisposable
@@ -58,16 +90,38 @@ namespace OdhNotifier
         /// <param name="referer"></param>
         /// <param name="excludeservices"></param>
         /// <returns></returns>
-        public async Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(string id, string type, string updatemode, IDictionary<string, bool>? additionalpushinfo, bool isdelete, string origin, string? referer = null, List<string>? excludeservices = null)
+        public async Task<IDictionary<string, NotifierResponse>> PushToAllRegisteredServices(
+            string id,
+            string type,
+            string updatemode,
+            IDictionary<string, bool>? additionalpushinfo,
+            bool isdelete,
+            string origin,
+            string? referer = null,
+            List<string>? excludeservices = null
+        )
         {
-            IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
+            IDictionary<string, NotifierResponse> notifierresponselist =
+                new Dictionary<string, NotifierResponse>();
 
             foreach (var notifyconfig in notifierconfiglist)
             {
-                if (excludeservices != null && excludeservices.Contains(notifyconfig.ServiceName.ToLower()))
+                if (
+                    excludeservices != null
+                    && excludeservices.Contains(notifyconfig.ServiceName.ToLower())
+                )
                     continue;
 
-                NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, additionalpushinfo, isdelete, updatemode, origin, referer);
+                NotifyMetaGenerated meta = new NotifyMetaGenerated(
+                    notifyconfig,
+                    id,
+                    type,
+                    additionalpushinfo,
+                    isdelete,
+                    updatemode,
+                    origin,
+                    referer
+                );
 
                 NotifierResponse notifierresponse = new NotifierResponse();
 
@@ -75,7 +129,9 @@ namespace OdhNotifier
                 notifierresponse.HttpStatusCode = response.Item1;
                 notifierresponse.Response = response.Item2;
                 notifierresponse.Service = notifyconfig.ServiceName;
-                notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
+                notifierresponse.Success = MapStatusCodeToSuccessProperty(
+                    notifierresponse.HttpStatusCode
+                );
 
                 notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponse);
             }
@@ -84,7 +140,7 @@ namespace OdhNotifier
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="id"></param>
         /// <param name="type"></param>
@@ -93,31 +149,61 @@ namespace OdhNotifier
         /// <param name="referer"></param>
         /// <param name="excludeservices"></param>
         /// <returns></returns>
-        public async Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(string id, string type, string updatemode, IDictionary<string, bool>? additionalpushinfo, bool isdelete, string origin, List<string> publishedonlist, string? referer = null)
+        public async Task<IDictionary<string, NotifierResponse>> PushToPublishedOnServices(
+            string id,
+            string type,
+            string updatemode,
+            IDictionary<string, bool>? additionalpushinfo,
+            bool isdelete,
+            string origin,
+            List<string> publishedonlist,
+            string? referer = null
+        )
         {
-            IDictionary<string, NotifierResponse> notifierresponselist = new Dictionary<string, NotifierResponse>();
+            IDictionary<string, NotifierResponse> notifierresponselist =
+                new Dictionary<string, NotifierResponse>();
 
-            //IF 
-            foreach(var pushchannel in publishedonlist)
+            //IF
+            foreach (var pushchannel in publishedonlist)
             {
-                if(notifierconfiglist.Where(x => x.ServiceName.ToLower() == pushchannel.ToLower()).Count() == 0)
-                    notifierresponselist.TryAddOrUpdate(pushchannel, new NotifierResponse() { Success = false, HttpStatusCode = HttpStatusCode.NotFound, Service = pushchannel, Response = "No configuration found for this publisher"});
+                if (
+                    notifierconfiglist
+                        .Where(x => x.ServiceName.ToLower() == pushchannel.ToLower())
+                        .Count() == 0
+                )
+                    notifierresponselist.TryAddOrUpdate(
+                        pushchannel,
+                        new NotifierResponse()
+                        {
+                            Success = false,
+                            HttpStatusCode = HttpStatusCode.NotFound,
+                            Service = pushchannel,
+                            Response = "No configuration found for this publisher",
+                        }
+                    );
             }
 
             foreach (var notifyconfig in notifierconfiglist)
-            {                
-                if(publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
+            {
+                if (publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
                 {
                     //Compare and push?
 
-                    NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, type, additionalpushinfo, isdelete, updatemode, origin, referer);
+                    NotifyMetaGenerated meta = new NotifyMetaGenerated(
+                        notifyconfig,
+                        id,
+                        type,
+                        additionalpushinfo,
+                        isdelete,
+                        updatemode,
+                        origin,
+                        referer
+                    );
 
-                 
                     var response = await SendNotify(meta);
 
-
                     notifierresponselist.TryAddOrUpdate(notifyconfig.ServiceName, response.Item2);
-                }                
+                }
             }
 
             return notifierresponselist;
@@ -127,15 +213,22 @@ namespace OdhNotifier
         {
             switch (statusCode)
             {
-                case HttpStatusCode.OK: return true;
-                case HttpStatusCode.Created: return true;
-                default: return false;
+                case HttpStatusCode.OK:
+                    return true;
+                case HttpStatusCode.Created:
+                    return true;
+                default:
+                    return false;
             }
         }
-        private async Task<Tuple<HttpStatusCode, NotifierResponse>> SendNotify(NotifyMeta notify, NotifierFailureQueue? failurequeuedata = null)
+
+        private async Task<Tuple<HttpStatusCode, NotifierResponse>> SendNotify(
+            NotifyMeta notify,
+            NotifierFailureQueue? failurequeuedata = null
+        )
         {
             var requesturl = notify.Url;
-            
+
             try
             {
                 //If data is from failurequeue proceed directly
@@ -163,7 +256,7 @@ namespace OdhNotifier
                         {
                             requesturl = requesturl + "?";
                             foreach (var parameter in notify.Parameters)
-                            {                              
+                            {
                                 requesturl = requesturl + parameter.Key + "=" + parameter.Value;
 
                                 if (notify.Parameters.Last().Key != parameter.Key)
@@ -182,46 +275,76 @@ namespace OdhNotifier
                         }
                         else if (notify.Mode.ToLower() == "post")
                         {
-                            var data = new StringContent(System.Text.Json.JsonSerializer.Serialize(new
-                            {
-                                id = notify.Id,
-                                entity = notify.NotifyType,
-                                skipImage = notify.HasImagechanged ? false : true,                                
-                                isHardDelete = notify.IsDelete
-                            }));
+                            var data = new StringContent(
+                                System.Text.Json.JsonSerializer.Serialize(
+                                    new
+                                    {
+                                        id = notify.Id,
+                                        entity = notify.NotifyType,
+                                        skipImage = notify.HasImagechanged ? false : true,
+                                        isHardDelete = notify.IsDelete,
+                                    }
+                                )
+                            );
 
-                            //If datatype is accommodation add the skiprooms 
-                            if(notify.Type == "accommodation")
-                                data = new StringContent(System.Text.Json.JsonSerializer.Serialize(new
-                                {
-                                    id = notify.Id,
-                                    entity = notify.NotifyType,
-                                    skipImage = notify.HasImagechanged ? false : true,
-                                    skipRooms = notify.Roomschanged.HasValue && notify.Roomschanged.Value ? false: true,
-                                    isHardDelete = notify.IsDelete
-                                }));                            
+                            //If datatype is accommodation add the skiprooms
+                            if (notify.Type == "accommodation")
+                                data = new StringContent(
+                                    System.Text.Json.JsonSerializer.Serialize(
+                                        new
+                                        {
+                                            id = notify.Id,
+                                            entity = notify.NotifyType,
+                                            skipImage = notify.HasImagechanged ? false : true,
+                                            skipRooms = notify.Roomschanged.HasValue
+                                            && notify.Roomschanged.Value
+                                                ? false
+                                                : true,
+                                            isHardDelete = notify.IsDelete,
+                                        }
+                                    )
+                                );
 
                             data.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                             response = await client.PostAsync(requesturl, data);
                         }
 
-
-                        if (response != null && (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created))
+                        if (
+                            response != null
+                            && (
+                                response.StatusCode == HttpStatusCode.OK
+                                || response.StatusCode == HttpStatusCode.Created
+                            )
+                        )
                         {
                             //TODO if all ok set the status to ok and update
 
-                            if(failurequeuedata != null)
+                            if (failurequeuedata != null)
                             {
                                 failurequeuedata.RetryCount = failurequeuedata.RetryCount + 1;
                                 failurequeuedata.Status = "elaborated";
                                 failurequeuedata.LastChange = DateTime.Now;
 
-                                await QueryFactory.Query("notificationfailures").Where("id", failurequeuedata.Id)
-                                    .UpdateAsync(new JsonBData() { id = failurequeuedata.Id, data = new JsonRaw(failurequeuedata) });
+                                await QueryFactory
+                                    .Query("notificationfailures")
+                                    .Where("id", failurequeuedata.Id)
+                                    .UpdateAsync(
+                                        new JsonBData()
+                                        {
+                                            id = failurequeuedata.Id,
+                                            data = new JsonRaw(failurequeuedata),
+                                        }
+                                    );
                             }
 
-                            return await ReturnHttpResponse(response, notify, notify.HasImagechanged, notify.Roomschanged.HasValue ? notify.Roomschanged.Value : false, "");
+                            return await ReturnHttpResponse(
+                                response,
+                                notify,
+                                notify.HasImagechanged,
+                                notify.Roomschanged.HasValue ? notify.Roomschanged.Value : false,
+                                ""
+                            );
                         }
                         else if (response != null)
                         {
@@ -244,7 +367,13 @@ namespace OdhNotifier
                     await UpdateFailureQueue(notify, ex.Message, failurequeuedata);
 
                 var response = new HttpResponseMessage(HttpStatusCode.RequestTimeout);
-                return await ReturnHttpResponse(response, notify, notify.HasImagechanged, notify.Roomschanged.HasValue ? notify.Roomschanged.Value : false, ex.Message);
+                return await ReturnHttpResponse(
+                    response,
+                    notify,
+                    notify.HasImagechanged,
+                    notify.Roomschanged.HasValue ? notify.Roomschanged.Value : false,
+                    ex.Message
+                );
             }
             catch (Exception ex)
             {
@@ -254,21 +383,58 @@ namespace OdhNotifier
                     await UpdateFailureQueue(notify, ex.Message, failurequeuedata);
 
                 var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
-                return await ReturnHttpResponse(response, notify, notify.HasImagechanged, notify.Roomschanged.HasValue ? notify.Roomschanged.Value : false, ex.Message);
+                return await ReturnHttpResponse(
+                    response,
+                    notify,
+                    notify.HasImagechanged,
+                    notify.Roomschanged.HasValue ? notify.Roomschanged.Value : false,
+                    ex.Message
+                );
             }
         }
 
-        private async Task<Tuple<HttpStatusCode, NotifierResponse>> ReturnHttpResponse(HttpResponseMessage response, NotifyMeta notify, bool imageupdate, bool roomsupdate, string error)
+        private async Task<Tuple<HttpStatusCode, NotifierResponse>> ReturnHttpResponse(
+            HttpResponseMessage response,
+            NotifyMeta notify,
+            bool imageupdate,
+            bool roomsupdate,
+            string error
+        )
         {
             var responsecontent = await ReadResponse(response, notify.Destination);
 
-            if (response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created)
+            if (
+                response.StatusCode == HttpStatusCode.OK
+                || response.StatusCode == HttpStatusCode.Created
+            )
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type.ToLower() + ".push.trigger", "api", notify.UdateMode, imageupdate, roomsupdate, responsecontent, null, true);                                
+                GenerateLog(
+                    notify.Id,
+                    notify.Destination,
+                    notify.Type.ToLower() + ".push.trigger",
+                    "api",
+                    notify.UdateMode,
+                    imageupdate,
+                    roomsupdate,
+                    responsecontent,
+                    null,
+                    true
+                );
             }
             else
             {
-                GenerateLog(notify.Id, notify.Destination, notify.Type.ToLower() + ".push.error", "api", notify.UdateMode, imageupdate, roomsupdate, responsecontent, error, false);                
+                GenerateLog(
+                    notify.Id,
+                    notify.Destination,
+                    notify.Type.ToLower() + ".push.error",
+                    "api",
+                    notify.UdateMode,
+                    imageupdate,
+                    roomsupdate,
+                    responsecontent,
+                    error,
+                    false
+                );
             }
 
             //var responseobj = JObject.Parse(responsestring);
@@ -276,13 +442,18 @@ namespace OdhNotifier
             return Tuple.Create(response.StatusCode, responsecontent);
         }
 
-        private async Task<NotifierResponse> ReadResponse(HttpResponseMessage response, string service)
+        private async Task<NotifierResponse> ReadResponse(
+            HttpResponseMessage response,
+            string service
+        )
         {
             NotifierResponse notifierresponse = new NotifierResponse();
             notifierresponse.HttpStatusCode = response.StatusCode;
             notifierresponse.Response = await TryReadingResponse(response, service);
             notifierresponse.Service = service;
-            notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
+            notifierresponse.Success = MapStatusCodeToSuccessProperty(
+                notifierresponse.HttpStatusCode
+            );
 
             return notifierresponse;
         }
@@ -300,11 +471,33 @@ namespace OdhNotifier
             }
         }
 
-
-        private void GenerateLog(string id, string destination, string message, string origin, string updatemode, bool? imageupdate, bool? roomsupdate, NotifierResponse response, string? exception, bool success)
+        private void GenerateLog(
+            string id,
+            string destination,
+            string message,
+            string origin,
+            string updatemode,
+            bool? imageupdate,
+            bool? roomsupdate,
+            NotifierResponse response,
+            string? exception,
+            bool success
+        )
         {
-            NotifyLog log = new NotifyLog() { id = id, destination = destination, message = message, origin = origin, imageupdate = imageupdate, roomsupdate = roomsupdate, updatemode = updatemode, response = response.Response, exception = exception, success = success };
-            
+            NotifyLog log = new NotifyLog()
+            {
+                id = id,
+                destination = destination,
+                message = message,
+                origin = origin,
+                imageupdate = imageupdate,
+                roomsupdate = roomsupdate,
+                updatemode = updatemode,
+                response = response.Response,
+                exception = exception,
+                success = success,
+            };
+
             Console.WriteLine(JsonConvert.SerializeObject(log));
         }
 
@@ -329,12 +522,17 @@ namespace OdhNotifier
             myfailure.HasImageChanged = notify.HasImagechanged;
             myfailure.Roomschanged = notify.Roomschanged;
 
-            await QueryFactory.Query("notificationfailures")
-                       .InsertAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
+            await QueryFactory
+                .Query("notificationfailures")
+                .InsertAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
         }
 
-        private async Task UpdateFailureQueue(NotifyMeta notify, string exmessage, NotifierFailureQueue myfailure)
-        {            
+        private async Task UpdateFailureQueue(
+            NotifyMeta notify,
+            string exmessage,
+            NotifierFailureQueue myfailure
+        )
+        {
             myfailure.ItemId = notify.Id;
             myfailure.Type = notify.Type;
             myfailure.NotifyType = notify.NotifyType;
@@ -352,8 +550,10 @@ namespace OdhNotifier
             myfailure.HasImageChanged = notify.HasImagechanged;
             myfailure.Roomschanged = notify.Roomschanged;
 
-            await QueryFactory.Query("notificationfailures").Where("id", myfailure.Id)
-                       .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
+            await QueryFactory
+                .Query("notificationfailures")
+                .Where("id", myfailure.Id)
+                .UpdateAsync(new JsonBData() { id = myfailure.Id, data = new JsonRaw(myfailure) });
         }
 
         //Valid Types for Push
@@ -368,14 +568,19 @@ namespace OdhNotifier
         public void Dispose()
         {
             // Dispose of unmanaged resources.
-            //TODO            
+            //TODO
             // Suppress finalization.
             GC.SuppressFinalize(this);
         }
 
-        private async Task<IEnumerable<NotifierFailureQueue>> GetFromFailureQueue(string service, string status, int elementstoprocess)
+        private async Task<IEnumerable<NotifierFailureQueue>> GetFromFailureQueue(
+            string service,
+            string status,
+            int elementstoprocess
+        )
         {
-            var query = QueryFactory.Query("notificationfailures")
+            var query = QueryFactory
+                .Query("notificationfailures")
                 .SelectRaw("data")
                 .Where("gen_service", service)
                 .Where("gen_status", status)
@@ -386,17 +591,28 @@ namespace OdhNotifier
             return data;
         }
 
-        public async Task<IDictionary<string, ICollection<NotifierResponse>>> PushFailureQueueToPublishedonService(List<string> publishedonlist, int elementstoprocess = 100, string? referer = null)
+        public async Task<
+            IDictionary<string, ICollection<NotifierResponse>>
+        > PushFailureQueueToPublishedonService(
+            List<string> publishedonlist,
+            int elementstoprocess = 100,
+            string? referer = null
+        )
         {
-            IDictionary<string, ICollection<NotifierResponse>> notifierresponsedict = new Dictionary<string, ICollection<NotifierResponse>>();
+            IDictionary<string, ICollection<NotifierResponse>> notifierresponsedict =
+                new Dictionary<string, ICollection<NotifierResponse>>();
 
             foreach (var notifyconfig in notifierconfiglist)
             {
-                //GET All failed pushes            
+                //GET All failed pushes
                 if (publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
                 {
-                    var failedpushes = await GetFromFailureQueue(notifyconfig.ServiceName.ToLower(), "open", elementstoprocess);
-                    
+                    var failedpushes = await GetFromFailureQueue(
+                        notifyconfig.ServiceName.ToLower(),
+                        "open",
+                        elementstoprocess
+                    );
+
                     List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
 
                     foreach (var failedpush in failedpushes)
@@ -409,20 +625,34 @@ namespace OdhNotifier
                         if (failedpush.Roomschanged != null && failedpush.Roomschanged.Value)
                             additionalpushinfodict.TryAdd("roomschanged", true);
 
-                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, failedpush.ItemId, failedpush.Type, additionalpushinfodict, false, "failurequeue.push", "api", referer);
+                        NotifyMetaGenerated meta = new NotifyMetaGenerated(
+                            notifyconfig,
+                            failedpush.ItemId,
+                            failedpush.Type,
+                            additionalpushinfodict,
+                            false,
+                            "failurequeue.push",
+                            "api",
+                            referer
+                        );
 
                         NotifierResponse notifierresponse = new NotifierResponse();
                         var response = await SendNotify(meta, failedpush);
                         notifierresponse.HttpStatusCode = response.Item1;
                         notifierresponse.Service = notifyconfig.ServiceName;
                         notifierresponse.Response = response.Item2;
-                        notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
+                        notifierresponse.Success = MapStatusCodeToSuccessProperty(
+                            notifierresponse.HttpStatusCode
+                        );
 
                         //TO CHECK if more Elements are pushed it is overwritten
                         notifierresponselist.Add(notifierresponse);
                     }
 
-                    notifierresponsedict.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponselist);
+                    notifierresponsedict.TryAddOrUpdate(
+                        notifyconfig.ServiceName,
+                        notifierresponselist
+                    );
                 }
             }
 
@@ -430,33 +660,56 @@ namespace OdhNotifier
         }
 
         //Not Updating Images and AccommodationRooms
-        public async Task<IDictionary<string, ICollection<NotifierResponse>>> PushCustomObjectsToPublishedonService(List<string> publishedonlist, List<string> idlist, string odhtype, IDictionary<string,bool>? additionalpushinfo, string? referer = null)
+        public async Task<
+            IDictionary<string, ICollection<NotifierResponse>>
+        > PushCustomObjectsToPublishedonService(
+            List<string> publishedonlist,
+            List<string> idlist,
+            string odhtype,
+            IDictionary<string, bool>? additionalpushinfo,
+            string? referer = null
+        )
         {
-            IDictionary<string, ICollection<NotifierResponse>> notifierresponsedict = new Dictionary<string, ICollection<NotifierResponse>>();
+            IDictionary<string, ICollection<NotifierResponse>> notifierresponsedict =
+                new Dictionary<string, ICollection<NotifierResponse>>();
 
             foreach (var notifyconfig in notifierconfiglist)
             {
-                //GET All failed pushes            
+                //GET All failed pushes
                 if (publishedonlist.Contains(notifyconfig.ServiceName.ToLower()))
-                {                   
+                {
                     List<NotifierResponse> notifierresponselist = new List<NotifierResponse>();
 
                     foreach (var id in idlist)
                     {
-                        NotifyMetaGenerated meta = new NotifyMetaGenerated(notifyconfig, id, odhtype, null, false, "custom.push", "api", referer);
+                        NotifyMetaGenerated meta = new NotifyMetaGenerated(
+                            notifyconfig,
+                            id,
+                            odhtype,
+                            null,
+                            false,
+                            "custom.push",
+                            "api",
+                            referer
+                        );
 
                         NotifierResponse notifierresponse = new NotifierResponse();
                         var response = await SendNotify(meta, null);
                         notifierresponse.HttpStatusCode = response.Item1;
                         notifierresponse.Service = notifyconfig.ServiceName;
                         notifierresponse.Response = response.Item2;
-                        notifierresponse.Success = MapStatusCodeToSuccessProperty(notifierresponse.HttpStatusCode);
+                        notifierresponse.Success = MapStatusCodeToSuccessProperty(
+                            notifierresponse.HttpStatusCode
+                        );
 
                         //TO CHECK if more Elements are pushed it is overwritten
                         notifierresponselist.Add(notifierresponse);
                     }
 
-                    notifierresponsedict.TryAddOrUpdate(notifyconfig.ServiceName, notifierresponselist);
+                    notifierresponsedict.TryAddOrUpdate(
+                        notifyconfig.ServiceName,
+                        notifierresponselist
+                    );
                 }
             }
 
@@ -466,7 +719,16 @@ namespace OdhNotifier
 
     public class NotifyMetaGenerated : NotifyMeta
     {
-        public NotifyMetaGenerated(NotifierConfig notifyconfig, string id, string type, IDictionary<string, bool>? additionalpushinfo, bool isdelete, string updatemode, string origin, string? referer = null)
+        public NotifyMetaGenerated(
+            NotifierConfig notifyconfig,
+            string id,
+            string type,
+            IDictionary<string, bool>? additionalpushinfo,
+            bool isdelete,
+            string updatemode,
+            string origin,
+            string? referer = null
+        )
         {
             //Set by parameters
             this.Id = id;
@@ -477,13 +739,13 @@ namespace OdhNotifier
             this.HasImagechanged = false;
             this.Roomschanged = false;
 
-            if(additionalpushinfo != null)
+            if (additionalpushinfo != null)
             {
                 if (additionalpushinfo.ContainsKey("imageschanged"))
                     this.HasImagechanged = additionalpushinfo["imageschanged"];
                 if (additionalpushinfo.ContainsKey("roomschanged"))
                     this.Roomschanged = additionalpushinfo["roomschanged"];
-            }            
+            }
 
             this.IsDelete = isdelete;
 
@@ -493,9 +755,10 @@ namespace OdhNotifier
 
                     //From Config
                     this.Url = notifyconfig.Url;
-                    this.Headers = new Dictionary<string, string>() {
+                    this.Headers = new Dictionary<string, string>()
+                    {
                         { "client_id", notifyconfig.User },
-                        { "client_secret", notifyconfig.Password }
+                        { "client_secret", notifyconfig.Password },
                     };
 
                     //Prefilled
@@ -503,16 +766,16 @@ namespace OdhNotifier
                     this.Mode = "post";
 
                     this.ValidTypes = new List<string>()
-                        {
-                            "ACCOMMODATION",
-                            "REGION",
-                            "MUNICIPALITY",
-                            "DISTRICT",
-                            "TOURISM_ASSOCIATION",
-                            "ODH_ACTIVITY_POI",
-                            "EVENT",
-                            "ODH_TAG",
-                            "SKI_AREA"
+                    {
+                        "ACCOMMODATION",
+                        "REGION",
+                        "MUNICIPALITY",
+                        "DISTRICT",
+                        "TOURISM_ASSOCIATION",
+                        "ODH_ACTIVITY_POI",
+                        "EVENT",
+                        "ODH_TAG",
+                        "SKI_AREA",
                     };
 
                     this.NotifyType = TransformType(this.Type, "idm-marketplace");
@@ -522,8 +785,9 @@ namespace OdhNotifier
 
                     //From Config
                     this.Url = notifyconfig.Url;
-                    this.Parameters = new Dictionary<string, string>() {
-                        { "skipimage", this.HasImagechanged ? "false" : "true" }
+                    this.Parameters = new Dictionary<string, string>()
+                    {
+                        { "skipimage", this.HasImagechanged ? "false" : "true" },
                     };
 
                     //Prefilled
@@ -531,24 +795,24 @@ namespace OdhNotifier
                     this.Mode = "get";
 
                     this.ValidTypes = new List<string>()
-                        {
-                            "accommodation",
-                            "activity",
-                            "article",
-                            "event",
-                            "metaregion",
-                            "region",
-                            "experiencearea",
-                            "municipality",
-                            "tvs",
-                            "district",
-                            "skiregion",
-                            "skiarea",
-                            "gastronomy",
-                            "odhactivitypoi",
-                            "smgtags",
-                            "odhtag"
-                        };
+                    {
+                        "accommodation",
+                        "activity",
+                        "article",
+                        "event",
+                        "metaregion",
+                        "region",
+                        "experiencearea",
+                        "municipality",
+                        "tvs",
+                        "district",
+                        "skiregion",
+                        "skiarea",
+                        "gastronomy",
+                        "odhactivitypoi",
+                        "smgtags",
+                        "odhtag",
+                    };
 
                     this.NotifyType = TransformType(this.Type, "sinfo");
 
@@ -577,7 +841,7 @@ namespace OdhNotifier
                     "tvs" => "TOURISM_ASSOCIATION",
                     "tv" => "TOURISM_ASSOCIATION",
                     "district" => "DISTRICT",
-                    "skiregion" => "NOT SUPPORTED",  //to check
+                    "skiregion" => "NOT SUPPORTED", //to check
                     "skiarea" => "SKI_AREA",
                     "gastronomy" => "NOT SUPPORTED", //deprecated
                     "poi" => "NOT SUPPORTED", //deprecated
@@ -589,12 +853,11 @@ namespace OdhNotifier
                     "measuringpoint" => "NOT SUPPORTED",
                     "venue" => "NOT SUPPORTED",
                     "wine" => "NOT SUPPORTED",
-                    _ => "NOT SUPPORTED"
+                    _ => "NOT SUPPORTED",
                 };
             }
             else
                 return type;
         }
-
-    } 
+    }
 }

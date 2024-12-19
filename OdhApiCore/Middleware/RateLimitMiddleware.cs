@@ -2,18 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Distributed;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Collections.Generic;
-using System.Security.Claims;
 using Helper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace OdhApiCore
 {
@@ -34,7 +34,7 @@ namespace OdhApiCore
             var endpoint = context.GetEndpoint();
 
             //If already a 401 Response is waiting do nothing
-            if(context.Response.HasStarted)
+            if (context.Response.HasStarted)
             {
                 return;
             }
@@ -66,21 +66,48 @@ namespace OdhApiCore
             {
                 var clientStatistics = await GetClientStatisticsByKey(key);
 
-                context.AddRateLimitHeaders(rlConfig.MaxRequests, clientStatistics == null ? 0 : clientStatistics.LastSuccessfulResponseTimeList.Count, rlConfig.TimeWindow, rlConfig.Type);
+                context.AddRateLimitHeaders(
+                    rlConfig.MaxRequests,
+                    clientStatistics == null
+                        ? 0
+                        : clientStatistics.LastSuccessfulResponseTimeList.Count,
+                    rlConfig.TimeWindow,
+                    rlConfig.Type
+                );
 
-                if (clientStatistics != null && clientStatistics.LastSuccessfulResponseTimeList.Count >= rlConfig.MaxRequests)
+                if (
+                    clientStatistics != null
+                    && clientStatistics.LastSuccessfulResponseTimeList.Count >= rlConfig.MaxRequests
+                )
                 {
                     // Done by WriteasJson
                     context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
 
-                    await context.Response.WriteAsJsonAsync(new QuotaExceededMessage { Message = "You have exhausted your API Request Quota", Policy = rlConfig.Type, RetryAfter = rlConfig.TimeWindow, RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count });
+                    await context.Response.WriteAsJsonAsync(
+                        new QuotaExceededMessage
+                        {
+                            Message = "You have exhausted your API Request Quota",
+                            Policy = rlConfig.Type,
+                            RetryAfter = rlConfig.TimeWindow,
+                            RequestsDone = clientStatistics.LastSuccessfulResponseTimeList.Count,
+                        }
+                    );
 
-                    HttpRequestExtensions.GenerateLogResponse(context, clientStatistics.LastSuccessfulResponseTimeList.Count, rlConfig.Type, key);
+                    HttpRequestExtensions.GenerateLogResponse(
+                        context,
+                        clientStatistics.LastSuccessfulResponseTimeList.Count,
+                        rlConfig.Type,
+                        key
+                    );
 
                     return;
                 }
 
-                await UpdateClientStatisticsStorage(key, rlConfig.MaxRequests, TimeSpan.FromSeconds(rlConfig.TimeWindow));                
+                await UpdateClientStatisticsStorage(
+                    key,
+                    rlConfig.MaxRequests,
+                    TimeSpan.FromSeconds(rlConfig.TimeWindow)
+                );
             }
 
             await _next(context);
@@ -88,7 +115,10 @@ namespace OdhApiCore
 
         //private static string GenerateClientKey(HttpContext context) => $"{context.Request.Path}_{context.Connection.RemoteIpAddress}";
 
-        private static (RateLimitConfig? rlConfig, string key) GenerateClientKeyExtended(HttpContext context, List<RateLimitConfig> rlsettings)
+        private static (RateLimitConfig? rlConfig, string key) GenerateClientKeyExtended(
+            HttpContext context,
+            List<RateLimitConfig> rlsettings
+        )
         {
             RateLimitConfig? ratelimitconfig = default;
             string ratelimitcachekey = "";
@@ -120,31 +150,33 @@ namespace OdhApiCore
 
                 var jwttoken = ReadMyJWTSecurityToken(token, handler);
 
-
                 if (jwttoken != null)
                 {
                     // Gets name from claims. Generally it's an email address.
-                    var usernameClaim = jwttoken.Claims
-                        .Where(x => x.Type == ClaimTypes.Name || x.Type == "name")
+                    var usernameClaim = jwttoken
+                        .Claims.Where(x => x.Type == ClaimTypes.Name || x.Type == "name")
                         .FirstOrDefault();
 
                     //HACK if no username (Serviceaccount) lets get the preferred_username
-                    if(usernameClaim == null)
+                    if (usernameClaim == null)
                     {
-                        usernameClaim = jwttoken.Claims
-                        .Where(x => x.Type == ClaimTypes.Name || x.Type == "preferred_username")
-                        .FirstOrDefault();
+                        usernameClaim = jwttoken
+                            .Claims.Where(x =>
+                                x.Type == ClaimTypes.Name || x.Type == "preferred_username"
+                            )
+                            .FirstOrDefault();
                     }
 
                     if (usernameClaim != null)
                         loggeduser = usernameClaim.Value;
 
-                    var roleClaim = jwttoken.Claims
-                        .Where(x => x.Type == ClaimTypes.Name || x.Type == "role");
-                    
-                    if(roleClaim != null)
+                    var roleClaim = jwttoken.Claims.Where(x =>
+                        x.Type == ClaimTypes.Name || x.Type == "role"
+                    );
+
+                    if (roleClaim != null)
                     {
-                        foreach(var role in roleClaim)
+                        foreach (var role in roleClaim)
                         {
                             userrole.Add(role.Value);
                         }
@@ -157,9 +189,8 @@ namespace OdhApiCore
             // TODO: Check if User has Referer, isLogged isAnonymous
 
 
-            //Get the Remote IP            
+            //Get the Remote IP
             var remoteip = RemoteIpHelper.GetRequestIP(context, true);
-
 
             // Case 1 Anonymous, Go to IP Restriction (Maybe on Path?)
             if (String.IsNullOrEmpty(referer) && String.IsNullOrEmpty(loggeduser))
@@ -173,26 +204,29 @@ namespace OdhApiCore
                 ratelimitcachekey = $"{context.Request.Path}_{remoteip}_{referer}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Referer").FirstOrDefault();
             }
-
             // Case 3 Logged user, decode token and use username as key
             else if (!String.IsNullOrEmpty(loggeduser))
             {
                 ratelimitcachekey = $"{context.Request.Path}_{remoteip}_{loggeduser}";
                 ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
 
-                // If user is in Role 
-                if(userrole.Count > 0)
+                // If user is in Role
+                if (userrole.Count > 0)
                 {
-                    if(userrole.Contains("ODH_ROLE_ADVANCED"))
-                        ratelimitconfig = rlsettings.Where(x => x.Type == "Advanced").FirstOrDefault();
+                    if (userrole.Contains("ODH_ROLE_ADVANCED"))
+                        ratelimitconfig = rlsettings
+                            .Where(x => x.Type == "Advanced")
+                            .FirstOrDefault();
                     if (userrole.Contains("ODH_ROLE_PREMIUM"))
-                        ratelimitconfig = rlsettings.Where(x => x.Type == "Premium").FirstOrDefault();
+                        ratelimitconfig = rlsettings
+                            .Where(x => x.Type == "Premium")
+                            .FirstOrDefault();
                     if (userrole.Contains("ODH_ROLE_ADMIN"))
                         ratelimitconfig = rlsettings.Where(x => x.Type == "Admin").FirstOrDefault();
                 }
 
                 // Fallback if ratelimitconfig by Role is null
-                if(ratelimitconfig == null)
+                if (ratelimitconfig == null)
                     ratelimitconfig = rlsettings.Where(x => x.Type == "Basic").FirstOrDefault();
             }
             // No rate limit
@@ -204,7 +238,10 @@ namespace OdhApiCore
             return (ratelimitconfig, ratelimitcachekey);
         }
 
-        private static JwtSecurityToken? ReadMyJWTSecurityToken(string token, JwtSecurityTokenHandler handler)
+        private static JwtSecurityToken? ReadMyJWTSecurityToken(
+            string token,
+            JwtSecurityTokenHandler handler
+        )
         {
             try
             {
@@ -218,9 +255,14 @@ namespace OdhApiCore
             }
         }
 
-        private async Task<ClientStatistics?> GetClientStatisticsByKey(string key) => await _cache.GetCacheValueAsync<ClientStatistics>(key);
+        private async Task<ClientStatistics?> GetClientStatisticsByKey(string key) =>
+            await _cache.GetCacheValueAsync<ClientStatistics>(key);
 
-        private async Task UpdateClientStatisticsStorage(string key, int maxRequests, TimeSpan timeWindow)
+        private async Task UpdateClientStatisticsStorage(
+            string key,
+            int maxRequests,
+            TimeSpan timeWindow
+        )
         {
             var clientStat = await _cache.GetCacheValueAsync<ClientStatistics>(key);
 
@@ -229,7 +271,11 @@ namespace OdhApiCore
                 var now = DateTime.UtcNow;
 
                 clientStat.LastSuccessfulResponseTimeList.Add(now);
-                clientStat.LastSuccessfulResponseTimeList = RemoveAllExpiredResponseDateTimes(clientStat.LastSuccessfulResponseTimeList, timeWindow, now);
+                clientStat.LastSuccessfulResponseTimeList = RemoveAllExpiredResponseDateTimes(
+                    clientStat.LastSuccessfulResponseTimeList,
+                    timeWindow,
+                    now
+                );
 
                 await _cache.SetCacheValueAsync<ClientStatistics>(key, timeWindow, clientStat);
             }
@@ -237,19 +283,22 @@ namespace OdhApiCore
             {
                 var clientStatistics = new ClientStatistics
                 {
-                    LastSuccessfulResponseTimeList = new List<DateTime>() { DateTime.UtcNow }
+                    LastSuccessfulResponseTimeList = new List<DateTime>() { DateTime.UtcNow },
                 };
 
                 await _cache.SetCacheValueAsync(key, timeWindow, clientStatistics);
             }
-
         }
 
-        private static List<DateTime> RemoveAllExpiredResponseDateTimes(List<DateTime> list, TimeSpan timeWindow, DateTime dateto)
+        private static List<DateTime> RemoveAllExpiredResponseDateTimes(
+            List<DateTime> list,
+            TimeSpan timeWindow,
+            DateTime dateto
+        )
         {
             var validfrom = dateto.Subtract(timeWindow);
 
-            // Remove all no more valid Requests                      
+            // Remove all no more valid Requests
             return list.Where(x => x >= validfrom).ToList();
         }
 
@@ -261,10 +310,13 @@ namespace OdhApiCore
         private static bool CheckNoRestrictionRoutes(PathString currentpath, ISettings settings)
         {
             bool toreturn = false;
-            
-            if (settings.NoRateLimitConfig.NoRateLimitRoutes != null && currentpath.Value != null && settings.NoRateLimitConfig.NoRateLimitRoutes.Contains(currentpath.Value))
-                return true;
 
+            if (
+                settings.NoRateLimitConfig.NoRateLimitRoutes != null
+                && currentpath.Value != null
+                && settings.NoRateLimitConfig.NoRateLimitRoutes.Contains(currentpath.Value)
+            )
+                return true;
 
             return toreturn;
         }
@@ -284,9 +336,11 @@ namespace OdhApiCore
                     currentreferer = context.Request.Query["Referer"].ToString();
             }
 
-            if (settings.NoRateLimitConfig.NoRateLimitReferer != null && settings.NoRateLimitConfig.NoRateLimitReferer.Contains(currentreferer))
+            if (
+                settings.NoRateLimitConfig.NoRateLimitReferer != null
+                && settings.NoRateLimitConfig.NoRateLimitReferer.Contains(currentreferer)
+            )
                 return true;
-
 
             return toreturn;
         }
@@ -307,10 +361,7 @@ namespace OdhApiCore
         public string? Message { get; set; }
         public string? Hint
         {
-            get
-            {
-                return "https://github.com/noi-techpark/odh-docs/wiki/Api-Quota";
-            }
+            get { return "https://github.com/noi-techpark/odh-docs/wiki/Api-Quota"; }
         }
         public string? Policy { get; set; }
 

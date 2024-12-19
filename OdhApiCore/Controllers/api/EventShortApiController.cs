@@ -2,11 +2,18 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using DataModel;
 using DataModel.Annotations;
 using Helper;
 using Helper.Generic;
 using Helper.Identity;
+using Helper.Tagging;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,27 +24,24 @@ using OdhApiCore.Responses;
 using OdhNotifier;
 using SqlKata.Execution;
 using Swashbuckle.AspNetCore.Annotations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Helper.Tagging;
 
 namespace OdhApiCore.Controllers.api
 {
     /// <summary>
-    /// EventShort Api (data provided by NOI/EURAC) ALL DATA Available as OPENDATA 
+    /// EventShort Api (data provided by NOI/EURAC) ALL DATA Available as OPENDATA
     /// </summary>
     [EnableCors("CorsPolicy")]
     [NullStringParameterActionFilter]
     public class EventShortController : OdhController
-    {        
-        public EventShortController(IWebHostEnvironment env, ISettings settings, ILogger<EventShortController> logger, QueryFactory queryFactory, IOdhPushNotifier odhpushnotifier)
-           : base(env, settings, logger, queryFactory, odhpushnotifier)
-        {
-        }
+    {
+        public EventShortController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<EventShortController> logger,
+            QueryFactory queryFactory,
+            IOdhPushNotifier odhpushnotifier
+        )
+            : base(env, settings, logger, queryFactory, odhpushnotifier) { }
 
         #region SWAGGER Exposed API
 
@@ -52,9 +56,9 @@ namespace OdhApiCore.Controllers.api
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
         /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>
-        /// <param name="onlyactive">'true' if only Events marked as Active for today.noi.bz.it should be returned</param>        
-        /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>        
-        /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>        
+        /// <param name="onlyactive">'true' if only Events marked as Active for today.noi.bz.it should be returned</param>
+        /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>
+        /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>
         /// <param name="eventids">comma separated list of event ids</param>
         /// <param name="sortorder">ASC or DESC by StartDate</param>
         /// <param name="webaddress">Searches the webaddress</param>
@@ -65,14 +69,14 @@ namespace OdhApiCore.Controllers.api
         /// <param name="longitude">GeoFilter FLOAT Longitude Format: '11.369909', 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="radius">Radius INTEGER to Search in Meters. Only Object withhin the given point and radius are returned and sorted by distance. Random Sorting is disabled if the GeoFilter Informations are provided, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#geosorting-functionality' target="_blank">Wiki geosort</a></param>
         /// <param name="polygon">valid WKT (Well-known text representation of geometry) Format, Examples (POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))) / By Using the GeoShapes Api (v1/GeoShapes) and passing Country.Type.Id OR Country.Type.Name Example (it.municipality.3066) / Bounding Box Filter bbc: 'Bounding Box Contains', 'bbi': 'Bounding Box Intersects', followed by a List of Comma Separated Longitude Latitude Tuples, 'null' = disabled, (default:'null') <a href='https://github.com/noi-techpark/odh-docs/wiki/Geosorting-and-Locationfilter-usage#polygon-filter-functionality' target="_blank">Wiki geosort</a></param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="updatefrom">Returns data changed after this date Format (yyyy-MM-dd), (default: 'null')</param>
         /// <param name="optimizedates">Optimizes dates, cuts out all Rooms with Comment "x", revisits and corrects start + enddate</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'true')</param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Result Object with EventShort List</returns>
         [ProducesResponseType(typeof(Result<EventShort>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -81,15 +85,17 @@ namespace OdhApiCore.Controllers.api
         //[AuthorizeODH(PermissionAction.Read)] Also Anonymous can read it
         [HttpGet, Route("EventShort")]
         public async Task<IActionResult> Get(
-            uint pagenumber = 1, 
+            uint pagenumber = 1,
             PageSize pagesize = null!, //1024 should be given as standard
-            string? startdate = null, 
-            string? enddate = null, 
-            string? datetimeformat = null, 
+            string? startdate = null,
+            string? enddate = null,
+            string? datetimeformat = null,
             string? source = null,
             [SwaggerEnum(new[] { "NOI", "EC", "VV", "OUT" })]
-            [SwaggerParameter("<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>")]
-            string? eventlocation = null, 
+            [SwaggerParameter(
+                "<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>"
+            )]
+                string? eventlocation = null,
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
@@ -105,30 +111,56 @@ namespace OdhApiCore.Controllers.api
             string? longitude = null,
             string? radius = null,
             string? polygon = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? lastchange = null,
             string? publishedon = null,
             string? searchfilter = null,
             string? rawfilter = null,
-            string? rawsort = null,            
+            string? rawsort = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default
-            )
+        )
         {
-            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(latitude, longitude, radius);
-            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(polygon, QueryFactory);
+            var geosearchresult = Helper.GeoSearchHelper.GetPGGeoSearchResult(
+                latitude,
+                longitude,
+                radius
+            );
+            var polygonsearchresult = await Helper.GeoSearchHelper.GetPolygon(
+                polygon,
+                QueryFactory
+            );
 
             return await GetEventShortList(
-               fields: fields ?? Array.Empty<string>(), language: language, pagenumber: pagenumber, pagesize: pagesize,
-               startdate: startdate, enddate: enddate, datetimeformat: datetimeformat, idfilter: eventids,
-                   searchfilter: searchfilter, sourcefilter: source, eventlocationfilter: eventlocation,
-                   webaddressfilter: webaddress, activetoday: onlyactive.Value, websiteactive: websiteactive.Value, communityactive: communityactive.Value, 
-                   active: active, optimizedates: optimizedates,
-                   sortorder: sortorder, seed: seed, lastchange: lastchange, langfilter: langfilter, publishedon: publishedon,
-                   polygonsearchresult: polygonsearchresult, geosearchresult: geosearchresult,
-                   rawfilter: rawfilter, rawsort: rawsort,  removenullvalues: removenullvalues, 
-                   cancellationToken: cancellationToken);
+                fields: fields ?? Array.Empty<string>(),
+                language: language,
+                pagenumber: pagenumber,
+                pagesize: pagesize,
+                startdate: startdate,
+                enddate: enddate,
+                datetimeformat: datetimeformat,
+                idfilter: eventids,
+                searchfilter: searchfilter,
+                sourcefilter: source,
+                eventlocationfilter: eventlocation,
+                webaddressfilter: webaddress,
+                activetoday: onlyactive.Value,
+                websiteactive: websiteactive.Value,
+                communityactive: communityactive.Value,
+                active: active,
+                optimizedates: optimizedates,
+                sortorder: sortorder,
+                seed: seed,
+                lastchange: lastchange,
+                langfilter: langfilter,
+                publishedon: publishedon,
+                polygonsearchresult: polygonsearchresult,
+                geosearchresult: geosearchresult,
+                rawfilter: rawfilter,
+                rawsort: rawsort,
+                removenullvalues: removenullvalues,
+                cancellationToken: cancellationToken
+            );
         }
 
         /// <summary>
@@ -138,7 +170,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="optimizedates">Optimizes dates, cuts out all Rooms with Comment "x", revisits and corrects start + enddate</param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>EventShort Object</returns>
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
@@ -154,12 +186,19 @@ namespace OdhApiCore.Controllers.api
             string id,
             string? language,
             bool optimizedates = false,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await GetEventShortSingle(id, language, optimizedates: optimizedates, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
+            return await GetEventShortSingle(
+                id,
+                language,
+                optimizedates: optimizedates,
+                fields: fields ?? Array.Empty<string>(),
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -169,21 +208,21 @@ namespace OdhApiCore.Controllers.api
         /// <param name="enddate">Format (yyyy-MM-dd HH:mm) default or Unix Timestamp</param>
         /// <param name="datetimeformat">not provided, use default format, for unix timestamp pass "uxtimestamp"</param>
         /// <param name="source">Source of the data, (possible values 'Content' or 'EBMS')</param>
-        /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>    
-        /// <param name="onlyactive">'true' if only Events marked as Active for today.noi.bz.it should be returned</param>        
-        /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>        
+        /// <param name="eventlocation">Event Location, (possible values, 'NOI' = Events at Noi Techpark, 'EC' = Eurac Events, 'OUT' = Events in other locatiosn)</param>
+        /// <param name="onlyactive">'true' if only Events marked as Active for today.noi.bz.it should be returned</param>
+        /// <param name="websiteactive">'true' if only Events marked as Active for noi.bz.it should be returned</param>
         /// <param name="active">Active Events Filter (possible Values: 'true' only Active Events, 'false' only Disabled Events), (default:'true')</param>
-        /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>        
+        /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>
         /// <param name="eventids">comma separated list of event ids</param>
         /// <param name="webaddress">Filter by WebAddress Field</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
-        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>       
+        /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>List of EventShortByRoom Objects</returns>
         [ProducesResponseType(typeof(IEnumerable<EventShortByRoom>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -191,38 +230,61 @@ namespace OdhApiCore.Controllers.api
         //[EnableCors(origins: "*", headers: "*", methods: "*")]
         [HttpGet, Route("EventShort/GetbyRoomBooked")]
         public async Task<IActionResult> GetbyRoomBooked(
-            string? startdate = null, 
-            string? enddate = null, 
-            string? datetimeformat = null, 
+            string? startdate = null,
+            string? enddate = null,
+            string? datetimeformat = null,
             string? source = null,
             [SwaggerEnum(new[] { "NOI", "EC", "VV", "OUT" })]
-            [SwaggerParameter("<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>")]
-            string? eventlocation = null,
+            [SwaggerParameter(
+                "<p>Members:</p><ul><li><i>NOI</i> - NOI Techpark</li> <li><i>EC</i> - Eurac</li> <li><i>VV</i> - Virtual Village</li> <li><i>OUT</i> - Other Location</li> </ul>"
+            )]
+                string? eventlocation = null,
             LegacyBool onlyactive = null!,
             LegacyBool websiteactive = null!,
             LegacyBool communityactive = null!,
             bool active = true,
-            string? eventids = null, 
+            string? eventids = null,
             string? webaddress = null,
             string? language = null,
             string? langfilter = null,
             string? lastchange = null,
             string? updatefrom = null,
             string? publishedon = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,            
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (updatefrom == null && lastchange != null)
                 updatefrom = lastchange;
 
-            return await GetEventShortListbyRoomBooked(startdate, enddate, datetimeformat, source, eventlocation, onlyactive.Value, 
-                websiteactive.Value, communityactive.Value, active, eventids, webaddress, publishedon, updatefrom, language, null, 
-                searchfilter, langfilter, fields: fields ?? Array.Empty<string>(), rawfilter, rawsort, removenullvalues, cancellationToken);
+            return await GetEventShortListbyRoomBooked(
+                startdate,
+                enddate,
+                datetimeformat,
+                source,
+                eventlocation,
+                onlyactive.Value,
+                websiteactive.Value,
+                communityactive.Value,
+                active,
+                eventids,
+                webaddress,
+                publishedon,
+                updatefrom,
+                language,
+                null,
+                searchfilter,
+                langfilter,
+                fields: fields ?? Array.Empty<string>(),
+                rawfilter,
+                rawsort,
+                removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -236,7 +298,7 @@ namespace OdhApiCore.Controllers.api
         [HttpGet, Route("EventShort/RoomMapping")]
         public async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLinkDictionary(
             string? language = "en"
-            )
+        )
         {
             return await GetBDPNoiRoomsWithLink(language);
         }
@@ -250,8 +312,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>Collection of EventShortType Object</returns> 
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>Collection of EventShortType Object</returns>
         //[ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -259,15 +321,24 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> GetEventShortTypes(
             string? language,
             string? type = null,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await GetEventShortTypesList(language, type, fields: fields ?? Array.Empty<string>(), searchfilter, rawfilter, rawsort, removenullvalues: removenullvalues, cancellationToken);
+            return await GetEventShortTypesList(
+                language,
+                type,
+                fields: fields ?? Array.Empty<string>(),
+                searchfilter,
+                rawfilter,
+                rawsort,
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -276,8 +347,8 @@ namespace OdhApiCore.Controllers.api
         /// <param name="id">ID of the EventShort Type</param>
         /// <param name="language">Language field selector, displays data and fields available in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
-        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>        
-        /// <returns>ActivityPoiType Object</returns>                
+        /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <returns>ActivityPoiType Object</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -288,12 +359,18 @@ namespace OdhApiCore.Controllers.api
         public async Task<IActionResult> GetEventShortTypesSingle(
             string id,
             string? language,
-            [ModelBinder(typeof(CommaSeparatedArrayBinder))]
-            string[]? fields = null,
+            [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             bool removenullvalues = false,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return await GetEventShortType(id, language, fields: fields ?? Array.Empty<string>(), removenullvalues: removenullvalues, cancellationToken);
+            return await GetEventShortType(
+                id,
+                language,
+                fields: fields ?? Array.Empty<string>(),
+                removenullvalues: removenullvalues,
+                cancellationToken
+            );
         }
 
         #endregion
@@ -301,53 +378,113 @@ namespace OdhApiCore.Controllers.api
         #region GETTER
 
         private Task<IActionResult> GetEventShortList(
-            string[] fields, string? language, string? searchfilter, uint pagenumber, int? pagesize, string? startdate, string? enddate, string? datetimeformat,
-            string? idfilter, string? sourcefilter, string? eventlocationfilter, string? webaddressfilter, bool? activetoday, bool? websiteactive, bool? communityactive, 
-            bool active, bool optimizedates, string? sortorder, string? seed, string? langfilter,
-            string? lastchange, string? publishedon, GeoPolygonSearchResult? polygonsearchresult, PGGeoSearchResult geosearchresult,
-            string? rawfilter, string? rawsort, bool removenullvalues,  CancellationToken cancellationToken)
+            string[] fields,
+            string? language,
+            string? searchfilter,
+            uint pagenumber,
+            int? pagesize,
+            string? startdate,
+            string? enddate,
+            string? datetimeformat,
+            string? idfilter,
+            string? sourcefilter,
+            string? eventlocationfilter,
+            string? webaddressfilter,
+            bool? activetoday,
+            bool? websiteactive,
+            bool? communityactive,
+            bool active,
+            bool optimizedates,
+            string? sortorder,
+            string? seed,
+            string? langfilter,
+            string? lastchange,
+            string? publishedon,
+            GeoPolygonSearchResult? polygonsearchresult,
+            PGGeoSearchResult geosearchresult,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
                 //Additional Read Filters to Add Check
-                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);                
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-                EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                    sourcefilter, eventlocationfilter, activetoday, websiteactive, communityactive, active, idfilter, webaddressfilter, lastchange, langfilter, sortorder, publishedon);
+                EventShortHelper myeventshorthelper = EventShortHelper.Create(
+                    startdate,
+                    enddate,
+                    datetimeformat,
+                    sourcefilter,
+                    eventlocationfilter,
+                    activetoday,
+                    websiteactive,
+                    communityactive,
+                    active,
+                    idfilter,
+                    webaddressfilter,
+                    lastchange,
+                    langfilter,
+                    sortorder,
+                    publishedon
+                );
 
-                var query =
-                   QueryFactory.Query()
-                       .SelectRaw("data")
-                       .From("eventeuracnoi")
-                       .EventShortWhereExpression(
-                           idlist: myeventshorthelper.idlist, languagelist: myeventshorthelper.languagelist, sourcelist: myeventshorthelper.sourcelist,
-                           eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
-                           start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
-                           websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter, 
-                           activefilter: myeventshorthelper.activefilter,
-                           publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
-                           additionalfilter: additionalfilter,
-                           userroles: UserRolesToFilter, getbyrooms: false)
-                       .ApplyRawFilter(rawfilter)
-                       //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);                      
-                       //.When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
-                       .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort, "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder);
+                var query = QueryFactory
+                    .Query()
+                    .SelectRaw("data")
+                    .From("eventeuracnoi")
+                    .EventShortWhereExpression(
+                        idlist: myeventshorthelper.idlist,
+                        languagelist: myeventshorthelper.languagelist,
+                        sourcelist: myeventshorthelper.sourcelist,
+                        eventlocationlist: myeventshorthelper.eventlocationlist,
+                        webaddresslist: myeventshorthelper.webaddresslist,
+                        start: myeventshorthelper.start,
+                        end: myeventshorthelper.end,
+                        todayactivefilter: myeventshorthelper.todayactivefilter,
+                        websiteactivefilter: myeventshorthelper.websiteactivefilter,
+                        communityactivefilter: myeventshorthelper.communityactivefilter,
+                        activefilter: myeventshorthelper.activefilter,
+                        publishedonlist: myeventshorthelper.publishedonlist,
+                        searchfilter: searchfilter,
+                        language: language,
+                        lastchange: myeventshorthelper.lastchange,
+                        additionalfilter: additionalfilter,
+                        userroles: UserRolesToFilter,
+                        getbyrooms: false
+                    )
+                    .ApplyRawFilter(rawfilter)
+                    //.ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort, sortifseednull);
+                    //.When(polygonsearchresult != null, x => x.WhereRaw(PostgresSQLHelper.GetGeoWhereInPolygon_GeneratedColumns(polygonsearchresult.wktstring, polygonsearchresult.polygon, polygonsearchresult.srid, polygonsearchresult.operation)))
+                    .ApplyOrdering(
+                        ref seed,
+                        new PGGeoSearchResult() { geosearch = false },
+                        rawsort,
+                        "data #>>'\\{StartDate\\}' " + myeventshorthelper.sortorder
+                    );
 
                 // Get paginated data
-                var data =
-                    (await query
-                        .PaginateAsync<JsonRaw>(
-                            page: (int)pagenumber,
-                            perPage: pagesize ?? 25));
+                var data = (
+                    await query.PaginateAsync<JsonRaw>(
+                        page: (int)pagenumber,
+                        perPage: pagesize ?? 25
+                    )
+                );
 
                 if (optimizedates)
                     data.List = OptimizeRoomForAppList(data.List);
 
-                var dataTransformed =
-                    data.List.Select(
-                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
-                    );
-
+                var dataTransformed = data.List.Select(raw =>
+                    raw.TransformRawData(
+                        language,
+                        fields,
+                        filteroutNullValues: removenullvalues,
+                        urlGenerator: UrlGenerator,
+                        fieldstohide: null
+                    )
+                );
 
                 uint totalpages = (uint)data.TotalPages;
                 uint totalcount = (uint)data.Count;
@@ -358,89 +495,164 @@ namespace OdhApiCore.Controllers.api
                     totalcount,
                     seed,
                     dataTransformed,
-                    Url);
-            });           
+                    Url
+                );
+            });
         }
 
         private Task<IActionResult> GetEventShortSingle(
-            string id, string? language, bool optimizedates, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+            string id,
+            string? language,
+            bool optimizedates,
+            string[] fields,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
                 //check if there are additionalfilters to add
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-                var query =
-                    QueryFactory.Query("eventeuracnoi")
-                        .Select("data")
-                        .Where("id", id.ToLower())
-                        .FilterDataByAccessRoles(UserRolesToFilter)
-                        .When(!String.IsNullOrEmpty(additionalfilter), q => q.FilterAdditionalDataByCondition(additionalfilter));
+                var query = QueryFactory
+                    .Query("eventeuracnoi")
+                    .Select("data")
+                    .Where("id", id.ToLower())
+                    .FilterDataByAccessRoles(UserRolesToFilter)
+                    .When(
+                        !String.IsNullOrEmpty(additionalfilter),
+                        q => q.FilterAdditionalDataByCondition(additionalfilter)
+                    );
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
 
                 if (optimizedates && data is { })
                     data = OptimizeRoomForApp(data);
 
-                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
+                return data?.TransformRawData(
+                    language,
+                    fields,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGenerator,
+                    fieldstohide: null
+                );
             });
         }
 
         #endregion
 
-        #region CUSTOM METODS 
+        #region CUSTOM METODS
 
         private async Task<IActionResult> GetEventShortListbyRoomBooked(
-            string? startdate, string? enddate, string? datetimeformat, string? sourcefilter, string? eventlocationfilter, 
-            bool? todayactive, bool? websiteactive, bool? communityactive, bool active, string? idfilter, string? webaddressfilter, string? publishedon, string? lastchange, string? language, string? sortorder, string? langfilter,
-            string? searchfilter, string[] fields, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+            string? startdate,
+            string? enddate,
+            string? datetimeformat,
+            string? sourcefilter,
+            string? eventlocationfilter,
+            bool? todayactive,
+            bool? websiteactive,
+            bool? communityactive,
+            bool active,
+            string? idfilter,
+            string? webaddressfilter,
+            string? publishedon,
+            string? lastchange,
+            string? language,
+            string? sortorder,
+            string? langfilter,
+            string? searchfilter,
+            string[] fields,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             //Additional Read Filters to Add Check
             AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-            EventShortHelper myeventshorthelper = EventShortHelper.Create(startdate, enddate, datetimeformat,
-                  sourcefilter, eventlocationfilter, todayactive, websiteactive, communityactive, active,
-                  idfilter, webaddressfilter, lastchange, langfilter, sortorder, publishedon);
+            EventShortHelper myeventshorthelper = EventShortHelper.Create(
+                startdate,
+                enddate,
+                datetimeformat,
+                sourcefilter,
+                eventlocationfilter,
+                todayactive,
+                websiteactive,
+                communityactive,
+                active,
+                idfilter,
+                webaddressfilter,
+                lastchange,
+                langfilter,
+                sortorder,
+                publishedon
+            );
 
-            var query =
-               QueryFactory.Query()
-                   .SelectRaw("data")
-                   .From("eventeuracnoi")
-                   .EventShortWhereExpression(
-                       idlist: myeventshorthelper.idlist, languagelist: myeventshorthelper.languagelist, sourcelist: myeventshorthelper.sourcelist,
-                       eventlocationlist: myeventshorthelper.eventlocationlist, webaddresslist: myeventshorthelper.webaddresslist,
-                       start: myeventshorthelper.start, end: myeventshorthelper.end, todayactivefilter: myeventshorthelper.todayactivefilter,
-                       websiteactivefilter: myeventshorthelper.websiteactivefilter, communityactivefilter: myeventshorthelper.communityactivefilter,
-                       activefilter: myeventshorthelper.activefilter,
-                       publishedonlist: myeventshorthelper.publishedonlist, searchfilter: searchfilter, language: language, lastchange: myeventshorthelper.lastchange,
-                       additionalfilter: additionalfilter,
-                       userroles: UserRolesToFilter, getbyrooms: false)
-                   .ApplyRawFilter(rawfilter);
+            var query = QueryFactory
+                .Query()
+                .SelectRaw("data")
+                .From("eventeuracnoi")
+                .EventShortWhereExpression(
+                    idlist: myeventshorthelper.idlist,
+                    languagelist: myeventshorthelper.languagelist,
+                    sourcelist: myeventshorthelper.sourcelist,
+                    eventlocationlist: myeventshorthelper.eventlocationlist,
+                    webaddresslist: myeventshorthelper.webaddresslist,
+                    start: myeventshorthelper.start,
+                    end: myeventshorthelper.end,
+                    todayactivefilter: myeventshorthelper.todayactivefilter,
+                    websiteactivefilter: myeventshorthelper.websiteactivefilter,
+                    communityactivefilter: myeventshorthelper.communityactivefilter,
+                    activefilter: myeventshorthelper.activefilter,
+                    publishedonlist: myeventshorthelper.publishedonlist,
+                    searchfilter: searchfilter,
+                    language: language,
+                    lastchange: myeventshorthelper.lastchange,
+                    additionalfilter: additionalfilter,
+                    userroles: UserRolesToFilter,
+                    getbyrooms: false
+                )
+                .ApplyRawFilter(rawfilter);
 
-            var data =
-                    await query
-                            .GetAsync<string>();
+            var data = await query.GetAsync<string>();
 
-            var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x)!).ToList();
+            var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x)!)
+                .ToList();
 
-            var result = TransformEventShortToRoom(eventshortlist, myeventshorthelper.start, myeventshorthelper.end);
+            var result = TransformEventShortToRoom(
+                eventshortlist,
+                myeventshorthelper.start,
+                myeventshorthelper.end
+            );
 
             IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
 
             return Ok(
-                    resultraw.Select(
-                        raw => raw.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
-                    ));                       
+                resultraw.Select(raw =>
+                    raw.TransformRawData(
+                        language,
+                        fields,
+                        filteroutNullValues: removenullvalues,
+                        urlGenerator: UrlGenerator,
+                        fieldstohide: null
+                    )
+                )
+            );
         }
 
-        private IEnumerable<EventShortByRoom> TransformEventShortToRoom(IEnumerable<EventShort> eventsshort, DateTime start, DateTime end)
+        private IEnumerable<EventShortByRoom> TransformEventShortToRoom(
+            IEnumerable<EventShort> eventsshort,
+            DateTime start,
+            DateTime end
+        )
         {
             List<EventShortByRoom> eventshortlistbyroom = new List<EventShortByRoom>();
 
             foreach (EventShort eventshort in eventsshort)
             {
                 // 1 Event goes for more days
-                //Hack, if Event Room is 
+                //Hack, if Event Room is
 
                 foreach (RoomBooked room in eventshort.RoomBooked ?? new List<RoomBooked>())
                 {
@@ -450,7 +662,6 @@ namespace OdhApiCore.Controllers.api
                     {
                         if (room.StartDate <= end)
                         {
-
                             EventShortByRoom myeventshortbyroom = new EventShortByRoom();
 
                             myeventshortbyroom.EventAnchorVenue = eventshort.AnchorVenue;
@@ -459,19 +670,43 @@ namespace OdhApiCore.Controllers.api
                             myeventshortbyroom.EventDescriptionEN = eventshort.EventDescriptionEN;
                             myeventshortbyroom.EventDescriptionIT = eventshort.EventDescriptionIT;
 
-                      
-                            myeventshortbyroom.EventDescription.TryAddOrUpdate("de", eventshort.EventDescriptionDE != null ? eventshort.EventDescriptionDE.Trim() : "");
-                            myeventshortbyroom.EventDescription.TryAddOrUpdate("it", eventshort.EventDescriptionIT != null ? eventshort.EventDescriptionIT.Trim() : "");
-                            myeventshortbyroom.EventDescription.TryAddOrUpdate("en", eventshort.EventDescriptionEN != null ? eventshort.EventDescriptionEN.Trim() : "");
+                            myeventshortbyroom.EventDescription.TryAddOrUpdate(
+                                "de",
+                                eventshort.EventDescriptionDE != null
+                                    ? eventshort.EventDescriptionDE.Trim()
+                                    : ""
+                            );
+                            myeventshortbyroom.EventDescription.TryAddOrUpdate(
+                                "it",
+                                eventshort.EventDescriptionIT != null
+                                    ? eventshort.EventDescriptionIT.Trim()
+                                    : ""
+                            );
+                            myeventshortbyroom.EventDescription.TryAddOrUpdate(
+                                "en",
+                                eventshort.EventDescriptionEN != null
+                                    ? eventshort.EventDescriptionEN.Trim()
+                                    : ""
+                            );
 
-                            if (String.IsNullOrEmpty(myeventshortbyroom.EventDescription["it"]) && eventshort.EventDescriptionDE != null)
-                                myeventshortbyroom.EventDescription?.TryAddOrUpdate("it", eventshort.EventDescriptionDE);
-                            if (String.IsNullOrEmpty(myeventshortbyroom?.EventDescription?["en"]) && eventshort.EventDescriptionDE != null)
-                                myeventshortbyroom!.EventDescription?.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
+                            if (
+                                String.IsNullOrEmpty(myeventshortbyroom.EventDescription["it"])
+                                && eventshort.EventDescriptionDE != null
+                            )
+                                myeventshortbyroom.EventDescription?.TryAddOrUpdate(
+                                    "it",
+                                    eventshort.EventDescriptionDE
+                                );
+                            if (
+                                String.IsNullOrEmpty(myeventshortbyroom?.EventDescription?["en"])
+                                && eventshort.EventDescriptionDE != null
+                            )
+                                myeventshortbyroom!.EventDescription?.TryAddOrUpdate(
+                                    "en",
+                                    eventshort.EventDescriptionDE
+                                );
 
                             myeventshortbyroom!.EventTitle = myeventshortbyroom.EventDescription!;
-
-                         
 
                             myeventshortbyroom!.EventEndDate = eventshort.EndDate;
                             myeventshortbyroom.EventEndDateUTC = eventshort.EndDateUTC;
@@ -494,7 +729,11 @@ namespace OdhApiCore.Controllers.api
                             myeventshortbyroom.Subtitle = room.Subtitle;
 
                             string roomname = room.SpaceDesc ?? "";
-                            if (roomname.StartsWith("NOI ") || roomname.StartsWith("Noi ") || roomname.StartsWith("noi "))
+                            if (
+                                roomname.StartsWith("NOI ")
+                                || roomname.StartsWith("Noi ")
+                                || roomname.StartsWith("noi ")
+                            )
                                 roomname = roomname.Remove(0, 3).Trim();
 
                             myeventshortbyroom.SpaceDescList.Add(roomname);
@@ -502,31 +741,49 @@ namespace OdhApiCore.Controllers.api
                             if (myeventshortbyroom.CompanyName == null)
                                 myeventshortbyroom.CompanyName = "";
 
-
                             // New Fields to display
                             myeventshortbyroom.ActiveWeb = eventshort.ActiveWeb;
-                            myeventshortbyroom.ImageGallery = eventshort.ImageGallery != null ? eventshort.ImageGallery : new List<ImageGallery>();
-                            myeventshortbyroom.VideoUrl = eventshort.VideoUrl != null ? eventshort.VideoUrl : "";
+                            myeventshortbyroom.ImageGallery =
+                                eventshort.ImageGallery != null
+                                    ? eventshort.ImageGallery
+                                    : new List<ImageGallery>();
+                            myeventshortbyroom.VideoUrl =
+                                eventshort.VideoUrl != null ? eventshort.VideoUrl : "";
                             // Same Logic
 
-                            string textde = eventshort.EventTextDE != null ? eventshort.EventTextDE : "";
+                            string textde =
+                                eventshort.EventTextDE != null ? eventshort.EventTextDE : "";
 
                             myeventshortbyroom.EventTextDE = textde;
                             myeventshortbyroom.EventTextIT = eventshort.EventTextIT;
                             myeventshortbyroom.EventTextEN = eventshort.EventTextEN;
-
 
                             if (string.IsNullOrEmpty(myeventshortbyroom.EventTextIT))
                                 myeventshortbyroom.EventTextIT = textde;
                             if (string.IsNullOrEmpty(myeventshortbyroom.EventTextEN))
                                 myeventshortbyroom.EventTextEN = textde;
 
-                            myeventshortbyroom.EventText.TryAddOrUpdate("de", eventshort.EventTextDE != null ? eventshort.EventTextDE.Trim() : "");
-                            myeventshortbyroom.EventText.TryAddOrUpdate("it", eventshort.EventTextIT != null ? eventshort.EventTextIT.Trim() : "");
-                            myeventshortbyroom.EventText.TryAddOrUpdate("en", eventshort.EventTextEN != null ? eventshort.EventTextEN.Trim() : "");
+                            myeventshortbyroom.EventText.TryAddOrUpdate(
+                                "de",
+                                eventshort.EventTextDE != null ? eventshort.EventTextDE.Trim() : ""
+                            );
+                            myeventshortbyroom.EventText.TryAddOrUpdate(
+                                "it",
+                                eventshort.EventTextIT != null ? eventshort.EventTextIT.Trim() : ""
+                            );
+                            myeventshortbyroom.EventText.TryAddOrUpdate(
+                                "en",
+                                eventshort.EventTextEN != null ? eventshort.EventTextEN.Trim() : ""
+                            );
 
-                            myeventshortbyroom.TechnologyFields = eventshort.TechnologyFields != null ? eventshort.TechnologyFields : new List<string>();
-                            myeventshortbyroom.CustomTagging = eventshort.CustomTagging != null ? eventshort.CustomTagging : new List<string>();
+                            myeventshortbyroom.TechnologyFields =
+                                eventshort.TechnologyFields != null
+                                    ? eventshort.TechnologyFields
+                                    : new List<string>();
+                            myeventshortbyroom.CustomTagging =
+                                eventshort.CustomTagging != null
+                                    ? eventshort.CustomTagging
+                                    : new List<string>();
 
                             if (eventshort.EventDocument != null)
                             {
@@ -534,8 +791,15 @@ namespace OdhApiCore.Controllers.api
                                 {
                                     foreach (var eventdocument in eventshort.EventDocument)
                                     {
-                                        if (!myeventshortbyroom.EventDocument?.ContainsKey(eventdocument.Language ?? "") ?? false)
-                                            myeventshortbyroom!.EventDocument?.TryAddOrUpdate(eventdocument.Language ?? "", eventdocument.DocumentURL ?? "");
+                                        if (
+                                            !myeventshortbyroom.EventDocument?.ContainsKey(
+                                                eventdocument.Language ?? ""
+                                            ) ?? false
+                                        )
+                                            myeventshortbyroom!.EventDocument?.TryAddOrUpdate(
+                                                eventdocument.Language ?? "",
+                                                eventdocument.DocumentURL ?? ""
+                                            );
                                     }
                                 }
                             }
@@ -545,12 +809,11 @@ namespace OdhApiCore.Controllers.api
                             else
                                 myeventshortbyroom.SoldOut = false;
 
-
                             if (eventshort.ExternalOrganizer != null)
-                                myeventshortbyroom.ExternalOrganizer = (bool)eventshort.ExternalOrganizer;
+                                myeventshortbyroom.ExternalOrganizer = (bool)
+                                    eventshort.ExternalOrganizer;
                             else
                                 myeventshortbyroom.ExternalOrganizer = false;
-
 
                             if (!string.IsNullOrEmpty(eventshort.Display5))
                                 myeventshortbyroom.CompanyName = eventshort.Display5;
@@ -564,25 +827,35 @@ namespace OdhApiCore.Controllers.api
             return eventshortlistbyroom.OrderBy(x => x.RoomStartDate);
         }
 
-        private void AddToRoomList(List<EventShortByRoom> eventshortlistbyroom, EventShortByRoom roomtoadd)
+        private void AddToRoomList(
+            List<EventShortByRoom> eventshortlistbyroom,
+            EventShortByRoom roomtoadd
+        )
         {
-            // Sieh nach ob bereits ein Event mit demselben namen und 
-            var sameevent = eventshortlistbyroom.Where(x => x.Id == roomtoadd.Id
-                                                        && x.RoomStartDate == roomtoadd.RoomStartDate
-                                                        && x.RoomEndDate == roomtoadd.RoomEndDate
-                                                        && x.Subtitle == roomtoadd.Subtitle).FirstOrDefault();
+            // Sieh nach ob bereits ein Event mit demselben namen und
+            var sameevent = eventshortlistbyroom
+                .Where(x =>
+                    x.Id == roomtoadd.Id
+                    && x.RoomStartDate == roomtoadd.RoomStartDate
+                    && x.RoomEndDate == roomtoadd.RoomEndDate
+                    && x.Subtitle == roomtoadd.Subtitle
+                )
+                .FirstOrDefault();
 
             if (sameevent != null)
             {
                 string roomname = roomtoadd.SpaceDesc ?? "";
-                if (roomname.StartsWith("NOI ") || roomname.StartsWith("Noi ") || roomname.StartsWith("noi "))
+                if (
+                    roomname.StartsWith("NOI ")
+                    || roomname.StartsWith("Noi ")
+                    || roomname.StartsWith("noi ")
+                )
                     roomname = roomname.Remove(0, 3).Trim();
 
                 sameevent.SpaceDescList.Add(roomname);
             }
             else
                 eventshortlistbyroom.Add(roomtoadd);
-
         }
 
         private IEnumerable<JsonRaw> OptimizeRoomForAppList(IEnumerable<JsonRaw> data)
@@ -600,7 +873,8 @@ namespace OdhApiCore.Controllers.api
         private JsonRaw OptimizeRoomForApp(JsonRaw eventshortraw)
         {
             //var eventshortlist = data.Select(x => JsonConvert.DeserializeObject<EventShort>(x.Value)!).ToList();
-            var eventshort = JsonConvert.DeserializeObject<EventShort>(eventshortraw.Value) ?? new();
+            var eventshort =
+                JsonConvert.DeserializeObject<EventShort>(eventshortraw.Value) ?? new();
 
             // TODO: Remove all Rooms with x
             // Starting and ending date check with rooms remaining
@@ -610,19 +884,29 @@ namespace OdhApiCore.Controllers.api
             }
 
             // Get the lowest room start date
-            var firstbegindate = eventshort.RoomBooked?.OrderBy(x => x.StartDate).Select(x => x.StartDate).FirstOrDefault();
-            var lastenddate = eventshort.RoomBooked?.OrderByDescending(x => x.EndDate).Select(x => x.EndDate).FirstOrDefault();
+            var firstbegindate = eventshort
+                .RoomBooked?.OrderBy(x => x.StartDate)
+                .Select(x => x.StartDate)
+                .FirstOrDefault();
+            var lastenddate = eventshort
+                .RoomBooked?.OrderByDescending(x => x.EndDate)
+                .Select(x => x.EndDate)
+                .FirstOrDefault();
 
             if (firstbegindate.HasValue && firstbegindate != eventshort.StartDate)
             {
                 eventshort.StartDate = firstbegindate.Value;
-                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(firstbegindate.Value);
+                eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                    firstbegindate.Value
+                );
             }
 
             if (lastenddate.HasValue && lastenddate != eventshort.EndDate)
             {
                 eventshort.EndDate = lastenddate.Value;
-                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(lastenddate.Value);
+                eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                    lastenddate.Value
+                );
             }
 
             return new JsonRaw(eventshort);
@@ -632,41 +916,72 @@ namespace OdhApiCore.Controllers.api
 
         #region EVENTSHORT TYPES
 
-        private Task<IActionResult> GetEventShortTypesList(string? language, string? typefilter, string[] fields, string? searchfilter, string? rawfilter, string? rawsort, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetEventShortTypesList(
+            string? language,
+            string? typefilter,
+            string[] fields,
+            string? searchfilter,
+            string? rawfilter,
+            string? rawsort,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query("eventshorttypes")
-                        .SelectRaw("data")
-                        .When(!String.IsNullOrEmpty(typefilter), q => q.WhereRaw("data->>'Type' ILIKE $$", typefilter))
-                        .SearchFilter(PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language), searchfilter)
-                        .ApplyRawFilter(rawfilter)
-                        .OrderOnlyByRawSortIfNotNull(rawsort);
+                var query = QueryFactory
+                    .Query("eventshorttypes")
+                    .SelectRaw("data")
+                    .When(
+                        !String.IsNullOrEmpty(typefilter),
+                        q => q.WhereRaw("data->>'Type' ILIKE $$", typefilter)
+                    )
+                    .SearchFilter(
+                        PostgresSQLWhereBuilder.TypeDescFieldsToSearchFor(language),
+                        searchfilter
+                    )
+                    .ApplyRawFilter(rawfilter)
+                    .OrderOnlyByRawSortIfNotNull(rawsort);
 
                 var data = await query.GetAsync<JsonRaw?>();
 
-                return
-                    data.Select(
-                        raw => raw?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null)
-                    );                
+                return data.Select(raw =>
+                    raw?.TransformRawData(
+                        language,
+                        fields,
+                        filteroutNullValues: removenullvalues,
+                        urlGenerator: UrlGenerator,
+                        fieldstohide: null
+                    )
+                );
             });
         }
 
-        private Task<IActionResult> GetEventShortType(string id, string? language, string[] fields, bool removenullvalues, CancellationToken cancellationToken)
+        private Task<IActionResult> GetEventShortType(
+            string id,
+            string? language,
+            string[] fields,
+            bool removenullvalues,
+            CancellationToken cancellationToken
+        )
         {
             return DoAsyncReturn(async () =>
             {
-                var query =
-                    QueryFactory.Query("eventshorttypes")
-                        .Select("data")
-                        //.WhereJsonb("Key", "ilike", id)
-                        .Where("id", id.ToLower());
-                
+                var query = QueryFactory
+                    .Query("eventshorttypes")
+                    .Select("data")
+                    //.WhereJsonb("Key", "ilike", id)
+                    .Where("id", id.ToLower());
 
                 var data = await query.FirstOrDefaultAsync<JsonRaw?>();
-                
-                return data?.TransformRawData(language, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
+
+                return data?.TransformRawData(
+                    language,
+                    fields,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGenerator,
+                    fieldstohide: null
+                );
             });
         }
 
@@ -700,14 +1015,24 @@ namespace OdhApiCore.Controllers.api
 
                     if (eventshort.EventLocation == null)
                         throw new Exception("EvenLocation needed");
-                    
+
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
-                 
-                    if (eventshort.StartDate == DateTime.MinValue || eventshort.EndDate == DateTime.MinValue)
+
+                    if (
+                        eventshort.StartDate == DateTime.MinValue
+                        || eventshort.EndDate == DateTime.MinValue
+                    )
                         throw new Exception("Start + End Time not set correctly");
 
-                    if(!DateTimeHelper.CompareValidStartEnddate(eventshort.StartDate, eventshort.EndDate))
-                        throw new Exception("Event Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
+                    if (
+                        !DateTimeHelper.CompareValidStartEnddate(
+                            eventshort.StartDate,
+                            eventshort.EndDate
+                        )
+                    )
+                        throw new Exception(
+                            "Event Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)"
+                        );
 
                     eventshort.ChangedOn = DateTime.Now;
                     eventshort.LastChange = eventshort.ChangedOn;
@@ -720,8 +1045,14 @@ namespace OdhApiCore.Controllers.api
                     //eventshort.StartDate = DateTime.SpecifyKind(eventshort.StartDate, DateTimeKind.Utc);
                     //eventshort.EndDate = DateTime.SpecifyKind(eventshort.EndDate, DateTimeKind.Utc);
 
-                    eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
-                    eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+                    eventshort.EndDateUTC =
+                        Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                            eventshort.EndDate
+                        );
+                    eventshort.StartDateUTC =
+                        Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                            eventshort.StartDate
+                        );
 
                     bool addroomautomatically = false;
 
@@ -740,8 +1071,14 @@ namespace OdhApiCore.Controllers.api
                         RoomBooked myroom = new RoomBooked();
                         myroom.StartDate = eventshort.StartDate;
                         myroom.EndDate = eventshort.EndDate;
-                        myroom.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
-                        myroom.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+                        myroom.EndDateUTC =
+                            Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                                eventshort.EndDate
+                            );
+                        myroom.StartDateUTC =
+                            Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                                eventshort.StartDate
+                            );
                         myroom.Comment = "";
                         myroom.Space = eventshort.AnchorVenueShort;
                         myroom.SpaceAbbrev = eventshort.AnchorVenue;
@@ -760,7 +1097,7 @@ namespace OdhApiCore.Controllers.api
                     }
                     else
                     {
-                        if(eventshort.RoomBooked != null)
+                        if (eventshort.RoomBooked != null)
                         {
                             foreach (var room in eventshort.RoomBooked)
                             {
@@ -768,18 +1105,31 @@ namespace OdhApiCore.Controllers.api
                                 //room.StartDate = DateTime.SpecifyKind(room.StartDate, DateTimeKind.Utc);
                                 //room.EndDate = DateTime.SpecifyKind(room.EndDate, DateTimeKind.Utc);
 
-                                room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
-                                room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+                                room.EndDateUTC =
+                                    Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                                        room.EndDate
+                                    );
+                                room.StartDateUTC =
+                                    Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                                        room.StartDate
+                                    );
 
-                                if (!DateTimeHelper.CompareValidStartEnddate(room.StartDate, room.EndDate))
-                                    throw new Exception("Room Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
+                                if (
+                                    !DateTimeHelper.CompareValidStartEnddate(
+                                        room.StartDate,
+                                        room.EndDate
+                                    )
+                                )
+                                    throw new Exception(
+                                        "Room Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)"
+                                    );
                             }
                         }
                     }
 
                     //Event Title IT EN
                     if (string.IsNullOrEmpty(eventshort.EventDescriptionIT))
-                        eventshort.EventTitle.TryAddOrUpdate("it",eventshort.EventDescriptionDE);
+                        eventshort.EventTitle.TryAddOrUpdate("it", eventshort.EventDescriptionDE);
 
                     if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
                         eventshort.EventTitle.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
@@ -792,7 +1142,13 @@ namespace OdhApiCore.Controllers.api
                         author = User.Identity.Name;
 
                     //LicenseInfo
-                    eventshort.LicenseInfo = new LicenseInfo() { Author = author, ClosedData = false, LicenseHolder = "https://noi.bz.it/", License = "CC0" };
+                    eventshort.LicenseInfo = new LicenseInfo()
+                    {
+                        Author = author,
+                        ClosedData = false,
+                        LicenseHolder = "https://noi.bz.it/",
+                        License = "CC0",
+                    };
                     //eventshort._Meta = MetadataHelper.GetMetadataobject<EventShortLinked>(eventshort, MetadataHelper.GetMetadataforEventShort);
                     //eventshort._Meta.LastUpdate = eventshort.LastChange;
 
@@ -814,8 +1170,8 @@ namespace OdhApiCore.Controllers.api
 
                     //Create PublishedonList
                     //PublishedOnHelper.CreatePublishedOnList<EventShortLinked>(eventshort);
-                    //TODO, Sync publishedon with current values, remove SETTER from ActiveToday, ActiveWeb, ActiveCommunity and generate it from publishedon, remove 
-                    //checkboxes from 
+                    //TODO, Sync publishedon with current values, remove SETTER from ActiveToday, ActiveWeb, ActiveCommunity and generate it from publishedon, remove
+                    //checkboxes from
 
                     //To Test Trim all Data
                     eventshort.TrimStringProperties();
@@ -823,8 +1179,13 @@ namespace OdhApiCore.Controllers.api
                     //Populate Tags (Id/Source/Type)
                     await eventshort.UpdateTagsExtension(QueryFactory);
 
-
-                    return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Create), new CompareConfig(false, false), new CRUDConstraints(additionalfilter, UserRolesToFilter)); ;
+                    return await UpsertData<EventShortLinked>(
+                        eventshort,
+                        new DataInfo("eventeuracnoi", CRUDOperation.Create),
+                        new CompareConfig(false, false),
+                        new CRUDConstraints(additionalfilter, UserRolesToFilter)
+                    );
+                    ;
                 }
                 else
                 {
@@ -865,8 +1226,15 @@ namespace OdhApiCore.Controllers.api
 
                     eventshort.EventLocation = eventshort.EventLocation.ToUpper();
 
-                    if (!DateTimeHelper.CompareValidStartEnddate(eventshort.StartDate, eventshort.EndDate))
-                        throw new Exception("Event Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
+                    if (
+                        !DateTimeHelper.CompareValidStartEnddate(
+                            eventshort.StartDate,
+                            eventshort.EndDate
+                        )
+                    )
+                        throw new Exception(
+                            "Event Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)"
+                        );
 
                     //if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataCreate", "EventShortManager", "EventShortModify" }) && eventshort.EventLocation != "VV")
                     //    throw new Exception("VirtualVillageManager can only insert Virtual Village Events");
@@ -881,19 +1249,38 @@ namespace OdhApiCore.Controllers.api
 
                     eventshort.AnchorVenueShort = eventshort.AnchorVenue;
 
-                    eventshort.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.EndDate);
-                    eventshort.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(eventshort.StartDate);
+                    eventshort.EndDateUTC =
+                        Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                            eventshort.EndDate
+                        );
+                    eventshort.StartDateUTC =
+                        Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                            eventshort.StartDate
+                        );
 
                     //TODO on rooms
                     if (eventshort.RoomBooked != null)
                     {
                         foreach (var room in eventshort.RoomBooked)
                         {
-                            if (!DateTimeHelper.CompareValidStartEnddate(room.StartDate, room.EndDate))
-                                throw new Exception("Room Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)");
+                            if (
+                                !DateTimeHelper.CompareValidStartEnddate(
+                                    room.StartDate,
+                                    room.EndDate
+                                )
+                            )
+                                throw new Exception(
+                                    "Room Enddate has to be after Startdate (hint: 00:00:00 < 23:59:59)"
+                                );
 
-                            room.EndDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.EndDate);
-                            room.StartDateUTC = Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(room.StartDate);
+                            room.EndDateUTC =
+                                Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                                    room.EndDate
+                                );
+                            room.StartDateUTC =
+                                Helper.DateTimeHelper.DateTimeToUnixTimestampMilliseconds(
+                                    room.StartDate
+                                );
                         }
                     }
 
@@ -904,7 +1291,7 @@ namespace OdhApiCore.Controllers.api
                     if (string.IsNullOrEmpty(eventshort.EventDescriptionEN))
                         eventshort.EventTitle.TryAddOrUpdate("en", eventshort.EventDescriptionDE);
 
-                    //TODO CHECK IF THIS WORKS     
+                    //TODO CHECK IF THIS WORKS
                     //var updatequery = await QueryFactory.Query("eventeuracnoi").Where("id", id)
                     //    .UpdateAsync(new JsonBData() { id = eventshort.Id ?? "", data = eventshort != null ? new JsonRaw(eventshort) : null });
 
@@ -927,7 +1314,12 @@ namespace OdhApiCore.Controllers.api
                     //Populate Tags (Id/Source/Type)
                     await eventshort.UpdateTagsExtension(QueryFactory);
 
-                    return await UpsertData<EventShortLinked>(eventshort, new DataInfo("eventeuracnoi", CRUDOperation.Update), new CompareConfig(true, true), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                    return await UpsertData<EventShortLinked>(
+                        eventshort,
+                        new DataInfo("eventeuracnoi", CRUDOperation.Update),
+                        new CompareConfig(true, true),
+                        new CRUDConstraints(additionalfilter, UserRolesToFilter)
+                    );
                 }
                 else
                 {
@@ -949,7 +1341,7 @@ namespace OdhApiCore.Controllers.api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         //[OdhAuthorizeAttribute("DataWriter,DataCreate,EventShortManager,EventShortModify,VirtualVillageManager")]
         [HttpDelete, Route("EventShort/{id}")]
-        //[InvalidateCacheOutput("GetReducedAsync")]        
+        //[InvalidateCacheOutput("GetReducedAsync")]
         public Task<IActionResult> Delete(string id)
         {
             return DoAsyncReturn(async () =>
@@ -959,7 +1351,11 @@ namespace OdhApiCore.Controllers.api
 
                 id = Helper.IdGenerator.CheckIdFromType<EventShortLinked>(id);
 
-                return await DeleteData<EventShortLinked>(id, new DataInfo("eventeuracnoi", CRUDOperation.Delete), new CRUDConstraints(additionalfilter, UserRolesToFilter));
+                return await DeleteData<EventShortLinked>(
+                    id,
+                    new DataInfo("eventeuracnoi", CRUDOperation.Delete),
+                    new CRUDConstraints(additionalfilter, UserRolesToFilter)
+                );
             });
 
             //try
@@ -985,7 +1381,7 @@ namespace OdhApiCore.Controllers.api
             //                if (CheckIfUserIsOnlyInRole("VirtualVillageManager", new List<string>() { "DataWriter", "DataDelete", "EventShortManager", "EventShortDelete" }) && myevent.EventLocation != "VV")
             //                    throw new Exception("VirtualVillageManager can only delete Virtual Village Events");
 
-            //                //TODO CHECK IF THIS WORKS     
+            //                //TODO CHECK IF THIS WORKS
             //                //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
             //                //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
@@ -996,7 +1392,7 @@ namespace OdhApiCore.Controllers.api
             //            {
             //                if (User.IsInRole("VirtualVillageManager") && myevent.EventLocation == "VV")
             //                {
-            //                    //TODO CHECK IF THIS WORKS     
+            //                    //TODO CHECK IF THIS WORKS
             //                    //var deletequery = await QueryFactory.Query("eventeuracnoi").Where("id", id).DeleteAsync();
 
             //                    //return Ok(new GenericResult() { Message = "DELETE EventShort succeeded, Id:" + id });
@@ -1024,12 +1420,13 @@ namespace OdhApiCore.Controllers.api
             //    return BadRequest(ex.Message);
             //}
         }
-   
+
         #endregion
 
         #region BDPRooms
 
-        private const string bdpserviceurl = @"https://mobility.api.opendatahub.com/v2/flat/NOI-Place?select=smetadata&where=sactive.eq.true&limit=-1";
+        private const string bdpserviceurl =
+            @"https://mobility.api.opendatahub.com/v2/flat/NOI-Place?select=smetadata&where=sactive.eq.true&limit=-1";
 
         private async Task<IDictionary<string, string>> GetBDPNoiRoomsWithLink(string? language)
         {
@@ -1038,7 +1435,10 @@ namespace OdhApiCore.Controllers.api
                 var langtoinsert = "";
 
                 //Temporary workaround
-                if (!String.IsNullOrEmpty(language) && (language == "en" || language == "de" || language == "it"))
+                if (
+                    !String.IsNullOrEmpty(language)
+                    && (language == "en" || language == "de" || language == "it")
+                )
                     langtoinsert = language + "/";
 
                 var bdprooms = await GetBDPNoiRooms();
@@ -1049,7 +1449,11 @@ namespace OdhApiCore.Controllers.api
                 //var noimaproomlist = new List<NoiMapRooms>();
                 var noimaproomlist = new Dictionary<string, string>();
 
-                foreach (var room in bdprooms.data.Where(x => !String.IsNullOrEmpty(x.smetadata.todaynoibzit)))
+                foreach (
+                    var room in bdprooms.data.Where(x =>
+                        !String.IsNullOrEmpty(x.smetadata.todaynoibzit)
+                    )
+                )
                 {
                     var maplink = "";
 
@@ -1060,11 +1464,18 @@ namespace OdhApiCore.Controllers.api
 
                     var nametodisplay = room.smetadata.todaynoibzit;
 
-                    if (nametodisplay.StartsWith("NOI ") || nametodisplay.StartsWith("Noi ") || nametodisplay.StartsWith("noi "))
+                    if (
+                        nametodisplay.StartsWith("NOI ")
+                        || nametodisplay.StartsWith("Noi ")
+                        || nametodisplay.StartsWith("noi ")
+                    )
                         nametodisplay = nametodisplay.Remove(0, 3).Trim();
 
                     if (!noimaproomlist.ContainsKey(nametodisplay))
-                        noimaproomlist.Add(nametodisplay, "https://maps.noi.bz.it/" + langtoinsert + "?shared=" + maplink);
+                        noimaproomlist.Add(
+                            nametodisplay,
+                            "https://maps.noi.bz.it/" + langtoinsert + "?shared=" + maplink
+                        );
                 }
 
                 return noimaproomlist;
@@ -1087,7 +1498,9 @@ namespace OdhApiCore.Controllers.api
 
                 var myresponsejson = await myresponse.Content.ReadAsStringAsync();
 
-                var btpresponseobject = JsonConvert.DeserializeObject<BDPResponseObject>(myresponsejson);
+                var btpresponseobject = JsonConvert.DeserializeObject<BDPResponseObject>(
+                    myresponsejson
+                );
 
                 return btpresponseobject;
             }

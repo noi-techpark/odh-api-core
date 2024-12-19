@@ -2,24 +2,32 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Helper
 {
     public static class JsonTransformerMethods
     {
-        private static readonly HashSet<string> Languages = new HashSet<string> {
-            "de", "it", "en", "cs", "fr", "nl", "pl", "ru", "ld"
+        private static readonly HashSet<string> Languages = new HashSet<string>
+        {
+            "de",
+            "it",
+            "en",
+            "cs",
+            "fr",
+            "nl",
+            "pl",
+            "ru",
+            "ld",
         };
 
-        private static bool IsLanguageKey(string key) =>
-            Languages.Contains(key);
+        private static bool IsLanguageKey(string key) => Languages.Contains(key);
 
         //Cutting out all not requested Language Dictionary Objects
         public static JToken? FilterByLanguage(this JToken? token, string language)
@@ -29,19 +37,18 @@ namespace Helper
             JToken Walk(JToken token) =>
                 token switch
                 {
-                    JObject obj =>
-                        new JObject(
-                            obj.Properties()
-                               .Where(x =>
-                                    // Check if property name is a language identifier
-                                    // and if it is the same as the provided language argument
-                                    !(IsLanguageKey(x.Name) && x.Name != language))
-                               .Select(Walk)),
-                    JProperty prop =>
-                        new JProperty(prop.Name, Walk(prop.Value)),
-                    JArray arr =>
-                        new JArray(arr.Select(Walk)),
-                    _ => token
+                    JObject obj => new JObject(
+                        obj.Properties()
+                            .Where(x =>
+                                // Check if property name is a language identifier
+                                // and if it is the same as the provided language argument
+                                !(IsLanguageKey(x.Name) && x.Name != language)
+                            )
+                            .Select(Walk)
+                    ),
+                    JProperty prop => new JProperty(prop.Name, Walk(prop.Value)),
+                    JArray arr => new JArray(arr.Select(Walk)),
+                    _ => token,
                 };
             return Walk(token);
         }
@@ -57,10 +64,19 @@ namespace Helper
                 var licenseProp = obj.Property("License");
                 // If License property exists and it's value isn't CC0 return null,
                 // which filters away the whole object
-                return licenseProp != null && (licenseProp.Value == null || (!licenseProp.Value.Equals(new JValue("CC0")) && !licenseProp.Path.StartsWith("LicenseInfo"))) ?
-                    null :
-                    new JObject(obj.Properties().Select(x => Walk(x)).Where(x => x != null));
-            };
+                return
+                    licenseProp != null
+                    && (
+                        licenseProp.Value == null
+                        || (
+                            !licenseProp.Value.Equals(new JValue("CC0"))
+                            && !licenseProp.Path.StartsWith("LicenseInfo")
+                        )
+                    )
+                    ? null
+                    : new JObject(obj.Properties().Select(x => Walk(x)).Where(x => x != null));
+            }
+            ;
             static JProperty? TransformProp(JProperty prop)
             {
                 var value = Walk(prop.Value);
@@ -69,16 +85,14 @@ namespace Helper
             static JToken? Walk(JToken token) =>
                 token switch
                 {
-                    JObject obj =>
-                        TransformObj(obj),
-                    JProperty prop =>
-                        TransformProp(prop),
-                    JArray arr =>
-                        new JArray(
-                            arr.Select(x => Walk(x))
-                               // Filter away empty content
-                               .Where(x => x != null)),
-                    _ => token
+                    JObject obj => TransformObj(obj),
+                    JProperty prop => TransformProp(prop),
+                    JArray arr => new JArray(
+                        arr.Select(x => Walk(x))
+                            // Filter away empty content
+                            .Where(x => x != null)
+                    ),
+                    _ => token,
                 };
             return Walk(token);
         }
@@ -94,24 +108,37 @@ namespace Helper
                 var accoRoomInfo = obj.Property("AccoRoomInfo");
                 if (accoRoomInfo is not null && accoRoomInfo.Value is JArray)
                 {
-                    var props = accoRoomInfo.Value.ToArray().Select(prop =>
-                    {
-                        // The prop needs to be an object
-                        if (prop is JObject roomInfo)
+                    var props = accoRoomInfo
+                        .Value.ToArray()
+                        .Select(prop =>
                         {
-                            // Get the Source property of an object
-                            var sourceProp = roomInfo.Property("Source");
-                            // If Source property exists and it's value is hgv return null,
-                            // which filters away the whole object
-                            return sourceProp is not null && (sourceProp.Value is null || sourceProp.Value.Equals(new JValue("hgv"))) ?
-                                null :
-                                new JObject(roomInfo.Properties().Select(x => Walk(x)).Where(x => x != null));
-                        }
-                        else
-                        {
-                            return prop;
-                        }
-                    }).Where(prop => prop is not null);
+                            // The prop needs to be an object
+                            if (prop is JObject roomInfo)
+                            {
+                                // Get the Source property of an object
+                                var sourceProp = roomInfo.Property("Source");
+                                // If Source property exists and it's value is hgv return null,
+                                // which filters away the whole object
+                                return
+                                    sourceProp is not null
+                                    && (
+                                        sourceProp.Value is null
+                                        || sourceProp.Value.Equals(new JValue("hgv"))
+                                    )
+                                    ? null
+                                    : new JObject(
+                                        roomInfo
+                                            .Properties()
+                                            .Select(x => Walk(x))
+                                            .Where(x => x != null)
+                                    );
+                            }
+                            else
+                            {
+                                return prop;
+                            }
+                        })
+                        .Where(prop => prop is not null);
                     obj.TryAddOrUpdate("AccoRoomInfo", new JArray(props));
                     return obj;
                 }
@@ -119,7 +146,8 @@ namespace Helper
                 {
                     return obj;
                 }
-            };
+            }
+            ;
             static JProperty? TransformProp(JProperty prop)
             {
                 var value = Walk(prop.Value);
@@ -128,16 +156,14 @@ namespace Helper
             static JToken? Walk(JToken token) =>
                 token switch
                 {
-                    JObject obj =>
-                        TransformObj(obj),
-                    JProperty prop =>
-                        TransformProp(prop),
-                    JArray arr =>
-                        new JArray(
-                            arr.Select(x => Walk(x))
-                               // Filter away empty content
-                               .Where(x => x != null)),
-                    _ => token
+                    JObject obj => TransformObj(obj),
+                    JProperty prop => TransformProp(prop),
+                    JArray arr => new JArray(
+                        arr.Select(x => Walk(x))
+                            // Filter away empty content
+                            .Where(x => x != null)
+                    ),
+                    _ => token,
                 };
             return Walk(token);
         }
@@ -147,23 +173,23 @@ namespace Helper
         {
             if (token == null)
                 return null;
-            
+
             static JObject TransformByPropList(JObject obj, List<string> propstocut)
             {
                 // Get the TVMember property of an object which has to be an property
                 //var accoTVMember = obj.Property("TVMember");
-                //if (accoTVMember is not null && accoTVMember is JProperty)               
+                //if (accoTVMember is not null && accoTVMember is JProperty)
                 //    //Cut out this property
-                //    return new JObject(obj.Properties().Where(x => !propstocut.Contains(x.Name)));                
+                //    return new JObject(obj.Properties().Where(x => !propstocut.Contains(x.Name)));
                 //else
-                //    return obj;               
+                //    return obj;
                 return new JObject(obj.Properties().Where(x => !propstocut.Contains(x.Name)));
-            }                
+            }
             static JToken Walk(JToken token, List<string> propstocut) =>
                 token switch
                 {
                     JObject obj => TransformByPropList(obj, propstocut),
-                    _ => token
+                    _ => token,
                 };
 
             return Walk(token, propstocut);
@@ -181,7 +207,7 @@ namespace Helper
                     obj.Properties()
                         .Where(x => !x.Value.IsNullOrEmpty(true, true))
                         .Select(x => new JProperty(x.Name, FilterOutNullProperties(x.Value)))
-                    );
+                );
             }
             static JToken Walk(JToken token) =>
                 token switch
@@ -189,7 +215,7 @@ namespace Helper
                     JObject obj => RemoveNullProps(obj),
                     JArray objs => new JArray(objs.Select(FilterOutNullProperties)),
                     //JProperty prop => new JProperty(prop.Name, Walk(prop.Value)),
-                    _ => token
+                    _ => token,
                 };
 
             return Walk(token);
@@ -206,7 +232,7 @@ namespace Helper
                 token switch
                 {
                     JObject obj => TransformMetaObj(obj),
-                    _ => token
+                    _ => token,
                 };
             return Walk(token);
         }
@@ -232,7 +258,8 @@ namespace Helper
                     }
                 }
                 return new JObject(obj.Properties().Select(x => Walk(x)));
-            };
+            }
+            ;
             static JProperty? TransformProp(JProperty prop)
             {
                 var value = Walk(prop.Value);
@@ -241,59 +268,69 @@ namespace Helper
             static JToken? Walk(JToken token) =>
                 token switch
                 {
-                    JObject obj =>
-                        TransformObj(obj),
-                    JProperty prop =>
-                        TransformProp(prop),
-                    JArray arr =>
-                        new JArray(
-                            arr.Select(x => Walk(x))
-                               // Filter away empty content
-                               .Where(x => x != null)),
-                    _ => token
+                    JObject obj => TransformObj(obj),
+                    JProperty prop => TransformProp(prop),
+                    JArray arr => new JArray(
+                        arr.Select(x => Walk(x))
+                            // Filter away empty content
+                            .Where(x => x != null)
+                    ),
+                    _ => token,
                 };
             return Walk(token);
         }
 
         //Cuts out all fields that are not requested only Id is active by default
-        public static JToken? FilterByFields(this JToken? token, string[] fieldsFromQueryString, string? languageParam)
+        public static JToken? FilterByFields(
+            this JToken? token,
+            string[] fieldsFromQueryString,
+            string? languageParam
+        )
         {
             if (token == null)
                 return null;
             var language = languageParam ?? "en";
-            var fields = new List<(string name, string path)>
-            {
-                ("Id", "Id")
-            };
+            var fields = new List<(string name, string path)> { ("Id", "Id") };
             fields.AddRange(fieldsFromQueryString.Select(field => (field, field)));
             if (token is JObject obj)
             {
                 return new JObject(
-                    fields.Distinct(new DistinctComparer()).Select(x =>
-                    {
-                        try
+                    fields
+                        .Distinct(new DistinctComparer())
+                        .Select(x =>
                         {
                             try
                             {
-                                return new JProperty(x.name, token.SelectToken(x.path, errorWhenNoMatch: true));
+                                try
+                                {
+                                    return new JProperty(
+                                        x.name,
+                                        token.SelectToken(x.path, errorWhenNoMatch: true)
+                                    );
+                                }
+                                catch (JsonException)
+                                {
+                                    return new JProperty(
+                                        x.name,
+                                        token.SelectTokens(x.path, errorWhenNoMatch: true)
+                                    );
+                                }
                             }
                             catch (JsonException)
                             {
-                                return new JProperty(x.name, token.SelectTokens(x.path, errorWhenNoMatch: true));
+                                return new JProperty(x.name, (object?)null);
                             }
-                        }
-                        catch (JsonException)
-                        {
-                            return new JProperty(x.name, (object?)null);
-                        }
-                    })
+                        })
                 );
             }
             return token;
         }
 
         //Transforms URL of the self link to the right domain
-        public static JToken? TransformSelfLink(this JToken? token, Func<string, string> urlGenerator)
+        public static JToken? TransformSelfLink(
+            this JToken? token,
+            Func<string, string> urlGenerator
+        )
         {
             if (token == null)
                 return null;
@@ -332,42 +369,48 @@ namespace Helper
             static JToken? Walk(JToken token, Func<string, string> urlGenerator) =>
                 token switch
                 {
-                    JObject obj =>
-                        TransformObj(obj, urlGenerator),
-                    JProperty prop =>
-                        TransformProp(prop, urlGenerator),
-                    JArray arr =>
-                        new JArray(
-                            arr.Select(x => Walk(x, urlGenerator))
-                               // Filter away empty content
-                               .Where(x => x != null)),
-                    _ => token
+                    JObject obj => TransformObj(obj, urlGenerator),
+                    JProperty prop => TransformProp(prop, urlGenerator),
+                    JArray arr => new JArray(
+                        arr.Select(x => Walk(x, urlGenerator))
+                            // Filter away empty content
+                            .Where(x => x != null)
+                    ),
+                    _ => token,
                 };
             return Walk(token, urlGenerator);
         }
-
     }
 
     public static class JsonExtensions
     {
-        public static bool IsNullOrEmpty(this JToken token, bool filteremptyarrays, bool filteremptyobjects)
+        public static bool IsNullOrEmpty(
+            this JToken token,
+            bool filteremptyarrays,
+            bool filteremptyobjects
+        )
         {
             bool result = false;
 
-            result = (token == null) || 
-                (token.Type == JTokenType.String && token.ToString() == String.Empty) || 
-                (token.Type == JTokenType.Null);
+            result =
+                (token == null)
+                || (token.Type == JTokenType.String && token.ToString() == String.Empty)
+                || (token.Type == JTokenType.Null);
 
             if (filteremptyarrays)
-                result = result || (token == null) ||
-                    (token.Type == JTokenType.Array && !token.HasValues);   //filter out empty array   
+                result =
+                    result
+                    || (token == null)
+                    || (token.Type == JTokenType.Array && !token.HasValues); //filter out empty array
 
             if (filteremptyobjects)
-                result = result || (token == null) ||
-                   (token.Type == JTokenType.Object && !token.HasValues); //filter out empty object
-                   
-                   //(token.Type == JTokenType.Undefined) || //not sure if needed
-                
+                result =
+                    result
+                    || (token == null)
+                    || (token.Type == JTokenType.Object && !token.HasValues); //filter out empty object
+
+            //(token.Type == JTokenType.Undefined) || //not sure if needed
+
             return result;
         }
     }

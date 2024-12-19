@@ -101,7 +101,7 @@ namespace LCS
 
         public static XElement GetAreas(List<string> areas)
         {
-            //Activity AreaCodes 
+            //Activity AreaCodes
             XElement myareacodes = new XElement("Areas");
             if (areas.Count > 0)
             {
@@ -119,7 +119,7 @@ namespace LCS
 
         public static XElement GetOwners(List<string> owner)
         {
-            //Activity Ownercodes 
+            //Activity Ownercodes
             XElement myownercodes = new XElement("Owners");
             if (owner.Count > 0)
             {
@@ -135,44 +135,41 @@ namespace LCS
             return myownercodes;
         }
 
-
-
-
         #endregion
 
         #region GastronomyData
 
         //Get the Gastronomy Search Request
         public static XElement GetGastronomicDataSearchRequestAsync(
-          string resultRID,
-          string pageNr,
-          string pageSize,
-          string language,
-          string onlyrootelement,
-          string request,
-          string contactinfos,
-          string multimediadesc,
-          string categorycodes,
-          string filters,
-          string searchterm,
-          string tvmember,
-          string hgvmember,
-          string posrequired,
-          List<string> districts,
-          List<string> municipalities,
-          List<string> tourismorg,
-          List<string> marketing,
-          List<string> catcodes,
-          List<string> facilities,
-          List<string> categoryprefilter,
-          List<string> facilityprefilter,
-          string requestor,
-          string ltsmsgpswd
-          )
+            string resultRID,
+            string pageNr,
+            string pageSize,
+            string language,
+            string onlyrootelement,
+            string request,
+            string contactinfos,
+            string multimediadesc,
+            string categorycodes,
+            string filters,
+            string searchterm,
+            string tvmember,
+            string hgvmember,
+            string posrequired,
+            List<string> districts,
+            List<string> municipalities,
+            List<string> tourismorg,
+            List<string> marketing,
+            List<string> catcodes,
+            List<string> facilities,
+            List<string> categoryprefilter,
+            List<string> facilityprefilter,
+            string requestor,
+            string ltsmsgpswd
+        )
         {
             XElement requestbody = new XElement("GastronomicDataSearchRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -288,11 +285,11 @@ namespace LCS
             string newsandfeatures,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("GastronomicDataDetailRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -337,11 +334,11 @@ namespace LCS
             string language,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("GastronomicCodesRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -352,7 +349,7 @@ namespace LCS
             XElement lang = new XElement("Language");
             lang.Add(new XAttribute("Code", language));
             parameters.Add(lang);
-            //Ende Language            
+            //Ende Language
 
             requestbody.Add(parameters);
 
@@ -364,11 +361,11 @@ namespace LCS
             string tvrid,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("GastronomicDataChangedItemsRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -379,7 +376,7 @@ namespace LCS
             XElement ts = new XElement("TimeSpan");
             ts.Add(new XAttribute("Start", timespan));
             parameters.Add(ts);
-            //Ende Language    
+            //Ende Language
 
             if (!String.IsNullOrEmpty(tvrid))
             {
@@ -391,7 +388,6 @@ namespace LCS
 
                 parameters.Add(toursimverein);
             }
-
 
             requestbody.Add(parameters);
 
@@ -433,7 +429,7 @@ namespace LCS
             return myfacilities;
         }
 
-        //Categorycode Prefilters 
+        //Categorycode Prefilters
         public static XElement GetCategoryPreFilter(List<string> categoryprefilter)
         {
             XElement mycatprefilter = new XElement("CategoryCodes");
@@ -460,7 +456,7 @@ namespace LCS
             return mycatprefilter;
         }
 
-        //Facility Prefilters 
+        //Facility Prefilters
         public static XElement GetFacilityPreFilter(List<string> facilityprefilter)
         {
             XElement myfacilityprefilter = new XElement("Facilities");
@@ -526,12 +522,11 @@ namespace LCS
             List<string> activityprefilter,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
-
             XElement requestbody = new XElement("ActivitySearchRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -579,7 +574,10 @@ namespace LCS
             if (!String.IsNullOrEmpty(sortcriterion))
             {
                 XElement sortcrit = new XElement("Sorting");
-                sortcrit.Add(new XAttribute("Criterion", sortcriterion), new XAttribute("Order", order));
+                sortcrit.Add(
+                    new XAttribute("Criterion", sortcriterion),
+                    new XAttribute("Order", order)
+                );
                 parameters.Add(sortcrit);
             }
             //Ende Sorting
@@ -604,7 +602,7 @@ namespace LCS
                 parameters.Add(GetOwners(ownercodes));
 
             requestbody.Add(parameters);
-            //Ende Parameters    
+            //Ende Parameters
 
             //Filters
             requestbody.Add(GetActivityPrefilters(activityprefilter));
@@ -647,12 +645,11 @@ namespace LCS
             List<string> activityprefilter,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
-
             XElement requestbody = new XElement("ActivitySearchRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -700,7 +697,10 @@ namespace LCS
             if (!String.IsNullOrEmpty(sortcriterion))
             {
                 XElement sortcrit = new XElement("Sorting");
-                sortcrit.Add(new XAttribute("Criterion", sortcriterion), new XAttribute("Order", order));
+                sortcrit.Add(
+                    new XAttribute("Criterion", sortcriterion),
+                    new XAttribute("Order", order)
+                );
                 parameters.Add(sortcrit);
             }
             //Ende Sorting
@@ -714,7 +714,9 @@ namespace LCS
             }
             //Ende Searchtermphrase
 
-            parameters.Add(GetActivities(activities, new List<string>(), activityenumcode, taggingtypes));
+            parameters.Add(
+                GetActivities(activities, new List<string>(), activityenumcode, taggingtypes)
+            );
 
             //Ende Activities
 
@@ -725,7 +727,7 @@ namespace LCS
                 parameters.Add(GetOwners(ownercodes));
 
             requestbody.Add(parameters);
-            //Ende Parameters    
+            //Ende Parameters
 
             //Filters
             requestbody.Add(GetActivityPrefilters(activityprefilter));
@@ -755,11 +757,11 @@ namespace LCS
             List<string> activities,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("ActivityDetailRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
@@ -822,11 +824,11 @@ namespace LCS
             List<string> owner,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("WeatherSnowObservationSearchRQ");
 
-            //POS Element Header            
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
@@ -869,7 +871,10 @@ namespace LCS
             if (!String.IsNullOrEmpty(sortcriterion))
             {
                 XElement sortcrit = new XElement("Sorting");
-                sortcrit.Add(new XAttribute("Criterion", sortcriterion), new XAttribute("Order", order));
+                sortcrit.Add(
+                    new XAttribute("Criterion", sortcriterion),
+                    new XAttribute("Order", order)
+                );
                 parameters.Add(sortcrit);
             }
             //Ende Sorting
@@ -919,12 +924,11 @@ namespace LCS
             List<string> measuringpoints,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
-
             XElement requestbody = new XElement("WeatherSnowObservationDetailRQ");
 
-            //POS Element Header            
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
@@ -968,7 +972,10 @@ namespace LCS
             if (!String.IsNullOrEmpty(sortcriterion))
             {
                 XElement sortcrit = new XElement("Sorting");
-                sortcrit.Add(new XAttribute("Criterion", sortcriterion), new XAttribute("Order", order));
+                sortcrit.Add(
+                    new XAttribute("Criterion", sortcriterion),
+                    new XAttribute("Order", order)
+                );
                 parameters.Add(sortcrit);
             }
             //Ende Sorting
@@ -1008,12 +1015,11 @@ namespace LCS
             List<string> owner,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
-
             XElement requestbody = new XElement("WebCamSearchRQ");
 
-            //POS Element Header            
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
@@ -1052,7 +1058,10 @@ namespace LCS
             if (!String.IsNullOrEmpty(sortcriterion))
             {
                 XElement sortcrit = new XElement("Sorting");
-                sortcrit.Add(new XAttribute("Criterion", sortcriterion), new XAttribute("Order", order));
+                sortcrit.Add(
+                    new XAttribute("Criterion", sortcriterion),
+                    new XAttribute("Order", order)
+                );
                 parameters.Add(sortcrit);
             }
             //Ende Sorting
@@ -1064,7 +1073,7 @@ namespace LCS
                 searchterm.Add(new XAttribute("Phrase", searchtermphrase));
                 parameters.Add(searchterm);
             }
-            //Ende Searchtermphrase            
+            //Ende Searchtermphrase
             if (areas.Count > 0)
                 parameters.Add(GetAreas(areas));
             if (owner.Count > 0)
@@ -1074,7 +1083,6 @@ namespace LCS
 
             return requestbody;
         }
-
 
         //Üebr Areas Measuringpoints rausfinden, Measuringpoints zwischenspeichern
         public static XElement GetWebcamDetailRequest(
@@ -1095,12 +1103,11 @@ namespace LCS
             List<string> webcams,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
-
             XElement requestbody = new XElement("WebCamDetailRQ");
 
-            //POS Element Header            
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
@@ -1145,7 +1152,10 @@ namespace LCS
             if (!String.IsNullOrEmpty(sortcriterion))
             {
                 XElement sortcrit = new XElement("Sorting");
-                sortcrit.Add(new XAttribute("Criterion", sortcriterion), new XAttribute("Order", order));
+                sortcrit.Add(
+                    new XAttribute("Criterion", sortcriterion),
+                    new XAttribute("Order", order)
+                );
                 parameters.Add(sortcrit);
             }
             //Ende Sorting
@@ -1174,17 +1184,18 @@ namespace LCS
             string requestor,
             string dateFrom,
             string dataTypeID,
-            string ltsmsgpswd)
+            string ltsmsgpswd
+        )
         {
             XElement requestbody = new XElement("ActivityChangedItemsRQ");
 
-            //POS Element Header            
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
             XElement parameters = new XElement("Parameters");
 
-            //TimeSpan            
+            //TimeSpan
             XElement lang = new XElement("TimeSpan");
             lang.Add(new XAttribute("Start", dateFrom));
             parameters.Add(lang);
@@ -1208,17 +1219,18 @@ namespace LCS
             string requestor,
             string dateFrom,
             string tagID,
-            string ltsmsgpswd)
+            string ltsmsgpswd
+        )
         {
             XElement requestbody = new XElement("ActivityChangedItemsRQ");
 
-            //POS Element Header            
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
             XElement parameters = new XElement("Parameters");
 
-            //TimeSpan            
+            //TimeSpan
             XElement lang = new XElement("TimeSpan");
             lang.Add(new XAttribute("Start", dateFrom));
             parameters.Add(lang);
@@ -1238,7 +1250,6 @@ namespace LCS
             taggingtags.Add(taggingtyperid);
             activities.Add(taggingtags);
 
-
             parameters.Add(activities);
 
             requestbody.Add(parameters);
@@ -1246,9 +1257,13 @@ namespace LCS
             return requestbody;
         }
 
-        public static XElement GetActivities(List<string> activities, List<string> activitydatatypes, List<string> activityenumcodes)
+        public static XElement GetActivities(
+            List<string> activities,
+            List<string> activitydatatypes,
+            List<string> activityenumcodes
+        )
         {
-            //Activity Filters 
+            //Activity Filters
             XElement myactivities = new XElement("Activities");
 
             foreach (string myactivitydatatype in activitydatatypes)
@@ -1259,8 +1274,6 @@ namespace LCS
 
                 myactivities.Add(activitytype);
             }
-
-
 
             if (activityenumcodes.Count > 0)
             {
@@ -1289,9 +1302,14 @@ namespace LCS
             return myactivities;
         }
 
-        public static XElement GetActivities(List<string> activities, List<string> activitydatatypes, List<string> activityenumcodes, List<string> taggingtypeRIDs)
+        public static XElement GetActivities(
+            List<string> activities,
+            List<string> activitydatatypes,
+            List<string> activityenumcodes,
+            List<string> taggingtypeRIDs
+        )
         {
-            //Activity Filters 
+            //Activity Filters
             XElement myactivities = new XElement("Activities");
 
             //Werd obsolet
@@ -1329,7 +1347,6 @@ namespace LCS
 
             tagging.Add(taggingtags);
             myactivities.Add(tagging);
-
 
             //ENDE Tagging
 
@@ -1429,12 +1446,11 @@ namespace LCS
             List<string> poiprefilter,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
-
             XElement requestbody = new XElement("POISearchRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -1482,7 +1498,10 @@ namespace LCS
             if (!String.IsNullOrEmpty(sortcriterion))
             {
                 XElement sortcrit = new XElement("Sorting");
-                sortcrit.Add(new XAttribute("Criterion", sortcriterion), new XAttribute("Order", order));
+                sortcrit.Add(
+                    new XAttribute("Criterion", sortcriterion),
+                    new XAttribute("Order", order)
+                );
                 parameters.Add(sortcrit);
             }
             //Ende Sorting
@@ -1507,7 +1526,7 @@ namespace LCS
                 parameters.Add(GetOwners(ownercodes));
 
             requestbody.Add(parameters);
-            //Ende Parameters    
+            //Ende Parameters
 
             //Filters
             requestbody.Add(GetPoiPrefilters(poiprefilter));
@@ -1550,12 +1569,11 @@ namespace LCS
             List<string> poiprefilter,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
-
             XElement requestbody = new XElement("POISearchRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
             //Ende POS Element
 
@@ -1603,7 +1621,10 @@ namespace LCS
             if (!String.IsNullOrEmpty(sortcriterion))
             {
                 XElement sortcrit = new XElement("Sorting");
-                sortcrit.Add(new XAttribute("Criterion", sortcriterion), new XAttribute("Order", order));
+                sortcrit.Add(
+                    new XAttribute("Criterion", sortcriterion),
+                    new XAttribute("Order", order)
+                );
                 parameters.Add(sortcrit);
             }
             //Ende Sorting
@@ -1628,7 +1649,7 @@ namespace LCS
                 parameters.Add(GetOwners(ownercodes));
 
             requestbody.Add(parameters);
-            //Ende Parameters    
+            //Ende Parameters
 
             //Filters
             requestbody.Add(GetPoiPrefilters(poiprefilter));
@@ -1656,11 +1677,11 @@ namespace LCS
             List<string> pois,
             string requestor,
             string ltsmsgpswd
-            )
+        )
         {
             XElement requestbody = new XElement("POIDetailRQ");
 
-            //POS Element Header             
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
@@ -1698,23 +1719,23 @@ namespace LCS
             return requestbody;
         }
 
-
         //Get The Request for Activity Changed Items
         public static XElement GetPOIChangedRequest(
             string requestor,
             string dateFrom,
             string dataTypeID,
-            string ltsmsgpswd)
+            string ltsmsgpswd
+        )
         {
             XElement requestbody = new XElement("POIChangedItemsRQ");
 
-            //POS Element Header            
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
             XElement parameters = new XElement("Parameters");
 
-            //TimeSpan            
+            //TimeSpan
             XElement lang = new XElement("TimeSpan");
             lang.Add(new XAttribute("Start", dateFrom));
             parameters.Add(lang);
@@ -1739,17 +1760,18 @@ namespace LCS
             string requestor,
             string dateFrom,
             string tagRID,
-            string ltsmsgpswd)
+            string ltsmsgpswd
+        )
         {
             XElement requestbody = new XElement("POIChangedItemsRQ");
 
-            //POS Element Header            
+            //POS Element Header
             requestbody.Add(GetPOS(requestor, ltsmsgpswd));
 
             //Parameters
             XElement parameters = new XElement("Parameters");
 
-            //TimeSpan            
+            //TimeSpan
             XElement lang = new XElement("TimeSpan");
             lang.Add(new XAttribute("Start", dateFrom));
             parameters.Add(lang);
@@ -1759,7 +1781,6 @@ namespace LCS
             //Activities
             if (!String.IsNullOrEmpty(tagRID))
             {
-
                 XElement activities = new XElement("POIS");
                 //XElement activitydatatype = new XElement("POI");
                 //activitydatatype.Add(new XAttribute("DataTypeID", ""));
@@ -1781,9 +1802,13 @@ namespace LCS
             return requestbody;
         }
 
-        public static XElement GetPois(List<string> activities, List<string> activitydatatypes, List<string> activityenumcodes)
+        public static XElement GetPois(
+            List<string> activities,
+            List<string> activitydatatypes,
+            List<string> activityenumcodes
+        )
         {
-            //Activity Filters 
+            //Activity Filters
             XElement myactivities = new XElement("POIs");
 
             foreach (string myactivitydatatype in activitydatatypes)
@@ -1822,9 +1847,14 @@ namespace LCS
             return myactivities;
         }
 
-        public static XElement GetPois(List<string> activities, List<string> activitydatatypes, List<string> activityenumcodes, List<string> taggingtypeRIDs)
+        public static XElement GetPois(
+            List<string> activities,
+            List<string> activitydatatypes,
+            List<string> activityenumcodes,
+            List<string> taggingtypeRIDs
+        )
         {
-            //Activity Filters 
+            //Activity Filters
             XElement myactivities = new XElement("POIs");
 
             //foreach (string myactivitydatatype in activitydatatypes)
@@ -1861,7 +1891,6 @@ namespace LCS
             tagging.Add(taggingtags);
             myactivities.Add(tagging);
 
-
             //ENDE Tagging
 
 
@@ -1891,7 +1920,6 @@ namespace LCS
 
             return myactivities;
         }
-
 
         public static XElement GetPoiPrefilters(List<string> activityprefilter)
         {
@@ -1924,7 +1952,6 @@ namespace LCS
             return filters;
         }
 
-
         #endregion
 
         #region Webcams
@@ -1952,7 +1979,7 @@ namespace LCS
 
         public static XElement GetMeasuringpoints(List<string> measuringpoints)
         {
-            //Activity Mesuringpoints 
+            //Activity Mesuringpoints
             XElement mymeasuringpoints = new XElement("MeasuringPoints");
             if (measuringpoints.Count > 0)
             {
@@ -1967,7 +1994,6 @@ namespace LCS
 
             return mymeasuringpoints;
         }
-
 
         #endregion
     }

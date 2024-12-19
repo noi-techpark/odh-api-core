@@ -2,11 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using A22;
-using DataModel;
-using Helper;
-using ServiceReferenceLCS;
-using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,16 +10,27 @@ using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using A22;
+using DataModel;
+using Helper;
+using ServiceReferenceLCS;
+using SqlKata.Execution;
 
 namespace OdhApiImporter.Helpers
 {
     public class A22PoiImportHelper : ImportHelper, IImportHelper
     {
-        public List<string> idlistinterface { get; set; }        
+        public List<string> idlistinterface { get; set; }
         public A22Poi a22poiinfo { get; set; }
-        
 
-        public A22PoiImportHelper(ISettings settings, QueryFactory queryfactory, string table, string importerURL, string entity) : base(settings, queryfactory, table, importerURL)
+        public A22PoiImportHelper(
+            ISettings settings,
+            QueryFactory queryfactory,
+            string table,
+            string importerURL,
+            string entity
+        )
+            : base(settings, queryfactory, table, importerURL)
         {
             idlistinterface = new List<string>();
 
@@ -38,7 +44,11 @@ namespace OdhApiImporter.Helpers
             }
         }
 
-        public async Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
+        public async Task<UpdateDetail> SaveDataToODH(
+            DateTime? lastchanged = null,
+            List<string>? idlist = null,
+            CancellationToken cancellationToken = default
+        )
         {
             //GET Data
             var data = await GetData(cancellationToken);
@@ -50,7 +60,9 @@ namespace OdhApiImporter.Helpers
             //Disable Data not in list
             var deleteresult = await SetDataNotinListToInactive(cancellationToken);
 
-            return GenericResultsHelper.MergeUpdateDetail(new List<UpdateDetail>() { updateresult, deleteresult });
+            return GenericResultsHelper.MergeUpdateDetail(
+                new List<UpdateDetail>() { updateresult, deleteresult }
+            );
         }
 
         //Get Data from Source
@@ -65,11 +77,19 @@ namespace OdhApiImporter.Helpers
         //Get Data from Source
         private async Task<XDocument> GetGpsData(CancellationToken cancellationToken)
         {
-            return await GetA22Data.GetCoordinates(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
+            return await GetA22Data.GetCoordinates(
+                settings.A22Config.ServiceUrl,
+                settings.A22Config.User,
+                settings.A22Config.Password
+            );
         }
 
         //Import the Data
-        public async Task<UpdateDetail> ImportData(XDocument a22data, XDocument coordinates, CancellationToken cancellationToken)
+        public async Task<UpdateDetail> ImportData(
+            XDocument a22data,
+            XDocument coordinates,
+            CancellationToken cancellationToken
+        )
         {
             int updatecounter = 0;
             int newcounter = 0;
@@ -79,12 +99,16 @@ namespace OdhApiImporter.Helpers
             if (a22data != null && a22data.Root != null)
             {
                 XNamespace df = a22data.Root.Name.Namespace;
-                CultureInfo myculture = new CultureInfo("en");                
+                CultureInfo myculture = new CultureInfo("en");
 
                 //loop trough a22 items
                 foreach (var poi in a22data.Root.Elements(df + a22poiinfo.rootelement))
                 {
-                    XElement matchedcoordinate = a22poiinfo.GetMatchedGPS(a22data, coordinates, poi);
+                    XElement matchedcoordinate = a22poiinfo.GetMatchedGPS(
+                        a22data,
+                        coordinates,
+                        poi
+                    );
 
                     //if(entity == "tollstation")
                     //{
@@ -98,7 +122,7 @@ namespace OdhApiImporter.Helpers
                     //    matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
                     //    .Where(x => Convert.ToDouble(x.Element(x.GetDefaultNamespace() + "KM").Value, myculture) >= distance).FirstOrDefault();
                     //}
-                    
+
 
                     var importresult = await ImportDataSingle(poi, matchedcoordinate);
 
@@ -108,7 +132,13 @@ namespace OdhApiImporter.Helpers
                 }
             }
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = deletecounter, error = errorcounter };
+            return new UpdateDetail()
+            {
+                created = newcounter,
+                updated = updatecounter,
+                deleted = deletecounter,
+                error = errorcounter,
+            };
         }
 
         //Parsing the Data
@@ -127,47 +157,97 @@ namespace OdhApiImporter.Helpers
                 //id generating by link id and panid from the cam
                 returnid = a22poiinfo.GetReturnid(poi);
 
-                idlistinterface.Add("a22_"+ a22poiinfo.entitytype + "_" + returnid);
+                idlistinterface.Add("a22_" + a22poiinfo.entitytype + "_" + returnid);
 
                 //Parse A22 Data
-                ODHActivityPoiLinked parsedobject = await ParseA22DataToODHActivityPoi("a22_" + a22poiinfo.entitytype + "_" + returnid, poi, coordinates);
+                ODHActivityPoiLinked parsedobject = await ParseA22DataToODHActivityPoi(
+                    "a22_" + a22poiinfo.entitytype + "_" + returnid,
+                    poi,
+                    coordinates
+                );
                 if (parsedobject == null)
                     throw new Exception();
 
                 //Get Areas to Assign (Areas is a LTS only concept and will be removed in future)
 
                 //Set Shortname
-                parsedobject.Shortname = parsedobject.Detail.Select(x => x.Value.Title).FirstOrDefault();
+                parsedobject.Shortname = parsedobject
+                    .Detail.Select(x => x.Value.Title)
+                    .FirstOrDefault();
 
                 //Save parsedobject to DB + Save Rawdata to DB
-                var pgcrudresult = await InsertDataToDB(parsedobject, new KeyValuePair<string, XElement>(returnid, poi));
+                var pgcrudresult = await InsertDataToDB(
+                    parsedobject,
+                    new KeyValuePair<string, XElement>(returnid, poi)
+                );
 
                 newcounter = newcounter + pgcrudresult.created ?? 0;
                 updatecounter = updatecounter + pgcrudresult.updated ?? 0;
 
-                WriteLog.LogToConsole(parsedobject.Id, "dataimport", "single.a22." + a22poiinfo.entitytype, new ImportLog() { sourceid = parsedobject.Id, sourceinterface = "a22." + a22poiinfo.entitytype, success = true, error = "" });
+                WriteLog.LogToConsole(
+                    parsedobject.Id,
+                    "dataimport",
+                    "single.a22." + a22poiinfo.entitytype,
+                    new ImportLog()
+                    {
+                        sourceid = parsedobject.Id,
+                        sourceinterface = "a22." + a22poiinfo.entitytype,
+                        success = true,
+                        error = "",
+                    }
+                );
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole(returnid, "dataimport", "single.a22." + a22poiinfo.entitytype, new ImportLog() { sourceid = returnid, sourceinterface = "a22." + a22poiinfo.entitytype, success = false, error = "a22 " + a22poiinfo.entitytype + " could not be parsed" });
+                WriteLog.LogToConsole(
+                    returnid,
+                    "dataimport",
+                    "single.a22." + a22poiinfo.entitytype,
+                    new ImportLog()
+                    {
+                        sourceid = returnid,
+                        sourceinterface = "a22." + a22poiinfo.entitytype,
+                        success = false,
+                        error = "a22 " + a22poiinfo.entitytype + " could not be parsed",
+                    }
+                );
 
                 errorcounter = errorcounter + 1;
             }
 
-            return new UpdateDetail() { created = newcounter, updated = updatecounter, deleted = 0, error = errorcounter };
+            return new UpdateDetail()
+            {
+                created = newcounter,
+                updated = updatecounter,
+                deleted = 0,
+                error = errorcounter,
+            };
         }
 
         //Inserting into DB
-        private async Task<PGCRUDResult> InsertDataToDB(ODHActivityPoiLinked odhactivitypoi, KeyValuePair<string, XElement> a22data)
+        private async Task<PGCRUDResult> InsertDataToDB(
+            ODHActivityPoiLinked odhactivitypoi,
+            KeyValuePair<string, XElement> a22data
+        )
         {
             var rawdataid = await InsertInRawDataDB(a22data);
 
             odhactivitypoi.Id = odhactivitypoi.Id?.ToLower();
 
             //Set LicenseInfo
-            odhactivitypoi.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoiLinked>(odhactivitypoi, Helper.LicenseHelper.GetLicenseforOdhActivityPoi);
+            odhactivitypoi.LicenseInfo =
+                Helper.LicenseHelper.GetLicenseInfoobject<ODHActivityPoiLinked>(
+                    odhactivitypoi,
+                    Helper.LicenseHelper.GetLicenseforOdhActivityPoi
+                );
 
-            var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(odhactivitypoi, table, rawdataid, "a22." + a22poiinfo.entitytype + ".import", importerURL);
+            var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(
+                odhactivitypoi,
+                table,
+                rawdataid,
+                "a22." + a22poiinfo.entitytype + ".import",
+                importerURL
+            );
 
             return pgcrudresult;
         }
@@ -175,27 +255,30 @@ namespace OdhApiImporter.Helpers
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, XElement> data)
         {
             return await QueryFactory.InsertInRawtableAndGetIdAsync(
-                        new RawDataStore()
-                        {
-                            datasource = "a22",
-                            rawformat = "xml",
-                            importdate = DateTime.Now,
-                            license = "open",
-                            sourceinterface = a22poiinfo.entitytype,
-                            sourceurl = settings.A22Config.ServiceUrl,
-                            type = "odhactivitypoi." + a22poiinfo.entitytype.ToLower(),
-                            sourceid = data.Key,
-                            raw = data.Value.ToString(),
-                        });
+                new RawDataStore()
+                {
+                    datasource = "a22",
+                    rawformat = "xml",
+                    importdate = DateTime.Now,
+                    license = "open",
+                    sourceinterface = a22poiinfo.entitytype,
+                    sourceurl = settings.A22Config.ServiceUrl,
+                    type = "odhactivitypoi." + a22poiinfo.entitytype.ToLower(),
+                    sourceid = data.Key,
+                    raw = data.Value.ToString(),
+                }
+            );
         }
 
         //Parse the a22 interface content
-        public async Task<ODHActivityPoiLinked?> ParseA22DataToODHActivityPoi(string odhid, XElement input, XElement coordinates)
+        public async Task<ODHActivityPoiLinked?> ParseA22DataToODHActivityPoi(
+            string odhid,
+            XElement input,
+            XElement coordinates
+        )
         {
             //Get the ODH Item
-            var query = QueryFactory.Query(table)
-              .Select("data")
-              .Where("id", odhid);
+            var query = QueryFactory.Query(table).Select("data").Where("id", odhid);
 
             var poiindb = await query.GetObjectSingleAsync<ODHActivityPoiLinked>();
             var poi = default(ODHActivityPoiLinked);
@@ -211,7 +294,9 @@ namespace OdhApiImporter.Helpers
         }
 
         //Deactivates all data that is no more on the interface
-        private async Task<UpdateDetail> SetDataNotinListToInactive(CancellationToken cancellationToken)
+        private async Task<UpdateDetail> SetDataNotinListToInactive(
+            CancellationToken cancellationToken
+        )
         {
             int updateresult = 0;
             int deleteresult = 0;
@@ -220,7 +305,10 @@ namespace OdhApiImporter.Helpers
             try
             {
                 //Begin SetDataNotinListToInactive
-                var idlistdb = await GetAllDataBySource(new List<string>() { "a22" }, new List<string>() { a22poiinfo.entitytype });
+                var idlistdb = await GetAllDataBySource(
+                    new List<string>() { "a22" },
+                    new List<string>() { a22poiinfo.entitytype }
+                );
 
                 var idstodelete = idlistdb.Where(p => !idlistinterface.Any(p2 => p2 == p));
 
@@ -234,12 +322,29 @@ namespace OdhApiImporter.Helpers
             }
             catch (Exception ex)
             {
-                WriteLog.LogToConsole("", "dataimport", "deactivate.a22.odhactivitypoi." + a22poiinfo.entitytype, new ImportLog() { sourceid = "", sourceinterface = "a22." + a22poiinfo.entitytype, success = false, error = ex.Message });
+                WriteLog.LogToConsole(
+                    "",
+                    "dataimport",
+                    "deactivate.a22.odhactivitypoi." + a22poiinfo.entitytype,
+                    new ImportLog()
+                    {
+                        sourceid = "",
+                        sourceinterface = "a22." + a22poiinfo.entitytype,
+                        success = false,
+                        error = ex.Message,
+                    }
+                );
 
                 errorresult = errorresult + 1;
             }
 
-            return new UpdateDetail() { created = 0, updated = updateresult, deleted = deleteresult, error = errorresult };
+            return new UpdateDetail()
+            {
+                created = 0,
+                updated = updateresult,
+                deleted = deleteresult,
+                error = errorresult,
+            };
         }
     }
 
@@ -253,7 +358,11 @@ namespace OdhApiImporter.Helpers
             throw new NotImplementedException();
         }
 
-        public virtual XElement? GetMatchedGPS(XDocument a22data, XDocument coordinates, XElement? poi)
+        public virtual XElement? GetMatchedGPS(
+            XDocument a22data,
+            XDocument coordinates,
+            XElement? poi
+        )
         {
             throw new NotImplementedException();
         }
@@ -263,26 +372,40 @@ namespace OdhApiImporter.Helpers
             throw new NotImplementedException();
         }
 
-        public virtual ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
+        public virtual ODHActivityPoiLinked ParsePoi(
+            ODHActivityPoiLinked? poiindb,
+            XElement input,
+            XElement coordinate,
+            string odhid
+        )
         {
             throw new NotImplementedException();
         }
     }
 
-    public class A22Tollstation: A22Poi
+    public class A22Tollstation : A22Poi
     {
-        public A22Tollstation() {
+        public A22Tollstation()
+        {
             entitytype = "tollstation";
             rootelement = "ArchieCasello";
         }
 
-        public override XElement? GetMatchedGPS(XDocument a22data, XDocument coordinates, XElement? poi)
+        public override XElement? GetMatchedGPS(
+            XDocument a22data,
+            XDocument coordinates,
+            XElement? poi
+        )
         {
             XNamespace df = a22data.Root.Name.Namespace;
             CultureInfo myculture = new CultureInfo("en");
 
-            var matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
-                .Where(x => x.Element(x.GetDefaultNamespace() + "KM").Value == poi.Element(df + "KM").Value).FirstOrDefault();
+            var matchedcoordinate = coordinates
+                .Root.Elements(df + "WSOpenData_CoordinataMappa")
+                .Where(x =>
+                    x.Element(x.GetDefaultNamespace() + "KM").Value == poi.Element(df + "KM").Value
+                )
+                .FirstOrDefault();
 
             return matchedcoordinate;
         }
@@ -294,31 +417,55 @@ namespace OdhApiImporter.Helpers
 
         public override async Task<XDocument> GetData(ISettings settings)
         {
-            return await GetA22Data.GetTollStations(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
+            return await GetA22Data.GetTollStations(
+                settings.A22Config.ServiceUrl,
+                settings.A22Config.User,
+                settings.A22Config.Password
+            );
         }
 
-        public override ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
+        public override ODHActivityPoiLinked ParsePoi(
+            ODHActivityPoiLinked? poiindb,
+            XElement input,
+            XElement coordinate,
+            string odhid
+        )
         {
-            return ParseA22ToODH.ParseTollStationToODHActivityPoi(poiindb, input, coordinate, odhid);
-        }        
+            return ParseA22ToODH.ParseTollStationToODHActivityPoi(
+                poiindb,
+                input,
+                coordinate,
+                odhid
+            );
+        }
     }
 
-    public class A22ServiceArea: A22Poi
+    public class A22ServiceArea : A22Poi
     {
-        public A22ServiceArea() {
+        public A22ServiceArea()
+        {
             entitytype = "servicearea";
             rootelement = "WSOpenData_AreaDiServizio";
         }
 
-        public override XElement? GetMatchedGPS(XDocument a22data, XDocument coordinates, XElement? poi)
+        public override XElement? GetMatchedGPS(
+            XDocument a22data,
+            XDocument coordinates,
+            XElement? poi
+        )
         {
             XNamespace df = a22data.Root.Name.Namespace;
             CultureInfo myculture = new CultureInfo("en");
 
             double distance = Convert.ToDouble(poi.Element(df + "Distanza").Value, myculture);
 
-            var matchedcoordinate = coordinates.Root.Elements(df + "WSOpenData_CoordinataMappa")
-                .Where(x => Convert.ToDouble(x.Element(x.GetDefaultNamespace() + "KM").Value, myculture) >= distance).FirstOrDefault();
+            var matchedcoordinate = coordinates
+                .Root.Elements(df + "WSOpenData_CoordinataMappa")
+                .Where(x =>
+                    Convert.ToDouble(x.Element(x.GetDefaultNamespace() + "KM").Value, myculture)
+                    >= distance
+                )
+                .FirstOrDefault();
 
             return matchedcoordinate;
         }
@@ -330,12 +477,26 @@ namespace OdhApiImporter.Helpers
 
         public override async Task<XDocument> GetData(ISettings settings)
         {
-            return await GetA22Data.GetServiceAreas(settings.A22Config.ServiceUrl, settings.A22Config.User, settings.A22Config.Password);
+            return await GetA22Data.GetServiceAreas(
+                settings.A22Config.ServiceUrl,
+                settings.A22Config.User,
+                settings.A22Config.Password
+            );
         }
 
-        public override ODHActivityPoiLinked ParsePoi(ODHActivityPoiLinked? poiindb, XElement input, XElement coordinate, string odhid)
+        public override ODHActivityPoiLinked ParsePoi(
+            ODHActivityPoiLinked? poiindb,
+            XElement input,
+            XElement coordinate,
+            string odhid
+        )
         {
-            return ParseA22ToODH.ParseServiceAreaToODHActivityPoi(poiindb, input, coordinate, odhid);
+            return ParseA22ToODH.ParseServiceAreaToODHActivityPoi(
+                poiindb,
+                input,
+                coordinate,
+                odhid
+            );
         }
     }
 }

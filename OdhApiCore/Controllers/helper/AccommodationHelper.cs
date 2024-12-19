@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
-using SqlKata.Execution;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Helper;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
@@ -36,48 +36,107 @@ namespace OdhApiCore.Controllers
         public bool? active;
         public bool? smgactive;
         public string? lastchange;
+
         //New Publishedonlist
         public List<string> publishedonlist;
 
         public static async Task<AccommodationHelper> CreateAsync(
-            QueryFactory queryFactory, string? idfilter, string? locfilter, string? boardfilter, 
-            string? categoryfilter, string? typefilter, string? featurefilter, string? featureidfilter,
-            string? badgefilter, string? themefilter, string? altitudefilter, string? smgtags,
-            bool? activefilter, bool? smgactivefilter, bool? bookablefilter, string? sourcefilter, string? lastchange, string? langfilter,
-            string? publishedonfilter, CancellationToken cancellationToken)
+            QueryFactory queryFactory,
+            string? idfilter,
+            string? locfilter,
+            string? boardfilter,
+            string? categoryfilter,
+            string? typefilter,
+            string? featurefilter,
+            string? featureidfilter,
+            string? badgefilter,
+            string? themefilter,
+            string? altitudefilter,
+            string? smgtags,
+            bool? activefilter,
+            bool? smgactivefilter,
+            bool? bookablefilter,
+            string? sourcefilter,
+            string? lastchange,
+            string? langfilter,
+            string? publishedonfilter,
+            CancellationToken cancellationToken
+        )
         {
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
             return new AccommodationHelper(
-                idfilter: idfilter, locfilter: locfilter, boardfilter: boardfilter, categoryfilter: categoryfilter, typefilter: typefilter,
-                featurefilter: featurefilter, featureidfilter: featureidfilter, badgefilter: badgefilter, themefilter: themefilter, altitudefilter: altitudefilter, bookablefilter: bookablefilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, sourcefilter: sourcefilter, lastchange: lastchange, languagefilter: langfilter, publishedonfilter: publishedonfilter,
-                tourismusvereinids: tourismusvereinids);
+                idfilter: idfilter,
+                locfilter: locfilter,
+                boardfilter: boardfilter,
+                categoryfilter: categoryfilter,
+                typefilter: typefilter,
+                featurefilter: featurefilter,
+                featureidfilter: featureidfilter,
+                badgefilter: badgefilter,
+                themefilter: themefilter,
+                altitudefilter: altitudefilter,
+                bookablefilter: bookablefilter,
+                activefilter: activefilter,
+                smgactivefilter: smgactivefilter,
+                smgtags: smgtags,
+                sourcefilter: sourcefilter,
+                lastchange: lastchange,
+                languagefilter: langfilter,
+                publishedonfilter: publishedonfilter,
+                tourismusvereinids: tourismusvereinids
+            );
         }
 
         private AccommodationHelper(
-            string? idfilter, string? locfilter, string? boardfilter, string? categoryfilter, string? typefilter,
-            string? featurefilter, string? featureidfilter, string? badgefilter, string? themefilter, string? altitudefilter, bool? bookablefilter,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? sourcefilter, string? lastchange, string? languagefilter, string? publishedonfilter,
-            IEnumerable<string>? tourismusvereinids)
+            string? idfilter,
+            string? locfilter,
+            string? boardfilter,
+            string? categoryfilter,
+            string? typefilter,
+            string? featurefilter,
+            string? featureidfilter,
+            string? badgefilter,
+            string? themefilter,
+            string? altitudefilter,
+            bool? bookablefilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? sourcefilter,
+            string? lastchange,
+            string? languagefilter,
+            string? publishedonfilter,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
-
             boardlist = AccoListCreator.CreateBoardListFromFlag(boardfilter);
             categorylist = AccoListCreator.CreateCategoryListfromFlag(categoryfilter);
             accotypelist = AccoListCreator.CreateAccoTypeListfromFlag(typefilter);
             featurelist = AccoListCreator.CreateFeatureListDictfromFlag(featurefilter);
             badgelist = AccoListCreator.CreateBadgeListfromFlag(badgefilter);
             themelist = AccoListCreator.CreateThemeListDictfromFlag(themefilter);
-            idlist = String.IsNullOrEmpty(idfilter) ? new List<string>() : CommonListCreator.CreateIdList(idfilter.ToUpper());
+            idlist = String.IsNullOrEmpty(idfilter)
+                ? new List<string>()
+                : CommonListCreator.CreateIdList(idfilter.ToUpper());
             smgtaglist = CommonListCreator.CreateIdList(smgtags);
-            sourcelist = Helper.CommonListCreator.CreateSmgPoiSourceList(sourcefilter);
+            sourcelist = Helper.CommonListCreator.CreateSourceList(sourcefilter);
 
-            featureidlist = String.IsNullOrEmpty(featureidfilter) ? new List<string>() : CommonListCreator.CreateIdList(featureidfilter.ToUpper());
+            featureidlist = String.IsNullOrEmpty(featureidfilter)
+                ? new List<string>()
+                : CommonListCreator.CreateIdList(featureidfilter.ToUpper());
 
             districtlist = new List<string>();
             municipalitylist = new List<string>();
@@ -122,7 +181,5 @@ namespace OdhApiCore.Controllers
 
             publishedonlist = Helper.CommonListCreator.CreateIdList(publishedonfilter?.ToLower());
         }
-
-
     }
 }

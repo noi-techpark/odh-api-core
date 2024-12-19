@@ -12,8 +12,10 @@ namespace DataModel
 {
     public static class GpsConverter
     {
-
-        public static IDictionary<string, GpsInfo> ToGpsPointsDictionary(this ICollection<GpsInfo>? gpsinfos, bool ltsactivitypoi = false)
+        public static IDictionary<string, GpsInfo> ToGpsPointsDictionary(
+            this ICollection<GpsInfo>? gpsinfos,
+            bool ltsactivitypoi = false
+        )
         {
             //ODHActivityPoi should already pass
             if (!ltsactivitypoi)
@@ -23,7 +25,9 @@ namespace DataModel
                     //If GPSInfo has GpsType = null or Empty --->
                     if (gpsinfos.Any(x => String.IsNullOrEmpty(x.Gpstype)))
                     {
-                        foreach(var gpsinfo in gpsinfos.Where(x => String.IsNullOrEmpty(x.Gpstype)))
+                        foreach (
+                            var gpsinfo in gpsinfos.Where(x => String.IsNullOrEmpty(x.Gpstype))
+                        )
                         {
                             gpsinfo.Gpstype = "position";
                         }
@@ -32,7 +36,6 @@ namespace DataModel
                     //If GPSInfo has more GpsType = position ---> Grouped count is inferior to totalcount GpsPoints returns only first element.....
                     if (gpsinfos.GroupBy(x => x.Gpstype).Count() < gpsinfos.Count)
                     {
-
                         return gpsinfos
                             .DistinctBy(x => x.Gpstype)
                             .Where(x => x.Gpstype != null)
@@ -44,11 +47,11 @@ namespace DataModel
                             .DistinctBy(x => x.Gpstype)
                             .Where(x => x.Gpstype != null)
                             .ToDictionary(x => x.Gpstype!, x => x);
-                    }                      
-                }                    
+                    }
+                }
                 else
                     return new Dictionary<string, GpsInfo>();
-            }   
+            }
             //For LTS POI & LTS Activity
             else
             {
@@ -59,7 +62,7 @@ namespace DataModel
                 {
                     foreach (var gpsinfo in gpsinfos)
                     {
-                        string postionstr = "position";                        
+                        string postionstr = "position";
 
                         if (positioncount > 0)
                             postionstr = postionstr + positioncount;
@@ -67,7 +70,13 @@ namespace DataModel
                         if (gpsinfo.Gpstype == "Endpunkt" || gpsinfo.Gpstype == "Bergstation")
                             gpspoints.Add("endposition", gpsinfo);
 
-                        if (gpsinfo.Gpstype == "position" || gpsinfo.Gpstype == "Standpunkt" || gpsinfo.Gpstype == "Startpunkt" || gpsinfo.Gpstype == "Start und Ziel" || gpsinfo.Gpstype == "Talstation")
+                        if (
+                            gpsinfo.Gpstype == "position"
+                            || gpsinfo.Gpstype == "Standpunkt"
+                            || gpsinfo.Gpstype == "Startpunkt"
+                            || gpsinfo.Gpstype == "Start und Ziel"
+                            || gpsinfo.Gpstype == "Talstation"
+                        )
                             gpspoints.Add(postionstr, gpsinfo);
 
                         positioncount = gpspoints.Where(x => x.Key.StartsWith("position")).Count();
@@ -75,7 +84,7 @@ namespace DataModel
                 }
 
                 return gpspoints;
-            }           
+            }
         }
 
         public static ICollection<GpsInfo> ConvertGpsInfoOnRootToGpsInfoArray(this IGpsInfo gpsinfo)
@@ -83,9 +92,16 @@ namespace DataModel
             if (gpsinfo.Latitude != 0 && gpsinfo.Longitude != 0)
             {
                 return new List<GpsInfo>
+                {
+                    new GpsInfo()
                     {
-                        new GpsInfo(){ Gpstype = "position", Altitude = gpsinfo.Altitude, AltitudeUnitofMeasure = gpsinfo.AltitudeUnitofMeasure, Latitude = gpsinfo.Latitude, Longitude = gpsinfo.Longitude }
-                    };
+                        Gpstype = "position",
+                        Altitude = gpsinfo.Altitude,
+                        AltitudeUnitofMeasure = gpsinfo.AltitudeUnitofMeasure,
+                        Latitude = gpsinfo.Latitude,
+                        Longitude = gpsinfo.Longitude,
+                    },
+                };
             }
             else
             {

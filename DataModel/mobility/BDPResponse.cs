@@ -24,7 +24,7 @@ namespace DataModel
         //public string sname { get; set; }
         //public string sorigin { get; set; }
         public BDPMetaData smetadata { get; set; }
-        //public BDPCoordinate scoordinate { get; set; }        
+        //public BDPCoordinate scoordinate { get; set; }
     }
 
     public class BDPMetaData

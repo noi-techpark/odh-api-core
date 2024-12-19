@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Helper
 {
@@ -23,10 +23,14 @@ namespace Helper
         /// <param name="output">HttpRequestLog / ImportLog</param>
         public static void LogToConsole<T>(string id, string type, string log, T output)
         {
-            LogOutput<T> logoutput = new LogOutput<T>() { id = id, type = type, log = log, output = output };
+            LogOutput<T> logoutput = new LogOutput<T>()
+            {
+                id = id,
+                type = type,
+                log = log,
+                output = output,
+            };
             Console.WriteLine(JsonConvert.SerializeObject(logoutput));
         }
-
-
     }
 }

@@ -2,12 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Helper;
-using SqlKata.Execution;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Helper;
+using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
 {
@@ -37,34 +37,83 @@ namespace OdhApiCore.Controllers
         public string? lastchange;
 
         public static async Task<ActivityHelper> CreateAsync(
-            QueryFactory queryFactory, string? activitytype, string? subtypefilter,
-            string? idfilter, string? locfilter, string? areafilter, string? distancefilter,
-            string? altitudefilter, string? durationfilter, bool? highlightfilter, string? difficultyfilter,
-            bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? langfilter,
-            CancellationToken cancellationToken)
+            QueryFactory queryFactory,
+            string? activitytype,
+            string? subtypefilter,
+            string? idfilter,
+            string? locfilter,
+            string? areafilter,
+            string? distancefilter,
+            string? altitudefilter,
+            string? durationfilter,
+            bool? highlightfilter,
+            string? difficultyfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? langfilter,
+            CancellationToken cancellationToken
+        )
         {
-            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(queryFactory, areafilter, cancellationToken);
+            var arealist = await GenericHelper.RetrieveAreaFilterDataAsync(
+                queryFactory,
+                areafilter,
+                cancellationToken
+            );
 
             IEnumerable<string>? tourismusvereinids = null;
             if (locfilter != null && locfilter.Contains("mta"))
             {
-                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(locfilter, "mta");
-                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(queryFactory, metaregionlist, cancellationToken);
+                List<string> metaregionlist = CommonListCreator.CreateDistrictIdList(
+                    locfilter,
+                    "mta"
+                );
+                tourismusvereinids = await GenericHelper.RetrieveLocFilterDataAsync(
+                    queryFactory,
+                    metaregionlist,
+                    cancellationToken
+                );
             }
 
             return new ActivityHelper(
-                activitytype: activitytype, subtypefilter: subtypefilter, idfilter: idfilter, locfilter: locfilter,
-                arealist: arealist, distancefilter: distancefilter, altitudefilter: altitudefilter,
-                durationfilter: durationfilter, highlightfilter: highlightfilter, difficultyfilter: difficultyfilter,
-                activefilter: activefilter, smgactivefilter: smgactivefilter, smgtags: smgtags, lastchange: lastchange, languagefilter: langfilter,
-                tourismusvereinids: tourismusvereinids);
+                activitytype: activitytype,
+                subtypefilter: subtypefilter,
+                idfilter: idfilter,
+                locfilter: locfilter,
+                arealist: arealist,
+                distancefilter: distancefilter,
+                altitudefilter: altitudefilter,
+                durationfilter: durationfilter,
+                highlightfilter: highlightfilter,
+                difficultyfilter: difficultyfilter,
+                activefilter: activefilter,
+                smgactivefilter: smgactivefilter,
+                smgtags: smgtags,
+                lastchange: lastchange,
+                languagefilter: langfilter,
+                tourismusvereinids: tourismusvereinids
+            );
         }
 
         private ActivityHelper(
-            string? activitytype, string? subtypefilter, string? idfilter, string? locfilter, IEnumerable<string> arealist,
-            string? distancefilter, string? altitudefilter, string? durationfilter, bool? highlightfilter,
-            string? difficultyfilter, bool? activefilter, bool? smgactivefilter, string? smgtags, string? lastchange, string? languagefilter,
-            IEnumerable<string>? tourismusvereinids)
+            string? activitytype,
+            string? subtypefilter,
+            string? idfilter,
+            string? locfilter,
+            IEnumerable<string> arealist,
+            string? distancefilter,
+            string? altitudefilter,
+            string? durationfilter,
+            bool? highlightfilter,
+            string? difficultyfilter,
+            bool? activefilter,
+            bool? smgactivefilter,
+            string? smgtags,
+            string? lastchange,
+            string? languagefilter,
+            IEnumerable<string>? tourismusvereinids
+        )
         {
             activitytypelist = new List<string>();
             if (activitytype != null)
@@ -72,7 +121,9 @@ namespace OdhApiCore.Controllers
                 if (int.TryParse(activitytype, out int typeinteger))
                 {
                     if (typeinteger != 1023)
-                        activitytypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(activitytype);
+                        activitytypelist = Helper.ActivityPoiListCreator.CreateActivityTypefromFlag(
+                            activitytype
+                        );
                 }
                 else
                 {
@@ -81,7 +132,9 @@ namespace OdhApiCore.Controllers
             }
             if (activitytypelist.Count > 0)
                 subtypelist = Helper.ActivityPoiListCreator.CreateActivitySubTypefromFlag(
-                    activitytypelist.FirstOrDefault(), subtypefilter);
+                    activitytypelist.FirstOrDefault(),
+                    subtypefilter
+                );
             else
                 subtypelist = new List<string>();
 
@@ -134,7 +187,5 @@ namespace OdhApiCore.Controllers
 
             this.lastchange = lastchange;
         }
-
-
     }
 }

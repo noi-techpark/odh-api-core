@@ -2,9 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using Newtonsoft.Json;
-using SIAG.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +11,9 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using DataModel;
+using Newtonsoft.Json;
+using SIAG.Model;
 
 namespace SIAG
 {
@@ -23,37 +23,80 @@ namespace SIAG
         //public const string source = "opendata";
 
         #region Weather general
- 
+
         //Gets SIAG Weather Data (RAW DATA)
-        public static async Task<string> GetSiagWeatherData(string lang, string siaguser, string siagpswd, bool json, string source, string? id = null)
+        public static async Task<string> GetSiagWeatherData(
+            string lang,
+            string siaguser,
+            string siagpswd,
+            bool json,
+            string source,
+            string? id = null
+        )
         {
             //Request on Siag Service
-            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source, json, id);
+            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(
+                lang,
+                siaguser,
+                siagpswd,
+                source,
+                json,
+                id
+            );
             //Reading Content and returning
             return await weatherresponse.Content.ReadAsStringAsync();
         }
 
         //Parses to ODH Format
-        public static Task<WeatherLinked> ParseSiagWeatherDataToODHWeather(string lang, string xmldir, string weatherresponsetask, bool json, string source)
+        public static Task<WeatherLinked> ParseSiagWeatherDataToODHWeather(
+            string lang,
+            string xmldir,
+            string weatherresponsetask,
+            bool json,
+            string source
+        )
         {
             var weatherinfo = XDocument.Load(xmldir + "Weather.xml");
 
             if (json)
             {
-                return Task.FromResult(ParseWeather.ParsemyWeatherJsonResponse(lang, weatherinfo, weatherresponsetask, source));
+                return Task.FromResult(
+                    ParseWeather.ParsemyWeatherJsonResponse(
+                        lang,
+                        weatherinfo,
+                        weatherresponsetask,
+                        source
+                    )
+                );
             }
 
             XDocument myweatherresponse = XDocument.Parse(weatherresponsetask);
-            return Task.FromResult(ParseWeather.ParsemyWeatherResponse(lang, weatherinfo, myweatherresponse, source));
+            return Task.FromResult(
+                ParseWeather.ParsemyWeatherResponse(lang, weatherinfo, myweatherresponse, source)
+            );
         }
 
         #endregion
 
-        public static async Task<WeatherLinked?> GetCurrentStationWeatherAsync(string lang, string stationid, string stationidtype, string xmldir, string siaguser, string siagpswd, bool json, string source)
+        public static async Task<WeatherLinked?> GetCurrentStationWeatherAsync(
+            string lang,
+            string stationid,
+            string stationidtype,
+            string xmldir,
+            string siaguser,
+            string siagpswd,
+            bool json,
+            string source
+        )
         {
             try
             {
-                HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(lang, siaguser, siagpswd, source);
+                HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestAsync(
+                    lang,
+                    siaguser,
+                    siagpswd,
+                    source
+                );
 
                 //Content auslesen und XDocument Parsen
                 var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
@@ -63,7 +106,7 @@ namespace SIAG
 
                 //Testen
                 //string mystationid = (from x in weatherinfo.Root.Elements("Station")
-                //                      let y = x.Elements(stationidtype + "s").SelectMany(y => y.Elements(stationidtype).Elements("ID").Select(u => u.Value))                                      
+                //                      let y = x.Elements(stationidtype + "s").SelectMany(y => y.Elements(stationidtype).Elements("ID").Select(u => u.Value))
                 //                      where y == stationid
                 //                      select x.Attribute("Id").Value).FirstOrDefault();
 
@@ -72,12 +115,27 @@ namespace SIAG
                 if (stationidtype == "Id")
                     mystationid = stationid;
                 else
-                    mystationid = weatherinfo.Root?.Elements("Station").Where(x => x.Elements(stationidtype + "s").Elements(stationidtype).Attributes("ID").Select(y => y.Value).Contains(stationid)).Select(u => u.Attribute("Id")?.Value).FirstOrDefault();
-
+                    mystationid = weatherinfo
+                        .Root?.Elements("Station")
+                        .Where(x =>
+                            x.Elements(stationidtype + "s")
+                                .Elements(stationidtype)
+                                .Attributes("ID")
+                                .Select(y => y.Value)
+                                .Contains(stationid)
+                        )
+                        .Select(u => u.Attribute("Id")?.Value)
+                        .FirstOrDefault();
 
                 if (mystationid != null)
                 {
-                    var myweather = ParseWeather.ParsemyStationWeatherResponse(lang, weatherinfo, myweatherresponse, mystationid, source);
+                    var myweather = ParseWeather.ParsemyStationWeatherResponse(
+                        lang,
+                        weatherinfo,
+                        myweatherresponse,
+                        mystationid,
+                        source
+                    );
 
                     return myweather;
                 }
@@ -94,7 +152,17 @@ namespace SIAG
 
         #region District Weather
 
-        public static async Task<IEnumerable<string>> GetCurrentBezirkWeatherAsync(string lang, string bezirksid, string tvrid, string regid, string xmldir, string siaguser, string siagpswd, bool json, string source)
+        public static async Task<IEnumerable<string>> GetCurrentBezirkWeatherAsync(
+            string lang,
+            string bezirksid,
+            string tvrid,
+            string regid,
+            string xmldir,
+            string siaguser,
+            string siagpswd,
+            bool json,
+            string source
+        )
         {
             var currentbezirksidlist = new List<string>();
 
@@ -104,15 +172,17 @@ namespace SIAG
                 {
                     currentbezirksidlist.Add(bezirkid);
                 }
-            }    
+            }
             else if (!String.IsNullOrEmpty(tvrid))
             {
                 var bezirkweatherinfo = XDocument.Load(xmldir + "BezirkWeather.xml");
 
-                var currentbezirksid = (from x in bezirkweatherinfo.Root?.Elements("Bezirk")
-                                    from y in x.Element("TVList")?.Elements("TV") ?? Enumerable.Empty<XElement>()
-                                    where y.Attribute("ID")?.Value == tvrid
-                                    select x.Attribute("ID")?.Value).FirstOrDefault();
+                var currentbezirksid = (
+                    from x in bezirkweatherinfo.Root?.Elements("Bezirk")
+                    from y in x.Element("TVList")?.Elements("TV") ?? Enumerable.Empty<XElement>()
+                    where y.Attribute("ID")?.Value == tvrid
+                    select x.Attribute("ID")?.Value
+                ).FirstOrDefault();
 
                 if (!String.IsNullOrEmpty(currentbezirksid))
                     currentbezirksidlist.Add(currentbezirksid);
@@ -121,10 +191,13 @@ namespace SIAG
             {
                 var bezirkweatherinfo = XDocument.Load(xmldir + "BezirkWeather.xml");
 
-                var currentbezirksid = (from x in bezirkweatherinfo.Root?.Elements("Bezirk")
-                                    from y in x.Element("RegionList")?.Elements("Region") ?? Enumerable.Empty<XElement>()
-                                    where y.Attribute("ID")?.Value == regid
-                                    select x.Attribute("ID")?.Value).FirstOrDefault();
+                var currentbezirksid = (
+                    from x in bezirkweatherinfo.Root?.Elements("Bezirk")
+                    from y in x.Element("RegionList")?.Elements("Region")
+                        ?? Enumerable.Empty<XElement>()
+                    where y.Attribute("ID")?.Value == regid
+                    select x.Attribute("ID")?.Value
+                ).FirstOrDefault();
 
                 if (!String.IsNullOrEmpty(currentbezirksid))
                     currentbezirksidlist.Add(currentbezirksid);
@@ -133,10 +206,11 @@ namespace SIAG
             {
                 var bezirkweatherinfo = XDocument.Load(xmldir + "BezirkWeather.xml");
 
-                currentbezirksidlist = (from x in bezirkweatherinfo.Root?.Elements("Bezirk")                                        
-                                        select x.Attribute("ID")?.Value).ToList();
+                currentbezirksidlist = (
+                    from x in bezirkweatherinfo.Root?.Elements("Bezirk")
+                    select x.Attribute("ID")?.Value
+                ).ToList();
             }
-
 
             var bezirksweatherlist = new List<string>();
 
@@ -144,32 +218,55 @@ namespace SIAG
             {
                 foreach (var currentbezirksid in currentbezirksidlist)
                 {
-                    HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestBezirksWeatherAsync(lang, currentbezirksid, siaguser, siagpswd, source, json);
+                    HttpResponseMessage weatherresponse =
+                        await GetWeatherFromSIAG.RequestBezirksWeatherAsync(
+                            lang,
+                            currentbezirksid,
+                            siaguser,
+                            siagpswd,
+                            source,
+                            json
+                        );
 
                     //Content auslesen und XDocument Parsen
                     var weatherresponsestr = await weatherresponse.Content.ReadAsStringAsync();
-                                       
+
                     bezirksweatherlist.Add(weatherresponsestr);
-                }                
+                }
             }
 
             return bezirksweatherlist;
         }
 
-        public static async Task<IEnumerable<WeatherDistrictLinked?>> ParseSiagBezirkWeatherDataToODHWeather(IEnumerable<string> weatherresponse, string lang, bool json, string source)
+        public static async Task<
+            IEnumerable<WeatherDistrictLinked?>
+        > ParseSiagBezirkWeatherDataToODHWeather(
+            IEnumerable<string> weatherresponse,
+            string lang,
+            bool json,
+            string source
+        )
         {
             var bezirksweatherlist = new List<WeatherDistrictLinked>();
 
-            foreach(var weatherresponsestr in weatherresponse)
+            foreach (var weatherresponsestr in weatherresponse)
             {
                 WeatherDistrictLinked myweatherdistrictlinked = default(WeatherDistrictLinked);
 
                 if (json)
-                    myweatherdistrictlinked = ParseWeather.ParsemyBezirksWeatherJsonResponse(lang, weatherresponsestr, source);
+                    myweatherdistrictlinked = ParseWeather.ParsemyBezirksWeatherJsonResponse(
+                        lang,
+                        weatherresponsestr,
+                        source
+                    );
                 else
                 {
                     XDocument myweatherresponse = XDocument.Parse(weatherresponsestr);
-                    myweatherdistrictlinked = ParseWeather.ParsemyBezirksWeatherResponse(lang, myweatherresponse, source);                    
+                    myweatherdistrictlinked = ParseWeather.ParsemyBezirksWeatherResponse(
+                        lang,
+                        myweatherresponse,
+                        source
+                    );
                 }
 
                 bezirksweatherlist.Add(myweatherdistrictlinked);
@@ -182,9 +279,12 @@ namespace SIAG
 
         #region Realtime Weather
 
-        public static async Task<IEnumerable<WeatherRealTimeLinked>> GetCurrentRealTimeWEatherAsync(string lang)
+        public static async Task<IEnumerable<WeatherRealTimeLinked>> GetCurrentRealTimeWEatherAsync(
+            string lang
+        )
         {
-            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
+            HttpResponseMessage weatherresponse =
+                await GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
 
             //Content auslesen und XDocument Parsen
             var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
@@ -204,9 +304,18 @@ namespace SIAG
                 {
                     WeatherRealTimeLinked myrealtimeweather = new WeatherRealTimeLinked();
                     myrealtimeweather.Id = row.id;
-                    myrealtimeweather.altitude = Convert.ToDouble(row.altitude, CultureInfo.InvariantCulture);
-                    myrealtimeweather.latitude = Convert.ToDouble(row.latitude.Value.Replace(',', '.'), CultureInfo.InvariantCulture);
-                    myrealtimeweather.longitude = Convert.ToDouble(row.longitude.Value.Replace(',', '.'), CultureInfo.InvariantCulture);
+                    myrealtimeweather.altitude = Convert.ToDouble(
+                        row.altitude,
+                        CultureInfo.InvariantCulture
+                    );
+                    myrealtimeweather.latitude = Convert.ToDouble(
+                        row.latitude.Value.Replace(',', '.'),
+                        CultureInfo.InvariantCulture
+                    );
+                    myrealtimeweather.longitude = Convert.ToDouble(
+                        row.longitude.Value.Replace(',', '.'),
+                        CultureInfo.InvariantCulture
+                    );
                     myrealtimeweather.categoryId = row.categoryId;
                     myrealtimeweather.code = row.code;
                     myrealtimeweather.dd = row.dd;
@@ -229,7 +338,8 @@ namespace SIAG
                     myrealtimeweather.wMax = row.wMax;
                     myrealtimeweather.zoomLevel = row.zoomlevel;
 
-                    List<RealTimeMeasurements> myrealtimemeasurments = new List<RealTimeMeasurements>();
+                    List<RealTimeMeasurements> myrealtimemeasurments =
+                        new List<RealTimeMeasurements>();
 
                     foreach (var measurement in row.measurements)
                     {
@@ -251,9 +361,13 @@ namespace SIAG
             return myrealtimeweatherlist.ToList();
         }
 
-        public static async Task<WeatherRealTimeLinked?> GetCurrentRealTimeWEatherSingleAsync(string lang, string stationid)
+        public static async Task<WeatherRealTimeLinked?> GetCurrentRealTimeWEatherSingleAsync(
+            string lang,
+            string stationid
+        )
         {
-            HttpResponseMessage weatherresponse = await GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
+            HttpResponseMessage weatherresponse =
+                await GetWeatherFromSIAG.RequestRealtimeWeatherAsync(lang);
 
             //Content auslesen und XDocument Parsen
             var weatherresponsetask = await weatherresponse.Content.ReadAsStringAsync();
@@ -264,17 +378,28 @@ namespace SIAG
 
             CultureInfo myculture = new CultureInfo("de-DE");
 
-            var row = ((IEnumerable?)stuff?.rows)?.Cast<dynamic>()
-                            .Where(p => p.id == stationid).FirstOrDefault();
+            var row = ((IEnumerable?)stuff?.rows)
+                ?.Cast<dynamic>()
+                .Where(p => p.id == stationid)
+                .FirstOrDefault();
 
             if (row?.t != "--")
             {
                 WeatherRealTimeLinked myrealtimeweather = new WeatherRealTimeLinked();
 
                 myrealtimeweather.Id = row.id;
-                myrealtimeweather.altitude = Convert.ToDouble(row.altitude, CultureInfo.InvariantCulture);
-                myrealtimeweather.latitude = Convert.ToDouble(row.latitude.Value.Replace(',', '.'), CultureInfo.InvariantCulture);
-                myrealtimeweather.longitude = Convert.ToDouble(row.longitude.Value.Replace(',', '.'), CultureInfo.InvariantCulture);
+                myrealtimeweather.altitude = Convert.ToDouble(
+                    row.altitude,
+                    CultureInfo.InvariantCulture
+                );
+                myrealtimeweather.latitude = Convert.ToDouble(
+                    row.latitude.Value.Replace(',', '.'),
+                    CultureInfo.InvariantCulture
+                );
+                myrealtimeweather.longitude = Convert.ToDouble(
+                    row.longitude.Value.Replace(',', '.'),
+                    CultureInfo.InvariantCulture
+                );
                 myrealtimeweather.categoryId = row.categoryId;
                 myrealtimeweather.code = row.code;
                 myrealtimeweather.dd = row.dd;
@@ -316,23 +441,35 @@ namespace SIAG
             }
             else
                 return null;
-
         }
 
         #endregion
 
         #region WeatherForecast
 
-        public static async Task<IEnumerable<WeatherForecastLinked?>> GetWeatherForeCastAsync(string lang, ICollection<string> municipalitycode, SiagWeatherForecastModel siagweatherforecast)
+        public static async Task<IEnumerable<WeatherForecastLinked?>> GetWeatherForeCastAsync(
+            string lang,
+            ICollection<string> municipalitycode,
+            SiagWeatherForecastModel siagweatherforecast
+        )
         {
             var weatherforecastpermun = new List<WeatherForecastLinked>();
 
-            foreach(var municipality in siagweatherforecast.municipalities)
+            foreach (var municipality in siagweatherforecast.municipalities)
             {
-                if((municipalitycode == null || municipalitycode.Count == 0) || municipalitycode.Contains(municipality.code))
+                if (
+                    (municipalitycode == null || municipalitycode.Count == 0)
+                    || municipalitycode.Contains(municipality.code)
+                )
                 {
-                    weatherforecastpermun.Add(ParseWeather.ParseWeatherForecastFromJsonFile(lang, municipality, siagweatherforecast.info));
-                }                
+                    weatherforecastpermun.Add(
+                        ParseWeather.ParseWeatherForecastFromJsonFile(
+                            lang,
+                            municipality,
+                            siagweatherforecast.info
+                        )
+                    );
+                }
             }
 
             return weatherforecastpermun;

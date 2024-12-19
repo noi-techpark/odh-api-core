@@ -2,10 +2,10 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using System.Reflection;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using DataModel.Annotations;
 
 namespace OdhApiCore.GenericHelpers
@@ -15,30 +15,40 @@ namespace OdhApiCore.GenericHelpers
         public static IEnumerable<DeprecationInfo> GetDeprecatedFields(Type type)
         {
             var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            var deprecatedprops = props.Where(p => p.GetCustomAttribute(typeof(SwaggerDeprecatedAttribute), true) != null);
+            var deprecatedprops = props.Where(p =>
+                p.GetCustomAttribute(typeof(SwaggerDeprecatedAttribute), true) != null
+            );
 
             //foreach(var deprecatedprop in deprecatedprops)
             //{
 
             //}
 
-            return deprecatedprops.Select(x => new DeprecationInfo() {
-                Name = x.Name,
-                Description = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().Description,
-                Type = FriendlyName(x.PropertyType),
-                DeprecationDate = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().DeprecationDate,
-                RemovedAfter = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().RemovedAfter,
-            })
-            .ToList();
-                
+            return deprecatedprops
+                .Select(x => new DeprecationInfo()
+                {
+                    Name = x.Name,
+                    Description = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().Description,
+                    Type = FriendlyName(x.PropertyType),
+                    DeprecationDate =
+                        x.GetCustomAttribute<SwaggerDeprecatedAttribute>().DeprecationDate,
+                    RemovedAfter = x.GetCustomAttribute<SwaggerDeprecatedAttribute>().RemovedAfter,
+                })
+                .ToList();
         }
 
         public static string FriendlyName(Type type)
         {
             if (type.IsGenericType)
             {
-                var namePrefix = type.Name.Split(new[] { '`' }, StringSplitOptions.RemoveEmptyEntries)[0];
-                var genericParameters = String.Join(", ", type.GetGenericArguments().Select(FriendlyName));
+                var namePrefix = type.Name.Split(
+                    new[] { '`' },
+                    StringSplitOptions.RemoveEmptyEntries
+                )[0];
+                var genericParameters = String.Join(
+                    ", ",
+                    type.GetGenericArguments().Select(FriendlyName)
+                );
                 return namePrefix + "<" + genericParameters + ">";
             }
 

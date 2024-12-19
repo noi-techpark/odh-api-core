@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace DataModel
 {
@@ -58,6 +58,7 @@ namespace DataModel
         public int onlineResults { get; set; }
         public string? resultId { get; set; }
         public IEnumerable<T> items { get; set; } = Enumerable.Empty<T>();
+
         [JsonIgnore]
         public IEnumerable<T> Items => items;
     }
@@ -66,7 +67,8 @@ namespace DataModel
     {
         public uint totalResults { get; set; }
         public string? searchTerm { get; set; }
-        public Dictionary<string, uint> detailedResults { get; set; } = new Dictionary<string, uint>();
+        public Dictionary<string, uint> detailedResults { get; set; } =
+            new Dictionary<string, uint>();
         public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
     }
 

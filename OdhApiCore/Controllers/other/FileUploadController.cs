@@ -2,21 +2,21 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
+using Amazon.S3.Model;
+using Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.IO;
-using Amazon.Runtime;
-using Amazon.S3;
-using Amazon;
-using Amazon.S3.Model;
-using Helper;
 
 namespace OdhApiCore.Controllers.api
 {
@@ -29,13 +29,16 @@ namespace OdhApiCore.Controllers.api
         private readonly ISettings settings;
         protected ILogger<OdhController> Logger { get; }
 
-        public FileUploadController(IWebHostEnvironment env, ISettings settings, ILogger<OdhController> logger)
+        public FileUploadController(
+            IWebHostEnvironment env,
+            ISettings settings,
+            ILogger<OdhController> logger
+        )
         {
             this.env = env;
             this.settings = settings;
             this.Logger = logger;
         }
-
 
         //[ApiExplorerSettings(IgnoreApi = true)]
         [Authorize]
@@ -64,14 +67,18 @@ namespace OdhApiCore.Controllers.api
                     BucketName = bucketName,
                     Key = filename,
                     InputStream = file.OpenReadStream(),
-                    ContentType = file.ContentType
+                    ContentType = file.ContentType,
                 };
                 var response = await client.PutObjectAsync(request); //UploadPartAsync(request);
 
-                if(IsFileImage(file.ContentType))
-                    filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.Url, filename));
+                if (IsFileImage(file.ContentType))
+                    filenames.Add(
+                        String.Format("{0}{1}", settings.S3ImageresizerConfig.Url, filename)
+                    );
                 else
-                    filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename));
+                    filenames.Add(
+                        String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename)
+                    );
             }
             if (filenames.Count == 1)
                 return Ok(filenames.FirstOrDefault());
@@ -104,11 +111,13 @@ namespace OdhApiCore.Controllers.api
                     BucketName = bucketName,
                     Key = filename,
                     InputStream = file.OpenReadStream(),
-                    ContentType = file.ContentType
+                    ContentType = file.ContentType,
                 };
                 var response = await client.PutObjectAsync(request);
 
-                filenames.Add(String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename));
+                filenames.Add(
+                    String.Format("{0}{1}", settings.S3ImageresizerConfig.DocUrl, filename)
+                );
             }
             if (filenames.Count == 1)
                 return Ok(filenames.FirstOrDefault());
@@ -138,7 +147,7 @@ namespace OdhApiCore.Controllers.api
                 var deleteObjectRequest = new DeleteObjectRequest
                 {
                     BucketName = bucketName,
-                    Key = keyName
+                    Key = keyName,
                 };
 
                 Console.WriteLine("Deleting an object");
@@ -168,11 +177,21 @@ namespace OdhApiCore.Controllers.api
             }
             catch (AmazonS3Exception e)
             {
-                return BadRequest(String.Format("Error encountered on server.Message:'{0}' when deleting an object", e.Message));
+                return BadRequest(
+                    String.Format(
+                        "Error encountered on server.Message:'{0}' when deleting an object",
+                        e.Message
+                    )
+                );
             }
             catch (Exception e)
             {
-                return BadRequest(String.Format("Unknown encountered on server. Message:'{0}' when deleting an object", e.Message));
+                return BadRequest(
+                    String.Format(
+                        "Unknown encountered on server. Message:'{0}' when deleting an object",
+                        e.Message
+                    )
+                );
             }
         }
 
@@ -182,6 +201,4 @@ namespace OdhApiCore.Controllers.api
             return contenttype.ToLower().StartsWith("image");
         }
     }
-
-
 }

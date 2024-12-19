@@ -2,19 +2,33 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel.Annotations;
-using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DataModel.Annotations;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace DataModel
 {
     #region EventsV2 Datamodel
-    public class EventV2 : IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IPublishedOn, IVideoItemsAware, IImportDateassigneable, ISource, IHasTagInfo
+    public class EventV2
+        : IIdentifiable,
+            IActivateable,
+            IHasLanguage,
+            IImageGalleryAware,
+            IContactInfosAware,
+            IMetaData,
+            IMappingAware,
+            IDetailInfosAware,
+            ILicenseInfo,
+            IPublishedOn,
+            IVideoItemsAware,
+            IImportDateassigneable,
+            ISource,
+            IHasTagInfo
     {
         public EventV2()
         {
@@ -34,10 +48,7 @@ namespace DataModel
         //Self Link to this Data
         public string Self
         {
-            get
-            {
-                return this.Id != null ? "EventV2/" + Uri.EscapeDataString(this.Id) : null;                
-            }
+            get { return this.Id != null ? "EventV2/" + Uri.EscapeDataString(this.Id) : null; }
         }
 
         //Id Shortname and Active Info
@@ -45,47 +56,45 @@ namespace DataModel
         public string? Shortname { get; set; }
         public bool Active { get; set; }
 
-     
-
         //Firstimport and LastChange Section (Here for compatibility reasons could also be removed)
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
 
-        //Source 
+        //Source
         public string? Source { get; set; }
 
         //HasLanguage, for which Languages the dataset has information
         public ICollection<string>? HasLanguage { get; set; }
-        
+
         //Publishedon Array, Event is published for channel xy
         public ICollection<string>? PublishedOn { get; set; }
-        
+
         //Mapping Section, to store Ids and other information of the data provider
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
-        
+
         //RelatedContent, could be used to store Parent/Child Event Information
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
         //Indicates if this is a Parent Event
         public bool? IsRoot { get; set; }
+
         //Event Grouping Id, by flattening the Event here the same Id
         public string? EventGroupId { get; set; }
 
-
         //Dynamic AdditionalProperties field to store Provider Specific data that does not fit into the fields
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
-        
+
         public ICollection<Tags> Tags { get; set; }
 
         public ICollection<string> TagIds { get; set; }
 
         //Description and Contactinfo
         public IDictionary<string, Detail> Detail { get; set; }
-        public IDictionary<string, ContactInfos> ContactInfos { get; set; }        
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
 
         //ImageGallery and Video Data
         public ICollection<ImageGallery>? ImageGallery { get; set; }
-        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }        
+        public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
 
         //Documents for this Event
         public IDictionary<string, List<DocumentDetailed>>? Documents { get; set; }
@@ -93,7 +102,7 @@ namespace DataModel
         //EventInfo Section contains all Infos about Event Dates, Venues etc....
         //public ICollection<EventInfo> EventInfo { get; set; }
 
-        ////Each Event has a "main" Venue, to discuss if this 
+        ////Each Event has a "main" Venue, to discuss if this
         //public List<string> VenueIds { get; set; }
 
         //[SwaggerSchema(Description = "generated field", ReadOnly = true)]
@@ -114,8 +123,7 @@ namespace DataModel
         public double BeginUTC { get; set; }
         public double EndUTC { get; set; }
 
-
-        //Each Event has a "main" Venue, to discuss if this 
+        //Each Event has a "main" Venue, to discuss if this
         public string VenueId { get; set; }
 
         [SwaggerSchema(Description = "generated field", ReadOnly = true)]
@@ -123,7 +131,9 @@ namespace DataModel
         {
             get
             {
-                return this.VenueId != null ? new VenueLink() { Id = this.VenueId, Self = "VenueV2/" + this.VenueId } : new VenueLink() { };
+                return this.VenueId != null
+                    ? new VenueLink() { Id = this.VenueId, Self = "VenueV2/" + this.VenueId }
+                    : new VenueLink() { };
             }
         }
 
@@ -132,7 +142,7 @@ namespace DataModel
 
         //TO Check, section for Event URLS?
 
-        //TO Check, section for Booking Info        
+        //TO Check, section for Booking Info
     }
 
     public class VenueLink
@@ -183,7 +193,21 @@ namespace DataModel
 
     #region VenueV2 Datamodel
 
-    public class VenueV2: IIdentifiable, IActivateable, IHasLanguage, IImageGalleryAware, IContactInfosAware, IMetaData, IMappingAware, IDetailInfosAware, ILicenseInfo, IPublishedOn, IVideoItemsAware, IImportDateassigneable, ISource, IHasTagInfo
+    public class VenueV2
+        : IIdentifiable,
+            IActivateable,
+            IHasLanguage,
+            IImageGalleryAware,
+            IContactInfosAware,
+            IMetaData,
+            IMappingAware,
+            IDetailInfosAware,
+            ILicenseInfo,
+            IPublishedOn,
+            IVideoItemsAware,
+            IImportDateassigneable,
+            ISource,
+            IHasTagInfo
     {
         public VenueV2()
         {
@@ -203,10 +227,7 @@ namespace DataModel
         //Self Link to this Data
         public string Self
         {
-            get
-            {
-                return this.Id != null ? "VenueV2/" + Uri.EscapeDataString(this.Id) : null;
-            }
+            get { return this.Id != null ? "VenueV2/" + Uri.EscapeDataString(this.Id) : null; }
         }
 
         //Id Shortname and Active Info
@@ -222,6 +243,7 @@ namespace DataModel
         public ICollection<string>? HasLanguage { get; set; }
         public ICollection<string>? PublishedOn { get; set; }
         public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
         //We use RelatedContent to store Parent/Child Event Information
         public ICollection<RelatedContent>? RelatedContent { get; set; }
 
@@ -229,9 +251,8 @@ namespace DataModel
         public bool? IsRoot { get; set; }
         public string? VenueGroupId { get; set; }
 
-
         public IDictionary<string, dynamic> AdditionalProperties { get; set; }
-      
+
         //Description and Contactinfo
         public IDictionary<string, Detail> Detail { get; set; }
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
@@ -240,18 +261,17 @@ namespace DataModel
         public ICollection<ImageGallery>? ImageGallery { get; set; }
         public IDictionary<string, ICollection<VideoItems>>? VideoItems { get; set; }
 
-
         public VenueInfo VenueInfo { get; set; }
-        public LocationInfo? LocationInfo { get; set; }                
+        public LocationInfo? LocationInfo { get; set; }
         public ICollection<GpsInfo>? GpsInfo { get; set; }
-                
+
         public DistanceInfo? DistanceInfo { get; set; }
         public ICollection<OperationSchedule>? OperationSchedule { get; set; }
-        
+
         public ICollection<VenueSetupV2>? Capacity { get; set; }
 
         //All Categorization is done via Tags
-        public ICollection<Tags> Tags { get; set; }        
+        public ICollection<Tags> Tags { get; set; }
         public ICollection<string> TagIds { get; set; }
 
         //GpsPoints
@@ -259,10 +279,7 @@ namespace DataModel
         [SwaggerDeprecated("Deprecated, use GpsInfo")]
         public IDictionary<string, GpsInfo> GpsPoints
         {
-            get
-            {
-                return this.GpsInfo.ToGpsPointsDictionary(true);
-            }
+            get { return this.GpsInfo.ToGpsPointsDictionary(true); }
         }
     }
 
@@ -273,7 +290,7 @@ namespace DataModel
         //TODO Fill on Save
         public Tags Tag { get; set; }
 
-        public string TagId { get;set; }
+        public string TagId { get; set; }
     }
 
     public class VenueInfo
@@ -281,7 +298,7 @@ namespace DataModel
         public int? Beds { get; set; }
         public int? Rooms { get; set; }
         public int? SquareMeters { get; set; }
-        public bool? Indoor { get; set; }               
+        public bool? Indoor { get; set; }
     }
 
     #endregion
@@ -302,44 +319,110 @@ namespace DataModel
         //New Rateplans
         public ICollection<RatePlan>? RatePlan { get; set; }
 
+        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
+        public new string? TrustYouID
+        {
+            get
+            {
+                return this.Review != null && this.Review.ContainsKey("trustyou")
+                    ? this.Review["trustyou"].ReviewId
+                    : "";
+            }
+        }
 
         [SwaggerDeprecated("Deprecated, use Review.trustyou")]
-        public new string? TrustYouID { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].ReviewId : ""; } }
+        public new double? TrustYouScore
+        {
+            get
+            {
+                return this.Review != null && this.Review.ContainsKey("trustyou")
+                    ? this.Review["trustyou"].Score
+                    : null;
+            }
+        }
 
         [SwaggerDeprecated("Deprecated, use Review.trustyou")]
-        public new double? TrustYouScore { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Score : null; } }
+        public new int? TrustYouResults
+        {
+            get
+            {
+                return this.Review != null && this.Review.ContainsKey("trustyou")
+                    ? this.Review["trustyou"].Results
+                    : null;
+            }
+        }
 
         [SwaggerDeprecated("Deprecated, use Review.trustyou")]
-        public new int? TrustYouResults { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Results : null; } }
+        public new bool? TrustYouActive
+        {
+            get
+            {
+                return this.Review != null && this.Review.ContainsKey("trustyou")
+                    ? this.Review["trustyou"].Active
+                    : null;
+            }
+        }
 
         [SwaggerDeprecated("Deprecated, use Review.trustyou")]
-        public new bool? TrustYouActive { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].Active : null; } }
-
-        [SwaggerDeprecated("Deprecated, use Review.trustyou")]
-        public new int? TrustYouState { get { return this.Review != null && this.Review.ContainsKey("trustyou") ? this.Review["trustyou"].StateInteger : null; } }
+        public new int? TrustYouState
+        {
+            get
+            {
+                return this.Review != null && this.Review.ContainsKey("trustyou")
+                    ? this.Review["trustyou"].StateInteger
+                    : null;
+            }
+        }
 
         //Accommodation Properties
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.HasApartment")]
-        public new bool HasApartment { get { return this.AccoProperties != null ? this.AccoProperties.HasApartment.Value : false; } }
+        public new bool HasApartment
+        {
+            get
+            {
+                return this.AccoProperties != null ? this.AccoProperties.HasApartment.Value : false;
+            }
+        }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.HasRoom")]
-        public new bool? HasRoom { get { return this.AccoProperties != null ? this.AccoProperties.HasRoom : null; } }
+        public new bool? HasRoom
+        {
+            get { return this.AccoProperties != null ? this.AccoProperties.HasRoom : null; }
+        }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsCamping")]
-        public new bool? IsCamping { get { return this.AccoProperties != null ? this.AccoProperties.IsCamping : null; } }
+        public new bool? IsCamping
+        {
+            get { return this.AccoProperties != null ? this.AccoProperties.IsCamping : null; }
+        }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsGastronomy")]
-        public bool? IsGastronomy { get { return this.AccoProperties != null ? this.AccoProperties.IsGastronomy : null; } }
+        public bool? IsGastronomy
+        {
+            get { return this.AccoProperties != null ? this.AccoProperties.IsGastronomy : null; }
+        }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsBookable")]
-        public new bool IsBookable { get { return this.AccoProperties != null ? this.AccoProperties.IsBookable.Value : false; } }
+        public new bool IsBookable
+        {
+            get
+            {
+                return this.AccoProperties != null ? this.AccoProperties.IsBookable.Value : false;
+            }
+        }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.IsAccommodation")]
-        public new bool? IsAccommodation { get { return this.AccoProperties != null ? this.AccoProperties.IsAccommodation : null; } }
+        public new bool? IsAccommodation
+        {
+            get { return this.AccoProperties != null ? this.AccoProperties.IsAccommodation : null; }
+        }
 
         [SwaggerDeprecated("Deprecated, use AccoProperties.TVMember")]
-        public new bool? TVMember { get { return this.AccoProperties != null ? this.AccoProperties.TVMember : null; } }
+        public new bool? TVMember
+        {
+            get { return this.AccoProperties != null ? this.AccoProperties.TVMember : null; }
+        }
 
         //Tags
         //All Categorization is done via Tags
@@ -429,12 +512,78 @@ namespace DataModel
             //According to old LTS Documentation State (0=not rated, 1=do not display, 2=display)
             switch (trustyoustate)
             {
-                case 2: return "rated";
-                case 1: return "underValued";
-                case 0: return "notRated";
-                default: return "";
+                case 2:
+                    return "rated";
+                case 1:
+                    return "underValued";
+                case 0:
+                    return "notRated";
+                default:
+                    return "";
             }
         }
+    }
+
+    #endregion
+
+    #region ODHActivityPoiV2
+
+    public class ODHActivityPoiV2: ODHActivityPoiLinked
+    {
+        //Fits into Mapping
+        public new string? OutdooractiveID { get; set; }
+        public new string? OutdooractiveElevationID { get; set; }
+        public new string? SmgId { get; set; }
+        public new string? CustomId { get; set; }
+        public new string? OwnerRid { get; set; }
+        public new int? WayNumber { get; set; }
+        public new string? Number { get; set; }
+
+        //Properties to remove/rename/replace
+
+        public new int? AgeFrom { get; set; }
+        public new int? AgeTo { get; set; }
+        public new int? MaxSeatingCapacity { get; set; }
+
+        public new bool? CopyrightChecked { get; set; }
+        public new string? Difficulty { get; set; }
+        public new string? Type { get; set; }
+        public new string? SubType { get; set; }
+        public new string? PoiType { get; set; }
+        public new bool SmgActive { get; set; }
+        public new HashSet<string>? AreaId { get; set; }
+        public new string? TourismorganizationId { get; set; }
+        
+        public new double? AltitudeDifference { get; set; }
+        public new double? AltitudeHighestPoint { get; set; }
+        public new double? AltitudeLowestPoint { get; set; }
+        public new double? AltitudeSumUp { get; set; }
+        public new double? AltitudeSumDown { get; set; }
+        public new double? DistanceDuration { get; set; }
+        public new double? DistanceLength { get; set; }
+
+
+        public new bool? Highlight { get; set; }
+        public new bool? IsOpen { get; set; }
+        public new bool? IsPrepared { get; set; }
+        public new bool? RunToValley { get; set; }
+        public new bool? IsWithLigth { get; set; }
+        public new bool? HasRentals { get; set; }
+        public new bool? HasFreeEntrance { get; set; }
+        public new bool? LiftAvailable { get; set; }
+        public new bool? FeetClimb { get; set; }
+        public new bool? BikeTransport { get; set; }
+
+        
+        //Related Content?
+        public new List<string>? ChildPoiIds { get; set; }
+        public new List<string>? MasterPoiIds { get; set; }
+
+        public new string? SyncSourceInterface { get; set; }
+        public new string? SyncUpdateMode { get; set; }
+        public new ICollection<string>? PoiServices { get; set; }
+        public new IDictionary<string, List<PoiProperty>> PoiProperty { get; set; }
+
     }
 
     #endregion
@@ -454,7 +603,7 @@ namespace DataModel
 
     //NOT USED anymore
     //public class EventInfo
-    //{       
+    //{
     //    //Begin and Enddate in UTC (could be created automatically)
     //    public double BeginUTC { get; set; }
     //    public double EndUTC { get; set; }
@@ -478,10 +627,9 @@ namespace DataModel
     //    public IDictionary<string, Detail> Detail { get; set; }
 
     //    //Documents
-    //    public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }        
+    //    public IDictionary<string, List<DocumentDetailed>?> Documents { get; set; }
 
     //    //Capacity of the Event Venue Combination (not always the same as the Venue Capacity)
     //    public int? Capacity { get; set; }
     //}
-
 }

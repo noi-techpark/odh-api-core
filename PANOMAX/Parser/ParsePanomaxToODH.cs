@@ -2,10 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
-using DataModel;
-using Helper;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +9,20 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using DataModel;
+using Helper;
+using Newtonsoft.Json;
 
 namespace PANOMAX
 {
     public class ParsePanomaxToODH
     {
-        public static WebcamInfoLinked ParseWebcamToWebcamInfo(WebcamInfoLinked webcam, dynamic webcamtoparse, string odhid)
+        public static WebcamInfoLinked ParseWebcamToWebcamInfo(
+            WebcamInfoLinked webcam,
+            dynamic webcamtoparse,
+            string odhid
+        )
         {
             if (webcam == null)
                 webcam = new WebcamInfoLinked();
@@ -42,7 +46,8 @@ namespace PANOMAX
             ContactInfos contactinfo = new ContactInfos();
             contactinfo.CompanyName = webcamtoparse.customerName;
             contactinfo.LogoUrl = webcamtoparse.logo;
-            contactinfo.CountryCode = webcamtoparse.country != null ? ((string)webcamtoparse.country).ToUpper() : "";
+            contactinfo.CountryCode =
+                webcamtoparse.country != null ? ((string)webcamtoparse.country).ToUpper() : "";
             contactinfo.CountryName = webcamtoparse.countryName;
             contactinfo.City = webcamtoparse.city;
             contactinfo.Region = webcamtoparse.state;
@@ -55,11 +60,14 @@ namespace PANOMAX
             //GPS
             GpsInfo gpsinfo = new GpsInfo();
             gpsinfo.Gpstype = "position";
-            gpsinfo.Latitude = webcamtoparse.latitude != null ? Convert.ToDouble(webcamtoparse.latitude) : 0;
-            gpsinfo.Longitude = webcamtoparse.longitude != null ? Convert.ToDouble(webcamtoparse.longitude) : 0;
-            gpsinfo.Altitude = webcamtoparse.elevation != null ? Convert.ToDouble(webcamtoparse.elevation) : 0;
+            gpsinfo.Latitude =
+                webcamtoparse.latitude != null ? Convert.ToDouble(webcamtoparse.latitude) : 0;
+            gpsinfo.Longitude =
+                webcamtoparse.longitude != null ? Convert.ToDouble(webcamtoparse.longitude) : 0;
+            gpsinfo.Altitude =
+                webcamtoparse.elevation != null ? Convert.ToDouble(webcamtoparse.elevation) : 0;
             gpsinfo.AltitudeUnitofMeasure = "m";
-            webcam.GpsInfo = new List<GpsInfo>() { gpsinfo };            
+            webcam.GpsInfo = new List<GpsInfo>() { gpsinfo };
 
             //WebcamProperties
             WebcamProperties webcamproperties = new WebcamProperties();
@@ -67,7 +75,8 @@ namespace PANOMAX
             webcamproperties.ViewAngleDegree = webcamtoparse.viewAngleDegree;
             webcamproperties.ZeroDirection = webcamtoparse.zeroDirection;
             webcamproperties.HtmlEmbed = webcamtoparse.htmlEmbed;
-            webcamproperties.TourCam = webcamtoparse.latitude != null ? (bool)webcamtoparse.tourCam : false;
+            webcamproperties.TourCam =
+                webcamtoparse.latitude != null ? (bool)webcamtoparse.tourCam : false;
 
             webcam.WebCamProperties = webcamproperties;
 
@@ -79,41 +88,54 @@ namespace PANOMAX
                 imagetoadd.ImageSource = "panomax";
                 imagetoadd.ImageUrl = imagetoparse.url;
                 imagetoadd.Width = imagetoparse.width;
-                imagetoadd.Height = imagetoparse.height;           
-                
-                if(imagetoadd.ImageUrl.Contains("thumb"))
+                imagetoadd.Height = imagetoparse.height;
+
+                if (imagetoadd.ImageUrl.Contains("thumb"))
                 {
                     imagetoadd.ListPosition = 0;
 
-                    imagetoadd.ImageTags = new List<string>() { "thumbnail" };                    
+                    imagetoadd.ImageTags = new List<string>() { "thumbnail" };
                 }
 
                 if (imagetoadd.ImageUrl.Contains("small"))
                 {
-                    imagetoadd.ListPosition = 0;                    
+                    imagetoadd.ListPosition = 0;
                 }
 
                 webcam.ImageGallery.Add(imagetoadd);
             }
 
-            webcam.ImageGallery = webcam.ImageGallery.OrderByDescending(x => x.ListPosition).ToList();
+            webcam.ImageGallery = webcam
+                .ImageGallery.OrderByDescending(x => x.ListPosition)
+                .ToList();
 
             //Mapping
-            webcam.Mapping.TryAddOrUpdate("panomax", new Dictionary<string, string>() { { "id", (string)webcamtoparse.id }, { "camId", (string)webcamtoparse.camId }, { "customerId", (string)webcamtoparse.customerId } });
+            webcam.Mapping.TryAddOrUpdate(
+                "panomax",
+                new Dictionary<string, string>()
+                {
+                    { "id", (string)webcamtoparse.id },
+                    { "camId", (string)webcamtoparse.camId },
+                    { "customerId", (string)webcamtoparse.customerId },
+                }
+            );
 
             //HasLanguage
-            webcam.HasLanguage = webcam.Detail.Select(x => x.Key).Distinct().ToList();            
+            webcam.HasLanguage = webcam.Detail.Select(x => x.Key).Distinct().ToList();
 
             return webcam;
         }
 
-        public static IDictionary<string, ICollection<VideoItems>> ParseVideosToVideoItems(IDictionary<string, ICollection<VideoItems>> videoitemsdict, dynamic videostoparse)
+        public static IDictionary<string, ICollection<VideoItems>> ParseVideosToVideoItems(
+            IDictionary<string, ICollection<VideoItems>> videoitemsdict,
+            dynamic videostoparse
+        )
         {
-            if(videostoparse != null)
+            if (videostoparse != null)
             {
                 foreach (var videotoparse in videostoparse.videos)
                 {
-                    if(videoitemsdict == null)
+                    if (videoitemsdict == null)
                         videoitemsdict = new Dictionary<string, ICollection<VideoItems>>();
 
                     var videoitemlist = new List<VideoItems>();
@@ -131,7 +153,7 @@ namespace PANOMAX
 
                     videoitemsdict.TryAddOrUpdate("en", videoitemlist);
                 }
-            }            
+            }
 
             return videoitemsdict;
         }

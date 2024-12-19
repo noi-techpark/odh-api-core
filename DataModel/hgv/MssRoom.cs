@@ -30,5 +30,5 @@ namespace DataModel
             get { return person; }
             set { person = value; }
         }
-    }   
+    }
 }

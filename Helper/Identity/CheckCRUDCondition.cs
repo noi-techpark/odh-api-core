@@ -2,21 +2,22 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using DataModel;
-using SqlKata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataModel;
+using SqlKata;
 
 namespace Helper.Identity
 {
     public class CheckCRUDCondition
     {
-        public static bool CRUDOperationAllowed<T>(T data, string? condition) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static bool CRUDOperationAllowed<T>(T data, string? condition)
+            where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
-            //TODO what if condition has more variables NOT working at the moment because 
+            //TODO what if condition has more variables NOT working at the moment because
 
             bool checkresult = true;
 
@@ -25,15 +26,24 @@ namespace Helper.Identity
 
             List<bool> checks = new List<bool>();
 
-            var splittedcondition = condition.Split("&").Select(x => x.Split("=")).Select(x => new ReadCondition() { Column = x[0], Value = x[1] });
+            var splittedcondition = condition
+                .Split("&")
+                .Select(x => x.Split("="))
+                .Select(x => new ReadCondition() { Column = x[0], Value = x[1] });
 
-            var itemstoadd = splittedcondition.GroupBy(x => x.Column).Where(g => g.Count() == 1).ToList();
+            var itemstoadd = splittedcondition
+                .GroupBy(x => x.Column)
+                .Where(g => g.Count() == 1)
+                .ToList();
             foreach (var item in itemstoadd)
             {
                 checks.Add(CheckTheFields(data, item.Key, item.Select(x => x.Value).ToList()));
             }
 
-            var itemstomerge = splittedcondition.GroupBy(x => x.Column).Where(g => g.Count() > 1).ToList();
+            var itemstomerge = splittedcondition
+                .GroupBy(x => x.Column)
+                .Where(g => g.Count() > 1)
+                .ToList();
             foreach (var item in itemstomerge)
             {
                 checks.Add(CheckTheFields(data, item.Key, item.Select(x => x.Value).ToList()));
@@ -42,16 +52,17 @@ namespace Helper.Identity
             return checks.All(x => x == true);
         }
 
-        public static bool CheckTheFields<T>(T data, string input, List<string> values) where T : IIdentifiable, IImportDateassigneable, IMetaData
+        public static bool CheckTheFields<T>(T data, string input, List<string> values)
+            where T : IIdentifiable, IImportDateassigneable, IMetaData
         {
             var checkresult = true;
 
             switch (input.ToLower())
             {
-                //Hardcoded 
+                //Hardcoded
                 case "source":
-                        if(!values.Any(x => x == data._Meta.Source))
-                            checkresult = false;
+                    if (!values.Any(x => x == data._Meta.Source))
+                        checkresult = false;
                     break;
                 //Using reflection to get the Type
                 default:
