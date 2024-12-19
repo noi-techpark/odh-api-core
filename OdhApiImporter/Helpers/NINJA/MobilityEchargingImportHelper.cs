@@ -162,6 +162,8 @@ namespace OdhApiImporter.Helpers
                 }
                 else
                 {
+                    errorimportcounter = errorimportcounter + 1;
+
                     WriteLog.LogToConsole(
                         id,
                         "dataimport",
