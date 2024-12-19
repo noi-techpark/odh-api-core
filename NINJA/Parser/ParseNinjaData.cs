@@ -1073,7 +1073,7 @@ namespace NINJA.Parser
 
                 //Source, SyncSourceInterface
                 echargingpoi.Source = data.porigin.ToLower();
-                echargingpoi.SyncSourceInterface = data.pmetadata.provider.ToLower();
+                echargingpoi.SyncSourceInterface = !String.IsNullOrEmpty(data.pmetadata.provider) ? data.pmetadata.provider.ToLower() : data.porigin.ToLower();
                 echargingpoi.SyncUpdateMode = "partial";
 
                 //Hack spreadsheet

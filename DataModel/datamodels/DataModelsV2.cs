@@ -530,15 +530,21 @@ namespace DataModel
 
     public class ODHActivityPoiV2: ODHActivityPoiLinked
     {
+        //Fits into Mapping
+        public new string? OutdooractiveID { get; set; }
+        public new string? OutdooractiveElevationID { get; set; }
+        public new string? SmgId { get; set; }
+        public new string? CustomId { get; set; }
+        public new string? OwnerRid { get; set; }
+        public new int? WayNumber { get; set; }
+        public new string? Number { get; set; }
+
         //Properties to remove/rename/replace
 
         public new int? AgeFrom { get; set; }
         public new int? AgeTo { get; set; }
         public new int? MaxSeatingCapacity { get; set; }
-        public new string? OutdooractiveID { get; set; }
-        public new string? OutdooractiveElevationID { get; set; }
-        public new string? SmgId { get; set; }
-        public new string? CustomId { get; set; }
+
         public new bool? CopyrightChecked { get; set; }
         public new string? Difficulty { get; set; }
         public new string? Type { get; set; }
@@ -547,14 +553,15 @@ namespace DataModel
         public new bool SmgActive { get; set; }
         public new HashSet<string>? AreaId { get; set; }
         public new string? TourismorganizationId { get; set; }
+        
         public new double? AltitudeDifference { get; set; }
         public new double? AltitudeHighestPoint { get; set; }
         public new double? AltitudeLowestPoint { get; set; }
         public new double? AltitudeSumUp { get; set; }
         public new double? AltitudeSumDown { get; set; }
-
         public new double? DistanceDuration { get; set; }
         public new double? DistanceLength { get; set; }
+
 
         public new bool? Highlight { get; set; }
         public new bool? IsOpen { get; set; }
@@ -565,17 +572,13 @@ namespace DataModel
         public new bool? HasFreeEntrance { get; set; }
         public new bool? LiftAvailable { get; set; }
         public new bool? FeetClimb { get; set; }
-
         public new bool? BikeTransport { get; set; }
 
-        public new string? OwnerRid { get; set; }
-
-        public new int? WayNumber { get; set; }
-
-        public new string? Number { get; set; }
-
+        
+        //Related Content?
         public new List<string>? ChildPoiIds { get; set; }
         public new List<string>? MasterPoiIds { get; set; }
+
         public new string? SyncSourceInterface { get; set; }
         public new string? SyncUpdateMode { get; set; }
         public new ICollection<string>? PoiServices { get; set; }
