@@ -143,6 +143,9 @@ namespace DataModel
         //TO Check, section for Event URLS?
 
         //TO Check, section for Booking Info
+
+        //TO CHECK Add GpsInfo to have compatibility
+        //public ICollection<GpsInfo>? GpsInfo { get; set; }
     }
 
     public class VenueLink
