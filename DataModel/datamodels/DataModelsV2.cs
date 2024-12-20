@@ -589,6 +589,17 @@ namespace DataModel
 
     }
 
+    public class DishRatesV2 : DishRatesLinked
+    {
+        public double? MinAmount { get; set; }
+        public double? MaxAmount { get; set; }
+    }
+
+    public class CapacityCeremonyV2 : CapacityCeremonyLinked
+    {
+        public int? MaxSeatingCapacity { get; set; }
+    }
+
     #endregion
 
     #region AdditionalInfos
