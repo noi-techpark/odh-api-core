@@ -187,7 +187,7 @@ namespace OdhApiCore.Controllers
                     searchfilter: searchfilter,
                     seed: seed,
                     fields: fields ?? Array.Empty<string>(),
-                    new GeoPolygonSearchResult(),
+                    null,
                     new PGGeoSearchResult(),
                     rawfilter,
                     rawsort,
