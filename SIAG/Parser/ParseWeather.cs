@@ -1677,7 +1677,7 @@ namespace SIAG
                 ("c", "it") => "Nuvoloso",
                 ("c", "en") => "cloudy",
 
-                ("d", "de") => "Stark bew�lkt",
+                ("d", "de") => "Stark bewölkt",
                 ("d", "it") => "Molto nuvoloso",
                 ("d", "en") => "very cloudy",
 
@@ -1685,7 +1685,7 @@ namespace SIAG
                 ("e", "it") => "Coperto",
                 ("e", "en") => "overcast",
 
-                ("f", "de") => "Wolkig, m��iger Regen",
+                ("f", "de") => "Wolkig, mäßiger Regen",
                 ("f", "it") => "Nuvoloso, piogge moderate",
                 ("f", "en") => "cloudy with moderate rain",
 
@@ -1693,7 +1693,7 @@ namespace SIAG
                 ("g", "it") => "Nuvoloso, piogge intense",
                 ("g", "en") => "cloudy with intense rain",
 
-                ("h", "de") => "Bedeckt, m��iger Regen",
+                ("h", "de") => "Bedeckt, mäßiger Regen",
                 ("h", "it") => "Coperto, piogge moderate",
                 ("h", "en") => "overcast with moderate rain",
 
@@ -1705,8 +1705,8 @@ namespace SIAG
                 ("j", "it") => "Coperto, piogge deboli",
                 ("j", "en") => "overcast with light rain",
 
-                ("k", "de") => "Durchscheinende Bew�lkung",
-                ("k", "it") => "Nuvolosit� translucida",
+                ("k", "de") => "Durchscheinende Bewölkung",
+                ("k", "it") => "Nuvolositá translucida",
                 ("k", "en") => "translucent cloudy",
 
                 ("l", "de") => "Wolkig, leichter Schneefall",
@@ -1721,7 +1721,7 @@ namespace SIAG
                 ("n", "it") => "Coperto, nevicate deboli",
                 ("n", "en") => "overcast with light snow",
 
-                ("o", "de") => "Bedeckt, m��iger Schneefall",
+                ("o", "de") => "Bedeckt, mäßiger Schneefall",
                 ("o", "it") => "Coperto, nevicate moderate",
                 ("o", "en") => "overcast with moderate snow",
 
@@ -1738,14 +1738,14 @@ namespace SIAG
                 ("r", "en") => "overcast with rain and snow",
 
                 ("s", "de") => "Hochnebel",
-                ("s", "it") => "Nuvolosit� bassa",
+                ("s", "it") => "Nuvolositá bassa",
                 ("s", "en") => "low cloudiness",
 
                 ("t", "de") => "Nebel",
                 ("t", "it") => "Nebbia",
                 ("t", "en") => "Fog",
 
-                ("u", "de") => "Wolkig, Gewitter mit m��igen Schauern",
+                ("u", "de") => "Wolkig, Gewitter mit mäßigen Schauern",
                 ("u", "it") => "Nuvoloso, temporali con moderati rovesci",
                 ("u", "en") => "cloudy, thunderstorms with moderate showers",
 
@@ -1753,7 +1753,7 @@ namespace SIAG
                 ("v", "it") => "Coperto, temporali con rovesci intensi",
                 ("v", "en") => "cloudy, thunderstorms with intense showers",
 
-                ("w", "de") => "Wolkig, Gewitter mit m��igen Schneeregenschauern",
+                ("w", "de") => "Wolkig, Gewitter mit mäßigen Schneeregenschauern",
                 ("w", "it") => "Nuvoloso, temporali con moderati rovesci nevosi e piovosi",
                 ("w", "en") => "cloudy, thunderstorms with moderate snowy and rainy showers",
 
@@ -1761,7 +1761,7 @@ namespace SIAG
                 ("x", "it") => "Coperto, temporali con intensi rovesci nevosi e piovosi",
                 ("x", "en") => "cloudy, thunderstorms with intense snowy and rainy showers",
 
-                ("y", "de") => "Wolkig, Gewitter mit m��igen Schneeschauern",
+                ("y", "de") => "Wolkig, Gewitter mit mäßigen Schneeschauern",
                 ("y", "it") => "Nuvoloso, temporali con moderati rovesci nevosi",
                 ("y", "en") => "cloudy, thunderstorms with moderate snowy showers",
 
