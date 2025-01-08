@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
@@ -1252,20 +1254,39 @@ namespace OdhApiCore.Controllers
             //};
             //await fileTransferUtility.DownloadAsync(request);
 
-            using (
-                StreamReader r = new StreamReader(
-                    settings.JsonConfig.Jsondir
-                        + settings.S3Config["dc-meteorology-province-forecast"].Filename
-                )
-            )
-            {
-                string json = r.ReadToEnd();
 
-                if (json != null)
-                    return JsonConvert.DeserializeObject<SiagWeatherForecastModel>(json);
-                else
-                    throw new Exception("Unable to parse file");
-            }
+            string jsonString = System.IO.File.ReadAllText(settings.JsonConfig.Jsondir + settings.S3Config["dc-meteorology-province-forecast"].Filename, Encoding.UTF8);
+            
+            if(jsonString != null)
+                return JsonConvert.DeserializeObject<SiagWeatherForecastModel>(Regex.Unescape(jsonString));
+            else
+                throw new Exception("Unable to parse file");
+
+            //using (
+            //    StreamReader r = new StreamReader(
+            //        settings.JsonConfig.Jsondir
+            //            + settings.S3Config["dc-meteorology-province-forecast"].Filename, Encoding.ASCII
+            //    )
+            //)
+            //{
+            //    string json = r.ReadToEnd();
+
+                //    //Encoding latinEncoding = Encoding.GetEncoding("iso-8859-1");
+                //    //Encoding utf8Encoding = Encoding.UTF8;
+
+                //    //byte[] latinBytes = latinEncoding.GetBytes(json);
+                //    //byte[] utf8Bytes = Encoding.Convert(latinEncoding, utf8Encoding, latinBytes);
+
+                //    //var utf8String = Encoding.UTF8.GetString(utf8Bytes);
+
+
+
+                //    if (json != null)
+                //        return System.Text.Json.JsonSerializer.Deserialize<SiagWeatherForecastModel>(json);
+                //    //return JsonConvert.DeserializeObject<SiagWeatherForecastModel>(json);
+                //    else
+                //        throw new Exception("Unable to parse file");
+                //}
         }
 
         #endregion
