@@ -283,7 +283,7 @@ namespace OdhApiCore.Controllers
         /// GET Accommodation Single
         /// </summary>
         /// <param name="id">ID of the Accommodation</param>
-        /// <param name="idsource">ID Source Filter (possible values:'lts','hgv'), (default:'lts')</param>
+        /// <param name="idsource">ID Source Filter (possible values:'lts','hgv','a0r_id'), (default:'lts')</param>
         /// <param name="boardfilter">Boardfilter BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = (No Filter), (default:'null')</param>
         /// <param name="availabilitycheck">Availability Check enabled/disabled (possible Values: 'true', 'false), (default Value: 'false') NOT AVAILABLE AS OPEN DATA</param>
         /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED, (default:'Today')</param>
@@ -331,6 +331,14 @@ namespace OdhApiCore.Controllers
 
             if (idsource == "hgv")
                 return await GetSingleByHgvId(
+                    id,
+                    language,
+                    fields: fields ?? Array.Empty<string>(),
+                    removenullvalues,
+                    cancellationToken
+                );
+            else if (idsource == "a0r_id")
+                return await GetSingleBya0r_id(
                     id,
                     language,
                     fields: fields ?? Array.Empty<string>(),
@@ -1095,6 +1103,43 @@ namespace OdhApiCore.Controllers
                     .Query("accommodations")
                     .Select("data")
                     .Where("gen_hgvid", "ILIKE", id)
+                    .FilterDataByAccessRoles(UserRolesToFilter)
+                    .When(
+                        !String.IsNullOrEmpty(additionalfilter),
+                        q => q.FilterAdditionalDataByCondition(additionalfilter)
+                    );
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>(
+                    cancellationToken: cancellationToken
+                );
+
+                return data?.TransformRawData(
+                    language,
+                    fields,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGenerator,
+                    fieldstohide: null
+                );
+            });
+        }
+
+        private Task<IActionResult> GetSingleBya0r_id(
+           string id,
+           string? language,
+           string[] fields,
+           bool removenullvalues,
+           CancellationToken cancellationToken
+       )
+        {
+            return DoAsyncReturn(async () =>
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
+                var query = QueryFactory
+                    .Query("accommodations")
+                    .Select("data")
+                    .Where("gen_a0r_id", "ILIKE", id)
                     .FilterDataByAccessRoles(UserRolesToFilter)
                     .When(
                         !String.IsNullOrEmpty(additionalfilter),
