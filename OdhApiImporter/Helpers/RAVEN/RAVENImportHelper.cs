@@ -89,6 +89,7 @@ namespace OdhApiImporter.Helpers
                         QueryFactory,
                         settings,
                         true,
+                        true,
                         true
                     );
 
