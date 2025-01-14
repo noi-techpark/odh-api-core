@@ -126,7 +126,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     objecttosave.Shortname = objecttosave.TagName.ContainsKey("en")
                         ? objecttosave.TagName["en"]
                         : objecttosave.TagName.FirstOrDefault().Value;
-                    objecttosave.Types = new List<string>() { "tags" + data.entityType };
+                    objecttosave.Types = new List<string>() { "tags" + data.entityType.ToLower() };
 
                     if (!typelistlts.Contains("ltstags"))
                         typelistlts.Add("ltstags");
