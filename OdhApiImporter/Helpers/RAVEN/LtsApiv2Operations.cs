@@ -300,6 +300,29 @@ namespace OdhApiImporter.Helpers.RAVEN
                 }
                 //Populate Tags (Id/Source/Type)
                 await accommodation.UpdateTagsExtension(queryFactory);
+
+                GenericResultsHelper.GetSuccessUpdateResult(
+                    accommodation.Id,
+                    "api",
+                    "Update Guestcard",
+                    "single",
+                    "Update Guestcard success",
+                    "accommodation",
+                    new UpdateDetail()
+                    {
+                        updated = 1,
+                        changes = null,
+                        comparedobjects = null,
+                        created = 0,
+                        deleted = 0,
+                        error = 0,
+                        objectchanged = 0,
+                        objectimagechanged = 0,
+                        pushed = null,
+                        pushchannels = null,
+                    },                    
+                    true
+                );
             }
             catch (Exception ex)
             {
