@@ -58,7 +58,7 @@ namespace OdhApiImporter.Helpers.RAVEN
                 var qs = new LTSQueryStrings()
                 {
                     page_size = 1,
-                    fields = "cinCode,amenities,suedtirolGuestPass",
+                    fields = "cinCode,amenities,suedtirolGuestPass,roomGroups",
                 };
                 var dict = ltsapi.GetLTSQSDictionary(qs);
 
