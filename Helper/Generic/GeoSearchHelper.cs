@@ -323,7 +323,7 @@ namespace Helper
                         .Where("country", inputquery[0].ToUpper())
                         .Where("type", inputquery[1].ToLower())
                         .When(idtofilter, x => x.Where("id", parsedid))
-                        .When(!idtofilter, x => x.WhereLike("name", inputquery[2]))
+                        .When(!idtofilter, x => x.WhereLike("name", inputquery[2]).OrWhereLike("name_alternative", inputquery[2]))
                         //create a generated column which constructs a name by id,type and name
                         .FirstOrDefaultAsync<string>();
 

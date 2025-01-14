@@ -283,7 +283,7 @@ namespace OdhApiCore.Controllers
         /// GET Accommodation Single
         /// </summary>
         /// <param name="id">ID of the Accommodation</param>
-        /// <param name="idsource">ID Source Filter (possible values:'lts','hgv'), (default:'lts')</param>
+        /// <param name="idsource">ID Source Filter (possible values:'lts','hgv','a0r_id'), (default:'lts')</param>
         /// <param name="boardfilter">Boardfilter BITMASK values: 0 = (all boards), 1 = (without board), 2 = (breakfast), 4 = (half board), 8 = (full board), 16 = (All inclusive), 'null' = (No Filter), (default:'null')</param>
         /// <param name="availabilitycheck">Availability Check enabled/disabled (possible Values: 'true', 'false), (default Value: 'false') NOT AVAILABLE AS OPEN DATA</param>
         /// <param name="arrival">Arrival Date (yyyy-MM-dd) REQUIRED, (default:'Today')</param>
@@ -331,6 +331,14 @@ namespace OdhApiCore.Controllers
 
             if (idsource == "hgv")
                 return await GetSingleByHgvId(
+                    id,
+                    language,
+                    fields: fields ?? Array.Empty<string>(),
+                    removenullvalues,
+                    cancellationToken
+                );
+            else if (idsource == "a0r_id")
+                return await GetSingleBya0r_id(
                     id,
                     language,
                     fields: fields ?? Array.Empty<string>(),
@@ -511,7 +519,7 @@ namespace OdhApiCore.Controllers
         /// GET Accommodation Room Info by Accommodation
         /// </summary>
         /// <param name="accoid">Accommodation ID</param>
-        /// <param name="idsource">HGV ID or LTS ID of the Accommodation (possible values:'lts','hgv'), (default:'lts')</param>
+        /// <param name="idsource">HGV ID or LTS ID of the Accommodation (possible values:'lts','hgv','a0r_id'), (default:'lts')</param>
         /// <param name="source">Source Filter (possible values:'lts','hgv'), (default:null)</param>
         /// <param name="getall">Get Rooms from all sources (If an accommodation is bookable on Booking Southtyrol, rooms from this source are returned, setting getall to true returns also LTS Rooms), (default:false)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
@@ -550,6 +558,10 @@ namespace OdhApiCore.Controllers
             string idtocheck = accoid;
 
             if (idsource == "hgv")
+            {
+                idtocheck = await GetAccoIdByHgvId(accoid, cancellationToken);
+            }
+            else if (idsource == "a0r_id")
             {
                 idtocheck = await GetAccoIdByHgvId(accoid, cancellationToken);
             }
@@ -1115,6 +1127,43 @@ namespace OdhApiCore.Controllers
             });
         }
 
+        private Task<IActionResult> GetSingleBya0r_id(
+           string id,
+           string? language,
+           string[] fields,
+           bool removenullvalues,
+           CancellationToken cancellationToken
+       )
+        {
+            return DoAsyncReturn(async () =>
+            {
+                //Additional Read Filters to Add Check
+                AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
+
+                var query = QueryFactory
+                    .Query("accommodations")
+                    .Select("data")
+                    .Where("gen_a0r_id", "ILIKE", id)
+                    .FilterDataByAccessRoles(UserRolesToFilter)
+                    .When(
+                        !String.IsNullOrEmpty(additionalfilter),
+                        q => q.FilterAdditionalDataByCondition(additionalfilter)
+                    );
+
+                var data = await query.FirstOrDefaultAsync<JsonRaw?>(
+                    cancellationToken: cancellationToken
+                );
+
+                return data?.TransformRawData(
+                    language,
+                    fields,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGenerator,
+                    fieldstohide: null
+                );
+            });
+        }
+
         private async Task<string> GetAccoIdByHgvId(string id, CancellationToken cancellationToken)
         {
             var query = QueryFactory
@@ -1128,6 +1177,21 @@ namespace OdhApiCore.Controllers
 
             return data ?? "";
         }
+
+        private async Task<string> GetAccoIdBya0r_id(string id, CancellationToken cancellationToken)
+        {
+            var query = QueryFactory
+                .Query("accommodations")
+                .Select("id")
+                .Where("gen_a0r_id", "ILIKE", id)
+                //.Anonymous_Logged_UserRule_GeneratedColumn(FilterClosedData, !ReducedData);
+                .FilterDataByAccessRoles(UserRolesToFilter);
+
+            var data = await query.FirstOrDefaultAsync<string?>();
+
+            return data ?? "";
+        }
+
 
         private Task<IActionResult> GetAccommodationRooms(
             string id,
