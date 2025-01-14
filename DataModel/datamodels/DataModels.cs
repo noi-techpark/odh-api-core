@@ -616,6 +616,8 @@ namespace DataModel
 
         public AccoHGVInfo? AccoHGVInfo { get; set; }
 
+        public AccoLTSInfo? AccoLTSInfo { get; set; }
+
         public AccoOverview? AccoOverview { get; set; }
 
         [SwaggerSchema("Accommodation Id on Trust You")]
@@ -788,6 +790,12 @@ namespace DataModel
         public bool? Bookable { get; set; }
         public string? AvailableFrom { get; set; }
         public int? PriceFrom { get; set; }
+    }
+
+    public class AccoLTSInfo
+    {
+        public int? PriceFrom { get; set; }
+        public int? PriceFromPerUnit { get; set; }
     }
 
     public class AccoOverview
