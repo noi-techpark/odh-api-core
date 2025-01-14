@@ -22,7 +22,8 @@ namespace OdhApiImporter.Helpers.RAVEN
             QueryFactory queryFactory,
             Helper.ISettings settings,
             bool updatecincode,
-            bool updateguestcards
+            bool updateguestcards,
+            bool updateaccoltsinfo
         )
         {
             var ltsdata = await GetAccommodationFromLTSV2(accommodation, settings);
@@ -30,6 +31,10 @@ namespace OdhApiImporter.Helpers.RAVEN
             //Assign the CinCode
             if (updatecincode)
                 await AssignCinCodeFromNewLtsApi(accommodation, ltsdata);
+
+            //Assign AccoLTSInfo
+            if (updateaccoltsinfo)
+                await AssignAccoLTSInfoFromNewLtsApi(accommodation, ltsdata);
 
             //Guestcard Tag
             if (updateguestcards)
@@ -145,6 +150,82 @@ namespace OdhApiImporter.Helpers.RAVEN
             }
         }
 
+        private static async Task AssignAccoLTSInfoFromNewLtsApi(
+           AccommodationV2 accommodation,
+           JObject ltsdata
+       )
+        {
+            try
+            {
+                //Todo parse response
+                var rooms =
+                    ltsdata["data"] != null
+                    ? ltsdata["data"]["roomGroups"] != null 
+                        ? ltsdata["data"]["roomGroups"].ToObject<IList<LtsRoomGroupList>>() : null
+                       : null;
+
+
+                float? pricefrom = rooms != null ? rooms.Where(x => x.isActive == true).OrderBy(x => x.minAmountPerPersonPerDay).Select(x => x.minAmountPerPersonPerDay).First() : null;
+                float? pricefromperunit = rooms != null ? rooms.Where(x => x.isActive == true).OrderBy(x => x.minAmountPerUnitPerDay).Select(x => x.minAmountPerUnitPerDay).First() : null;
+
+                //If lts info is null
+                if (accommodation.AccoLTSInfo == null)
+                    accommodation.AccoLTSInfo = new AccoLTSInfo();
+
+                accommodation.AccoLTSInfo.PriceFrom = (int?)pricefrom;
+                accommodation.AccoLTSInfo.PriceFromPerUnit = (int?)pricefromperunit;
+
+                GenericResultsHelper.GetSuccessUpdateResult(
+                    accommodation.Id,
+                    "api",
+                    "Update AccoLTSInfo",
+                    "single",
+                    "Update AccoLTSInfo success",
+                    "accommodation",
+                    new UpdateDetail()
+                    {
+                        updated = 1,
+                        changes = null,
+                        comparedobjects = null,
+                        created = 0,
+                        deleted = 0,
+                        error = 0,
+                        objectchanged = 0,
+                        objectimagechanged = 0,
+                        pushed = null,
+                        pushchannels = null,
+                    },
+                    true
+                );
+            }
+            catch (Exception ex)
+            {
+                GenericResultsHelper.GetErrorUpdateResult(
+                    accommodation.Id,
+                    "api",
+                    "Update AccoLTSInfo",
+                    "single",
+                    "Update AccoLTSInfo failed",
+                    "accommodation",
+                    new UpdateDetail()
+                    {
+                        updated = 0,
+                        changes = null,
+                        comparedobjects = null,
+                        created = 0,
+                        deleted = 0,
+                        error = 1,
+                        objectchanged = 0,
+                        objectimagechanged = 0,
+                        pushed = null,
+                        pushchannels = null,
+                    },
+                    ex,
+                    true
+                );
+            }
+        }
+        
         private static async Task AssignGuestcardDataFromNewLtsApi(
             AccommodationV2 accommodation,
             JObject ltsdata,
@@ -287,5 +368,23 @@ namespace OdhApiImporter.Helpers.RAVEN
     public class LtsRidList
     {
         public string rid { get; set; }
+    }
+
+    public class LtsRoomGroupList
+    {
+        public string classification { get; set; }
+        public string code { get; set; }
+        public string rid { get; set; }
+        public string type { get; set; }
+        public int diningRooms { get; set; }
+        public int livingRooms { get; set; }
+        public int sleepingRooms { get; set; }
+        public int toilets { get; set; }
+        public int roomQuantity { get; set; }
+        public int baths { get; set; }        
+        public bool isActive { get; set; }
+        public float minAmountPerPersonPerDay { get; set; }
+        public float minAmountPerUnitPerDay { get; set; }
+        public float squareMeters { get; set; }
     }
 }
