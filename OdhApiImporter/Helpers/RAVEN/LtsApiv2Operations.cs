@@ -164,9 +164,8 @@ namespace OdhApiImporter.Helpers.RAVEN
                         ? ltsdata["data"]["roomGroups"].ToObject<IList<LtsRoomGroupList>>() : null
                        : null;
 
-
-                float? pricefrom = rooms != null ? rooms.Where(x => x.isActive == true).OrderBy(x => x.minAmountPerPersonPerDay).Select(x => x.minAmountPerPersonPerDay).First() : null;
-                float? pricefromperunit = rooms != null ? rooms.Where(x => x.isActive == true).OrderBy(x => x.minAmountPerUnitPerDay).Select(x => x.minAmountPerUnitPerDay).First() : null;
+                float? pricefrom = rooms != null ? rooms.Where(x => x.isActive == true && x.minAmountPerPersonPerDay != null).OrderBy(x => x.minAmountPerPersonPerDay).Select(x => x.minAmountPerPersonPerDay).FirstOrDefault() : null;
+                float? pricefromperunit = rooms != null ? rooms.Where(x => x.isActive == true && x.minAmountPerUnitPerDay != null).OrderBy(x => x.minAmountPerUnitPerDay).Select(x => x.minAmountPerUnitPerDay).FirstOrDefault() : null;
 
                 //If lts info is null
                 if (accommodation.AccoLTSInfo == null)
@@ -395,19 +394,19 @@ namespace OdhApiImporter.Helpers.RAVEN
 
     public class LtsRoomGroupList
     {
-        public string classification { get; set; }
-        public string code { get; set; }
-        public string rid { get; set; }
-        public string type { get; set; }
-        public int diningRooms { get; set; }
-        public int livingRooms { get; set; }
-        public int sleepingRooms { get; set; }
-        public int toilets { get; set; }
-        public int roomQuantity { get; set; }
-        public int baths { get; set; }        
+        public string? classification { get; set; }
+        public string? code { get; set; }
+        public string? rid { get; set; }
+        public string? type { get; set; }
+        public int? diningRooms { get; set; }
+        public int? livingRooms { get; set; }
+        public int? sleepingRooms { get; set; }
+        public int? toilets { get; set; }
+        public int? roomQuantity { get; set; }
+        public int? baths { get; set; }        
         public bool isActive { get; set; }
-        public float minAmountPerPersonPerDay { get; set; }
-        public float minAmountPerUnitPerDay { get; set; }
-        public float squareMeters { get; set; }
+        public float? minAmountPerPersonPerDay { get; set; }
+        public float? minAmountPerUnitPerDay { get; set; }
+        public float? squareMeters { get; set; }
     }
 }
