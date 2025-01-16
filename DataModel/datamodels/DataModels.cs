@@ -3095,7 +3095,7 @@ namespace DataModel
         public string? UpdatedBy { get; set; }
         public string? UpdateSource { get; set; }
 
-        public ICollection<UpdateHistory> UpdateHistory { get; set; }
+        public ICollection<UpdateHistory>? UpdateHistory { get; set; }
     }
 
     public class UpdateHistory
