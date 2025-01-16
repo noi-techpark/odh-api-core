@@ -465,20 +465,37 @@ namespace Helper
 
         public static void SetUpdateHistory(Metadata? oldmetadata, Metadata newmetadata)
         {
-            //if (oldmetadata == null && newmetadata.UpdateInfo != null && !String.IsNullOrEmpty(newmetadata.UpdateInfo.UpdatedBy))
-            //    newmetadata.UpdateInfo.UpdateHistory = new Dictionary<string, UpdateHistory>() { { newmetadata.UpdateInfo.UpdatedBy, new UpdateHistory() { LastUpdate = newmetadata.LastUpdate, UpdateSource = newmetadata.UpdateInfo.UpdateSource } } };
-            //else if (oldmetadata != null)
-            //{
-            //    if (oldmetadata.UpdateInfo.UpdateHistory == null)
-            //        newmetadata.UpdateInfo.UpdateHistory = new Dictionary<string, UpdateHistory>();
-            //    else
-            //        newmetadata.UpdateInfo.UpdateHistory = oldmetadata.UpdateInfo.UpdateHistory;
+            if (oldmetadata == null && newmetadata.UpdateInfo != null && !String.IsNullOrEmpty(newmetadata.UpdateInfo.UpdatedBy))
+            {
+                //New dataset
+                newmetadata.UpdateInfo.UpdateHistory =
+                [
+                    new UpdateHistory() { LastUpdate = newmetadata.LastUpdate, UpdateSource = newmetadata.UpdateInfo.UpdateSource, UpdatedBy = newmetadata.UpdateInfo.UpdatedBy },
+                ];
+            }
+            else if (oldmetadata != null)
+            {
+                if (oldmetadata.UpdateInfo.UpdateHistory == null)
+                    newmetadata.UpdateInfo.UpdateHistory = new List<UpdateHistory>();
+                else
+                    newmetadata.UpdateInfo.UpdateHistory = oldmetadata.UpdateInfo.UpdateHistory;
 
-            //    if(!String.IsNullOrEmpty(newmetadata.UpdateInfo.UpdatedBy))
-            //        newmetadata.UpdateInfo.UpdateHistory.TryAddOrUpdate(newmetadata.UpdateInfo.UpdatedBy, new UpdateHistory() { LastUpdate = newmetadata.LastUpdate, UpdateSource = newmetadata.UpdateInfo.UpdateSource });
-            //}
-            //else
-            //    newmetadata.UpdateInfo.UpdateHistory = null;
+                if (!String.IsNullOrEmpty(newmetadata.UpdateInfo.UpdatedBy))
+                {
+                    if(newmetadata.UpdateInfo.UpdateHistory.Where(x => x.UpdatedBy == newmetadata.UpdateInfo.UpdatedBy).Count() > 0)
+                    {
+                        var updatehistorytoupdate = newmetadata.UpdateInfo.UpdateHistory.Where(x => x.UpdatedBy == newmetadata.UpdateInfo.UpdatedBy && x.UpdateSource == newmetadata.UpdateInfo.UpdateSource).FirstOrDefault();
+                        updatehistorytoupdate.LastUpdate = newmetadata.LastUpdate;
+                    }
+                    else
+                    {
+                        newmetadata.UpdateInfo.UpdateHistory.Add(new UpdateHistory() { LastUpdate = newmetadata.LastUpdate, UpdateSource = newmetadata.UpdateInfo.UpdateSource, UpdatedBy = newmetadata.UpdateInfo.UpdatedBy })
+                    }
+                }
+                    //newmetadata.UpdateInfo.UpdateHistory.  TryAddOrUpdate(, );
+            }
+            else
+                newmetadata.UpdateInfo.UpdateHistory = null;
         }
     }
 }
