@@ -260,6 +260,12 @@ namespace Helper
                 UpdatedBy = editinfo.Editor,
                 UpdateSource = editinfo.Source,
             };
+            //Setting the MetaData UpdateInfo.UpdateHistory
+            {
+                MetadataHelper.SetUpdateHistory(queryresult != null ? queryresult._Meta : null, data._Meta);
+            }
+
+
             //Setting Firstimport
             if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
