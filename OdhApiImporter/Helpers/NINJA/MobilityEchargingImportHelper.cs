@@ -314,6 +314,8 @@ namespace OdhApiImporter.Helpers
                     {
                         data.Active = false;
                         data.SmgActive = false;
+                        data.LastChange = DateTime.Now;
+                        data._Meta.LastUpdate = DateTime.Now;
 
                         updateresult = await QueryFactory
                             .Query("smgpois")
@@ -448,6 +450,8 @@ namespace OdhApiImporter.Helpers
                     )
                 );
             }
+            //Hack for alperia stations
+            listtoreturn.Add(Tuple.Create("alperia", "alperia"));
 
             return listtoreturn;
         }

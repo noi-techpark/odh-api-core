@@ -274,10 +274,10 @@ namespace OdhApiCore.Controllers
             where T : IIdentifiable, IImportDateassigneable, IMetaData, new()
         {
             //TODO Username and provenance of the insert/edit
-            //Get the Username
+            //Get the Name Identifier TO CHECK what about service accounts?
             string editor =
-                this.User != null && this.User.Identity != null && this.User.Identity.Name != null
-                    ? this.User.Identity.Name
+                this.User != null && this.User.Claims != null ? 
+                this.User.Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value
                     : "anonymous";
 
             if (
