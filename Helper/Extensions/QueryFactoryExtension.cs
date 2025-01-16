@@ -261,9 +261,7 @@ namespace Helper
                 UpdateSource = editinfo.Source,
             };
             //Setting the MetaData UpdateInfo.UpdateHistory
-            {
-                MetadataHelper.SetUpdateHistory(queryresult != null ? queryresult._Meta : null, data._Meta);
-            }
+            MetadataHelper.SetUpdateHistory(queryresult != null ? queryresult._Meta : null, data._Meta);
 
 
             //Setting Firstimport
@@ -733,10 +731,9 @@ namespace Helper
                 throw new ArgumentNullException(nameof(data), "no data");
 
             //Check if data exists
-            var query = QueryFactory.Query(table).Select("data").Where("id", data.Id);
-
-            var queryresult = await query.GetAsync<T>();
-
+            var queryresult = await QueryFactory.Query(table).Select("data").Where("id", data.Id)
+                .GetObjectSingleAsync<T>(); ;
+        
             string operation = "";
 
             int createresult = 0;
@@ -756,8 +753,10 @@ namespace Helper
                 UpdatedBy = editor,
                 UpdateSource = editsource,
             };
+            //Setting the MetaData UpdateInfo.UpdateHistory
+            MetadataHelper.SetUpdateHistory(queryresult != null ? queryresult._Meta : null, data._Meta);
 
-            if (queryresult == null || queryresult.Count() == 0)
+            if (queryresult == null)
             {
                 createresult = await QueryFactory
                     .Query(table)
