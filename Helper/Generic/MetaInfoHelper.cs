@@ -489,7 +489,7 @@ namespace Helper
                     }
                     else
                     {
-                        newmetadata.UpdateInfo.UpdateHistory.Add(new UpdateHistory() { LastUpdate = newmetadata.LastUpdate, UpdateSource = newmetadata.UpdateInfo.UpdateSource, UpdatedBy = newmetadata.UpdateInfo.UpdatedBy })
+                        newmetadata.UpdateInfo.UpdateHistory.Add(new UpdateHistory() { LastUpdate = newmetadata.LastUpdate, UpdateSource = newmetadata.UpdateInfo.UpdateSource, UpdatedBy = newmetadata.UpdateInfo.UpdatedBy });
                     }
                 }
                     //newmetadata.UpdateInfo.UpdateHistory.  TryAddOrUpdate(, );
