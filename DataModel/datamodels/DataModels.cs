@@ -3088,6 +3088,14 @@ namespace DataModel
         public string? UpdatedBy { get; set; }
 
         public string? UpdateSource { get; set; }
+
+        public IDictionary<string, UpdateHistory>? UpdateHistory { get; set; }
+    }
+
+    public class UpdateHistory
+    {
+        public DateTime? LastUpdate { get; set; }
+        public string? UpdateSource { get; set; }
     }
 
     public class LicenseInfo

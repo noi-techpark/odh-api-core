@@ -461,5 +461,23 @@ namespace Helper
         {
             return GetMetadata(data, "noi", data.LastChange, false);
         }
+
+
+        public static void SetUpdateHistory(Metadata? oldmetadata, Metadata newmetadata)
+        {
+            if (oldmetadata == null && newmetadata.UpdateInfo != null && !String.IsNullOrEmpty(newmetadata.UpdateInfo.UpdatedBy))
+                newmetadata.UpdateInfo.UpdateHistory = new Dictionary<string, UpdateHistory>() { { newmetadata.UpdateInfo.UpdatedBy, new UpdateHistory() { LastUpdate = newmetadata.LastUpdate, UpdateSource = newmetadata.UpdateInfo.UpdateSource } } };
+            else if (oldmetadata != null)
+            {
+                if (oldmetadata.UpdateInfo.UpdateHistory == null)
+                    newmetadata.UpdateInfo.UpdateHistory = new Dictionary<string, UpdateHistory>();
+                else
+                    newmetadata.UpdateInfo.UpdateHistory = oldmetadata.UpdateInfo.UpdateHistory;
+
+                newmetadata.UpdateInfo.UpdateHistory.TryAddOrUpdate(newmetadata.UpdateInfo.UpdatedBy, new UpdateHistory() { LastUpdate = newmetadata.LastUpdate, UpdateSource = newmetadata.UpdateInfo.UpdateSource });
+            }
+            else
+                newmetadata.UpdateInfo.UpdateHistory = null;
+        }
     }
 }
