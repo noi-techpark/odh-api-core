@@ -250,6 +250,8 @@ namespace OdhApiImporter.Helpers.RAVEN
                 if (accommodation.SpecialFeaturesIds == null)
                     accommodation.SpecialFeaturesIds = new List<string>();
 
+                AccoFeatureLinked guestcardfeature = new AccoFeatureLinked() { Id = "8192350ABF6B41DA89B255B340003991", Name = "Südtirol Alto Adige Guest Pass", OtaCodes = null, RoomAmenityCodes = null, HgvId = "" };
+
                 //IF guestcard active Add Tag "guestcard"
                 if (guestcardactive == null || guestcardactive == false)
                 {
@@ -257,6 +259,17 @@ namespace OdhApiImporter.Helpers.RAVEN
                     accommodation.TagIds.TryRemoveOnList("guestcard");
                     //NEW TO Remove, add speciafeature Guestcard
                     accommodation.SpecialFeaturesIds.TryRemoveOnList("Guestcard");
+                    //NEW Remove on Features
+                    if(accommodation.Features != null)
+                    {
+                        if(accommodation.Features.Where(x => x.Id == "8192350ABF6B41DA89B255B340003991").Count() > 0)
+                        {
+                            var featuretoremove = accommodation.Features.Where(x => x.Id == "8192350ABF6B41DA89B255B340003991").FirstOrDefault();
+                            if(featuretoremove != null) 
+                                accommodation.Features.Remove(featuretoremove);
+                        }
+                    }
+                    
                 }
                 else
                 {
@@ -264,6 +277,10 @@ namespace OdhApiImporter.Helpers.RAVEN
                     accommodation.TagIds.TryAddOrUpdateOnList("guestcard");
                     //NEW TO Remove, add speciafeature Guestcard
                     accommodation.SpecialFeaturesIds.TryAddOrUpdateOnList("Guestcard");
+                    //Update also the Features
+                    if (accommodation.Features == null)
+                        accommodation.Features = new List<AccoFeatureLinked>();
+                    accommodation.Features.Add(guestcardfeature);
                 }
 
                 //Compatiblity features to Tags
