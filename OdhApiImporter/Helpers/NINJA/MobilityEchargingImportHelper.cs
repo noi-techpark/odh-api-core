@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Location;
 using Helper.Tagging;
 using Microsoft.FSharp.Control;
@@ -258,10 +259,11 @@ namespace OdhApiImporter.Helpers
 
                 return await QueryFactory.UpsertData<ODHActivityPoiLinked>(
                     objecttosave,
-                    "smgpois",
-                    rawdataid,
-                    "mobility.echarging.import",
-                    importerURL
+                    new DataInfo("smgpois", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("mobility.echarging.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
                 );
             }
             catch (Exception ex)

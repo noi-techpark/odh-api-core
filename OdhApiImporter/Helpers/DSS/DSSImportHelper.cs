@@ -626,10 +626,11 @@ namespace OdhApiImporter.Helpers.DSS
 
                 var pgcrudresult = await QueryFactory.UpsertData<ODHActivityPoiLinked>(
                     odhactivitypoi,
-                    table,
-                    rawdataid,
-                    "dss." + entitytype + ".import",
-                    importerURL
+                    new DataInfo(table, Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("dss." + entitytype + ".import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
                 );
 
                 //Publishedon Helper?

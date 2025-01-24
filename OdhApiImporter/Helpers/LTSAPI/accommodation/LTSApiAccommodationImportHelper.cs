@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using Amazon.Util.Internal;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Tagging;
 using LTSAPI;
 using LTSAPI.Parser;
@@ -317,10 +318,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 return await QueryFactory.UpsertData<AccommodationV2>(
                     objecttosave,
-                    "accommodations",
-                    rawdataid,
-                    "lts.accommodations.import",
-                    importerURL
+                    new DataInfo("accommodations", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("lts.accommodations.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
                 );
             }
             catch (Exception ex)

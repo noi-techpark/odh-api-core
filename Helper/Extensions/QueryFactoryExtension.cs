@@ -199,7 +199,8 @@ namespace Helper
             DataInfo dataconfig,
             EditInfo editinfo,
             CRUDConstraints constraints,
-            CompareConfig compareConfig
+            CompareConfig compareConfig,
+            int? rawdataid = null
         )
             where T : IIdentifiable, IImportDateassigneable, IMetaData, new()
         {
@@ -250,8 +251,6 @@ namespace Helper
             bool imagesequal = false;
             EqualityResult equalityresult = new EqualityResult() { isequal = false, patch = null };
 
-            //Setting LastChange
-            data.LastChange = DateTime.Now;
             //Setting MetaInfo
             data._Meta = MetadataHelper.GetMetadataobject<T>(data);
             //Setting Editinfo
@@ -263,10 +262,11 @@ namespace Helper
             //Setting the MetaData UpdateInfo.UpdateHistory
             MetadataHelper.SetUpdateHistory(queryresult != null ? queryresult._Meta : null, data._Meta);
 
-
-            //Setting Firstimport
+            //Setting Firstimport to Now if null
             if (data.FirstImport == null)
                 data.FirstImport = DateTime.Now;
+            //New Data set last change to now
+            data.LastChange = DateTime.Now;
 
             //Todo setting Shortname
 
@@ -311,9 +311,19 @@ namespace Helper
                         pushchannels = channelstopublish,
                     };
 
-                createresult = await QueryFactory
-                    .Query(dataconfig.Table)
-                    .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                if (rawdataid == null)
+                {
+                    createresult = await QueryFactory
+                        .Query(dataconfig.Table)
+                        .InsertAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                }
+                else
+                {
+                    createresult = await QueryFactory
+                        .Query(dataconfig.Table)
+                        .InsertAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid.Value });
+                }
+                
 
                 dataconfig.Operation = CRUDOperation.Create;
 
@@ -352,6 +362,14 @@ namespace Helper
                         pushchannels = channelstopublish,
                     };
 
+                //Set the FirstImport of the old data
+                if(queryresult.FirstImport != null)
+                    data.FirstImport = queryresult.FirstImport;
+
+                //Set the Lastchanged of the old data, only if the Comparator is active
+                if (queryresult.LastChange != null && compareConfig.CompareData)
+                    data.LastChange = queryresult.LastChange;
+
                 //Compare the data
                 if (compareConfig.CompareData && queryresult != null)
                 {
@@ -364,7 +382,10 @@ namespace Helper
                     if (equalityresult.isequal)
                         objectchangedcount = 0;
                     else
+                    {
                         objectchangedcount = 1;
+                        data.LastChange = DateTime.Now;
+                    }                        
                 }
 
                 //Compare Image Gallery Check if this works with a cast to IImageGalleryAware
@@ -399,10 +420,20 @@ namespace Helper
                     );
                 }
 
-                updateresult = await QueryFactory
-                    .Query(dataconfig.Table)
-                    .Where("id", data.Id)
-                    .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                if(rawdataid == null)
+                {
+                    updateresult = await QueryFactory
+                   .Query(dataconfig.Table)
+                   .Where("id", data.Id)
+                   .UpdateAsync(new JsonBData() { id = data.Id, data = new JsonRaw(data) });
+                }
+                else
+                {
+                    updateresult = await QueryFactory
+                   .Query(dataconfig.Table)
+                   .Where("id", data.Id)
+                   .UpdateAsync(new JsonBDataRaw() { id = data.Id, data = new JsonRaw(data), rawdataid = rawdataid.Value });
+                }
 
                 dataconfig.Operation = CRUDOperation.Update;
             }
@@ -716,92 +747,95 @@ namespace Helper
 
         #region RawDataStore
 
-        public static async Task<PGCRUDResult> UpsertData<T>(
-            this QueryFactory QueryFactory,
-            T data,
-            string table,
-            int rawdataid,
-            string editor,
-            string editsource,
-            bool errorwhendataexists = false
-        )
-            where T : IIdentifiable, IImportDateassigneable, IMetaData
-        {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data), "no data");
-
-            //Check if data exists
-            var queryresult = await QueryFactory.Query(table).Select("data").Where("id", data.Id)
-                .GetObjectSingleAsync<T>(); ;
         
-            string operation = "";
+        //OBSOLETE INCLUDED IN UpsertData Generic Method
 
-            int createresult = 0;
-            int updateresult = 0;
-            int errorresult = 0;
+        //public static async Task<PGCRUDResult> UpsertData<T>(
+        //    this QueryFactory QueryFactory,
+        //    T data,
+        //    string table,
+        //    int rawdataid,
+        //    string editor,
+        //    string editsource,
+        //    bool errorwhendataexists = false
+        //)
+        //    where T : IIdentifiable, IImportDateassigneable, IMetaData
+        //{
+        //    if (data == null)
+        //        throw new ArgumentNullException(nameof(data), "no data");
 
-            data.LastChange = DateTime.Now;
-            //Setting MetaInfo
-            data._Meta = MetadataHelper.GetMetadataobject<T>(data);
+        //    //Check if data exists
+        //    var queryresult = await QueryFactory.Query(table).Select("data").Where("id", data.Id)
+        //        .GetObjectSingleAsync<T>(); ;
+        
+        //    string operation = "";
 
-            if (data.FirstImport == null)
-                data.FirstImport = DateTime.Now;
+        //    int createresult = 0;
+        //    int updateresult = 0;
+        //    int errorresult = 0;
 
-            //Setting Editinfo
-            data._Meta.UpdateInfo = new UpdateInfo()
-            {
-                UpdatedBy = editor,
-                UpdateSource = editsource,
-            };
-            //Setting the MetaData UpdateInfo.UpdateHistory
-            MetadataHelper.SetUpdateHistory(queryresult != null ? queryresult._Meta : null, data._Meta);
+        //    //Setting MetaInfo
+        //    data._Meta = MetadataHelper.GetMetadataobject<T>(data);
 
-            if (queryresult == null)
-            {
-                createresult = await QueryFactory
-                    .Query(table)
-                    .InsertAsync(
-                        new JsonBDataRaw()
-                        {
-                            id = data.Id,
-                            data = new JsonRaw(data),
-                            rawdataid = rawdataid,
-                        }
-                    );
-                operation = "INSERT";
-            }
-            else
-            {
-                if (errorwhendataexists)
-                    throw new ArgumentNullException(nameof(data), "Id exists already");
+        //    if (data.FirstImport == null)
+        //        data.FirstImport = DateTime.Now;
+        //    data.LastChange = DateTime.Now;
 
-                updateresult = await QueryFactory
-                    .Query(table)
-                    .Where("id", data.Id)
-                    .UpdateAsync(
-                        new JsonBDataRaw()
-                        {
-                            id = data.Id,
-                            data = new JsonRaw(data),
-                            rawdataid = rawdataid,
-                        }
-                    );
-                operation = "UPDATE";
-            }
+        //    //Setting Editinfo
+        //    data._Meta.UpdateInfo = new UpdateInfo()
+        //    {
+        //        UpdatedBy = editor,
+        //        UpdateSource = editsource,
+        //    };
+        //    //Setting the MetaData UpdateInfo.UpdateHistory
+        //    MetadataHelper.SetUpdateHistory(queryresult != null ? queryresult._Meta : null, data._Meta);
 
-            if (createresult == 0 && updateresult == 0)
-                errorresult = 1;
+        //    if (queryresult == null)
+        //    {
+        //        createresult = await QueryFactory
+        //            .Query(table)
+        //            .InsertAsync(
+        //                new JsonBDataRaw()
+        //                {
+        //                    id = data.Id,
+        //                    data = new JsonRaw(data),
+        //                    rawdataid = rawdataid,
+        //                }
+        //            );
+        //        operation = "INSERT";
+        //    }
+        //    else
+        //    {
+        //        if (errorwhendataexists)
+        //            throw new ArgumentNullException(nameof(data), "Id exists already");
 
-            return new PGCRUDResult()
-            {
-                id = data.Id,
-                created = createresult,
-                updated = updateresult,
-                deleted = 0,
-                error = errorresult,
-                operation = operation,
-            };
-        }
+        //        updateresult = await QueryFactory
+        //            .Query(table)
+        //            .Where("id", data.Id)
+        //            .UpdateAsync(
+        //                new JsonBDataRaw()
+        //                {
+        //                    id = data.Id,
+        //                    data = new JsonRaw(data),
+        //                    rawdataid = rawdataid,
+        //                }
+        //            );
+        //        operation = "UPDATE";
+        //    }
+
+        //    if (createresult == 0 && updateresult == 0)
+        //        errorresult = 1;
+
+        //    return new PGCRUDResult()
+        //    {
+        //        id = data.Id,
+        //        created = createresult,
+        //        updated = updateresult,
+        //        deleted = 0,
+        //        error = errorresult,
+        //        operation = operation,
+        //    };
+        //}
 
         #endregion
     }
