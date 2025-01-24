@@ -264,9 +264,15 @@ namespace OdhApiImporter.Helpers.RAVEN
                     {
                         if(accommodation.Features.Where(x => x.Id == "8192350ABF6B41DA89B255B340003991").Count() > 0)
                         {
-                            var featuretoremove = accommodation.Features.Where(x => x.Id == "8192350ABF6B41DA89B255B340003991").FirstOrDefault();
-                            if(featuretoremove != null) 
-                                accommodation.Features.Remove(featuretoremove);
+                            var featurestoremove = accommodation.Features.Where(x => x.Id == "8192350ABF6B41DA89B255B340003991").ToList();
+                            if(featurestoremove != null)
+                            {
+                                foreach(var featuretoremove in featurestoremove)
+                                {
+                                    accommodation.Features.Remove(featuretoremove);
+                                }                                
+                            }
+                                
                         }
                     }
                     
@@ -280,7 +286,22 @@ namespace OdhApiImporter.Helpers.RAVEN
                     //Update also the Features
                     if (accommodation.Features == null)
                         accommodation.Features = new List<AccoFeatureLinked>();
-                    accommodation.Features.Add(guestcardfeature);
+                    if(accommodation.Features.Count() == 0)
+                    {
+                        accommodation.Features.Add(guestcardfeature);
+                    }
+                    else
+                    {
+                        if (accommodation.Features.Where(x => x.Id == "8192350ABF6B41DA89B255B340003991").Count() == 0)
+                            accommodation.Features.Add(guestcardfeature);
+                        else if (accommodation.Features.Where(x => x.Id == "8192350ABF6B41DA89B255B340003991").Count() == 2)
+                        {
+                            //Clear Duplicates
+                            var featuretoremove = accommodation.Features.Where(x => x.Id == "8192350ABF6B41DA89B255B340003991").FirstOrDefault();
+                            accommodation.Features.Remove(featuretoremove);
+                        }
+                    }
+
                 }
 
                 //Compatiblity features to Tags
