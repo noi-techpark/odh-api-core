@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using DataModel;
 using Helper.Extensions;
 using Helper.Generic;
@@ -455,6 +456,34 @@ namespace Helper
                     objectimagechanged = objectimagechangedcount,
                     pushchannels = channelstopublish,
                 };
+
+            //If changes should be saved to DB
+            if(dataconfig.SaveChangesToDB)
+            {
+                if (objectchangedcount != null && objectchangedcount > 0)
+                {
+                    RawChangesStore datachanges = new RawChangesStore();
+                    datachanges.editsource = editinfo.Source ?? "";
+                    datachanges.editedby = editinfo.Editor;
+                    datachanges.date = data._Meta.LastUpdate ?? DateTime.Now;
+                    datachanges.datasource = data._Meta.Source;
+                    datachanges.changes = equalityresult.patch != null ? new JsonRaw(equalityresult.patch.ToString()) : new JsonRaw("");
+                    datachanges.sourceid = data.Id;
+                    datachanges.type = data._Meta.Type;
+                    datachanges.license = "unknown";
+
+                    if (data is ILicenseInfo)
+                    {
+                        if ((data as ILicenseInfo).LicenseInfo != null)
+                            datachanges.license = (data as ILicenseInfo).LicenseInfo.ClosedData ? "closed" : "open";
+                    }
+
+                    var resulto = await QueryFactory
+                       .Query("rawchanges")
+                       .InsertAsync(datachanges);
+
+                }
+            }
 
             return new PGCRUDResult()
             {

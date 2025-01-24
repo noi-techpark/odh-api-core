@@ -28,6 +28,7 @@ namespace DataModel
         public Int32 rawdataid { get; set; }
     }
 
+    #region RawDataStore
     public interface IRawDataStore
     {
         string type { get; set; }
@@ -92,4 +93,40 @@ namespace DataModel
                 return rawdatastore;
         }
     }
+
+    #endregion
+
+    #region RawChangesStore
+
+    public interface IRawChangesStore
+    {
+        string type { get; set; }
+        string datasource { get; set; }
+        string sourceid { get; set; }
+        string editedby { get; set; }
+        string editsource { get; set; }
+        DateTime date { get; set; }
+        JsonRaw changes { get; set; }
+        string license { get; set; }
+    }
+
+    public class RawChangesStore : IRawChangesStore
+    {
+        public string type { get; set; }
+        public string datasource { get; set; }
+        public string sourceid { get; set; }
+        public string editedby { get; set; }
+        public string editsource { get; set; }
+        public DateTime date { get; set; }
+        public JsonRaw changes { get; set; }
+        public string license { get; set; }
+    }
+
+    public class RawChangesStoreWithId : RawChangesStore
+    {
+        public int? id { get; set; }
+    }
+
+
+    #endregion
 }
