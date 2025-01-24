@@ -14,6 +14,7 @@ using DataModel;
 using DSS;
 using DSS.Parser;
 using Helper;
+using Helper.Generic;
 using Newtonsoft.Json;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
@@ -327,10 +328,11 @@ namespace OdhApiImporter.Helpers.DSS
 
             var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(
                 webcam,
-                table,
-                rawdataid,
-                "dss.webcam.import",
-                importerURL
+                new DataInfo(table, Helper.Generic.CRUDOperation.CreateAndUpdate),
+                new EditInfo("dss.webcam.import", importerURL),
+                new CRUDConstraints(),
+                new CompareConfig(true, false),
+                rawdataid
             );
 
             return pgcrudresult;

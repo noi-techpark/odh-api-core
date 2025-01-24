@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using Amazon.Runtime.Internal.Transform;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Location;
 using SqlKata.Execution;
 using SuedtirolWein;
@@ -611,10 +612,11 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
 
             return await QueryFactory.UpsertData<ODHActivityPoiLinked>(
                 odhactivitypoi,
-                "smgpois",
-                rawdataid,
-                "suedtirolwein.company.import",
-                importerURL
+                new DataInfo("smgpois", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("suedtirolwein.company.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
             );
         }
 

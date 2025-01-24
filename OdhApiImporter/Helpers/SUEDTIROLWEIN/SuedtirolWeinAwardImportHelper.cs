@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using SqlKata.Execution;
 using SuedtirolWein;
 using SuedtirolWein.Parser;
@@ -295,10 +296,11 @@ namespace OdhApiImporter.Helpers.SuedtirolWein
             //TODO Add column rawdataid
             return await QueryFactory.UpsertData<WineLinked>(
                 wineaward,
-                "wines",
-                rawdataid,
-                "suedtirolwein.weinaward.import",
-                importerURL
+                new DataInfo("wines", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("suedtirolwein.weinaward.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
             );
         }
 

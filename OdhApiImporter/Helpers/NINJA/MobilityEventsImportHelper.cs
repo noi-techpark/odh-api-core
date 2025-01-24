@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Location;
 using Newtonsoft.Json;
 using NINJA;
@@ -241,10 +242,11 @@ namespace OdhApiImporter.Helpers
 
                 return await QueryFactory.UpsertData<EventLinked>(
                     eventtosave,
-                    "events",
-                    rawdataid,
-                    "mobility.event.import",
-                    importerURL
+                    new DataInfo("events", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("mobility.event.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
                 );
             }
             catch (Exception ex)
