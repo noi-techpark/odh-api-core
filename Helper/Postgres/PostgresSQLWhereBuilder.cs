@@ -706,7 +706,10 @@ namespace Helper
                 //.EventDateFilterBegin_GeneratedColumn(begindate, enddate)
                 //.EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
                 //TEST TSMULTIRANGE
-                .DateFilter_GeneratedColumn(begindate, enddate, "")
+                .When(
+                    begindate != DateTime.MinValue && enddate != DateTime.MaxValue, 
+                    q => q.DateFilter_GeneratedColumn(begindate, enddate, "")
+                )
                 .When(
                     languagelist.Count > 0,
                     q => q.HasLanguageFilterAnd_GeneratedColumn(languagelist)
