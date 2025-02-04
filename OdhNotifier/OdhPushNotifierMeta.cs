@@ -126,6 +126,7 @@ namespace OdhNotifier
                 NotifierResponse notifierresponse = new NotifierResponse();
 
                 var response = await SendNotify(meta);
+                notifierresponse.ObjectId = id;
                 notifierresponse.HttpStatusCode = response.Item1;
                 notifierresponse.Response = response.Item2;
                 notifierresponse.Service = notifyconfig.ServiceName;
@@ -175,6 +176,7 @@ namespace OdhNotifier
                         pushchannel,
                         new NotifierResponse()
                         {
+                            ObjectId = id,
                             Success = false,
                             HttpStatusCode = HttpStatusCode.NotFound,
                             Service = pushchannel,
@@ -401,7 +403,7 @@ namespace OdhNotifier
             string error
         )
         {
-            var responsecontent = await ReadResponse(response, notify.Destination);
+            var responsecontent = await ReadResponse(response, notify.Destination, notify.Id);
 
             if (
                 response.StatusCode == HttpStatusCode.OK
@@ -444,10 +446,12 @@ namespace OdhNotifier
 
         private async Task<NotifierResponse> ReadResponse(
             HttpResponseMessage response,
-            string service
+            string service,
+            string id
         )
         {
             NotifierResponse notifierresponse = new NotifierResponse();
+            notifierresponse.ObjectId = id;
             notifierresponse.HttpStatusCode = response.StatusCode;
             notifierresponse.Response = await TryReadingResponse(response, service);
             notifierresponse.Service = service;
@@ -638,6 +642,7 @@ namespace OdhNotifier
 
                         NotifierResponse notifierresponse = new NotifierResponse();
                         var response = await SendNotify(meta, failedpush);
+                        notifierresponse.ObjectId = failedpush.ItemId;
                         notifierresponse.HttpStatusCode = response.Item1;
                         notifierresponse.Service = notifyconfig.ServiceName;
                         notifierresponse.Response = response.Item2;
@@ -695,6 +700,7 @@ namespace OdhNotifier
 
                         NotifierResponse notifierresponse = new NotifierResponse();
                         var response = await SendNotify(meta, null);
+                        notifierresponse.ObjectId = id;
                         notifierresponse.HttpStatusCode = response.Item1;
                         notifierresponse.Service = notifyconfig.ServiceName;
                         notifierresponse.Response = response.Item2;

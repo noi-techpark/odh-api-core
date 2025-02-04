@@ -460,6 +460,7 @@ namespace DataModel
         public HttpStatusCode HttpStatusCode { get; set; }
         public string Service { get; set; }
         public bool Success { get; set; }
+        public string? ObjectId { get; set; }
     }
 
     public class IdmMarketPlacePushResponse
