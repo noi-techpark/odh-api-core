@@ -11,6 +11,7 @@ using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Amazon.Runtime.Internal.Transform;
 using DataModel;
 using Helper;
 using Microsoft.AspNetCore.Components.RenderTree;
@@ -764,8 +765,10 @@ namespace OdhNotifier
                     this.Headers = new Dictionary<string, string>()
                     {
                         { "client_id", notifyconfig.User },
-                        { "client_secret", notifyconfig.Password },
+                        { "client_secret", notifyconfig.Password },                       
                     };
+                    if (!String.IsNullOrEmpty(notifyconfig.Header))
+                        this.Headers.Add(notifyconfig.Header, notifyconfig.Token);
 
                     //Prefilled
                     this.Destination = "idm-marketplace";
