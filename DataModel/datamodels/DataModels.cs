@@ -1001,19 +1001,6 @@ namespace DataModel
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
-
-        public string? OrgRID { get; set; }
-
-        [SwaggerDeprecated("Obsolete use EventPublisher List")]
-        public int? Ranc { get; set; }
-        public string? Ticket { get; set; }
-        public string? SignOn { get; set; }
-        public string? PayMet { get; set; }
-
-        [SwaggerDeprecated("Obsolete")]
-        public string? Type { get; set; }
-        public string? Pdf { get; set; }
-
         public string? DistrictId { get; set; }
         public ICollection<string>? DistrictIds { get; set; }
         public ICollection<ImageGallery>? ImageGallery { get; set; }
@@ -1024,54 +1011,62 @@ namespace DataModel
         public ICollection<Topic>? Topics { get; set; }
 
         public ICollection<EventPublisher>? EventPublisher { get; set; }
-
-        public IDictionary<string, EventAdditionalInfos> EventAdditionalInfos { get; set; }
-        public IDictionary<string, EventPrice> EventPrice { get; set; }
-
-        public ICollection<EventDate>? EventDate { get; set; }
-
+    
         public IDictionary<string, ContactInfos> ContactInfos { get; set; }
         public IDictionary<string, ContactInfos> OrganizerInfos { get; set; }
 
-        public LocationInfo? LocationInfo { get; set; }
-
-        public ICollection<string>? SmgTags { get; set; }
-
-        [SwaggerDeprecated("Obsolete, use PublishedOn")]
-        public bool SmgActive { get; set; }
-
+        public LocationInfo? LocationInfo { get; set; }        
         public ICollection<string>? HasLanguage { get; set; }
+        public string Source { get; set; }                        
+        public ICollection<string>? PublishedOn { get; set; }                 
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
+
+
+        //Obsolete fields to change
+
+        public ICollection<EventDate>? EventDate { get; set; }
+        public IDictionary<string, EventAdditionalInfos> EventAdditionalInfos { get; set; }
+
 
         [SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
         public DateTime? NextBeginDate { get; set; }
 
-        public string Source { get; set; }
-        public bool? GrpEvent { get; set; }
-        public bool? EventBenefit { get; set; }
-        public EventBooking? EventBooking { get; set; }
+        [Obsolete("Deprecated use Mapping.lts.ClassificationRID")]
+        public string? ClassificationRID { get; set; }
 
-        [Obsolete("Deprecated use Tags")]
-        public ICollection<LTSTags>? LTSTags { get; set; }
+        public ICollection<string>? SmgTags { get; set; }
 
-        public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
+        public EventBooking? EventBooking { get; set; }   //Check if EventBooking.Type not null bool
+
+        [SwaggerDeprecated("Obsolete, use PublishedOn")]
+        public bool SmgActive { get; set; }
+
+        //Obsolete fields not used!
+
+        public ICollection<EventCrossSelling>? EventCrossSelling { get; set; }
+        public EventOperationScheduleOverview? EventOperationScheduleOverview { get; set; }
+        public IDictionary<string, ICollection<string>> Hashtag { get; set; }
 
         //Only for LTS internal use
         //public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
 
-        public IDictionary<string, ICollection<string>> Hashtag { get; set; }
-
-        public EventOperationScheduleOverview? EventOperationScheduleOverview { get; set; }
-
-        public ICollection<string>? PublishedOn { get; set; }
-
-        public string? ClassificationRID { get; set; }
-
-        public ICollection<EventCrossSelling>? EventCrossSelling { get; set; }
+        public bool? GrpEvent { get; set; }
+        public bool? EventBenefit { get; set; }
+        public string? OrgRID { get; set; }
+        [SwaggerDeprecated("Obsolete use EventPublisher List")]
+        public int? Ranc { get; set; }
+        public string? Ticket { get; set; }
+        public string? SignOn { get; set; }
+        public string? PayMet { get; set; }
+        [SwaggerDeprecated("Obsolete")]
+        public string? Type { get; set; }
+        public string? Pdf { get; set; }
+        public IDictionary<string, EventPrice> EventPrice { get; set; }
+        public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
+        [Obsolete("Deprecated use Tags")]
+        public ICollection<LTSTags>? LTSTags { get; set; }
         public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
-
-        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
-
-        public DistanceInfo? DistanceInfo { get; set; }
     }
 
     public class EventRaven : Event
