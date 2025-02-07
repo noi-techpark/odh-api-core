@@ -503,8 +503,11 @@ namespace DataModel
         [SwaggerSchema("Length, (on column barrierfree = 500 cm), (on row barrierfree = 650 cm)")]
         public int? Length { get; set; }
 
-        [SwaggerSchema("Schraffurmarkierung")]
+        [SwaggerSchema("Barrier-free access space signage present")]
         public bool? ManeuvringSpaceSignagePresent { get; set; }
+
+        [SwaggerSchema("Barrier-free access space to charging point(monitor / pistol)")]
+        public bool? BarrierFreeAccessSpacetoChargingPoint { get; set; }
     }
 
     #endregion

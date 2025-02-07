@@ -169,7 +169,9 @@ namespace OdhApiImporter
                             notifiercfg.Key,
                             notifiercfg.GetValue<string>("Url", ""),
                             notifiercfg.GetValue<string>("User", ""),
-                            notifiercfg.GetValue<string>("Password", "")
+                            notifiercfg.GetValue<string>("Password", ""),
+                            notifiercfg.GetValue<string>("Header", ""),
+                            notifiercfg.GetValue<string>("Token", "")
                         )
                     );
                 }

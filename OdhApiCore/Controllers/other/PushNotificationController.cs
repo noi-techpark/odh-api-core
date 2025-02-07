@@ -81,43 +81,66 @@ namespace OdhApiCore.Controllers.api
                     {
                         //FCM Push
                         case "noi-communityapp":
-                            data.Result = usemocks
-                                ? new PushResult()
+                            if (User.IsInRole("NOICommunityAppPush"))
+                            {
+                                data.Result = usemocks
+                                    ? new PushResult()
+                                    {
+                                        Error = "",
+                                        Success = true,
+                                        Messages = 1,
+                                        Response = "This is a mockup response",
+                                    }
+                                    : await GetDataAndSendFCMMessage(type, id, publish, language);
+                            }
+                            else
+                            {
+                                data.Result = new
                                 {
-                                    Error = "",
-                                    Success = true,
-                                    Messages = 1,
-                                    Response = "This is a mockup response",
-                                }
-                                : await GetDataAndSendFCMMessage(type, id, publish, language);
+                                    Response = "User Not allowed to push on noi-communityapp",
+                                    Success = false,
+                                };
+                                
+                            }
                             break;
 
                         //NOTIFIER
                         case "idm-marketplace":
-                            if (usemocks)
-                                data.Result = new NotifierResponse()
+                            if (User.IsInRole("IDMMarketplacePush"))
+                            {
+                                if (usemocks)
+                                    data.Result = new NotifierResponse()
+                                    {
+                                        HttpStatusCode = System.Net.HttpStatusCode.OK,
+                                        Response = "This is a mockup response",
+                                        Service = "idm-marketplace",
+                                        Success = true,
+                                    };
+                                else
                                 {
-                                    HttpStatusCode = System.Net.HttpStatusCode.OK,
-                                    Response = "This is a mockup response",
-                                    Service = "idm-marketplace",
-                                    Success = true,
-                                };
+                                    var notifierresult =
+                                        await OdhPushnotifier.PushToPublishedOnServices(
+                                            id,
+                                            type,
+                                            "manual.push",
+                                            new Dictionary<string, bool> { { "imageschanged", true } },
+                                            false,
+                                            "push.api",
+                                            new List<string>() { publish }
+                                        );
+                                    data.Result =
+                                        notifierresult != null && notifierresult.ContainsKey(publish)
+                                            ? notifierresult[publish]
+                                            : new { Success = false };
+                                }
+                            }
                             else
                             {
-                                var notifierresult =
-                                    await OdhPushnotifier.PushToPublishedOnServices(
-                                        id,
-                                        type,
-                                        "manual.push",
-                                        new Dictionary<string, bool> { { "imageschanged", true } },
-                                        false,
-                                        "push.api",
-                                        new List<string>() { publish }
-                                    );
-                                data.Result =
-                                    notifierresult != null && notifierresult.ContainsKey(publish)
-                                        ? notifierresult[publish]
-                                        : new { Success = false };
+                                data.Result = new
+                                {
+                                    Response = "User Not allowed to push on idm-marketplace",
+                                    Success = false,
+                                };
                             }
                             break;
                         default:

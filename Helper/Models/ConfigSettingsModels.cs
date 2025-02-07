@@ -207,18 +207,22 @@ namespace Helper
 
     public class NotifierConfig
     {
-        public NotifierConfig(string servicename, string url, string user, string pswd)
+        public NotifierConfig(string servicename, string url, string user, string pswd, string header, string token)
         {
             this.ServiceName = servicename;
             this.Url = url;
             this.User = user;
             this.Password = pswd;
+            this.Header = header;
+            this.Token = token;
         }
 
         public string ServiceName { get; private set; }
         public string Url { get; private set; }
         public string User { get; private set; }
         public string Password { get; private set; }
+        public string Header { get; private set; }
+        public string Token { get; private set; }
     }
 
     #region Data Importer Config
