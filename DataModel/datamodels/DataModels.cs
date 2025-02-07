@@ -980,8 +980,8 @@ namespace DataModel
             EventPrice = new Dictionary<string, EventPrice>();
             EventPrices = new Dictionary<string, ICollection<EventPrice>>();
             //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
-            Hashtag = new Dictionary<string, ICollection<string>>();
-            EventDescAdditional = new Dictionary<string, EventDescAdditional>();
+            //Hashtag = new Dictionary<string, ICollection<string>>();
+            //EventDescAdditional = new Dictionary<string, EventDescAdditional>();
             Mapping = new Dictionary<string, IDictionary<string, string>>();
         }
 
@@ -1044,9 +1044,9 @@ namespace DataModel
 
         //Obsolete fields not used!
 
-        public ICollection<EventCrossSelling>? EventCrossSelling { get; set; }
-        public EventOperationScheduleOverview? EventOperationScheduleOverview { get; set; }
-        public IDictionary<string, ICollection<string>> Hashtag { get; set; }
+        //public ICollection<EventCrossSelling>? EventCrossSelling { get; set; }
+        //public EventOperationScheduleOverview? EventOperationScheduleOverview { get; set; }
+        //public IDictionary<string, ICollection<string>> Hashtag { get; set; }
 
         //Only for LTS internal use
         //public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
@@ -1054,8 +1054,8 @@ namespace DataModel
         public bool? GrpEvent { get; set; }
         public bool? EventBenefit { get; set; }
         public string? OrgRID { get; set; }
-        [SwaggerDeprecated("Obsolete use EventPublisher List")]
-        public int? Ranc { get; set; }
+        //[SwaggerDeprecated("Obsolete use EventPublisher List")]
+        //public int? Ranc { get; set; }
         public string? Ticket { get; set; }
         public string? SignOn { get; set; }
         public string? PayMet { get; set; }
@@ -1064,9 +1064,9 @@ namespace DataModel
         public string? Pdf { get; set; }
         public IDictionary<string, EventPrice> EventPrice { get; set; }
         public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
-        [Obsolete("Deprecated use Tags")]
-        public ICollection<LTSTags>? LTSTags { get; set; }
-        public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
+        //[Obsolete("Deprecated use Tags")]
+        //public ICollection<LTSTags>? LTSTags { get; set; }
+        //public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
     }
 
     public class EventRaven : Event
@@ -3860,10 +3860,25 @@ namespace DataModel
 
     public class EventAdditionalInfos : IEventAdditionalInfos, ILanguage
     {
-        public string? Mplace { get; set; }
-        public string? Reg { get; set; }
+        [SwaggerDeprecated("Deprecated use Meetingplace")]
+        public string? Mplace { get { return this.MeetingPoint; } }
+        public string? MeetingPoint { get; set; }
+        [SwaggerDeprecated("Deprecated use Registration")]
+        public string? Reg { get { return this.Registration; } }
+        public string? Registration { get; set; }
         public string? Location { get; set; }
         public string? Language { get; set; }
+    }
+
+    public class EventProperty
+    {
+        public bool? IsTicketRequired { get; set; }
+        public bool? IsRegistrationRequired { get; set; }
+        public bool? IsIncludedInSuedtirolGuestPass { get; set; }
+
+        public string? EventClassificationId { get; set; }
+
+        public string? EventOrganizerId { get; set; }
     }
 
     //TODO Mark as deprecated
@@ -4017,21 +4032,21 @@ namespace DataModel
         public bool Sunday { get; set; }
     }
 
-    public class EventCrossSelling
-    {
-        public string EventRID { get; set; }
-    }
+    //public class EventCrossSelling
+    //{
+    //    public string EventRID { get; set; }
+    //}
 
-    public class EventDescAdditional
-    {
-        public string Type { get; set; }
-        public string Language { get; set; }
-        public string Order { get; set; }
-        public string RQPlain { get; set; }
-        public string RQHtml { get; set; }
-        public string RSPlain { get; set; }
-        public string RSHtml { get; set; }
-    }
+    //public class EventDescAdditional
+    //{
+    //    public string Type { get; set; }
+    //    public string Language { get; set; }
+    //    public string Order { get; set; }
+    //    public string RQPlain { get; set; }
+    //    public string RQHtml { get; set; }
+    //    public string RSPlain { get; set; }
+    //    public string RSHtml { get; set; }
+    //}
 
     //end Event classes
 

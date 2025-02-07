@@ -348,8 +348,8 @@ namespace DataModel
 
     public interface IEventAdditionalInfos
     {
-        string? Mplace { get; set; }
-        string? Reg { get; set; }
+        string? Mplace { get;  }
+        string? Reg { get;  }
         string? Location { get; set; }
     }
 
