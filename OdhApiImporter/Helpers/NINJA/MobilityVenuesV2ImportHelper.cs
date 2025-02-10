@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Location;
 using MSS;
 using Newtonsoft.Json;
@@ -227,10 +228,11 @@ namespace OdhApiImporter.Helpers
 
                 return await QueryFactory.UpsertData<VenueV2>(
                     venuetosave,
-                    "venuesv2",
-                    rawdataid,
-                    "mobility.venuev2.import",
-                    importerURL
+                    new DataInfo("venuesv2", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("mobility.venuev2.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
                 );
             }
             catch (Exception ex)

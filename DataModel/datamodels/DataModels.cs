@@ -3079,7 +3079,14 @@ namespace DataModel
             }
         )]
         public string Type { get; set; }
+
+        [SwaggerSchema(Description = "Date when Data was lastly saved/updated")]
         public DateTime? LastUpdate { get; set; }
+
+        ////LAs
+        //[SwaggerSchema(Description = "Date when the Data had changes inside")]
+        //public DateTime? LastDataChange { get; set; }
+
         public string Source { get; set; }
         public bool Reduced { get; set; }
 
@@ -3089,8 +3096,16 @@ namespace DataModel
     public class UpdateInfo
     {
         public string? UpdatedBy { get; set; }
-
         public string? UpdateSource { get; set; }
+
+        public ICollection<UpdateHistory>? UpdateHistory { get; set; }
+    }
+
+    public class UpdateHistory
+    {
+        public DateTime? LastUpdate { get; set; }
+        public string? UpdateSource { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 
     public class LicenseInfo

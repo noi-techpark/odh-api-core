@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.S3;
 using Newtonsoft.Json;
 using SIAG;
@@ -317,11 +318,11 @@ namespace OdhApiImporter.Helpers
 
                 var insertresult = await QueryFactory.UpsertData<WeatherHistoryLinked>(
                     myweatherhistory,
-                    "weatherdatahistory",
-                    insertresultraw,
-                    "siag.weather.import",
-                    importerURL,
-                    true
+                    new DataInfo("weatherdatahistory", Helper.Generic.CRUDOperation.Create),
+                    new EditInfo("siag.weather.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    insertresultraw
                 );
 
                 //var insertresult = await QueryFactory.Query("weatherdatahistory")

@@ -1432,7 +1432,7 @@ namespace OdhApiImporter.Helpers
             var result = await QueryFactory.UpsertData<T>(
                 datatosave,
                 new DataInfo(table, CRUDOperation.Update) { ErrorWhendataIsNew = false },
-                new EditInfo("lts.push.import", "odh.importer"),
+                new EditInfo("lts.push.import", importerURL),
                 new CRUDConstraints(),
                 new CompareConfig(compareresult, compareimagechange)
             );

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using LTSAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -264,10 +265,11 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 return await QueryFactory.UpsertData<TagLinked>(
                     objecttosave,
-                    "tags",
-                    rawdataid,
-                    "lts.gastronomies.ceremonycodes.import",
-                    importerURL
+                    new DataInfo("tags", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("lts.gastronomies.ceremonycodes.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
                 );
             }
             catch (Exception ex)

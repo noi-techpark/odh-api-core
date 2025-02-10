@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using A22;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using ServiceReferenceLCS;
 using SqlKata.Execution;
 
@@ -217,10 +218,11 @@ namespace OdhApiImporter.Helpers
 
             var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(
                 webcam,
-                table,
-                rawdataid,
-                "a22.webcam.import",
-                importerURL
+                new DataInfo(table, Helper.Generic.CRUDOperation.CreateAndUpdate),
+                new EditInfo("a22.webcam.import", importerURL),
+                new CRUDConstraints(),
+                new CompareConfig(true, false),
+                rawdataid
             );
 
             return pgcrudresult;

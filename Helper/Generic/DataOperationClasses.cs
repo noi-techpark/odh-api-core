@@ -22,10 +22,11 @@ namespace Helper.Generic
 
     public class DataInfo
     {
-        public DataInfo(string table, CRUDOperation operation)
+        public DataInfo(string table, CRUDOperation operation, bool savechangestoDB = false)
         {
             Table = table;
             Operation = operation;
+            SaveChangesToDB = savechangestoDB;
 
             if (operation == CRUDOperation.Create)
             {
@@ -53,6 +54,8 @@ namespace Helper.Generic
         public CRUDOperation Operation { get; set; }
         public bool ErrorWhendataExists { get; set; }
         public bool ErrorWhendataIsNew { get; set; }
+
+        public bool SaveChangesToDB { get; set; }
     }
 
     public class CompareConfig

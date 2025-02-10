@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Location;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
@@ -157,10 +158,11 @@ namespace OdhApiImporter.Helpers
                                 //Check if data exists
                                 var result = await QueryFactory.UpsertData(
                                     odhactivitypoi,
-                                    "smgpois",
-                                    rawdataid,
-                                    "sta.vendingpoint.import",
-                                    importerURL
+                                    new DataInfo("smgpois", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                                    new EditInfo("sta.vendingpoint.import", importerURL),
+                                    new CRUDConstraints(),
+                                    new CompareConfig(true, false),
+                                    rawdataid
                                 );
 
                                 idlistspreadsheet.Add(odhactivitypoi.Id);
