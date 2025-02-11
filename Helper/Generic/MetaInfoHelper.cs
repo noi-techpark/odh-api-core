@@ -483,7 +483,7 @@ namespace Helper
 
                 if (!String.IsNullOrEmpty(newmetadata.UpdateInfo.UpdatedBy))
                 {
-                    if(newmetadata.UpdateInfo.UpdateHistory.Where(x => x.UpdatedBy == newmetadata.UpdateInfo.UpdatedBy).Count() > 0)
+                    if(newmetadata.UpdateInfo.UpdateHistory.Where(x => x.UpdatedBy == newmetadata.UpdateInfo.UpdatedBy && x.UpdateSource == newmetadata.UpdateInfo.UpdateSource).Count() > 0)
                     {
                         var updatehistorytoupdate = newmetadata.UpdateInfo.UpdateHistory.Where(x => x.UpdatedBy == newmetadata.UpdateInfo.UpdatedBy && x.UpdateSource == newmetadata.UpdateInfo.UpdateSource).FirstOrDefault();
                         updatehistorytoupdate.LastUpdate = newmetadata.LastUpdate;
