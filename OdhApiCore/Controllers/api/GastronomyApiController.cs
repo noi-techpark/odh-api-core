@@ -529,7 +529,7 @@ namespace OdhApiCore.Controllers
 
                 return await UpsertData<GastronomyLinked>(
                     gastronomy,
-                    new DataInfo("gastronomies", CRUDOperation.Update),
+                    new DataInfo("gastronomies", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

@@ -341,7 +341,7 @@ namespace OdhApiCore.Controllers
 
                 return await UpsertData<ODHTagLinked>(
                     odhtag,
-                    new DataInfo("smgtags", CRUDOperation.Update),
+                    new DataInfo("smgtags", CRUDOperation.Update, true),
                     new CompareConfig(true, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

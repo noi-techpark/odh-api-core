@@ -561,7 +561,7 @@ namespace OdhApiCore.Controllers.api
 
                 return await UpsertData<LTSPoiLinked>(
                     poi,
-                    new DataInfo("pois", CRUDOperation.Update),
+                    new DataInfo("pois", CRUDOperation.Update, true),
                     new CompareConfig(false, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

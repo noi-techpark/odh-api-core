@@ -293,7 +293,7 @@ namespace OdhApiCore.Controllers
 
                 return await UpsertData<PublisherLinked>(
                     publisher,
-                    new DataInfo("publishers", CRUDOperation.Update),
+                    new DataInfo("publishers", CRUDOperation.Update, true),
                     new CompareConfig(false, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

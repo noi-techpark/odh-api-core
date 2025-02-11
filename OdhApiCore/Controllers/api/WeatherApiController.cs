@@ -1745,7 +1745,7 @@ namespace OdhApiCore.Controllers
 
                 return await UpsertData<MeasuringpointLinked>(
                     measuringpoint,
-                    new DataInfo("measuringpoints", CRUDOperation.Update),
+                    new DataInfo("measuringpoints", CRUDOperation.Update, true),
                     new CompareConfig(false, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
