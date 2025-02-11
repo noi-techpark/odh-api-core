@@ -1544,7 +1544,7 @@ namespace OdhApiCore.Controllers
 
                 return await UpsertData<AccommodationV2>(
                     accommodation,
-                    new DataInfo("accommodations", CRUDOperation.Update),
+                    new DataInfo("accommodations", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

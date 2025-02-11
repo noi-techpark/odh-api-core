@@ -293,7 +293,7 @@ namespace OdhApiCore.Controllers
 
                 return await UpsertData<SourceLinked>(
                     source,
-                    new DataInfo("sources", CRUDOperation.Update),
+                    new DataInfo("sources", CRUDOperation.Update, true),
                     new CompareConfig(false, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

@@ -2192,7 +2192,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<MetaRegionLinked>(id);
                 return await UpsertData<MetaRegionLinked>(
                     data,
-                    new DataInfo("metaregions", CRUDOperation.Update),
+                    new DataInfo("metaregions", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2220,7 +2220,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<RegionLinked>(id);
                 return await UpsertData<RegionLinked>(
                     data,
-                    new DataInfo("regions", CRUDOperation.Update),
+                    new DataInfo("regions", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2248,7 +2248,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<ExperienceAreaLinked>(id);
                 return await UpsertData<ExperienceAreaLinked>(
                     data,
-                    new DataInfo("experienceareas", CRUDOperation.Update),
+                    new DataInfo("experienceareas", CRUDOperation.Update, true),
                     new CompareConfig(false, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2276,7 +2276,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<TourismvereinLinked>(id);
                 return await UpsertData<TourismvereinLinked>(
                     data,
-                    new DataInfo("tvs", CRUDOperation.Update),
+                    new DataInfo("tvs", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2304,7 +2304,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<MunicipalityLinked>(id);
                 return await UpsertData<MunicipalityLinked>(
                     data,
-                    new DataInfo("municipalities", CRUDOperation.Update),
+                    new DataInfo("municipalities", CRUDOperation.Update, true),
                     new CompareConfig(true, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2332,7 +2332,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<DistrictLinked>(id);
                 return await UpsertData<DistrictLinked>(
                     data,
-                    new DataInfo("districts", CRUDOperation.Update),
+                    new DataInfo("districts", CRUDOperation.Update, true),
                     new CompareConfig(true, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2360,7 +2360,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<AreaLinked>(id);
                 return await UpsertData<AreaLinked>(
                     data,
-                    new DataInfo("areas", CRUDOperation.Update),
+                    new DataInfo("areas", CRUDOperation.Update, true),
                     new CompareConfig(false, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2388,7 +2388,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<SkiRegionLinked>(id);
                 return await UpsertData<SkiRegionLinked>(
                     data,
-                    new DataInfo("skiregions", CRUDOperation.Update),
+                    new DataInfo("skiregions", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2416,7 +2416,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<SkiAreaLinked>(id);
                 return await UpsertData<SkiAreaLinked>(
                     data,
-                    new DataInfo("skiareas", CRUDOperation.Update),
+                    new DataInfo("skiareas", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
@@ -2444,7 +2444,7 @@ namespace OdhApiCore.Controllers.api
                 data.Id = Helper.IdGenerator.CheckIdFromType<WineLinked>(id);
                 return await UpsertData<WineLinked>(
                     data,
-                    new DataInfo("wines", CRUDOperation.Update),
+                    new DataInfo("wines", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

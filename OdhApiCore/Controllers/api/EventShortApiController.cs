@@ -1316,7 +1316,7 @@ namespace OdhApiCore.Controllers.api
 
                     return await UpsertData<EventShortLinked>(
                         eventshort,
-                        new DataInfo("eventeuracnoi", CRUDOperation.Update),
+                        new DataInfo("eventeuracnoi", CRUDOperation.Update, true),
                         new CompareConfig(true, true),
                         new CRUDConstraints(additionalfilter, UserRolesToFilter)
                     );

@@ -340,7 +340,7 @@ namespace OdhApiCore.Controllers
 
                 return await UpsertData<TagLinked>(
                     tag,
-                    new DataInfo("tags", CRUDOperation.Update),
+                    new DataInfo("tags", CRUDOperation.Update, true),
                     new CompareConfig(false, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );
