@@ -507,7 +507,7 @@ namespace OdhApiCore.Controllers
                 //TODO UPDATE/INSERT ALSO in Destinationdata Column
                 return await UpsertData<VenueV2>(
                     venue,
-                    new DataInfo("venuesv2", CRUDOperation.Update),
+                    new DataInfo("venuesv2", CRUDOperation.Update, true),
                     new CompareConfig(false, false),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

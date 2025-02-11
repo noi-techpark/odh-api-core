@@ -212,7 +212,7 @@ namespace OdhApiImporter.Helpers.DSS
                 new DataInfo(table, CRUDOperation.Update),
                 new EditInfo("dss.skiarea.import", importerURL),
                 new CRUDConstraints(),
-                new CompareConfig(false, false)
+                new CompareConfig(true, false)
             );
         }
 

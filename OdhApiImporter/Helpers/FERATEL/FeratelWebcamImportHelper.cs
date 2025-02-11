@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using DataModel;
 using FERATEL;
 using Helper;
+using Helper.Generic;
 using Newtonsoft.Json;
 using SqlKata.Execution;
 
@@ -214,10 +215,11 @@ namespace OdhApiImporter.Helpers
 
             var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(
                 webcam,
-                table,
-                rawdataid,
-                "feratel.webcam.import",
-                importerURL
+                new DataInfo(table, Helper.Generic.CRUDOperation.CreateAndUpdate),
+                new EditInfo("feratel.webcam.import", importerURL),
+                new CRUDConstraints(),
+                new CompareConfig(true, false),
+                rawdataid
             );
 
             return pgcrudresult;

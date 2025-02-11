@@ -3079,18 +3079,26 @@ namespace DataModel
             }
         )]
         public string Type { get; set; }
-        public DateTime? LastUpdate { get; set; }
+        [SwaggerSchema(Description = "Date when Data was lastly saved/updated")]
+        public DateTime? LastUpdate { get; set; }        
         public string Source { get; set; }
         public bool Reduced { get; set; }
-
         public UpdateInfo? UpdateInfo { get; set; }
     }
 
     public class UpdateInfo
     {
         public string? UpdatedBy { get; set; }
-
         public string? UpdateSource { get; set; }
+
+        public ICollection<UpdateHistory>? UpdateHistory { get; set; }
+    }
+
+    public class UpdateHistory
+    {
+        public DateTime? LastUpdate { get; set; }
+        public string? UpdateSource { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 
     public class LicenseInfo
@@ -3165,9 +3173,7 @@ namespace DataModel
 
         public Publisher()
         {
-            Name = new Dictionary<string, string>();
-
-            //Mapping = new Dictionary<string, IDictionary<string, string>>();
+            Name = new Dictionary<string, string>();            
         }
 
         public string? Id { get; set; }

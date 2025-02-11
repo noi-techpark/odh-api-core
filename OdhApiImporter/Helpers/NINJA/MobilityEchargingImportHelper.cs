@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Location;
 using Helper.Tagging;
 using Microsoft.FSharp.Control;
@@ -258,10 +259,11 @@ namespace OdhApiImporter.Helpers
 
                 return await QueryFactory.UpsertData<ODHActivityPoiLinked>(
                     objecttosave,
-                    "smgpois",
-                    rawdataid,
-                    "mobility.echarging.import",
-                    importerURL
+                    new DataInfo("smgpois", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("mobility.echarging.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
                 );
             }
             catch (Exception ex)
@@ -314,6 +316,8 @@ namespace OdhApiImporter.Helpers
                     {
                         data.Active = false;
                         data.SmgActive = false;
+                        data.LastChange = DateTime.Now;
+                        data._Meta.LastUpdate = DateTime.Now;
 
                         updateresult = await QueryFactory
                             .Query("smgpois")
@@ -448,6 +452,8 @@ namespace OdhApiImporter.Helpers
                     )
                 );
             }
+            //Hack for alperia stations
+            listtoreturn.Add(Tuple.Create("alperia", "alperia"));
 
             return listtoreturn;
         }

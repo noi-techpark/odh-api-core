@@ -12,6 +12,7 @@ using EBMS;
 using Helper;
 using Helper.Extensions;
 using Helper.Tagging;
+using Helper.Generic;
 using Newtonsoft.Json;
 using SqlKata.Execution;
 
@@ -301,10 +302,11 @@ namespace OdhApiImporter.Helpers
 
                 return await QueryFactory.UpsertData<EventShortLinked>(
                     eventshort,
-                    "eventeuracnoi",
-                    rawdataid,
-                    "ebms.eventshort.import",
-                    importerURL
+                    new DataInfo("eventeuracnoi", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("ebms.eventshort.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
                 );
             }
             catch (Exception ex)

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Newtonsoft.Json;
 using PANOCLOUD;
 using SqlKata.Execution;
@@ -195,10 +196,11 @@ namespace OdhApiImporter.Helpers
 
             var pgcrudresult = await QueryFactory.UpsertData<WebcamInfoLinked>(
                 webcam,
-                table,
-                rawdataid,
-                "panocloud.webcam.import",
-                importerURL
+                new DataInfo(table, Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("panocloud.webcam.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid                
             );
 
             return pgcrudresult;

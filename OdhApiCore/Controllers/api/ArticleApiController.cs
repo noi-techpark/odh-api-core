@@ -549,7 +549,7 @@ namespace OdhApiCore.Controllers.api
 
                 return await UpsertData<ArticlesLinked>(
                     article,
-                    new DataInfo("articles", CRUDOperation.Update),
+                    new DataInfo("articles", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

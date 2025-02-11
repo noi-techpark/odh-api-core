@@ -594,7 +594,7 @@ namespace OdhApiCore.Controllers
 
                 return await UpsertData<LTSActivityLinked>(
                     activity,
-                    new DataInfo("activities", CRUDOperation.Update),
+                    new DataInfo("activities", CRUDOperation.Update, true),
                     new CompareConfig(true, true),
                     new CRUDConstraints(additionalfilter, UserRolesToFilter)
                 );

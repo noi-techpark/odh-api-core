@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using DataModel;
 using Helper;
+using Helper.Generic;
 using Helper.Location;
 using Newtonsoft.Json;
 using ServiceReferenceLCS;
@@ -696,10 +697,11 @@ namespace OdhApiImporter.Helpers
 
             return await QueryFactory.UpsertData<ODHActivityPoiLinked>(
                 odhactivitypoi,
-                "smgpois",
-                rawdataid,
-                "siag.museum.import",
-                importerURL
+                new DataInfo("smgpois", Helper.Generic.CRUDOperation.CreateAndUpdate),
+                    new EditInfo("siag.museum.import", importerURL),
+                    new CRUDConstraints(),
+                    new CompareConfig(true, false),
+                    rawdataid
             );
         }
 

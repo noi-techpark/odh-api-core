@@ -91,10 +91,11 @@ namespace NINJA
 
         public static async Task<
             NinjaObjectWithParent<NinjaEchargingPlug, NinjaEchargingStation>
-        > GetNinjaEchargingPlugs(string serviceurl)
+        > GetNinjaEchargingPlugs(string serviceurl, bool onlyactive = true)
         {
-            string placeselect =
-                $"EChargingPlug?limit=0&where=sactive.eq.true,scoordinate.bbc.({NinjaHelper.GetBoundingBoxForSouthTyrol()})";
+            string placeselect = onlyactive ?
+                $"EChargingPlug?limit=0&where=sactive.eq.true,scoordinate.bbc.({NinjaHelper.GetBoundingBoxForSouthTyrol()})"
+                : $"EChargingPlug?limit=0&where=scoordinate.bbc.({NinjaHelper.GetBoundingBoxForSouthTyrol()})"; 
 
             var requesturl = serviceurl + placeselect;
 
