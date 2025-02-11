@@ -69,24 +69,38 @@ namespace Helper
 
             //Blacklist TVs
             Dictionary<string, List<string>> notallowedtvs = new Dictionary<string, List<string>>()
-            {
-                //TV Obertilliach, Cortina, Sappada, Auronzo, Arabba,
+            {                
                 {
                     "odhactivitypoi",
                     new List<string>()
                     {
-                        "F68D877B11916F39E6413DFB744259EB",
-                        "3063A07EFE5EC4D357FCB6C5128E81F0",
-                        "3629935C546A49328842D3E0E9150CE8",
-                        "E9D7583EECBA480EA073C4F8C030E83C",
-                        "9FA380DE9937C1BB64844076674968E2",
-                        "6B39D0B4DD4CCAE6477F7013B090784C",
-                        "F7D7AAEC0313487B9CE8EC9067E43B73",
-                        "E1407CED66C14AABBF49532AA49C76A6",
-                        "7D208AA1374F1484A2483829207C9421",
+                        "F68D877B11916F39E6413DFB744259EB", //Obertilliach
+                        "3063A07EFE5EC4D357FCB6C5128E81F0", //Cortina
+                        "3629935C546A49328842D3E0E9150CE8", //Osttirol
+                        "E9D7583EECBA480EA073C4F8C030E83C", //Sappada
+                        "9FA380DE9937C1BB64844076674968E2", //Lorenzago Auronzo Misurina 
+                        "6B39D0B4DD4CCAE6477F7013B090784C", //Cadore
+                        "F7D7AAEC0313487B9CE8EC9067E43B73", //Arabba
+                        "E1407CED66C14AABBF49532AA49C76A6", //Alleghe
+                        "7D208AA1374F1484A2483829207C9421", //TEST Owner
+                        "0E8FFB31CCFC31D92C6F396134D2F1FC ", //Tourismusverband Tiroler Oberland
+                        "959F253373BE9B97A753EA19D274ECAE ", //Engadin Scuol Zernez
                     }
                 },
             };
+
+            //Blaklisted OwnerRIDs
+            Dictionary<string, List<string>> notallowedownerrids = new Dictionary<string, List<string>>()
+            {
+                {
+                    "odhactivitypoi",
+                    new List<string>()
+                    {
+                        "0E8FFB31CCFC31D92C6F396134D2F1FC", // Tourismusverband Tiroler Oberland - Infobüro Nauders                      
+                    }
+                },
+            };
+
 
             List<string> publishedonlist = new List<string>();
 
@@ -271,13 +285,28 @@ namespace Helper
                                         ? false
                                         : true;
 
+                            bool ownerallowed = true;
+                            if ((mydata as ODHActivityPoiLinked).OwnerRid != null)
+                                ownerallowed =
+                                    notallowedownerrids[mydata._Meta.Type]
+                                        .Where(x =>
+                                            x.Contains(
+                                                (
+                                                    mydata as ODHActivityPoiLinked
+                                                ).OwnerRid
+                                            )
+                                        )
+                                        .Count() > 0
+                                        ? false
+                                        : true;
+
                             //IF category is white or blacklisted find an intersection
                             var tagintersection = allowedtags
                                 .Select(x => x.Id)
                                 .ToList()
                                 .Intersect((mydata as ODHActivityPoiLinked).SmgTags);
 
-                            if (tagintersection.Count() > 0 && tvallowed)
+                            if (tagintersection.Count() > 0 && tvallowed && ownerallowed)
                             {
                                 var blacklistedpublisher = new List<string>();
 
