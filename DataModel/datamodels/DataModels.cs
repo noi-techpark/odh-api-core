@@ -977,8 +977,8 @@ namespace DataModel
             ContactInfos = new Dictionary<string, ContactInfos>();
             OrganizerInfos = new Dictionary<string, ContactInfos>();
             EventAdditionalInfos = new Dictionary<string, EventAdditionalInfos>();
-            EventPrice = new Dictionary<string, EventPrice>();
-            EventPrices = new Dictionary<string, ICollection<EventPrice>>();
+            //EventPrice = new Dictionary<string, EventPrice>();
+            //EventPrices = new Dictionary<string, ICollection<EventPrice>>();
             //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
             //Hashtag = new Dictionary<string, ICollection<string>>();
             //EventDescAdditional = new Dictionary<string, EventDescAdditional>();
@@ -1042,6 +1042,12 @@ namespace DataModel
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
         public bool SmgActive { get; set; }
 
+        public ICollection<EventVariant> EventVariants { get; set; }
+
+        public ICollection<Tags> Tags { get; set; }
+
+        public ICollection<string> TagIds { get; set; }
+
         //Obsolete fields not used!
 
         //public ICollection<EventCrossSelling>? EventCrossSelling { get; set; }
@@ -1051,19 +1057,20 @@ namespace DataModel
         //Only for LTS internal use
         //public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
 
-        public bool? GrpEvent { get; set; }
-        public bool? EventBenefit { get; set; }
+        //public bool? GrpEvent { get; set; }
+        //public bool? EventBenefit { get; set; }
         public string? OrgRID { get; set; }
         //[SwaggerDeprecated("Obsolete use EventPublisher List")]
         //public int? Ranc { get; set; }
         public string? Ticket { get; set; }
         public string? SignOn { get; set; }
         public string? PayMet { get; set; }
-        [SwaggerDeprecated("Obsolete")]
-        public string? Type { get; set; }
-        public string? Pdf { get; set; }
-        public IDictionary<string, EventPrice> EventPrice { get; set; }
-        public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
+        
+        //[SwaggerDeprecated("Obsolete")]
+        //public string? Type { get; set; }
+        //public string? Pdf { get; set; }
+        //public IDictionary<string, EventPrice> EventPrice { get; set; }
+        //public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
         //[Obsolete("Deprecated use Tags")]
         //public ICollection<LTSTags>? LTSTags { get; set; }
         //public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
@@ -1078,31 +1085,209 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }
+        public List<LTSTagsLinked>? LTSTags { get; set; }
+
+        public string? Type { get; set; }
+        public string? Pdf { get; set; }
+        public IDictionary<string, EventPrice> EventPrice { get; set; }
+        public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
+        public EventOperationScheduleOverview? EventOperationScheduleOverview { get; set; }
+        public IDictionary<string, ICollection<string>> Hashtag { get; set; }
+        public bool? GrpEvent { get; set; }
+        public bool? EventBenefit { get; set; }
     }
 
-    //TODO Migrate to new EventPricing class
 
-    public class EventPricing
+
+    //Includes registration, meetingPoint, location
+    public class EventAdditionalInfos : IEventAdditionalInfos, ILanguage
     {
-        public EventPricing()
+        [SwaggerDeprecated("Deprecated use Meetingplace")]
+        public string? Mplace { get { return this.MeetingPoint; } }        
+        [SwaggerDeprecated("Deprecated use Registration")]
+        public string? Reg { get { return this.Registration; } }
+
+        public string? MeetingPoint { get; set; }
+        public string? Registration { get; set; }
+        public string? Location { get; set; }
+        public string? Language { get; set; }
+    }
+
+    //Includes shopConfiguration, urlAlias, urls
+    public class EventUrls
+    {
+        public string Type { get; set; }
+        public IDictionary<string,string> Url { get; set; }
+        public bool? Active { get; set; }
+    }
+
+    //Includes isTicketRequired, isRegistrationRequired, isIncludedInSuedtirolGuestPass, classification, organizer
+    public class EventProperty
+    {
+        public bool? TicketRequired { get; set; }
+        public bool? RegistrationRequired { get; set; }
+        public bool? IncludedInSuedtirolGuestPass { get; set; }
+
+        public string? EventClassificationId { get; set; }
+
+        public string? EventOrganizerId { get; set; }
+    }
+
+    //includes variants
+    public class EventVariant
+    {
+        public int? Order { get; set; }
+        public double? Price { get; set; }
+        public string? VariantId { get; set; }
+        public ICollection<string> VariantCategory { get; set; }
+        public IDictionary<string,string> Name { get; set; }
+    }
+
+    public class EventPublisher
+    {
+        public string? PublisherRID { get; set; }
+        public int Ranc { get; set; }
+        public int Publish { get; set; }
+    }
+
+    public class EventDate : IEventDate
+    {
+        //Test automatic Generation
+        //public DateTime DateBegin
+        //{
+        //    get
+        //    {
+        //        return new DateTime(From.Year, From.Month, From.Day, Begin.Value.Hours, Begin.Value.Minutes, Begin.Value.Days);
+        //    }
+        //}
+
+        //public DateTime DateEnd
+        //{
+        //    get
+        //    {
+        //        return new DateTime(To.Year, To.Month, To.Day, End.Value.Hours, End.Value.Minutes, End.Value.Days);
+        //    }
+        //}
+
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
+        public bool? SingleDays { get; set; }
+        public int? MinPersons { get; set; }
+        public int? MaxPersons { get; set; }
+        public bool? Ticket { get; set; }
+        public double? GpsNorth { get; set; }
+        public double? GpsEast { get; set; }
+        public TimeSpan? Begin { get; set; }
+        public TimeSpan? End { get; set; }
+        public TimeSpan? Entrance { get; set; }
+
+        //NEW Properties
+        public double? InscriptionTill { get; set; }
+        public bool? Active { get; set; }
+        public string? DayRID { get; set; }
+
+        public Dictionary<string, EventDateAdditionalInfo>? EventDateAdditionalInfo { get; set; }
+        public ICollection<EventDateAdditionalTime>? EventDateAdditionalTime { get; set; }
+        public EventDateCalculatedDay? EventCalculatedDay { get; set; }
+
+        //New
+        public string PriceFrom { get; set; }
+        public string Cancelled { get; set; }
+    }
+
+    public class EventDateAdditionalInfo : ILanguage
+    {
+        public string Description { get; set; }
+        public string Guide { get; set; }
+        public string InscriptionLanguage { get; set; }
+        public string Language { get; set; }
+
+        public string Cancelled { get; set; }
+    }
+
+    //TODO GET MORE INFOS ABOUT THIS
+    public class EventDateAdditionalTime
+    {
+        public string Days { get; set; }
+        public TimeSpan Entrance1 { get; set; }
+        public TimeSpan Begin1 { get; set; }
+        public TimeSpan End1 { get; set; }
+        public TimeSpan Entrance2 { get; set; }
+        public TimeSpan Begin2 { get; set; }
+        public TimeSpan End2 { get; set; }
+    }
+
+    public class EventDateCalculatedDay
+    {
+        public string CDayRID { get; set; }
+        public DateTime Day { get; set; }
+        public TimeSpan Begin { get; set; }
+
+        public int? AvailabilityLow { get; set; }
+        public int? AvailabilityCalculatedValue { get; set; }
+        public bool? SoldOut { get; set; }
+
+        public ICollection<EventDateCalculatedDayVariant> EventDateCalculatedDayVariant { get; set; }
+    }
+
+    public class EventDateCalculatedDayVariant
+    {
+        public string VariantRID { get; set; }
+        public int? AvailabilityLow { get; set; }
+        public int? AvailabilityCalculatedValue { get; set; }
+    }
+
+
+    //DEPRECATED Classes used on the Raven Event Model
+
+    public class Topic
+    {
+        public string? TopicRID { get; set; }
+        public string? TopicInfo { get; set; }
+    }
+    
+    public class EventBooking
+    {
+        public EventBooking()
         {
-            EventPricingDesc = new Dictionary<string, EventPricingDescription>();
+            BookingUrl = new Dictionary<string, EventBookingDetail>();
         }
 
-        public double Price { get; set; }
-        public string? Type { get; set; }
-        public string PriceID { get; set; }
+        public DateTime? BookableFrom { get; set; }
+        public DateTime? BookableTo { get; set; }
+        public int? AccommodationAssignment { get; set; }
 
-        public IDictionary<string, EventPricingDescription> EventPricingDesc { get; set; }
+        public Dictionary<string, EventBookingDetail> BookingUrl { get; set; }
     }
 
-    public class EventPricingDescription : ILanguage
+    public class EventBookingDetail
     {
+        public string Url { get; set; }
+    }
+
+    public class EventPrice : IEventPrice, ILanguage
+    {
+        public double Price { get; set; }
+        public string? Type { get; set; }
+        public string? Pstd { get; set; }
         public string? ShortDesc { get; set; }
         public string? LongDesc { get; set; }
         public string? Description { get; set; }
+
         public string? Language { get; set; }
+        public string PriceRID { get; set; }
+        public string VarRID { get; set; }
+    }
+
+    public class EventOperationScheduleOverview
+    {
+        public bool Monday { get; set; }
+        public bool Tuesday { get; set; }
+        public bool Wednesday { get; set; }
+        public bool Thursday { get; set; }
+        public bool Friday { get; set; }
+        public bool Saturday { get; set; }
+        public bool Sunday { get; set; }
     }
 
     #endregion
@@ -3855,206 +4040,7 @@ namespace DataModel
         )]
         public int Timecode { get; set; }
     }
-
-    //Event Data
-
-    public class Topic
-    {
-        public string? TopicRID { get; set; }
-        public string? TopicInfo { get; set; }
-    }
-
-    public class EventAdditionalInfos : IEventAdditionalInfos, ILanguage
-    {
-        [SwaggerDeprecated("Deprecated use Meetingplace")]
-        public string? Mplace { get { return this.MeetingPoint; } }
-        public string? MeetingPoint { get; set; }
-        [SwaggerDeprecated("Deprecated use Registration")]
-        public string? Reg { get { return this.Registration; } }
-        public string? Registration { get; set; }
-        public string? Location { get; set; }
-        public string? Language { get; set; }
-    }
-
-    public class EventProperty
-    {
-        public bool? IsTicketRequired { get; set; }
-        public bool? IsRegistrationRequired { get; set; }
-        public bool? IsIncludedInSuedtirolGuestPass { get; set; }
-
-        public string? EventClassificationId { get; set; }
-
-        public string? EventOrganizerId { get; set; }
-    }
-
-    //TODO Mark as deprecated
-    public class EventPrice : IEventPrice, ILanguage
-    {
-        public double Price { get; set; }
-        public string? Type { get; set; }
-        public string? Pstd { get; set; }
-        public string? ShortDesc { get; set; }
-        public string? LongDesc { get; set; }
-        public string? Description { get; set; }
-
-        public string? Language { get; set; }
-        public string PriceRID { get; set; }
-        public string VarRID { get; set; }
-    }
-
-    public class EventPublisher
-    {
-        public string? PublisherRID { get; set; }
-        public int Ranc { get; set; }
-        public int Publish { get; set; }
-    }
-
-    public class EventDate : IEventDate
-    {
-        //Test automatic Generation
-        //public DateTime DateBegin
-        //{
-        //    get
-        //    {
-        //        return new DateTime(From.Year, From.Month, From.Day, Begin.Value.Hours, Begin.Value.Minutes, Begin.Value.Days);
-        //    }
-        //}
-
-        //public DateTime DateEnd
-        //{
-        //    get
-        //    {
-        //        return new DateTime(To.Year, To.Month, To.Day, End.Value.Hours, End.Value.Minutes, End.Value.Days);
-        //    }
-        //}
-
-        public DateTime From { get; set; }
-        public DateTime To { get; set; }
-        public bool? SingleDays { get; set; }
-        public int? MinPersons { get; set; }
-        public int? MaxPersons { get; set; }
-        public bool? Ticket { get; set; }
-        public double? GpsNorth { get; set; }
-        public double? GpsEast { get; set; }
-        public TimeSpan? Begin { get; set; }
-        public TimeSpan? End { get; set; }
-        public TimeSpan? Entrance { get; set; }
-
-        //NEW Properties
-        public double? InscriptionTill { get; set; }
-        public bool? Active { get; set; }
-        public string? DayRID { get; set; }
-
-        public Dictionary<string, EventDateAdditionalInfo>? EventDateAdditionalInfo { get; set; }
-        public ICollection<EventDateAdditionalTime>? EventDateAdditionalTime { get; set; }
-        public EventDateCalculatedDay? EventCalculatedDay { get; set; }
-
-        //New
-        public string PriceFrom { get; set; }
-        public string Cancelled { get; set; }
-    }
-
-    public class EventDateAdditionalInfo : ILanguage
-    {
-        public string Description { get; set; }
-        public string Guide { get; set; }
-        public string InscriptionLanguage { get; set; }
-        public string Language { get; set; }
-
-        public string Cancelled { get; set; }
-    }
-
-    //TODO GET MORE INFOS ABOUT THIS
-    public class EventDateAdditionalTime
-    {
-        public string Days { get; set; }
-        public TimeSpan Entrance1 { get; set; }
-        public TimeSpan Begin1 { get; set; }
-        public TimeSpan End1 { get; set; }
-        public TimeSpan Entrance2 { get; set; }
-        public TimeSpan Begin2 { get; set; }
-        public TimeSpan End2 { get; set; }
-    }
-
-    public class EventDateCalculatedDay
-    {
-        public string CDayRID { get; set; }
-        public DateTime Day { get; set; }
-        public TimeSpan Begin { get; set; }
-        //public int TicketsAvailable { get; set; }
-        //public int MaxSellableTickets { get; set; }
-        //public ICollection<EventDateCalculatedDayVariant> EventDateCalculatedDayVariant { get; set; }
-
-        ////found in response
-        //public Nullable<int> AvailabilityCalculatedValue { get; set; }
-        //public Nullable<int> AvailabilityLow { get; set; }
-        //public Nullable<double> PriceFrom { get; set; }
-    }
-
-    //public class EventDateCalculatedDayVariant
-    //{
-    //    public string VarRID { get; set; }
-    //    public double Price { get; set; }
-    //    public Nullable<bool> IsStandardVariant { get; set; }
-    //    public Nullable<int> TotalSellable { get; set; }
-    //}
-
-    public class EventBooking
-    {
-        public EventBooking()
-        {
-            BookingUrl = new Dictionary<string, EventBookingDetail>();
-        }
-
-        public DateTime? BookableFrom { get; set; }
-        public DateTime? BookableTo { get; set; }
-        public int? AccommodationAssignment { get; set; }
-
-        public Dictionary<string, EventBookingDetail> BookingUrl { get; set; }
-    }
-
-    public class EventBookingDetail
-    {
-        public string Url { get; set; }
-    }
-
-    //public class EventVariant
-    //{
-    //    public string VarRID { get; set; }
-    //    public string ShortDescription { get; set; }
-    //    public string LongDescription { get; set; }
-    //    public string Description { get; set; }
-    //    public string Language { get; set; }
-    //}
-
-    public class EventOperationScheduleOverview
-    {
-        public bool Monday { get; set; }
-        public bool Tuesday { get; set; }
-        public bool Wednesday { get; set; }
-        public bool Thursday { get; set; }
-        public bool Friday { get; set; }
-        public bool Saturday { get; set; }
-        public bool Sunday { get; set; }
-    }
-
-    //public class EventCrossSelling
-    //{
-    //    public string EventRID { get; set; }
-    //}
-
-    //public class EventDescAdditional
-    //{
-    //    public string Type { get; set; }
-    //    public string Language { get; set; }
-    //    public string Order { get; set; }
-    //    public string RQPlain { get; set; }
-    //    public string RQHtml { get; set; }
-    //    public string RSPlain { get; set; }
-    //    public string RSHtml { get; set; }
-    //}
-
-    //end Event classes
+  
 
     public class LocationInfo : ILocationInfoAware
     {
