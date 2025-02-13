@@ -369,9 +369,6 @@ namespace DataModel
         bool? SingleDays { get; set; }
         int? MinPersons { get; set; }
         int? MaxPersons { get; set; }
-        bool? Ticket { get; set; }
-        double? GpsNorth { get; set; }
-        double? GpsEast { get; set; }
         TimeSpan? Begin { get; set; }
         TimeSpan? End { get; set; }
         TimeSpan? Entrance { get; set; }

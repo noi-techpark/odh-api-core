@@ -977,7 +977,7 @@ namespace DataModel
             ContactInfos = new Dictionary<string, ContactInfos>();
             OrganizerInfos = new Dictionary<string, ContactInfos>();
             EventAdditionalInfos = new Dictionary<string, EventAdditionalInfos>();
-            //EventPrice = new Dictionary<string, EventPrice>();
+            EventPrice = new Dictionary<string, EventPrice>();
             //EventPrices = new Dictionary<string, ICollection<EventPrice>>();
             //EventVariants = new Dictionary<string, ICollection<EventVariant>>();
             //Hashtag = new Dictionary<string, ICollection<string>>();
@@ -989,11 +989,28 @@ namespace DataModel
         public bool Active { get; set; }
         public string? Shortname { get; set; }
 
-        public DateTime? DateBegin { get; set; }
-        public DateTime? DateEnd { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
+        public string Source { get; set; }
 
         public DateTime? FirstImport { get; set; }
         public DateTime? LastChange { get; set; }
+
+        public ICollection<ImageGallery>? ImageGallery { get; set; }
+        public IDictionary<string, Detail> Detail { get; set; }
+        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
+
+
+        public LocationInfo? LocationInfo { get; set; }
+        public ICollection<string>? PublishedOn { get; set; }
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public DistanceInfo? DistanceInfo { get; set; }
+
+
+        [SwaggerSchema("First Date when the Event occurs, Detailed Eventdates in Section EventDates")]
+        public DateTime? DateBegin { get; set; }
+        [SwaggerSchema("Last Date when the Event occurs, Detailed Eventdates in Section EventDates")]
+        public DateTime? DateEnd { get; set; }
+
 
         //GPS Info
         public string? Gpstype { get; set; }
@@ -1001,80 +1018,73 @@ namespace DataModel
         public double Longitude { get; set; }
         public Nullable<double> Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
+        
+        
+        
         public string? DistrictId { get; set; }
         public ICollection<string>? DistrictIds { get; set; }
-        public ICollection<ImageGallery>? ImageGallery { get; set; }
-
-        public IDictionary<string, Detail> Detail { get; set; }
-
+        
+        
         public ICollection<string>? TopicRIDs { get; set; }
         public ICollection<Topic>? Topics { get; set; }
 
         public ICollection<EventPublisher>? EventPublisher { get; set; }
     
-        public IDictionary<string, ContactInfos> ContactInfos { get; set; }
         public IDictionary<string, ContactInfos> OrganizerInfos { get; set; }
 
-        public LocationInfo? LocationInfo { get; set; }        
-        public ICollection<string>? HasLanguage { get; set; }
-        public string Source { get; set; }                        
-        public ICollection<string>? PublishedOn { get; set; }                 
-        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
-        public DistanceInfo? DistanceInfo { get; set; }
-
-
-        //Obsolete fields to change
-
+    
         public ICollection<EventDate>? EventDate { get; set; }
-        public IDictionary<string, EventAdditionalInfos> EventAdditionalInfos { get; set; }
+        public IDictionary<string, EventAdditionalInfos> EventAdditionalInfos { get; set; }        
+        public ICollection<EventVariant> EventVariants { get; set; }
+        public EventProperty EventProperty { get; set; }
 
 
         [SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
         public DateTime? NextBeginDate { get; set; }
 
-        [Obsolete("Deprecated use Mapping.lts.ClassificationRID")]
-        public string? ClassificationRID { get; set; }
+        [SwaggerDeprecated("Deprecated use Mapping.lts.ClassificationRID, EventProperty.EventClassificationId")]
+        public string? ClassificationRID
+        {
+            get
+            {
+                return this.EventProperty != null ? this.EventProperty.EventClassificationId : "";
+            }
+        }
+       
+        [SwaggerDeprecated("Obsolete, use EventProperty.TicketRequired")]
+        public string? Ticket
+        {
+            get
+            {
+                return this.EventProperty != null ? this.EventProperty.TicketRequired != null ? this.EventProperty.TicketRequired.Value ? "1" : "0" : "0" : "0";
+            }
+        }
+        [SwaggerDeprecated("Obsolete, use EventProperty.RegistrationRequired")]
+        public string? SignOn
+        {
+            get
+            {
+                return this.EventProperty != null ? this.EventProperty.RegistrationRequired != null ? this.EventProperty.RegistrationRequired.Value ? "1" : "0" : "0" : "0";
+            }
+        }
+        [SwaggerDeprecated("Obsolete, use EventProperty.EventOrganizerId")]
+        public string? OrgRID { 
+            get {
+                return this.EventProperty != null ? this.EventProperty.EventOrganizerId : "";            
+            } 
+        }
+        
+        [SwaggerDeprecated("Obsolete, use EventVariants")]
+        public IDictionary<string, EventPrice> EventPrice { get; set; } //Stays here for compatibility reasons used in Centro Trevi Sync
 
+        [SwaggerDeprecated("Obsolete, use EventUrls type bookingUrl")]
+        public EventBooking? EventBooking { get; set; }   //Stays here for compatibility reasons IDM checks if EventBooking.Type not null = bookable
+
+        [SwaggerDeprecated("Obsolete, use Tags")]
         public ICollection<string>? SmgTags { get; set; }
-
-        public EventBooking? EventBooking { get; set; }   //Check if EventBooking.Type not null bool
-
+        
         [SwaggerDeprecated("Obsolete, use PublishedOn")]
-        public bool SmgActive { get; set; }
-
-        public ICollection<EventVariant> EventVariants { get; set; }
-
-        public ICollection<Tags> Tags { get; set; }
-
-        public ICollection<string> TagIds { get; set; }
-
-        //Obsolete fields not used!
-
-        //public ICollection<EventCrossSelling>? EventCrossSelling { get; set; }
-        //public EventOperationScheduleOverview? EventOperationScheduleOverview { get; set; }
-        //public IDictionary<string, ICollection<string>> Hashtag { get; set; }
-
-        //Only for LTS internal use
-        //public IDictionary<string, ICollection<EventVariant>> EventVariants { get; set; }
-
-        //public bool? GrpEvent { get; set; }
-        //public bool? EventBenefit { get; set; }
-        public string? OrgRID { get; set; }
-        
-        //[SwaggerDeprecated("Obsolete use EventPublisher List")]
-        //public int? Ranc { get; set; }
-        public string? Ticket { get; set; }
-        public string? SignOn { get; set; }
-        public string? PayMet { get; set; }
-        
-        //[SwaggerDeprecated("Obsolete")]
-        //public string? Type { get; set; }
-        //public string? Pdf { get; set; }
-        //public IDictionary<string, EventPrice> EventPrice { get; set; }
-        //public IDictionary<string, ICollection<EventPrice>> EventPrices { get; set; }
-        //[Obsolete("Deprecated use Tags")]
-        //public ICollection<LTSTags>? LTSTags { get; set; }
-        //public IDictionary<string, EventDescAdditional> EventDescAdditional { get; set; }
+        public bool SmgActive { get; set; }      
     }
 
     public class EventRaven : Event
@@ -1128,7 +1138,6 @@ namespace DataModel
         public bool? IncludedInSuedtirolGuestPass { get; set; }
 
         public string? EventClassificationId { get; set; }
-
         public string? EventOrganizerId { get; set; }
     }
 
@@ -1185,7 +1194,7 @@ namespace DataModel
         public bool? Active { get; set; }
         //isEachDayOwnEvent
         public bool? SingleDays { get; set; }
-        public string Cancelled { get; set; }
+        public bool? Cancelled { get; set; }
 
         public int? MinPersons { get; set; }
         public int? MaxPersons { get; set; }
@@ -1195,6 +1204,9 @@ namespace DataModel
         public ICollection<string>? EventVariantIDs { get; set; }
 
         public ICollection<EventDateOpeningHour>? EventDateOpeningInfo { get; set; }
+
+        [SwaggerDeprecated("Deprecated")]
+        public bool? Ticket { get; set; }
     }
 
     public class EventDateCalculatedDay
@@ -1221,10 +1233,9 @@ namespace DataModel
     {
         public string Description { get; set; }
         public string Guide { get; set; }
-        public string InscriptionLanguage { get; set; }
+        public string RegistrationWithin { get; set; }
         public string Language { get; set; }
-
-        public string Cancelled { get; set; }
+        public string CancellationDescription { get; set; }
     }
 
     public class EventDateTicketInfo

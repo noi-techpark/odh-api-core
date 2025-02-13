@@ -555,7 +555,10 @@ namespace RAVEN
 
             eventlinked.Active = data.Active;
             eventlinked.GpsInfo = data.ConvertGpsInfoOnRootToGpsInfoArray();
-            eventlinked.ClassificationRID = data.ClassificationRID;
+
+            eventlinked.EventProperty = new EventProperty();
+
+            eventlinked.EventProperty.EventClassificationId = data.ClassificationRID;
             eventlinked.ContactInfos = data.ContactInfos;
             eventlinked.DateBegin = data.DateBegin;
             eventlinked.DateEnd = data.DateEnd;
@@ -564,39 +567,39 @@ namespace RAVEN
             eventlinked.DistrictId = data.DistrictId;
             eventlinked.DistrictIds = data.DistrictIds;
             eventlinked.EventAdditionalInfos = data.EventAdditionalInfos;
-            eventlinked.EventBenefit = data.EventBenefit;
+            //eventlinked.EventBenefit = data.EventBenefit;
             eventlinked.EventBooking = data.EventBooking;
-            eventlinked.EventCrossSelling = data.EventCrossSelling;
+            //eventlinked.EventCrossSelling = data.EventCrossSelling;
             eventlinked.EventDate = data.EventDate;
-            eventlinked.EventDescAdditional = data.EventDescAdditional;
-            eventlinked.EventOperationScheduleOverview = data.EventOperationScheduleOverview;
+            //eventlinked.EventDescAdditional = data.EventDescAdditional;
+            //eventlinked.EventOperationScheduleOverview = data.EventOperationScheduleOverview;
             eventlinked.EventPrice = data.EventPrice;
-            eventlinked.EventPrices = data.EventPrices;
+            //eventlinked.EventPrices = data.EventPrices;
             eventlinked.EventPublisher = data.EventPublisher;
             eventlinked.FirstImport = data.FirstImport;
-            eventlinked.GrpEvent = data.GrpEvent;
-            eventlinked.Hashtag = data.Hashtag;
+            //eventlinked.GrpEvent = data.GrpEvent;
+            //eventlinked.Hashtag = data.Hashtag;
             eventlinked.HasLanguage = data.HasLanguage;
             eventlinked.ImageGallery = data.ImageGallery;
             eventlinked.LastChange = data.LastChange;
             eventlinked.LicenseInfo = data.LicenseInfo;
             eventlinked.LocationInfo = data.LocationInfo;
-            eventlinked.LTSTags = data.LTSTags;
+            //eventlinked.LTSTags = data.LTSTags;
             eventlinked.Mapping = data.Mapping;
             eventlinked.NextBeginDate = data.NextBeginDate;
             eventlinked.OrganizerInfos = data.OrganizerInfos;
-            eventlinked.OrgRID = data.OrgRID;
-            eventlinked.PayMet = data.PayMet;
-            eventlinked.Pdf = data.Pdf;
-            eventlinked.Ranc = data.Ranc;
+            eventlinked.EventProperty.EventOrganizerId = data.OrgRID;
+            //eventlinked.PayMet = data.PayMet;
+            //eventlinked.Pdf = data.Pdf;
+            //eventlinked.Ranc = data.Ranc;
             eventlinked.Shortname = data.Shortname;
-            eventlinked.SignOn = data.SignOn;
+            eventlinked.EventProperty.RegistrationRequired = !String.IsNullOrEmpty(data.Ticket) ? data.SignOn == "1" ? true : false : false;
             eventlinked.SmgActive = data.SmgActive;
             eventlinked.SmgTags = data.SmgTags;
-            eventlinked.Ticket = data.Ticket;
+            eventlinked.EventProperty.TicketRequired = !String.IsNullOrEmpty(data.Ticket) ? data.Ticket == "1" ? true : false : false;
             eventlinked.TopicRIDs = data.TopicRIDs;
             eventlinked.Topics = data.Topics;
-            eventlinked.Type = data.Type;
+            //eventlinked.Type = data.Type;
 
             if (eventlinked.TagIds == null)
                 eventlinked.TagIds = new List<string>();

@@ -725,7 +725,7 @@ namespace DataModel
         public new LocationInfoLinked? LocationInfo { get; set; }
 
         //Overwrites LTSTags
-        public new List<LTSTagsLinked>? LTSTags { get; set; }
+        //public new List<LTSTagsLinked>? LTSTags { get; set; }
 
         public ICollection<GpsInfo>? GpsInfo { get; set; }
 
