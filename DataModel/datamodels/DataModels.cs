@@ -1060,6 +1060,7 @@ namespace DataModel
         //public bool? GrpEvent { get; set; }
         //public bool? EventBenefit { get; set; }
         public string? OrgRID { get; set; }
+        
         //[SwaggerDeprecated("Obsolete use EventPublisher List")]
         //public int? Ranc { get; set; }
         public string? Ticket { get; set; }
@@ -1097,8 +1098,6 @@ namespace DataModel
         public bool? EventBenefit { get; set; }
     }
 
-
-
     //Includes registration, meetingPoint, location
     public class EventAdditionalInfos : IEventAdditionalInfos, ILanguage
     {
@@ -1133,7 +1132,7 @@ namespace DataModel
         public string? EventOrganizerId { get; set; }
     }
 
-    //includes variants
+    //Includes variants
     public class EventVariant
     {
         public int? Order { get; set; }
@@ -1143,6 +1142,7 @@ namespace DataModel
         public IDictionary<string,string> Name { get; set; }
     }
 
+    //includes publisherSettings
     public class EventPublisher
     {
         public string? PublisherRID { get; set; }
@@ -1169,52 +1169,32 @@ namespace DataModel
         //    }
         //}
 
+        public string? DayRID { get; set; }
+        //
+        public EventDateCalculatedDay? EventCalculatedDay { get; set; }
+        //includes cancellationDescription, guide, description, registrationWithin
+        public Dictionary<string, EventDateAdditionalInfo>? EventDateAdditionalInfo { get; set; }
+        //minAmount
+        public double? PriceFrom { get; set; }
+        //startDate, endDate
         public DateTime From { get; set; }
         public DateTime To { get; set; }
-        public bool? SingleDays { get; set; }
-        public int? MinPersons { get; set; }
-        public int? MaxPersons { get; set; }
-        public bool? Ticket { get; set; }
-        public double? GpsNorth { get; set; }
-        public double? GpsEast { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
         public TimeSpan? Entrance { get; set; }
-
-        //NEW Properties
-        public double? InscriptionTill { get; set; }
         public bool? Active { get; set; }
-        public string? DayRID { get; set; }
-
-        public Dictionary<string, EventDateAdditionalInfo>? EventDateAdditionalInfo { get; set; }
-        public ICollection<EventDateAdditionalTime>? EventDateAdditionalTime { get; set; }
-        public EventDateCalculatedDay? EventCalculatedDay { get; set; }
-
-        //New
-        public string PriceFrom { get; set; }
+        //isEachDayOwnEvent
+        public bool? SingleDays { get; set; }
         public string Cancelled { get; set; }
-    }
 
-    public class EventDateAdditionalInfo : ILanguage
-    {
-        public string Description { get; set; }
-        public string Guide { get; set; }
-        public string InscriptionLanguage { get; set; }
-        public string Language { get; set; }
+        public int? MinPersons { get; set; }
+        public int? MaxPersons { get; set; }
 
-        public string Cancelled { get; set; }
-    }
+        public EventDateTicketInfo? EventDateTicketInfo { get; set; }
 
-    //TODO GET MORE INFOS ABOUT THIS
-    public class EventDateAdditionalTime
-    {
-        public string Days { get; set; }
-        public TimeSpan Entrance1 { get; set; }
-        public TimeSpan Begin1 { get; set; }
-        public TimeSpan End1 { get; set; }
-        public TimeSpan Entrance2 { get; set; }
-        public TimeSpan Begin2 { get; set; }
-        public TimeSpan End2 { get; set; }
+        public ICollection<string>? EventVariantIDs { get; set; }
+
+        public ICollection<EventDateOpeningHour>? EventDateOpeningInfo { get; set; }
     }
 
     public class EventDateCalculatedDay
@@ -1237,6 +1217,44 @@ namespace DataModel
         public int? AvailabilityCalculatedValue { get; set; }
     }
 
+    public class EventDateAdditionalInfo : ILanguage
+    {
+        public string Description { get; set; }
+        public string Guide { get; set; }
+        public string InscriptionLanguage { get; set; }
+        public string Language { get; set; }
+
+        public string Cancelled { get; set; }
+    }
+
+    public class EventDateTicketInfo
+    {
+        public bool? Active { get; set; }
+        //Number of minutes before the Event before which ticket sale is allowed        
+        public int? OnlineSaleUntil { get; set; }
+        //Maximum number of tickets sellable online
+        public int? OnlineContingent { get; set; }
+    }
+
+    public class EventDateOpeningHour
+    {
+        public bool? MondayOpen { get; set; }
+        public bool? TuesdayOpen { get; set; }
+        public bool? WednesdayOpen { get; set; }
+        public bool? ThursdayOpen { get; set; }
+        public bool? FridayOpen { get; set; }
+        public bool? SaturdayOpen { get; set; }
+        public bool? SundayOpen { get; set; }        
+        public TimeSpan? Entrance1 { get; set; }
+        public TimeSpan? Begin1 { get; set; }
+        public TimeSpan? End1 { get; set; }
+        public TimeSpan? Entrance2 { get; set; }
+        public TimeSpan? Begin2 { get; set; }
+        public TimeSpan? End2 { get; set; }
+    }
+
+    
+
 
     //DEPRECATED Classes used on the Raven Event Model
 
@@ -1245,7 +1263,18 @@ namespace DataModel
         public string? TopicRID { get; set; }
         public string? TopicInfo { get; set; }
     }
-    
+
+    public class EventDateAdditionalTime
+    {
+        public string Days { get; set; }
+        public TimeSpan Entrance1 { get; set; }
+        public TimeSpan Begin1 { get; set; }
+        public TimeSpan End1 { get; set; }
+        public TimeSpan Entrance2 { get; set; }
+        public TimeSpan Begin2 { get; set; }
+        public TimeSpan End2 { get; set; }
+    }
+
     public class EventBooking
     {
         public EventBooking()
