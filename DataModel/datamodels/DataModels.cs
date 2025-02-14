@@ -1119,6 +1119,11 @@ namespace DataModel
         public string? MeetingPoint { get; set; }
         public string? Registration { get; set; }
         public string? Location { get; set; }
+
+        public string? ServiceDescription { get; set; }
+        public string? WhatToBring { get; set; }
+        public string? CancellationModality { get; set; }
+
         public string? Language { get; set; }
     }
 
