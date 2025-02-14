@@ -70,6 +70,7 @@ namespace OdhApiCore.Controllers
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of Gastronomy Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -105,6 +106,7 @@ namespace OdhApiCore.Controllers
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -142,6 +144,7 @@ namespace OdhApiCore.Controllers
                 rawfilter: rawfilter,
                 rawsort: rawsort,
                 removenullvalues: removenullvalues,
+                getasidarray: getasidarray,
                 cancellationToken: cancellationToken
             );
         }
@@ -269,6 +272,7 @@ namespace OdhApiCore.Controllers
             string? rawfilter,
             string? rawsort,
             bool removenullvalues,
+            bool getasidarray,
             CancellationToken cancellationToken
         )
         {
@@ -296,7 +300,8 @@ namespace OdhApiCore.Controllers
 
                 var query = QueryFactory
                     .Query()
-                    .SelectRaw("data")
+                    .When(getasidarray, x => x.Select("id"))
+                    .When(!getasidarray, x => x.SelectRaw("data"))
                     .From("gastronomies")
                     .GastronomyWhereExpression(
                         idlist: mygastronomyhelper.idlist,
@@ -332,6 +337,12 @@ namespace OdhApiCore.Controllers
                             )
                     )
                     .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
+
+                //IF getasidarray set simply return array of ids
+                if (getasidarray)
+                {
+                    return await query.GetAsync<string>();
+                }
 
                 // Get paginated data
                 var data = await query.PaginateAsync<JsonRaw>(

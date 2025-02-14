@@ -157,6 +157,10 @@ namespace OdhApiCore.Filters
                     {
                         actualdict.TryAdd(item.Key, ((bool?)item.Value).ToString());
                     }
+                    else if (item.Key == "getasidarray")
+                    {
+                        actualdict.TryAdd(item.Key, ((bool?)item.Value).ToString());
+                    }
                     else
                     {
                         actualdict.TryAdd(item.Key, ((string?)item.Value));
