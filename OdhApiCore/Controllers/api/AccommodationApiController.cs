@@ -158,6 +158,7 @@ namespace OdhApiCore.Controllers
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -212,8 +213,9 @@ namespace OdhApiCore.Controllers
                     rawfilter: rawfilter,
                     rawsort: rawsort,
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
-                );
+                ); ;
             }
             else if (availabilitycheck?.Value == true)
             {
@@ -270,6 +272,7 @@ namespace OdhApiCore.Controllers
                     rawfilter: rawfilter,
                     rawsort: rawsort,
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -793,6 +796,7 @@ namespace OdhApiCore.Controllers
                     rawfilter: null,
                     rawsort: null,
                     removenullvalues: false,
+                    getasidarray: false,
                     cancellationToken
                 );
             }
@@ -899,6 +903,7 @@ namespace OdhApiCore.Controllers
             string? rawfilter,
             string? rawsort,
             bool removenullvalues,
+            bool getasidarray,
             CancellationToken cancellationToken
         )
         {
@@ -941,7 +946,8 @@ namespace OdhApiCore.Controllers
 
                 var query = QueryFactory
                     .Query()
-                    .SelectRaw("data")
+                    .When(getasidarray, x => x.Select("id"))
+                    .When(!getasidarray, x =>x.SelectRaw("data"))
                     .From("accommodations")
                     .AccommodationWhereExpression(
                         idlist: myhelper.idlist,
@@ -987,6 +993,11 @@ namespace OdhApiCore.Controllers
                             )
                     )
                     .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort);
+
+                if(getasidarray)
+                {
+                    return await query.GetAsync<string>();
+                }
 
                 // Get paginated data
                 var data = await query.PaginateAsync<JsonRaw>(
