@@ -1223,7 +1223,7 @@ namespace DataModel
         public DateTime Day { get; set; }
         public TimeSpan Begin { get; set; }
 
-        public int? AvailabilityLow { get; set; }
+        public bool? AvailabilityLow { get; set; }
         public int? AvailabilityCalculatedValue { get; set; }
         public bool? SoldOut { get; set; }
 
@@ -1233,7 +1233,7 @@ namespace DataModel
     public class EventDateCalculatedDayVariant
     {
         public string VariantRID { get; set; }
-        public int? AvailabilityLow { get; set; }
+        public bool? AvailabilityLow { get; set; }
         public int? AvailabilityCalculatedValue { get; set; }
     }
 
