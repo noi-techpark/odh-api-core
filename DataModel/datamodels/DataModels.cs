@@ -1038,6 +1038,8 @@ namespace DataModel
         public ICollection<EventVariant> EventVariants { get; set; }
         public EventProperty EventProperty { get; set; }
 
+        public ICollection<EventUrls> EventUrls { get; set; }
+
 
         [SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
         public DateTime? NextBeginDate { get; set; }

@@ -1016,9 +1016,8 @@ namespace Helper
                 eventdate.DayRID = null;
                 eventdate.EventDateAdditionalInfo = null;
                 //eventdate.EventDateAdditionalTime = null;
-                eventdate.EventCalculatedDay = null;
-                eventdate.Cancelled = null;
-                eventdate.EventCalculatedDay = null;
+                eventdate.EventCalculatedDays = null;
+                eventdate.Cancelled = null;                
                 eventdate.EventDateOpeningInfo = null;
                 eventdate.EventDateTicketInfo = null;
                 eventdate.EventVariantIDs = null;
