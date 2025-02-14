@@ -1184,8 +1184,13 @@ namespace DataModel
         //}
 
         public string? DayRID { get; set; }
+
         [SwaggerDeprecated("Deprecated use EventCalculatedDays")]
-        public EventDateCalculatedDay? EventCalculatedDay { get; set; }
+        public EventDateCalculatedDay? EventCalculatedDay { get
+            {
+                return this.EventCalculatedDays != null ? EventCalculatedDays.FirstOrDefault() : null;
+            }        
+        }
 
         public ICollection<EventDateCalculatedDay>? EventCalculatedDays { get; set; }
 
