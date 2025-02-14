@@ -127,7 +127,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     //ETC......
 
                     //GET OLD Event
-                    var eventindb = LoadDataFromDB<EventLinked>(id);
+                    var eventindb = await LoadDataFromDB<EventLinked>(id);
 
                     eventparsed.CreatePublishedOnList();
 
