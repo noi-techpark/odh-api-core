@@ -30,6 +30,8 @@ namespace OdhApiImporter.Helpers
         Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete)
             where T : IActivateable;
 
+        Task<T> LoadDataFromDB<T>(string id);
+
         //Task<UpdateDetail> ImportData(ImportObject importobject, CancellationToken cancellationToken);
     }
 
@@ -125,6 +127,16 @@ namespace OdhApiImporter.Helpers
             var ids = await query.GetAsync<string>();
 
             return ids.ToList();
+        }
+
+        public async Task<T> LoadDataFromDB<T>(string id)
+        {          
+                 var query = QueryFactory
+                    .Query(table)
+                    .Select("data")
+                    .Where("id", id.ToUpper());
+
+            return await query.GetObjectSingleAsync<T>();
         }
     }
 

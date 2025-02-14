@@ -107,8 +107,8 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                 foreach (var ltsdatasingle in ltsdata)
                 {
-                    eventdata.AddRange(
-                        ltsdatasingle.ToObject<IList<LTSEvent>>()
+                    eventdata.Add(
+                        ltsdatasingle.ToObject<LTSEvent>()
                     );
                 }
 
@@ -125,6 +125,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     //EventDates not delete
                     //Event Start Begindate Logic
                     //ETC......
+
+                    //GET OLD Event
+                    var eventindb = LoadDataFromDB<EventLinked>(id);
 
                     eventparsed.CreatePublishedOnList();
 

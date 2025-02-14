@@ -1002,7 +1002,7 @@ namespace DataModel
 
         public LocationInfo? LocationInfo { get; set; }
         public ICollection<string>? PublishedOn { get; set; }
-        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public IDictionary<string, IDictionary<string, string>>? Mapping { get; set; }
         public DistanceInfo? DistanceInfo { get; set; }
 
 
@@ -1016,7 +1016,7 @@ namespace DataModel
         public string? Gpstype { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public Nullable<double> Altitude { get; set; }
+        public double? Altitude { get; set; }
         public string? AltitudeUnitofMeasure { get; set; }
         
         
@@ -1030,15 +1030,15 @@ namespace DataModel
 
         public ICollection<EventPublisher>? EventPublisher { get; set; }
     
-        public IDictionary<string, ContactInfos> OrganizerInfos { get; set; }
+        public IDictionary<string, ContactInfos>? OrganizerInfos { get; set; }
 
     
         public ICollection<EventDate>? EventDate { get; set; }
-        public IDictionary<string, EventAdditionalInfos> EventAdditionalInfos { get; set; }        
-        public ICollection<EventVariant> EventVariants { get; set; }
-        public EventProperty EventProperty { get; set; }
+        public IDictionary<string, EventAdditionalInfos>? EventAdditionalInfos { get; set; }        
+        public ICollection<EventVariant>? EventVariants { get; set; }
+        public EventProperty? EventProperty { get; set; }
 
-        public ICollection<EventUrls> EventUrls { get; set; }
+        public ICollection<EventUrls>? EventUrls { get; set; }
 
 
         [SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
@@ -1077,7 +1077,7 @@ namespace DataModel
         }
         
         [SwaggerDeprecated("Obsolete, use EventVariants")]
-        public IDictionary<string, EventPrice> EventPrice { get; set; } //Stays here for compatibility reasons used in Centro Trevi Sync
+        public IDictionary<string, EventPrice>? EventPrice { get; set; } //Stays here for compatibility reasons used in Centro Trevi Sync
 
         [SwaggerDeprecated("Obsolete, use EventUrls type bookingUrl")]
         public EventBooking? EventBooking { get; set; }   //Stays here for compatibility reasons IDM checks if EventBooking.Type not null = bookable
@@ -1132,8 +1132,8 @@ namespace DataModel
     //Includes shopConfiguration, urlAlias, urls
     public class EventUrls
     {
-        public string Type { get; set; }
-        public IDictionary<string,string> Url { get; set; }
+        public string? Type { get; set; }
+        public IDictionary<string,string>? Url { get; set; }
         public bool? Active { get; set; }
     }
 
@@ -1154,16 +1154,16 @@ namespace DataModel
         public int? Order { get; set; }
         public double? Price { get; set; }
         public string? VariantId { get; set; }
-        public ICollection<string> VariantCategory { get; set; }
-        public IDictionary<string,string> Name { get; set; }
+        public string? VariantCategoryId { get; set; }
+        public IDictionary<string,string>? Name { get; set; }
     }
 
     //includes publisherSettings
     public class EventPublisher
     {
         public string? PublisherRID { get; set; }
-        public int Ranc { get; set; }
-        public int Publish { get; set; }
+        public int? Ranc { get; set; }
+        public int? Publish { get; set; }
     }
 
     public class EventDate : IEventDate
@@ -1226,15 +1226,15 @@ namespace DataModel
 
     public class EventDateCalculatedDay
     {
-        public string CDayRID { get; set; }
-        public DateTime Day { get; set; }
-        public TimeSpan Begin { get; set; }
+        public string? CDayRID { get; set; }
+        public DateTime? Day { get; set; }
+        public TimeSpan? Begin { get; set; }
 
         public bool? AvailabilityLow { get; set; }
         public int? AvailabilityCalculatedValue { get; set; }
         public bool? SoldOut { get; set; }
 
-        public ICollection<EventDateCalculatedDayVariant> EventDateCalculatedDayVariant { get; set; }
+        public ICollection<EventDateCalculatedDayVariant>? EventDateCalculatedDayVariant { get; set; }
     }
 
     public class EventDateCalculatedDayVariant
@@ -1246,11 +1246,11 @@ namespace DataModel
 
     public class EventDateAdditionalInfo : ILanguage
     {
-        public string Description { get; set; }
-        public string Guide { get; set; }
-        public string RegistrationWithin { get; set; }
-        public string Language { get; set; }
-        public string CancellationDescription { get; set; }
+        public string? Description { get; set; }
+        public string? Guide { get; set; }
+        public string? RegistrationWithin { get; set; }
+        public string? Language { get; set; }
+        public string? CancellationDescription { get; set; }
     }
 
     public class EventDateTicketInfo
