@@ -192,6 +192,70 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region UPDATE DIRECTLY FROM LTS API
+
+        [HttpGet, Route("LTS/{datatype}/Update/{id}")]
+        [Authorize(Roles = "DataPush")]
+        public async Task<IActionResult> UpdateDataFromLTS(
+            string id,
+            string datatype,
+            CancellationToken cancellationToken = default
+        )
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Update LTS";
+            string updatetype = "single";
+            string source = "api";
+            string otherinfo = datatype;
+
+            try
+            {
+                LTSAPIImportHelper ltsapiimporthelper = new LTSAPIImportHelper(
+                    settings,
+                    QueryFactory,
+                    UrlGeneratorStatic("LTS/" + datatype),
+                    OdhPushnotifier
+                );
+                var resulttuple = await ltsapiimporthelper.GetFromLTSApiTransformToPGObject(
+                    id,
+                    datatype,
+                    cancellationToken
+                );
+                updatedetail = resulttuple.Item2;
+
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    resulttuple.Item1,
+                    source,
+                    operation,
+                    updatetype,
+                    "Update LTS succeeded",
+                    otherinfo,
+                    updatedetail,
+                    true
+                );
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var errorResult = GenericResultsHelper.GetErrorUpdateResult(
+                    id,
+                    source,
+                    operation,
+                    updatetype,
+                    "Update Raven failed",
+                    otherinfo,
+                    updatedetail,
+                    ex,
+                    true
+                );
+
+                return BadRequest(errorResult);
+            }
+        }
+
+        #endregion
+
         #region REPROCESS PUSH FAILURE QUEUE
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("PushFailureQueue/Retry/{publishedon}")]
