@@ -85,6 +85,7 @@ namespace Helper
                         "7D208AA1374F1484A2483829207C9421", //TEST Owner
                         "0E8FFB31CCFC31D92C6F396134D2F1FC ", //Tourismusverband Tiroler Oberland
                         "959F253373BE9B97A753EA19D274ECAE ", //Engadin Scuol Zernez
+                        "876CF2F5FEBF5D82619BF10D91A1F8D3"   //Mischuns
                     }
                 },
             };

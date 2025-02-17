@@ -319,6 +319,13 @@ namespace OdhApiImporter.Controllers
 
         #region CUSTOM PUSH SEND
 
+        /// <summary>
+        /// Send custom pushes to a publisher
+        /// </summary>
+        /// <param name="odhtype">pass the odhtype of the Entity</param>
+        /// <param name="publishedon">insert the publisher</param>
+        /// <param name="idlist">Pass the Idlist in the Body as json in this format ["",""]</param>
+        /// <returns></returns>
         [Authorize(Roles = "DataPush")]
         [HttpPost, Route("CustomDataPush/{odhtype}/{publishedon}")]
         public async Task<IActionResult> CustomDataPush(

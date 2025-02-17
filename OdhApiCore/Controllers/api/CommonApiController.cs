@@ -59,6 +59,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of MetaRegion Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -90,6 +91,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -135,6 +137,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "MetaRegion",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -154,6 +157,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "MetaRegion",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -217,6 +221,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of ExperienceArea Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -248,6 +253,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -293,6 +299,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "ExperienceArea",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -312,6 +319,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "ExperienceArea",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -374,6 +382,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of Region Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -404,6 +413,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -449,6 +459,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "Region",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -468,6 +479,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "Region",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -530,6 +542,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of Tourismverein Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -560,6 +573,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -605,6 +619,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "TourismAssociation",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -624,6 +639,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "TourismAssociation",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -687,6 +703,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of Municipality Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -718,6 +735,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -763,6 +781,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "Municipality",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -782,6 +801,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "Municipality",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -845,6 +865,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of District Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -876,6 +897,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -921,6 +943,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "District",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -940,6 +963,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "District",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -998,6 +1022,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of Area Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -1024,6 +1049,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -1059,6 +1085,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "Area",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -1078,6 +1105,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "Area",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -1140,6 +1168,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of SkiRegion Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -1170,6 +1199,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -1215,6 +1245,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "SkiRegion",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -1234,6 +1265,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "SkiRegion",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -1296,6 +1328,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>Collection of SkiArea Objects</returns>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
@@ -1326,6 +1359,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter = null,
             string? rawsort = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -1371,6 +1405,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "SkiArea",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -1390,6 +1425,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "SkiArea",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -1452,6 +1488,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
         /// <param name="rawsort"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawsort" target="_blank">Wiki rawsort</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
+        /// <param name="getasidarray">Get result only as Array of Ids, (default:false)  Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
@@ -1479,6 +1516,7 @@ namespace OdhApiCore.Controllers.api
             string? publishedon = null,
             string? searchfilter = null,
             bool removenullvalues = false,
+            bool getasidarray = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -1512,6 +1550,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "WineAward",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -1528,6 +1567,7 @@ namespace OdhApiCore.Controllers.api
                     rawsort: rawsort,
                     endpoint: "WineAward",
                     removenullvalues: removenullvalues,
+                    getasidarray: getasidarray,
                     cancellationToken
                 );
             }
@@ -1582,6 +1622,7 @@ namespace OdhApiCore.Controllers.api
             string? rawsort,
             string endpoint,
             bool removenullvalues,
+            bool getasidarray,
             CancellationToken cancellationToken
         )
         {
@@ -1593,7 +1634,8 @@ namespace OdhApiCore.Controllers.api
 
                 var query = QueryFactory
                     .Query()
-                    .SelectRaw("data")
+                    .When(getasidarray, x => x.Select("id"))
+                    .When(!getasidarray, x => x.SelectRaw("data"))
                     .From(tablename)
                     .CommonWhereExpression(
                         idlist: commonhelper.idlist,
@@ -1626,6 +1668,12 @@ namespace OdhApiCore.Controllers.api
                     .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort)
                     .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint)); //.ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort);
 
+                //IF getasidarray set simply return array of ids
+                if (getasidarray)
+                {
+                    return await query.GetAsync<string>();
+                }
+
                 // Get paginated data
                 var data = await query.GetAsync<JsonRaw>();
 
@@ -1657,6 +1705,7 @@ namespace OdhApiCore.Controllers.api
             string? rawsort,
             string endpoint,
             bool removenullvalues,
+            bool getasidarray,
             CancellationToken cancellationToken
         )
         {
@@ -1668,7 +1717,8 @@ namespace OdhApiCore.Controllers.api
 
                 var query = QueryFactory
                     .Query()
-                    .SelectRaw("data")
+                    .When(getasidarray, x => x.Select("id"))
+                    .When(!getasidarray, x => x.SelectRaw("data"))
                     .From(tablename)
                     .CommonWhereExpression(
                         idlist: commonhelper.idlist,
@@ -1700,6 +1750,12 @@ namespace OdhApiCore.Controllers.api
                     )
                     .ApplyOrdering_GeneratedColumns(ref seed, geosearchresult, rawsort)
                     .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
+
+                //IF getasidarray set simply return array of ids
+                if (getasidarray)
+                {
+                    return await query.GetAsync<string>();
+                }
 
                 // Get paginated data
                 var data = await query.PaginateAsync<JsonRaw>(
@@ -1742,6 +1798,7 @@ namespace OdhApiCore.Controllers.api
             string? rawsort,
             string endpoint,
             bool removenullvalues,
+            bool getasidarray,
             CancellationToken cancellationToken
         )
         {
@@ -1753,7 +1810,8 @@ namespace OdhApiCore.Controllers.api
 
                 var query = QueryFactory
                     .Query()
-                    .SelectRaw("data")
+                    .When(getasidarray, x => x.Select("id"))
+                    .When(!getasidarray, x => x.SelectRaw("data"))
                     .From(tablename)
                     .WineWhereExpression(
                         languagelist: new List<string>(),
@@ -1771,6 +1829,12 @@ namespace OdhApiCore.Controllers.api
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort)
                     .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
+
+                //IF getasidarray set simply return array of ids
+                if (getasidarray)
+                {
+                    return await query.GetAsync<string>();
+                }
 
                 // Get paginated data
                 var data = await query.GetAsync<JsonRaw>();
@@ -1800,6 +1864,7 @@ namespace OdhApiCore.Controllers.api
             string? rawsort,
             string endpoint,
             bool removenullvalues,
+            bool getasidarray,
             CancellationToken cancellationToken
         )
         {
@@ -1810,7 +1875,8 @@ namespace OdhApiCore.Controllers.api
             {
                 var query = QueryFactory
                     .Query()
-                    .SelectRaw("data")
+                    .When(getasidarray, x => x.Select("id"))
+                    .When(!getasidarray, x => x.SelectRaw("data"))
                     .From(tablename)
                     .WineWhereExpression(
                         languagelist: new List<string>(),
@@ -1828,6 +1894,12 @@ namespace OdhApiCore.Controllers.api
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(ref seed, new PGGeoSearchResult() { geosearch = false }, rawsort)
                     .FilterDataByAccessRoles(UserRolesToFilterEndpoint(endpoint));
+
+                //IF getasidarray set simply return array of ids
+                if (getasidarray)
+                {
+                    return await query.GetAsync<string>();
+                }
 
                 // Get paginated data
                 var data = await query.PaginateAsync<JsonRaw>(
