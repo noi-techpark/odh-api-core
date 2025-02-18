@@ -820,6 +820,88 @@ namespace Helper.Location
             return isnull;
         }
 
+
+
+
+        /// <summary>
+        /// Recreate LocationInfo by passing queryFactory and querying the DB for each
+        /// </summary>
+        /// <param name="oldlocationinfo"></param>
+        /// <param name="queryFactory"></param>
+        /// <returns></returns>
+        public static async Task UpdateDistanceCalculation<T>(this T mydata, QueryFactory queryFactory, 
+            string? districtid = null, 
+            string? municipalityid = null            
+        ) where T : IDistanceInfoAware
+        {
+            try
+            {
+                if (mydata != null)
+                {
+                    if(districtid == null && municipalityid == null && mydata is IHasLocationInfoLinked)
+                    {
+                        if((mydata as IHasLocationInfoLinked).LocationInfo != null && (mydata as IHasLocationInfoLinked).LocationInfo.DistrictInfo != null)
+                            districtid = (mydata as IHasLocationInfoLinked).LocationInfo.DistrictInfo.Id;
+                        if ((mydata as IHasLocationInfoLinked).LocationInfo != null && (mydata as IHasLocationInfoLinked).LocationInfo.MunicipalityInfo != null)
+                            municipalityid = (mydata as IHasLocationInfoLinked).LocationInfo.MunicipalityInfo.Id;
+                    }
+
+
+                    if(!String.IsNullOrEmpty(districtid))
+                    {
+                        var districtgps = await queryFactory
+                        .Query()
+                        .Select("gen_latitude,gen_longitude")
+                        .From("districts")
+                        .Where("id", districtid)
+                        .GetObjectSingleAsync<(double?, double?)>();
+
+                        if(districtgps.Item1 != null && districtgps.Item2 != null)
+                        {
+                            if(mydata is IGpsInfo)
+                                mydata.ExtendGpsInfoToDistanceCalculation("district", districtgps.Item1.Value, districtgps.Item2.Value);
+                            if (mydata is IGPSInfoAware)
+                                mydata.ExtendGpsInfoToDistanceCalculationList("district", districtgps.Item1.Value, districtgps.Item2.Value);
+                        }
+                    }
+                    if (!String.IsNullOrEmpty(municipalityid))
+                    {
+                        var districtgps = await queryFactory
+                        .Query()
+                        .Select("gen_latitude,gen_longitude")
+                        .From("municipalities")
+                        .Where("id", districtid)
+                        .GetObjectSingleAsync<(double?, double?)>();
+
+                        if (districtgps.Item1 != null && districtgps.Item2 != null)
+                        {
+                            if (mydata is IGpsInfo)
+                                mydata.ExtendGpsInfoToDistanceCalculation("municipality", districtgps.Item1.Value, districtgps.Item2.Value);
+                            if (mydata is IGPSInfoAware)
+                                mydata.ExtendGpsInfoToDistanceCalculationList("municipality", districtgps.Item1.Value, districtgps.Item2.Value);
+                        }
+                    }
+                }                
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         ////Sonderfall mehrere Areas
         //public static LocationInfo GetTheLocationInfoAreas(NpgsqlConnection conn, List<string> areaids, string owner)
         //{

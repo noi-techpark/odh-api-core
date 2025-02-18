@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using DataModel;
 using Helper;
 using Helper.Generic;
+using Helper.Location;
 using LTSAPI;
 using LTSAPI.Parser;
 using Microsoft.Extensions.Logging;
@@ -52,13 +53,17 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 }
                 else
                 {
-                    var qs = new LTSQueryStrings() { page_size = 100, filter_rids = String.Join(",", eventids), filter_endDate = DateTime.Now.AddYears(1).ToString("yyyy-MM-dd") };
+                    var qs = new LTSQueryStrings() { page_size = 100, filter_endDate = DateTime.Now.AddYears(1).ToString("yyyy-MM-dd") };
+
+                    if (eventids != null && eventids.Count > 0)
+                        qs.filter_rids = String.Join(",", eventids);
+                    if (lastchanged != null)
+                        qs.filter_lastUpdate = lastchanged;
+
                     var dict = ltsapi.GetLTSQSDictionary(qs);
 
                     return await ltsapi.EventListRequest(dict, true);
-                }
-                //TODO Add the case no Ids are passed (lastchanged)
-
+                }                
             }
             catch (Exception ex)
             {
@@ -118,13 +123,23 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     var eventparsed = EventParser.ParseLTSEventV1(data.data, false);
 
-                    //TODO Add the Code Here for 
+                    //TODO Add the Code Here for POST Processing Data
+
+                    //POPULATE LocationInfo
+                    eventparsed.LocationInfo = await eventparsed.UpdateLocationInfoExtension(
+                        QueryFactory
+                    );
+
                     //DistanceCalculation
+                    await eventparsed.UpdateDistanceCalculation(QueryFactory);
+
+                    
+
+
                     //Tags not overwrite
-                    //LocationInfo Creation
+
                     //EventDates not delete
-                    //Event Start Begindate Logic
-                    //ETC......
+                    //Event Start Begindate Logic                    
 
                     //GET OLD Event
                     var eventindb = await LoadDataFromDB<EventLinked>(id);
