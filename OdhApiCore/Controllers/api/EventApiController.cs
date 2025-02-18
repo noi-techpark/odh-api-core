@@ -439,7 +439,8 @@ namespace OdhApiCore.Controllers
                 var query = QueryFactory
                     .Query("events")
                     .Select("data")
-                    .Where("id", id.ToUpper())
+                    //.Where("id", id.ToUpper())
+                    .WhereRaw("data#>>'\\{Id\\}' = $$", id.ToUpper())
                     .When(
                         !String.IsNullOrEmpty(additionalfilter),
                         q => q.FilterAdditionalDataByCondition(additionalfilter)

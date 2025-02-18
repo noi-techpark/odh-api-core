@@ -533,10 +533,13 @@ namespace RAVEN
 
             data.Source = "lts";
 
-            data._Meta = MetadataHelper.GetMetadataobject<EventLinked>(
-                data,
-                MetadataHelper.GetMetadataforEvent
-            ); //GetMetadata(data.Id, "event", "lts", data.LastChange);
+            data._Meta = MetadataHelper.GetMetadataforEvent(data);
+
+            //    MetadataHelper.GetMetadataobject<EventLinked>(
+            //    data,                
+            //    MetadataHelper.GetMetadataforEvent
+            //); 
+            //GetMetadata(data.Id, "event", "lts", data.LastChange);
             //data.PublishedOn = PublishedOnHelper.GetPublishenOnList("event", data.SmgActive);
 
             return data;
@@ -671,10 +674,15 @@ namespace RAVEN
 
             //TODO make some props obsolete
 
-            eventlinked._Meta = MetadataHelper.GetMetadataobject<EventLinked>(
-                eventlinked,
-                MetadataHelper.GetMetadataforEvent
-            ); //GetMetadata(data.Id, "event", "lts", data.LastChange);
+            //eventlinked._Meta = MetadataHelper.GetMetadataobject<EventLinked>(
+            //    eventlinked,
+            //    MetadataHelper.GetMetadataforEvent
+            //);
+
+            eventlinked._Meta = MetadataHelper.GetMetadataforEvent(eventlinked);
+
+
+            //GetMetadata(data.Id, "event", "lts", data.LastChange);
 
             return eventlinked;
         }

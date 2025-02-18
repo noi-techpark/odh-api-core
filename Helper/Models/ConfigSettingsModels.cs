@@ -46,6 +46,7 @@ namespace Helper
         SuedtirolWeinConfig SuedtirolWeinConfig { get; }
         LoopTecConfig LoopTecConfig { get; }
         LTSCredentials LtsCredentials { get; }
+        LTSCredentials LtsCredentialsOpen { get; }
     }
 
     //Classes for Settings shared between Projects

@@ -169,12 +169,32 @@ namespace Helper
                 return q;
             });
 
+        public static Query IdUpperFilterJsonId(this Query query, IReadOnlyCollection<string> idlist) =>
+           query.Where(q =>
+           {
+               foreach (var id in idlist)
+               {
+                   q = q.OrWhereRaw("data#>>'\\{Id\\}' = $$", id.ToUpper());
+               }
+               return q;
+           });
+
         public static Query IdLowerFilter(this Query query, IReadOnlyCollection<string> idlist) =>
             query.Where(q =>
             {
                 foreach (var id in idlist)
                 {
                     q = q.OrWhere("id", "=", id.ToLower());
+                }
+                return q;
+            });
+
+        public static Query IdLowerFilterJsonId(this Query query, IReadOnlyCollection<string> idlist) =>
+            query.Where(q =>
+            {
+                foreach (var id in idlist)
+                {
+                    q = q.OrWhereRaw("data#>>'\\{Id\\}' = $$", id.ToLower());
                 }
                 return q;
             });

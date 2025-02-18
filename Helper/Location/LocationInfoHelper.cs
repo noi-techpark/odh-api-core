@@ -851,34 +851,34 @@ namespace Helper.Location
                     {
                         var districtgps = await queryFactory
                         .Query()
-                        .Select("gen_latitude,gen_longitude")
+                        .Select("gen_latitude", "gen_longitude")
                         .From("districts")
                         .Where("id", districtid)
-                        .GetObjectSingleAsync<(double?, double?)>();
+                        .GetAsync<GenCoordinate>();
 
-                        if(districtgps.Item1 != null && districtgps.Item2 != null)
+                        if(districtgps.FirstOrDefault() != null && districtgps.FirstOrDefault().gen_latitude != null && districtgps.FirstOrDefault().gen_longitude != null)
                         {
                             if(mydata is IGpsInfo)
-                                mydata.ExtendGpsInfoToDistanceCalculation("district", districtgps.Item1.Value, districtgps.Item2.Value);
+                                mydata.ExtendGpsInfoToDistanceCalculation("district", districtgps.FirstOrDefault().gen_latitude, districtgps.FirstOrDefault().gen_longitude);
                             if (mydata is IGPSInfoAware)
-                                mydata.ExtendGpsInfoToDistanceCalculationList("district", districtgps.Item1.Value, districtgps.Item2.Value);
+                                mydata.ExtendGpsInfoToDistanceCalculationList("district", districtgps.FirstOrDefault().gen_latitude, districtgps.FirstOrDefault().gen_longitude);
                         }
                     }
                     if (!String.IsNullOrEmpty(municipalityid))
                     {
-                        var districtgps = await queryFactory
+                        var mungps = await queryFactory
                         .Query()
-                        .Select("gen_latitude,gen_longitude")
+                        .Select("gen_latitude","gen_longitude")
                         .From("municipalities")
-                        .Where("id", districtid)
-                        .GetObjectSingleAsync<(double?, double?)>();
+                        .Where("id", municipalityid)
+                        .GetAsync<GenCoordinate>();
 
-                        if (districtgps.Item1 != null && districtgps.Item2 != null)
+                        if (mungps.FirstOrDefault() != null && mungps.FirstOrDefault().gen_latitude != null && mungps.FirstOrDefault().gen_longitude != null)
                         {
                             if (mydata is IGpsInfo)
-                                mydata.ExtendGpsInfoToDistanceCalculation("municipality", districtgps.Item1.Value, districtgps.Item2.Value);
+                                mydata.ExtendGpsInfoToDistanceCalculation("municipality", mungps.FirstOrDefault().gen_latitude, mungps.FirstOrDefault().gen_longitude);
                             if (mydata is IGPSInfoAware)
-                                mydata.ExtendGpsInfoToDistanceCalculationList("municipality", districtgps.Item1.Value, districtgps.Item2.Value);
+                                mydata.ExtendGpsInfoToDistanceCalculationList("municipality", mungps.FirstOrDefault().gen_latitude, mungps.FirstOrDefault().gen_longitude);
                         }
                     }
                 }                
@@ -888,19 +888,6 @@ namespace Helper.Location
                 
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         ////Sonderfall mehrere Areas
         //public static LocationInfo GetTheLocationInfoAreas(NpgsqlConnection conn, List<string> areaids, string owner)
@@ -964,5 +951,11 @@ namespace Helper.Location
         //    }
         //    return mylocinfo;
         //}
+    }
+
+    public class GenCoordinate
+    {
+        public double gen_latitude { get; set; }
+        public double gen_longitude { get; set; }
     }
 }

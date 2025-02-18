@@ -30,9 +30,19 @@ namespace OdhApiImporter.Helpers
         Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete)
             where T : IActivateable;
 
-        Task<T> LoadDataFromDB<T>(string id);
+        //Task<T> LoadDataFromDB<T>(string id, bool reduced);
 
         //Task<UpdateDetail> ImportData(ImportObject importobject, CancellationToken cancellationToken);
+    }
+
+    public interface IImportHelperLTS : IImportHelper
+    {
+        Task<UpdateDetail> SaveDataToODH(
+            DateTime? lastchanged = null,
+            List<string>? idlist = null,
+            bool reduced = false,
+            CancellationToken cancellationToken = default
+        );
     }
 
     public class ImportHelper
@@ -129,12 +139,19 @@ namespace OdhApiImporter.Helpers
             return ids.ToList();
         }
 
-        public async Task<T> LoadDataFromDB<T>(string id)
-        {          
-                 var query = QueryFactory
-                    .Query(table)
-                    .Select("data")
-                    .Where("id", id.ToUpper());
+        public async Task<T> LoadDataFromDB<T>(string id, IDStyle? idstyle = IDStyle.uppercase, bool reduced = false)
+        {
+            string reducedid = "";
+            if (reduced)
+                reducedid = "_REDUCED";
+
+            var query = QueryFactory
+               .Query(table)
+               .Select("data")
+               .When(idstyle == IDStyle.uppercase, q => q.Where("id", id.ToUpper() + reducedid))
+               .When(idstyle == IDStyle.lowercase, q => q.Where("id", id.ToLower() + reducedid.ToLower()))
+               .When(idstyle == null, q => q.Where("id", id + reducedid));
+
 
             return await query.GetObjectSingleAsync<T>();
         }

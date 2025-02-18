@@ -11,6 +11,7 @@ using DataModel;
 using Helper;
 using Helper.Generic;
 using Helper.Location;
+using Helper.Tagging;
 using LTSAPI;
 using LTSAPI.Parser;
 using Microsoft.Extensions.Logging;
@@ -22,8 +23,10 @@ using SqlKata.Execution;
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
-    public class LTSApiEventImportHelper : ImportHelper, IImportHelper
+    public class LTSApiEventImportHelper : ImportHelper, IImportHelperLTS
     {
+        public bool opendata = false;
+
         public LTSApiEventImportHelper(
             ISettings settings,
             QueryFactory queryfactory,
@@ -36,13 +39,28 @@ namespace OdhApiImporter.Helpers.LTSAPI
         {
             try
             {
-                LtsApi ltsapi = new LtsApi(
-                    settings.LtsCredentials.serviceurl,
-                    settings.LtsCredentials.username,
-                    settings.LtsCredentials.password,
-                    settings.LtsCredentials.ltsclientid,
-                    false
-                );
+                LtsApi ltsapi = default(LtsApi);
+
+                if (!opendata)
+                {
+                    ltsapi = new LtsApi(
+                        settings.LtsCredentials.serviceurl,
+                        settings.LtsCredentials.username,
+                        settings.LtsCredentials.password,
+                        settings.LtsCredentials.ltsclientid,
+                        false
+                    );
+                }
+                else
+                {
+                    ltsapi = new LtsApi(
+                    settings.LtsCredentialsOpen.serviceurl,
+                    settings.LtsCredentialsOpen.username,
+                    settings.LtsCredentialsOpen.password,
+                    settings.LtsCredentialsOpen.ltsclientid,
+                    true
+                );                }
+
                 
                 if(eventids.Count == 1)
                 {
@@ -86,6 +104,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
         public async Task<UpdateDetail> SaveDataToODH(
             DateTime? lastchanged = null,
             List<string>? idlist = null,
+            bool reduced = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -133,16 +152,13 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     //DistanceCalculation
                     await eventparsed.UpdateDistanceCalculation(QueryFactory);
 
-                    
-
-
                     //Tags not overwrite
-
-                    //EventDates not delete
-                    //Event Start Begindate Logic                    
+                    await eventparsed.UpdateTagsExtension(QueryFactory);              
 
                     //GET OLD Event
                     var eventindb = await LoadDataFromDB<EventLinked>(id);
+
+                    await MergeEventDates(eventparsed, eventindb);
 
                     eventparsed.CreatePublishedOnList();
 
@@ -234,7 +250,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
         private async Task<PGCRUDResult> InsertDataToDB(
             EventLinked objecttosave,
-            LTSEventData eventlts
+            LTSEventData eventlts            
         )
         {
             try
@@ -284,6 +300,36 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     rawformat = "json",
                 }
             );
+        }
+
+        private async Task MergeEventDates(EventLinked eventNew, EventLinked eventOld)
+        {
+            //EventDates not delete
+            //Event Start Begindate Logic    
+            List<EventDate> eventDatesBeforeToday = new List<EventDate>();
+            foreach(var eventdate in eventOld.EventDate.Where(x => x.From.Date < DateTime.Now.Date))
+            {
+                eventDatesBeforeToday.Add(eventdate);
+            }
+
+            foreach (var eventdatebefore in eventDatesBeforeToday)
+            {
+                if (eventNew.EventDate.Where(x => x.DayRID == eventdatebefore.DayRID).Count() == 0)
+                    eventNew.EventDate.Add(eventdatebefore);
+            }
+            eventNew.EventDate = eventNew.EventDate.OrderBy(x => x.From).ToList();
+
+
+            //Set Begindate to the first possible date
+            eventNew.DateEnd = eventNew.EventDate.Select(x => x.From).Min();
+
+            //Set Enddate to the last possible date            
+            eventNew.DateEnd = eventNew.EventDate.Select(x => x.To).Max();
+        }
+
+        public Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
+        {
+            return SaveDataToODH(lastchanged, idlist, false, cancellationToken);
         }
     }
 }

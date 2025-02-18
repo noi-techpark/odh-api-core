@@ -59,7 +59,10 @@ namespace OdhApiImporter.Helpers
                         importerURL
                         );
 
-                    myupdateresult = await ltsapieventimporthelper.SaveDataToODH(null, new List<string>() { id });
+                    myupdateresult = await ltsapieventimporthelper.SaveDataToODH(null, new List<string>() { id }, false, cancellationToken);
+
+                    //Get Reduced                    
+                    updateresultreduced = await ltsapieventimporthelper.SaveDataToODH(null, new List<string>() { id }, true, cancellationToken);
 
                     break;
               

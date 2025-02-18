@@ -1209,7 +1209,7 @@ namespace DataModel
         public bool? Active { get; set; }
         //isEachDayOwnEvent
         public bool? SingleDays { get; set; }
-        public bool? Cancelled { get; set; }
+        public bool? IsCancelled { get; set; }
 
         public int? MinPersons { get; set; }
         public int? MaxPersons { get; set; }
@@ -1222,6 +1222,8 @@ namespace DataModel
 
         [SwaggerDeprecated("Deprecated")]
         public bool? Ticket { get; set; }
+        [SwaggerDeprecated("Deprecated use isCancelled")]
+        public string? Cancelled { get; set; }
     }
 
     public class EventDateCalculatedDay
