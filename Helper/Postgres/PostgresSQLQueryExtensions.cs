@@ -169,6 +169,16 @@ namespace Helper
                 return q;
             });
 
+        public static Query IdUpperFilterGenId(this Query query, IReadOnlyCollection<string> idlist) =>
+            query.Where(q =>
+            {
+                foreach (var id in idlist)
+                {
+                    q = q.OrWhere("gen_id", "=", id.ToUpper());
+                }
+                return q;
+            });
+
         public static Query IdUpperFilterJsonId(this Query query, IReadOnlyCollection<string> idlist) =>
            query.Where(q =>
            {
@@ -189,6 +199,16 @@ namespace Helper
                 return q;
             });
 
+        public static Query IdLowerFilterGenId(this Query query, IReadOnlyCollection<string> idlist) =>
+            query.Where(q =>
+            {
+                foreach (var id in idlist)
+                {
+                    q = q.OrWhere("gen_id", "=", id.ToLower());
+                }
+                return q;
+            });
+
         public static Query IdLowerFilterJsonId(this Query query, IReadOnlyCollection<string> idlist) =>
             query.Where(q =>
             {
@@ -205,6 +225,16 @@ namespace Helper
                 foreach (var id in idlist)
                 {
                     q = q.OrWhere("id", "ILIKE", id);
+                }
+                return q;
+            });
+
+        public static Query IdIlikeFilterGenId(this Query query, IReadOnlyCollection<string> idlist) =>
+            query.Where(q =>
+            {
+                foreach (var id in idlist)
+                {
+                    q = q.OrWhere("gen_id", "ILIKE", id);
                 }
                 return q;
             });
@@ -345,7 +375,25 @@ namespace Helper
                                 $"%{searchfilter}%"
                             );
                         }
-                        return q;
+                        return q.OrWhereRaw("id ILIKE $$", searchfilter);
+                    })
+            );
+
+        //Better Version of the Search Filter
+        public static Query SearchFilterWithGenId(this Query query, string[] fields, string? searchfilter) =>
+            query.When(
+                searchfilter != null && fields.Length > 0,
+                query =>
+                    query.Where(q =>
+                    {
+                        foreach (var field in fields)
+                        {
+                            q = q.OrWhereRaw(
+                                $"data#>>'\\{{{JsonPathToPostgresArray(field)}\\}}' ILIKE $$",
+                                $"%{searchfilter}%"
+                            );
+                        }
+                        return q.OrWhereRaw("gen_id ILIKE $$", searchfilter);
                     })
             );
 

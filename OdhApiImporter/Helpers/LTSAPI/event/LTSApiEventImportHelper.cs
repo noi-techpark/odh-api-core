@@ -154,13 +154,19 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     //DistanceCalculation
                     await eventparsed.UpdateDistanceCalculation(QueryFactory);
 
-                    //Tags not overwrite
-                    await eventparsed.UpdateTagsExtension(QueryFactory);              
-
+            
                     //GET OLD Event
                     var eventindb = await LoadDataFromDB<EventLinked>(id);
 
-                    await MergeEventDates(eventparsed, eventindb);                    
+                    //Do not delete Old Dates from Event
+                    await MergeEventDates(eventparsed, eventindb);
+
+                    //Add manual assigned Tags to TagIds
+                    //TODO
+
+                    //Create Tags
+                    await eventparsed.UpdateTagsExtension(QueryFactory);
+
 
                     var result = await InsertDataToDB(eventparsed, data.data);
 
@@ -332,6 +338,16 @@ namespace OdhApiImporter.Helpers.LTSAPI
             //Set Enddate to the last possible date            
             eventNew.DateEnd = eventNew.EventDate.Select(x => x.To).Max();
         }
+
+        private async Task MergeEventTags(EventLinked eventNew, EventLinked eventOld)
+        {
+            eventNew.SmgTags = eventOld.SmgTags;            
+
+            //Add also to TagIds
+
+            //TODO import the Redactional Tags from Events into Tags ?
+        }
+
 
         public Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
