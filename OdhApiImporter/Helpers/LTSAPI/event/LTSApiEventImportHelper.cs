@@ -162,7 +162,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     await MergeEventDates(eventparsed, eventindb);
 
                     //Add manual assigned Tags to TagIds
-                    //TODO
+                    await MergeEventTags(eventparsed, eventindb);
 
                     //Create Tags
                     await eventparsed.UpdateTagsExtension(QueryFactory);
@@ -341,10 +341,18 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
         private async Task MergeEventTags(EventLinked eventNew, EventLinked eventOld)
         {
-            eventNew.SmgTags = eventOld.SmgTags;            
+            eventNew.SmgTags = eventOld.SmgTags;
 
-            //Add also to TagIds
-
+            //Readd all Redactional Tags
+            var redactionalassignedTags = eventOld.Tags != null ? eventOld.Tags.Where(x => x.Source != "lts").ToList() : null;
+            if (redactionalassignedTags != null)
+            {
+                foreach (var tag in redactionalassignedTags)
+                {
+                    eventNew.TagIds.Add(tag.Id);
+                }
+            }
+            
             //TODO import the Redactional Tags from Events into Tags ?
         }
 
