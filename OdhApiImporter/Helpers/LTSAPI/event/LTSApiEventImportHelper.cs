@@ -160,9 +160,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     //GET OLD Event
                     var eventindb = await LoadDataFromDB<EventLinked>(id);
 
-                    await MergeEventDates(eventparsed, eventindb);
-
-                    eventparsed.CreatePublishedOnList();
+                    await MergeEventDates(eventparsed, eventindb);                    
 
                     var result = await InsertDataToDB(eventparsed, data.data);
 
@@ -238,6 +236,10 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 //    }
                 //}
             }
+            else if(ltsdata == null && opendata == true)
+            {
+                //Delete the Opendata if it is no more returned
+            }
             else
                 errorimportcounter = 1;
 
@@ -258,13 +260,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
             try
             {
                 //Set LicenseInfo
-                objecttosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(
-                    objecttosave,
-                    Helper.LicenseHelper.GetLicenseforEvent
-                );
+                //objecttosave.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject(
+                //    objecttosave,
+                //    Helper.LicenseHelper.GetLicenseforEvent(
+                //);
+                objecttosave.LicenseInfo = LicenseHelper.GetLicenseforEvent(objecttosave, opendata);
 
                 //Setting MetaInfo (we need the MetaData Object in the PublishedOnList Creator)
-                objecttosave._Meta = MetadataHelper.GetMetadataobject(objecttosave);
+                objecttosave._Meta = MetadataHelper.GetMetadataobject(objecttosave, opendata);
 
                 //Set PublishedOn
                 objecttosave.CreatePublishedOnList();
@@ -277,7 +280,8 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     new EditInfo("lts.events.import", importerURL),
                     new CRUDConstraints(),
                     new CompareConfig(true, false),
-                    rawdataid
+                    rawdataid,
+                    opendata
                 );
             }
             catch (Exception ex)

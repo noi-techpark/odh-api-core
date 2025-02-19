@@ -185,8 +185,8 @@ namespace Helper
         {
             string sourcemeta = data.Source.ToLower();
             
-            if (data._Meta != null)
-                reduced = (bool)data._Meta.Reduced;
+            //if (data._Meta != null)
+            //    reduced = (bool)data._Meta.Reduced;
 
             return GetMetadata(data, sourcemeta, reduced);
         }
@@ -476,7 +476,7 @@ namespace Helper
             }
             else if (oldmetadata != null)
             {
-                if (oldmetadata.UpdateInfo.UpdateHistory == null)
+                if (oldmetadata.UpdateInfo == null || oldmetadata.UpdateInfo.UpdateHistory == null)
                     newmetadata.UpdateInfo.UpdateHistory = new List<UpdateHistory>();
                 else
                     newmetadata.UpdateInfo.UpdateHistory = oldmetadata.UpdateInfo.UpdateHistory;
