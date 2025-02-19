@@ -129,6 +129,7 @@ namespace FERATEL
                     .Where(x =>
                         x.Attribute("t").Value == "MediaPlayer Thumbnails"
                         || x.Attribute("t").Value == "MediaPlayer Thumbnails 38"
+                        || x.Attribute("t").Value == "MediaPlayer Thumbnails 36"
                         || x.Attribute("t").Value == "MediaPlayer Thumbnail 360"
                     )
             )
@@ -160,16 +161,18 @@ namespace FERATEL
                     .Where(x =>
                         x.Attribute("t").Value == "MediaPlayer v4"
                         || x.Attribute("t").Value == "MediaPlayer v4 360"
+                        || x.Attribute("t").Value == "MediaPlayer v5"
+                        || x.Attribute("t").Value == "MediaPlayer v5 360"
                     )
             )
             {
                 //Add as WebcamUrl
-                if (url.Attribute("t").Value == "MediaPlayer v4")
+                if (url.Attribute("t").Value == "MediaPlayer v5")
                 {
                     wcprops.WebcamUrl = url.Attribute("v").Value;
                 }
                 //Add as Streamurl
-                else if (url.Attribute("t").Value == "MediaPlayer v4")
+                else if (url.Attribute("t").Value == "MediaPlayer v5")
                 {
                     wcprops.StreamUrl = url.Attribute("v").Value;
                 }
