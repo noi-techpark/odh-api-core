@@ -108,6 +108,8 @@ namespace OdhApiImporter.Helpers.LTSAPI
             CancellationToken cancellationToken = default
         )
         {
+            opendata = reduced;
+
             //Import the List
             var eventlts = await GetEventsFromLTSV2(idlist, lastchanged);
             //Import Single Data & Deactivate Data
@@ -321,7 +323,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
 
             //Set Begindate to the first possible date
-            eventNew.DateEnd = eventNew.EventDate.Select(x => x.From).Min();
+            eventNew.DateBegin = eventNew.EventDate.Select(x => x.From).Min();
 
             //Set Enddate to the last possible date            
             eventNew.DateEnd = eventNew.EventDate.Select(x => x.To).Max();
