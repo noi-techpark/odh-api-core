@@ -2561,6 +2561,61 @@ namespace OdhApiImporter.Controllers
             }
         }
 
+        //Imports all Venues HallFeatures
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("LTS/Venue/Update/HallFeatures")]
+        public async Task<IActionResult> ImportLTSVenueHallFeatures(
+            string id = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import LTS Venues HallFeatures";
+            string updatetype = GetUpdateType(null);
+            string source = "lts";
+            string otherinfo = "venues.hallfeatures";
+
+            try
+            {
+                LTSApiVenueHallFeaturesImportHelper importhelper =
+                    new LTSApiVenueHallFeaturesImportHelper(
+                        settings,
+                        QueryFactory,
+                        "tags",
+                        UrlGeneratorStatic("LTS/Venues/HallFeatures")
+                    );
+
+                updatedetail = await importhelper.SaveDataToODH(null, null, cancellationToken);
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import LTS Venues HallFeatures succeeded",
+                    otherinfo,
+                    updatedetail,
+                    true
+                );
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import LTS Venues HallFeatures data failed",
+                    otherinfo,
+                    updatedetail,
+                    ex,
+                    true
+                );
+                return BadRequest(updateResult);
+            }
+        }
+
         //Imports all ODHActivityPois Tags
         [Authorize(Roles = "DataPush")]
         [HttpGet, Route("LTS/ODHActivityPoi/Update/Tags")]
