@@ -234,7 +234,8 @@ namespace Helper
         public static string GetPolygonOperator(string? operation) =>
             operation switch
             {
-                "contains" => "ST_Contains",
+                //"contains" => "ST_Contains",
+                "contains" => "ST_Covers",
                 "intersects" => "ST_Intersects",
                 _ => "ST_Contains",
             };
