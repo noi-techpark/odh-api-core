@@ -88,6 +88,15 @@ namespace DIGIWAY
             WKTReader reader = new WKTReader();
             Geometry geom = reader.Read(coordinatesstr);
 
+
+            //var geometryfactory = new GeometryFactory();
+            //List<LineString> lines = new List<LineString>();
+            //foreach(var coord in geom.Coordinates)
+            //{
+            //    lines.Add()
+            //}
+            //geometryfactory.CreateMultiLineString(geometryfactory.CreateLineString(geom.Coordinates))
+
             geoshape.Geometry = geom;
 
             //To check if it can be done with linq
