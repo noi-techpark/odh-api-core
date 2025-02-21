@@ -553,6 +553,18 @@ namespace Helper
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }
 
+        public static LicenseInfo GetLicenseforGeoShape(GeoShapeJson geoshape)
+        {
+            var isopendata = true;
+            var licensetype = "CC0";
+            var licenseholder = "";
+
+            if (geoshape.Source == "digiway")
+                licenseholder = "https://geoservices1.civis.bz.it/";
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
         public static void CheckLicenseInfoWithSource(
             LicenseInfo licenseinfo,
             string source,

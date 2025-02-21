@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DIGIWAY.Parser
+namespace DIGIWAY
 {
     public class ParseCyclingRoutesToODHActivityPoi
     {
