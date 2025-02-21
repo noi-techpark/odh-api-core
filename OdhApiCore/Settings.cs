@@ -225,6 +225,8 @@ namespace OdhApiCore
                 }
             }
 
+            this.digiwayConfig = new Dictionary<string, DigiWayConfig>();
+
             var digiwayconfigdict = this.configuration.GetSection("DigiWayConfig").GetChildren();
             if (digiwayconfigdict != null)
             {

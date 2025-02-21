@@ -21,13 +21,13 @@ namespace DIGIWAY
     {
         public string type { get; set; }
         public string id { get; set; }
-        public Geometry geometry { get; set; }
+        public DWGeometry geometry { get; set; }
         public string geometry_name { get; set; }
         public Properties properties { get; set; }
         public float[] bbox { get; set; }
     }
 
-    public class Geometry
+    public class DWGeometry
     {
         public string type { get; set; }
         public float[][][] coordinates { get; set; }
@@ -49,11 +49,11 @@ namespace DIGIWAY
         public string DIFFICULTY { get; set; }
         public string STATUS { get; set; }
         public string STATUS_DATE { get; set; }
-        public int DOWNHILL_METERS { get; set; }
-        public int UPHILL_METERS { get; set; }
-        public int START_HEIGHT { get; set; }
-        public int END_HEIGHT { get; set; }
-        public float LENGTH { get; set; }
+        public int? DOWNHILL_METERS { get; set; }
+        public int? UPHILL_METERS { get; set; }
+        public int? START_HEIGHT { get; set; }
+        public int? END_HEIGHT { get; set; }
+        public float? LENGTH { get; set; }
         public string CREATE_DATE { get; set; }
         public string UPDATE_DATE { get; set; }
     }

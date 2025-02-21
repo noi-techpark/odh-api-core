@@ -55,7 +55,7 @@ namespace OdhApiImporter.Helpers
         //Get Data from Source
         private async Task<DigiWayRoutesCycleWaysResult> GetData(CancellationToken cancellationToken)
         {
-            return await GetDigiwayData.GetDigiWayCyclingRouteDataAsync("", "", settings.DigiWayConfig["ServiceUrl"].ServiceUrl);
+            return await GetDigiwayData.GetDigiWayCyclingRouteDataAsync("", "", settings.DigiWayConfig["CyclingRoutes"].ServiceUrl);
         }
 
         //Import the Data
@@ -121,8 +121,7 @@ namespace OdhApiImporter.Helpers
                 if (parsedobject.Item1 == null || parsedobject.Item2 == null)
                     throw new Exception();
 
-                
-
+                var pgcrudshaperesult = await InsertDataInShapesDB(parsedobject.Item2);
 
                 //Save parsedobject to DB + Save Rawdata to DB
                 var pgcrudresult = await InsertDataToDB(
@@ -206,59 +205,120 @@ namespace OdhApiImporter.Helpers
         private async Task<PGCRUDResult> InsertDataInShapesDB(
           GeoShapeJson data
       )
-        {            
-            //Set LicenseInfo
-            data.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<GeoShapeJson>(
-                data,
-                Helper.LicenseHelper.GetLicenseforGeoShape
-            );
-
-            //Set Meta
-            data._Meta = MetadataHelper.GetMetadataobject<GeoShapeJson>(data);
-
-            //Check if data is there
-            var shape = await QueryFactory.Query("shapes").Where("id", data.Id).GetAsync<GeoShapeDB>();
-
-            PGCRUDResult result = default(PGCRUDResult);
-            if (shape == null)
+        {
+            try
             {
-                var pgcrudresult = await QueryFactory
-                        .Query("shapes")
-                        .InsertAsync(new GeoShapeDB()
-                        {
-                            id = 0,
-                            abbrev = data.Abbrev,
-                            code_cm = data.Code_Cm,
-                            code_prov = data.Code_Prov,
-                            code_reg = data.Code_Reg,
-                            code_rip = data.Code_Rip,
-                            code_uts = data.Code_Uts,
-                            country = data.Country,
-                            istatnumber = data.Istatnumber,
-                            lincenseinfo = new JsonRaw(data.LicenseInfo),
-                            meta = new JsonRaw(data._Meta),
-                            name = data.Name,
-                            name_alternative = data.Name_Alternative,
-                            shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
-                            shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
-                            type = data.Type,
-                            source = "digiway",
-                            type_uts = data.Type_Uts,
-                            geometry = data.Geometry,
-                        });
+                //Set LicenseInfo
+                data.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<GeoShapeJson>(
+                    data,
+                    Helper.LicenseHelper.GetLicenseforGeoShape
+                );
 
+                //Set Meta
+                data._Meta = MetadataHelper.GetMetadataobject<GeoShapeJson>(data);
+
+                //Check if data is there
+                var shape = await QueryFactory.Query("shapes").Select("id").Where("id", data.Id).FirstOrDefaultAsync<int>();
+
+                int operationid = 0;
+
+                PGCRUDResult result = default(PGCRUDResult);
+                if (shape == 0)
+                {
+                    //var insert = await QueryFactory
+                    //        .Query("shapes").AsInsert(new GeoShapeDB()
+                    //        {
+                    //            id = 0,
+                    //            abbrev = data.Abbrev,
+                    //            code_cm = data.Code_Cm,
+                    //            code_prov = data.Code_Prov,
+                    //            code_reg = data.Code_Reg,
+                    //            code_rip = data.Code_Rip,
+                    //            code_uts = data.Code_Uts,
+                    //            country = data.Country,
+                    //            istatnumber = data.Istatnumber,
+                    //            licenseinfo = new JsonRaw(data.LicenseInfo),
+                    //            meta = new JsonRaw(data._Meta),
+                    //            name = data.Name,
+                    //            name_alternative = data.Name_Alternative,
+                    //            shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
+                    //            shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
+                    //            type = data.Type,
+                    //            source = "digiway",
+                    //            type_uts = data.Type_Uts,
+                    //            geom = @"ST_GeometryFromText('" + data.Geometry + "', 32632)",
+                    //            //geometry = "ST_Transform(ST_GeometryFromText('" + data.Geometry + "', 32632),4326)",
+                    //        });
+              
+
+                    var insert = await QueryFactory
+                    .Query("shapes").InsertAsync(new GeoShapeDB()
+                    {
+                        id = 9900,
+                        abbrev = data.Abbrev,
+                        code_cm = data.Code_Cm,
+                        code_prov = data.Code_Prov,
+                        code_reg = data.Code_Reg,
+                        code_rip = data.Code_Rip,
+                        code_uts = data.Code_Uts,
+                        country = data.Country,
+                        istatnumber = data.Istatnumber,
+                        licenseinfo = new JsonRaw(data.LicenseInfo),
+                        meta = new JsonRaw(data._Meta),
+                        name = data.Name,
+                        name_alternative = data.Name_Alternative,
+                        shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
+                        shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
+                        type = data.Type,
+                        source = "digiway",
+                        type_uts = data.Type_Uts,
+                        //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
+                        //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
+                        geom = new PGGeometryRaw(data.Geometry)
+                    });
+
+                }
+                else
+                {
+
+                }
+
+                return new PGCRUDResult()
+                {
+                    id = operationid.ToString(),
+                    odhtype = data._Meta.Type,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    error = 0,
+                    errorreason = null,
+                    operation = "insert shape",
+                    changes = null,
+                    compareobject = false,
+                    objectchanged = 0,
+                    objectimagechanged = 0,
+                    pushchannels = null,
+                };
             }
-            else
+            catch (Exception ex)
             {
-
+                return new PGCRUDResult()
+                {
+                    id = "",
+                    odhtype = data._Meta.Type,
+                    created = 0,
+                    updated = 0,
+                    deleted = 0,
+                    error = 1,
+                    errorreason = ex.Message,
+                    operation = "insert shape",
+                    changes = null,
+                    compareobject = false,
+                    objectchanged = 0,
+                    objectimagechanged = 0,
+                    pushchannels = null,
+                };
             }
-
-
-
-            return new PGCRUDResult()
-            {
-
-            };
         }
 
         private async Task<int> InsertInRawDataDB(KeyValuePair<string, DigiWayRoutesCycleWays> data)

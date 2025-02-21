@@ -197,7 +197,7 @@ namespace OdhApiImporter
                 }
             }
 
-            this.s3Config = new Dictionary<string, S3Config>();
+            this.digiwayConfig = new Dictionary<string, DigiWayConfig>();
 
             var digiwayconfigdict = this.configuration.GetSection("DigiWayConfig").GetChildren();
             if (digiwayconfigdict != null)

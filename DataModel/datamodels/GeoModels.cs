@@ -2,14 +2,26 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using NetTopologySuite.Geometries;
+using Newtonsoft.Json;
+using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace DataModel
 {
+    public class GeoShapeJsonBData
+    {
+        public string? id { get; set; }
+        public JsonRaw? data { get; set; }
+    }
     public class GeoShapeDB
     {
         public int id { get; set; }
@@ -28,19 +40,19 @@ namespace DataModel
         public float shape_leng { get; set; }
         public float shape_area { get; set; }
 
-        public string geom { get; set; }
+        
+        public PGGeometryRaw geom { get; set; }
 
         public string geometry { get; set; }
 
         //Table
         public string type { get; set; }
 
-        public JsonRaw lincenseinfo { get; set; }
+        public JsonRaw? licenseinfo { get; set; }
 
-        public JsonRaw meta { get; set; }
+        public JsonRaw? meta { get; set; }
 
         public string source { get; set; }
-
     }
 
     public class GeoShapeJson
@@ -75,6 +87,32 @@ namespace DataModel
 
         public LicenseInfo LicenseInfo { get; set; }
 
-        public string Geometry { get; set; }
+        public Geometry Geometry { get; set; }
+    }
+
+    public class PGGeometryRaw : ICustomQueryParameter
+    {        
+        public PGGeometryRaw(Geometry data)
+        {
+            Value = data;
+        }        
+
+        public Geometry Value { get; }
+
+        public void AddParameter(IDbCommand command, string name)
+        {
+            var parameter = new NpgsqlParameter(name, NpgsqlDbType.Geometry);
+            parameter.Value = Value;
+            command.Parameters.Add(parameter);
+        }
+
+        public override string? ToString()
+        {
+            throw new InvalidOperationException(
+                "ToString on PGGeometryRaw shouldn't be called, there is somewhere an implicit ToString() happening (maybe from a manual JSON serialization)."
+            );
+        }
+
+        public static explicit operator PGGeometryRaw(Geometry x) => new PGGeometryRaw(x);
     }
 }
