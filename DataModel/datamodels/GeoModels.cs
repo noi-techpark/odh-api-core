@@ -55,6 +55,31 @@ namespace DataModel
         public string source { get; set; }
     }
 
+    public class GeoShapeDBTest
+    {
+        public int id { get; set; }
+        public string? name { get; set; }
+      
+        public float shape_leng { get; set; }
+        public float shape_area { get; set; }
+
+
+        public PGGeometryRaw geometry { get; set; }
+
+        public string geometry { get; set; }
+
+        //Table
+        public string type { get; set; }
+
+        public JsonRaw? licenseinfo { get; set; }
+
+        public JsonRaw? meta { get; set; }
+
+        public string source { get; set; }
+
+        public string s7rid { get; set; }
+    }
+
     public class GeoShapeJson
     {
         public int Id { get; set; }

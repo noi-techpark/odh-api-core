@@ -218,7 +218,7 @@ namespace OdhApiImporter.Helpers
                 data._Meta = MetadataHelper.GetMetadataobject<GeoShapeJson>(data);
 
                 //Check if data is there
-                var shape = await QueryFactory.Query("shapes").Select("id").Where("id", data.Id).FirstOrDefaultAsync<int>();
+                var shape = await QueryFactory.Query("shapestest").Select("id").Where("id", data.Id).FirstOrDefaultAsync<int>();
 
                 int operationid = 0;
 
@@ -252,29 +252,20 @@ namespace OdhApiImporter.Helpers
               
 
                     var insert = await QueryFactory
-                    .Query("shapes").InsertAsync(new GeoShapeDB()
+                    .Query("shapestest").InsertAsync(new GeoShapeDBTest()
                     {
                         id = 9900,
-                        abbrev = data.Abbrev,
-                        code_cm = data.Code_Cm,
-                        code_prov = data.Code_Prov,
-                        code_reg = data.Code_Reg,
-                        code_rip = data.Code_Rip,
-                        code_uts = data.Code_Uts,
-                        country = data.Country,
-                        istatnumber = data.Istatnumber,
                         licenseinfo = new JsonRaw(data.LicenseInfo),
                         meta = new JsonRaw(data._Meta),
                         name = data.Name,
-                        name_alternative = data.Name_Alternative,
                         shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
                         shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
                         type = data.Type,
                         source = "digiway",
-                        type_uts = data.Type_Uts,
+                        s7rid = "32632",
                         //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
                         //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
-                        geom = new PGGeometryRaw(data.Geometry)
+                        geometry = new PGGeometryRaw(data.Geometry)
                     });
 
                 }
