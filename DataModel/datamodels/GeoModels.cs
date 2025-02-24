@@ -66,8 +66,6 @@ namespace DataModel
 
         public PGGeometryRaw geometry { get; set; }
 
-        public string geometry { get; set; }
-
         //Table
         public string type { get; set; }
 
