@@ -112,10 +112,22 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
             //Import the List
             var eventlts = await GetEventsFromLTSV2(idlist, lastchanged);
-            //Import Single Data & Deactivate Data
-            var result = await SaveEventsToPG(eventlts);
 
-            return result;
+            if (eventlts != null && eventlts.FirstOrDefault().ContainsKey("success") && (Boolean)eventlts.FirstOrDefault()["success"]) //&& eventlts.FirstOrDefault()["Success"] == true
+            {     //Import Single Data & Deactivate Data
+                var result = await SaveEventsToPG(eventlts);
+                return result;
+            }
+            else
+            {
+                return new UpdateDetail()
+                {
+                    updated = 0,
+                    created = 0,
+                    deleted = 0,
+                    error = 1,
+                };
+            }            
         }
 
         private async Task<UpdateDetail> SaveEventsToPG(List<JObject> ltsdata)
@@ -166,6 +178,8 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     //Create Tags
                     await eventparsed.UpdateTagsExtension(QueryFactory);
+
+                    //TODO GET Organizer Data and add to Event
 
 
                     var result = await InsertDataToDB(eventparsed, data.data);
@@ -316,21 +330,26 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
         private async Task MergeEventDates(EventLinked eventNew, EventLinked eventOld)
         {
-            //EventDates not delete
-            //Event Start Begindate Logic    
-            List<EventDate> eventDatesBeforeToday = new List<EventDate>();
-            foreach(var eventdate in eventOld.EventDate.Where(x => x.From.Date < DateTime.Now.Date))
+
+            if (eventOld != null)
             {
-                eventDatesBeforeToday.Add(eventdate);
+                //EventDates not delete
+                //Event Start Begindate Logic    
+                List<EventDate> eventDatesBeforeToday = new List<EventDate>();
+                foreach (var eventdate in eventOld.EventDate.Where(x => x.From.Date < DateTime.Now.Date))
+                {
+                    eventDatesBeforeToday.Add(eventdate);
+                }
+
+                foreach (var eventdatebefore in eventDatesBeforeToday)
+                {
+                    if (eventNew.EventDate.Where(x => x.DayRID == eventdatebefore.DayRID).Count() == 0)
+                        eventNew.EventDate.Add(eventdatebefore);
+                }
             }
 
-            foreach (var eventdatebefore in eventDatesBeforeToday)
-            {
-                if (eventNew.EventDate.Where(x => x.DayRID == eventdatebefore.DayRID).Count() == 0)
-                    eventNew.EventDate.Add(eventdatebefore);
-            }
+            //Reorder Event Dates
             eventNew.EventDate = eventNew.EventDate.OrderBy(x => x.From).ToList();
-
 
             //Set Begindate to the first possible date
             eventNew.DateBegin = eventNew.EventDate.Select(x => x.From).Min();
@@ -341,18 +360,20 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
         private async Task MergeEventTags(EventLinked eventNew, EventLinked eventOld)
         {
-            eventNew.SmgTags = eventOld.SmgTags;
-
-            //Readd all Redactional Tags
-            var redactionalassignedTags = eventOld.Tags != null ? eventOld.Tags.Where(x => x.Source != "lts").ToList() : null;
-            if (redactionalassignedTags != null)
+            if (eventOld != null)
             {
-                foreach (var tag in redactionalassignedTags)
+                eventNew.SmgTags = eventOld.SmgTags;
+
+                //Readd all Redactional Tags
+                var redactionalassignedTags = eventOld.Tags != null ? eventOld.Tags.Where(x => x.Source != "lts").ToList() : null;
+                if (redactionalassignedTags != null)
                 {
-                    eventNew.TagIds.Add(tag.Id);
+                    foreach (var tag in redactionalassignedTags)
+                    {
+                        eventNew.TagIds.Add(tag.Id);
+                    }
                 }
             }
-            
             //TODO import the Redactional Tags from Events into Tags ?
         }
 
