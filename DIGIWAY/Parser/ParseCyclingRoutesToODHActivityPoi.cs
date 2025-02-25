@@ -14,6 +14,7 @@ using System.Globalization;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Utilities;
 using NetTopologySuite.IO;
+using NetTopologySuite.Algorithm;
 
 namespace DIGIWAY
 {
@@ -66,18 +67,26 @@ namespace DIGIWAY
             //Check
             //List<LineString> linestringlist = new List<LineString>();
 
+            List<Coordinate> coordinates = new List<Coordinate>();
+
             string coordinatesstr = "MULTILINESTRING((";
             foreach(var coordinate1 in digiwaydata.geometry.coordinates)
             {
                 foreach (var coordinate2 in coordinate1)
                 {
-                    List<Coordinate> coordinates = new List<Coordinate>();
+                    //List<Coordinate> coordinates = new List<Coordinate>();
+
+                    List<double> coords = new List<double>();
 
                     foreach (var coordinate in coordinate2)
                     {
-                        coordinates.Add(new Coordinate() { });
+                        coords.Add(coordinate);
                         coordinatesstr = coordinatesstr + coordinate.ToString(CultureInfo.InvariantCulture) + " ";
                     }
+
+                    if(coords.Count == 2)
+                        coordinates.Add(new Coordinate(coords[0], coords[1]));
+
                     coordinatesstr = coordinatesstr.Remove(coordinatesstr.Length - 1);
                     coordinatesstr = coordinatesstr + ",";                                       
                 }
@@ -97,7 +106,13 @@ namespace DIGIWAY
             //}
             //geometryfactory.CreateMultiLineString(geometryfactory.CreateLineString(geom.Coordinates))
 
-            geoshape.Geometry = geom;
+            //geoshape.Geometry = geom;
+
+
+            var geomfactory = new GeometryFactory();
+            var linestring = geomfactory.WithSRID(32632).CreateLineString(coordinates.ToArray());
+
+            geoshape.Geometry = linestring;
 
             //To check if it can be done with linq
             //var test = "MULTILINESTRING((" + String.Join(",", digiwaydata.geometry.coordinates.SelectMany(x => x)) +"))";

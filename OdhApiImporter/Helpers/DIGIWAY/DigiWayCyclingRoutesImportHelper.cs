@@ -12,8 +12,10 @@ using DataModel;
 using DIGIWAY;
 using Helper;
 using Helper.Generic;
+using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
 using SqlKata.Execution;
+using SqlKata.Extensions;
 
 namespace OdhApiImporter.Helpers
 {
@@ -249,10 +251,14 @@ namespace OdhApiImporter.Helpers
                     //            geom = @"ST_GeometryFromText('" + data.Geometry + "', 32632)",
                     //            //geometry = "ST_Transform(ST_GeometryFromText('" + data.Geometry + "', 32632),4326)",
                     //        });
-              
+
+
+                    
+                    var geomfactory = new GeometryFactory();
+                    var linestring = geomfactory.WithSRID(32632).CreateLineString(data.Geometry.Coordinates);
 
                     var insert = await QueryFactory
-                    .Query("shapestest").InsertAsync(new GeoShapeDBTest()
+                    .Query("shapestest").InsertAsync(new GeoShapeDBTest<LineString>()
                     {
                         id = 9900,
                         licenseinfo = new JsonRaw(data.LicenseInfo),
@@ -265,7 +271,8 @@ namespace OdhApiImporter.Helpers
                         s7rid = "32632",
                         //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
                         //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
-                        geometry = new PGGeometryRaw(data.Geometry)
+                        //geometry = new PGLineStringRaw(linestring)
+                        geometry = linestring
                     });
 
                 }

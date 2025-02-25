@@ -55,7 +55,7 @@ namespace DataModel
         public string source { get; set; }
     }
 
-    public class GeoShapeDBTest
+    public class GeoShapeDBTest<T>
     {
         public int id { get; set; }
         public string? name { get; set; }
@@ -64,7 +64,7 @@ namespace DataModel
         public float shape_area { get; set; }
 
 
-        public PGGeometryRaw geometry { get; set; }
+        public T geometry { get; set; }
 
         //Table
         public string type { get; set; }
@@ -137,5 +137,26 @@ namespace DataModel
         }
 
         public static explicit operator PGGeometryRaw(Geometry x) => new PGGeometryRaw(x);
+    }
+
+
+      
+    public class PGLineStringRaw : ICustomQueryParameter
+    {
+        public PGLineStringRaw(LineString data)
+        {
+            Value = data;
+        }
+
+        public LineString Value { get; }
+
+        public void AddParameter(IDbCommand command, string name)
+        {
+            var parameter = new NpgsqlParameter(name, NpgsqlDbType.Geometry);
+            parameter.Value = Value;
+            command.Parameters.Add(parameter);
+        }
+
+        public static explicit operator PGLineStringRaw(LineString x) => new PGLineStringRaw(x);
     }
 }
