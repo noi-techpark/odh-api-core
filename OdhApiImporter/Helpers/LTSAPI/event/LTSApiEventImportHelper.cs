@@ -113,10 +113,24 @@ namespace OdhApiImporter.Helpers.LTSAPI
             //Import the List
             var eventlts = await GetEventsFromLTSV2(idlist, lastchanged);
 
+            //Check if Data is accessible on LTS
             if (eventlts != null && eventlts.FirstOrDefault().ContainsKey("success") && (Boolean)eventlts.FirstOrDefault()["success"]) //&& eventlts.FirstOrDefault()["Success"] == true
             {     //Import Single Data & Deactivate Data
                 var result = await SaveEventsToPG(eventlts);
                 return result;
+            }
+            //If data is not accessible on LTS Side, 
+            else if(eventlts != null && eventlts.FirstOrDefault().ContainsKey("status") && (int)eventlts.FirstOrDefault()["status"] == 403)
+            {
+                var result = await DeleteOrDisableData<EventLinked>(idlist.FirstOrDefault() + "_REDUCED", true);
+
+                return new UpdateDetail()
+                {
+                    updated = 0,
+                    created = 0,
+                    deleted = result.Item2,
+                    error = 1,
+                };
             }
             else
             {

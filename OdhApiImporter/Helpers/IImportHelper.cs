@@ -65,6 +65,13 @@ namespace OdhApiImporter.Helpers
             this.importerURL = importerURL;
         }
 
+        /// <summary>
+        /// Deletes or disables the data by the selected option
+        /// </summary>
+        /// <typeparam name="T">ODH Entity to deactivate (to identify the right table)</typeparam>
+        /// <param name="id">Id of the data to delete/disable</param>
+        /// <param name="delete">Delete the data true/false, if false the data is set to Active = false</param>
+        /// <returns>Tuple of ints (updated/deleted)</returns>
         public async Task<Tuple<int, int>> DeleteOrDisableData<T>(string id, bool delete)
             where T : IActivateable
         {
@@ -103,7 +110,12 @@ namespace OdhApiImporter.Helpers
             return Tuple.Create(updateresult, deleteresult);
         }
 
-        //Helper get all data from source
+        /// <summary>
+        /// Get All Data by passed Source
+        /// </summary>
+        /// <param name="syncsourcelist"></param>
+        /// <param name="syncsourceinterfacelist"></param>
+        /// <returns></returns>
         public async Task<List<string>> GetAllDataBySource(
             List<string> syncsourcelist,
             List<string>? syncsourceinterfacelist = null
