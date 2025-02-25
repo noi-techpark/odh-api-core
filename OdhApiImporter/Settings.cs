@@ -39,6 +39,7 @@ namespace OdhApiImporter
         private readonly IDictionary<string, S3Config> s3Config;
 
         private readonly LTSCredentials ltsCredentials;
+        private readonly LTSCredentials ltsCredentialsOpen;
 
         public Settings(IConfiguration configuration)
         {
@@ -204,6 +205,15 @@ namespace OdhApiImporter
                 ltsapi.GetValue<string>("XLSClientid", ""),
                 ltsapi.GetValue<bool>("Opendata", false)
             );
+
+            var ltsapiopen = this.configuration.GetSection("LTSApiOpen");
+            this.ltsCredentialsOpen = new LTSCredentials(
+                ltsapiopen.GetValue<string>("ServiceUrl", ""),
+                ltsapiopen.GetValue<string>("Username", ""),
+                ltsapiopen.GetValue<string>("Password", ""),
+                ltsapiopen.GetValue<string>("XLSClientid", ""),
+                ltsapiopen.GetValue<bool>("Opendata", true)
+            );
         }
 
         public string PostgresConnectionString => this.connectionString.Value;
@@ -240,5 +250,6 @@ namespace OdhApiImporter
         public PushServerConfig PushServerConfig => throw new NotImplementedException();
         public IDictionary<string, S3Config> S3Config => this.s3Config;
         public LTSCredentials LtsCredentials => this.ltsCredentials;
+        public LTSCredentials LtsCredentialsOpen => this.ltsCredentialsOpen;
     }
 }
