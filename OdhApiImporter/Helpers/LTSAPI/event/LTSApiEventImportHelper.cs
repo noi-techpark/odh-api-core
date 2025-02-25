@@ -14,12 +14,10 @@ using Helper.Location;
 using Helper.Tagging;
 using LTSAPI;
 using LTSAPI.Parser;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NINJA.Parser;
-using ServiceReferenceLCS;
 using SqlKata.Execution;
+
 
 namespace OdhApiImporter.Helpers.LTSAPI
 {
@@ -35,32 +33,35 @@ namespace OdhApiImporter.Helpers.LTSAPI
         )
             : base(settings, queryfactory, table, importerURL) { }
 
+        private LtsApi GetLTSApi()
+        {
+            if (!opendata)
+            {
+                return new LtsApi(
+                   settings.LtsCredentials.serviceurl,
+                   settings.LtsCredentials.username,
+                   settings.LtsCredentials.password,
+                   settings.LtsCredentials.ltsclientid,
+                   false
+               );
+            }
+            else
+            {
+                return new LtsApi(
+                settings.LtsCredentialsOpen.serviceurl,
+                settings.LtsCredentialsOpen.username,
+                settings.LtsCredentialsOpen.password,
+                settings.LtsCredentialsOpen.ltsclientid,
+                true
+            );
+            }
+        }
+
         private async Task<List<JObject>> GetEventsFromLTSV2(List<string> eventids, DateTime? lastchanged)
         {
             try
             {
-                LtsApi ltsapi = default(LtsApi);
-
-                if (!opendata)
-                {
-                    ltsapi = new LtsApi(
-                        settings.LtsCredentials.serviceurl,
-                        settings.LtsCredentials.username,
-                        settings.LtsCredentials.password,
-                        settings.LtsCredentials.ltsclientid,
-                        false
-                    );
-                }
-                else
-                {
-                    ltsapi = new LtsApi(
-                    settings.LtsCredentialsOpen.serviceurl,
-                    settings.LtsCredentialsOpen.username,
-                    settings.LtsCredentialsOpen.password,
-                    settings.LtsCredentialsOpen.ltsclientid,
-                    true
-                );                }
-
+                LtsApi ltsapi = GetLTSApi();
                 
                 if(eventids.Count == 1)
                 {
@@ -101,6 +102,37 @@ namespace OdhApiImporter.Helpers.LTSAPI
             }
         }
 
+        private async Task<List<JObject>> GetOrganizerFromLTSV2(string organizerid)
+        {
+            try
+            {
+                LtsApi ltsapi = GetLTSApi();
+
+                var qs = new LTSQueryStrings() { page_size = 1 };
+                var dict = ltsapi.GetLTSQSDictionary(qs);
+
+                return await ltsapi.EventOrganizerDetailRequest(organizerid, dict);
+            }
+            catch (Exception ex)
+            {
+                WriteLog.LogToConsole(
+                    "",
+                    "dataimport",
+                    "single.events.organizers",
+                    new ImportLog()
+                    {
+                        sourceid = "",
+                        sourceinterface = "lts.events.organizers",
+                        success = false,
+                        error = ex.Message,
+                    }
+                );
+                return null;
+            }
+        }
+
+
+
         public async Task<UpdateDetail> SaveDataToODH(
             DateTime? lastchanged = null,
             List<string>? idlist = null,
@@ -129,7 +161,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     updated = 0,
                     created = 0,
                     deleted = result.Item2,
-                    error = 1,
+                    error = 0,
                 };
             }
             else
@@ -179,7 +211,6 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     //DistanceCalculation
                     await eventparsed.UpdateDistanceCalculation(QueryFactory);
-
             
                     //GET OLD Event
                     var eventindb = await LoadDataFromDB<EventLinked>(id);
@@ -193,8 +224,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     //Create Tags
                     await eventparsed.UpdateTagsExtension(QueryFactory);
 
-                    //TODO GET Organizer Data and add to Event
-
+                    //GET Organizer Data and add to Event
+                    if (!opendata)
+                        await AddOrganizerData(eventparsed);
 
                     var result = await InsertDataToDB(eventparsed, data.data);
 
@@ -391,6 +423,20 @@ namespace OdhApiImporter.Helpers.LTSAPI
             //TODO import the Redactional Tags from Events into Tags ?
         }
 
+        private async Task AddOrganizerData(EventLinked eventNew)
+        {
+            if(!String.IsNullOrEmpty(eventNew.OrgRID))
+            {
+                //Get the Organizer from LTS
+                var organizer = await GetOrganizerFromLTSV2(eventNew.OrgRID);
+
+                if (organizer != null)
+                {
+                    var organizerinfo = EventOrganizerParser.ParseLTSEventOrganizer(organizer.FirstOrDefault());
+                    eventNew.OrganizerInfos = organizerinfo;
+                }
+            }
+        }
 
         public Task<UpdateDetail> SaveDataToODH(DateTime? lastchanged = null, List<string>? idlist = null, CancellationToken cancellationToken = default)
         {
