@@ -290,27 +290,49 @@ namespace OdhApiImporter.Helpers
                     //        });
 
 
-                    
+
                     //var geomfactory = new GeometryFactory();
                     //var linestring = geomfactory.WithSRID(32632).CreateLineString(data.Geometry.Coordinates);
+                    var maxid = await QueryFactory
+                    .Query("shapestest").SelectMax("id").GetAsync<int>();
+
+
+                    //var insert = await QueryFactory
+                    //.Query("shapestest").InsertAsync(new GeoShapeDBTest<PGLineStringRaw>()
+                    //{
+                    //    id = maxid.FirstOrDefault() + 1,
+                    //    licenseinfo = new JsonRaw(data.LicenseInfo),
+                    //    meta = new JsonRaw(data._Meta),
+                    //    name = data.Name,
+                    //    shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
+                    //    shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
+                    //    type = data.Type,
+                    //    source = "digiway",
+                    //    s7rid = "32632",
+                    //    //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
+                    //    //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
+                    //    //geometry = new PGLineStringRaw(linestring)
+                    //    geometry = new PGLineStringRaw(linestring)
+                    //});
 
                     var insert = await QueryFactory
-                    .Query("shapestest").InsertAsync(new GeoShapeDBTest<PGLineStringRaw>()
-                    {
-                        id = 9900,
-                        licenseinfo = new JsonRaw(data.LicenseInfo),
-                        meta = new JsonRaw(data._Meta),
-                        name = data.Name,
-                        shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
-                        shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
-                        type = data.Type,
-                        source = "digiway",
-                        s7rid = "32632",
-                        //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
-                        //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
-                        //geometry = new PGLineStringRaw(linestring)
-                        geometry = new PGLineStringRaw(linestring)
-                    });
+                   .Query("shapestest").InsertAsync(new GeoShapeDBTest<string>()
+                   {
+                       id = maxid.FirstOrDefault() + 1,
+                       licenseinfo = new JsonRaw(data.LicenseInfo),
+                       meta = new JsonRaw(data._Meta),
+                       name = data.Name,
+                       shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
+                       shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
+                       type = data.Type,
+                       source = "digiway",
+                       s7rid = "32632",
+                       //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
+                       //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
+                       //geometry = new PGLineStringRaw(linestring)
+                       geometry = "ST_GeometryFromText('" + linestring.ToString() + "', 32632)"
+                   });
+
 
                 }
                 else
