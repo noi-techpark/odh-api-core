@@ -59,7 +59,9 @@ namespace DataModel
     {
         public int id { get; set; }
         public string? name { get; set; }
-      
+
+        public string? country { get; set; }
+
         public float shape_leng { get; set; }
         public float shape_area { get; set; }
 

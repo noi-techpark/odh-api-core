@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -125,6 +126,21 @@ namespace OdhApiImporter.Helpers
 
                 var pgcrudshaperesult = await InsertDataInShapesDB(parsedobject.Item2);
 
+                //Create GPX Info
+                GpsTrack gpstrack = new GpsTrack()
+                {
+                    Format = "geojson",
+                    GpxTrackUrl = "v1/GeoShape/" + pgcrudshaperesult.id,
+                    Id = pgcrudshaperesult.id,
+                    Type = "Track",
+                    GpxTrackDesc = null
+                };
+
+                if (parsedobject.Item1.GpsTrack == null)
+                    parsedobject.Item1.GpsTrack = new List<GpsTrack>();
+
+                parsedobject.Item1.GpsTrack.Add(gpstrack);
+
                 //Save parsedobject to DB + Save Rawdata to DB
                 var pgcrudresult = await InsertDataToDB(
                     parsedobject.Item1,
@@ -209,40 +225,7 @@ namespace OdhApiImporter.Helpers
       )
         {
             try
-            {
-                //var geomfactory = new GeometryFactory();
-
-                //List<Coordinate> coordinates = new List<Coordinate>();
-                //coordinates.Add(new Coordinate(754907.9859, 5266143.9387));
-                //coordinates.Add(new Coordinate(754907.1739, 5266138.4547));
-                //coordinates.Add(new Coordinate(754905.7391, 5266131.014));
-                //coordinates.Add(new Coordinate(754905.3508, 5266129.0538));
-                //coordinates.Add(new Coordinate(754903.9335, 5266121.9573));
-                //coordinates.Add(new Coordinate(754897.8422, 5266096.307));
-                //coordinates.Add(new Coordinate(754889.3344, 5266067.5832));
-                //coordinates.Add(new Coordinate(754874.9674, 5266026.0523));
-                //coordinates.Add(new Coordinate(754866.9682, 5265998.65));
-                //coordinates.Add(new Coordinate(754860.2605, 5265973.3955));
-
-
-                //var linestring = geomfactory.WithSRID(32632).CreateLineString(coordinates.ToArray());
-
-                ////schneller hack
-                //if (data == null)
-                //{
-                //    data = new GeoShapeJson()
-                //    {
-                //        LicenseInfo = new LicenseInfo() { License = "open", Author = "", ClosedData = false, LicenseHolder = "" },
-                //        Name = "test",
-                //        Shape_area = 0,
-                //        Shape_length = 0,
-                //        Type = "Cyclingroute",
-                //        Source = "digiway",
-                //        Geometry = linestring
-                //    };
-                //}
-
-
+            {                
                 //Set LicenseInfo
                 data.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<GeoShapeJson>(
                     data,
@@ -256,49 +239,60 @@ namespace OdhApiImporter.Helpers
                 var shape = await QueryFactory.Query("shapestest").Select("id").Where("id", data.Id).FirstOrDefaultAsync<int>();
 
                 int operationid = 0;
+                int insert = 0;
+                int update = 0;
 
                 PGCRUDResult result = default(PGCRUDResult);
                 if (shape == 0)
-                {                    
-                    //var geomfactory = new GeometryFactory();
-                    //var linestring = geomfactory.WithSRID(32632).CreateLineString(data.Geometry.Coordinates);
+                {                                        
                     var maxid = await QueryFactory
                     .Query("shapestest").SelectMax("id").GetAsync<int?>();
 
-                    int idtopass = maxid != null && maxid.FirstOrDefault() != null && maxid.FirstOrDefault().HasValue ? maxid.FirstOrDefault().Value + 1 : 1;
+                    operationid = maxid != null && maxid.FirstOrDefault() != null && maxid.FirstOrDefault().HasValue ? maxid.FirstOrDefault().Value + 1 : 1;
 
-                    var insert = await QueryFactory
+                    insert = await QueryFactory
                    .Query("shapestest").InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
-                       id = idtopass,
+                       id = operationid,
                        licenseinfo = new JsonRaw(data.LicenseInfo),
                        meta = new JsonRaw(data._Meta),
                        name = data.Name,
+                       country = data.Country,
+                       shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
+                       shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
+                       type = data.Type,
+                       source = "digiway",
+                       s7rid = "32632",                       
+                       //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),                       
+                       geometry = new UnsafeLiteral("ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632)", false)                       
+                   });
+                }
+                else
+                {
+                    update = await QueryFactory
+                   .Query("shapestest").UpdateAsync(new GeoShapeDBTest<UnsafeLiteral>()
+                   {
+                       id = shape,
+                       licenseinfo = new JsonRaw(data.LicenseInfo),
+                       meta = new JsonRaw(data._Meta),
+                       name = data.Name,
+                       country = data.Country,
                        shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
                        shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
                        type = data.Type,
                        source = "digiway",
                        s7rid = "32632",
-                       //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
-                       //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
-                       //geometry = new PGLineStringRaw(linestring)
-                       //geometry = "ST_GeometryFromText('" + linestring.ToString() + "', 32632)"
+                       //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),                       
                        geometry = new UnsafeLiteral("ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632)", false)
                    });
-
-
-                }
-                else
-                {
-
                 }
 
                 return new PGCRUDResult()
                 {
                     id = operationid.ToString(),
                     odhtype = data._Meta.Type,
-                    created = 0,
-                    updated = 0,
+                    created = insert,
+                    updated = update,
                     deleted = 0,
                     error = 0,
                     errorreason = null,
