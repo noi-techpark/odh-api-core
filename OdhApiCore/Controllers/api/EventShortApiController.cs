@@ -218,6 +218,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="communityactive">'true' if only Events marked as Active for Noi community should be returned</param>
         /// <param name="eventids">comma separated list of event ids</param>
         /// <param name="webaddress">Filter by WebAddress Field</param>
+        /// <param name="eventgrouping">Groups Events with the Same Date/Id/Name and adds all Rooms to the SpaceDesc List</param>
         /// <param name="language">Language field selector, displays data and fields in the selected language (default:'null' all languages are displayed)</param>
         /// <param name="langfilter">Language filter (returns only data available in the selected Language, Separator ',' possible values: 'de,it,en,nl,sc,pl,fr,ru', 'null': Filter disabled)</param>
         /// <param name="publishedon">Published On Filter (Separator ',' List of publisher IDs), (default:'null')</param>
@@ -253,11 +254,12 @@ namespace OdhApiCore.Controllers.api
             string? lastchange = null,
             string? updatefrom = null,
             string? publishedon = null,
+            bool eventgrouping = true,
             [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? searchfilter = null,
             string? rawfilter = null,
             string? rawsort = null,
-            bool removenullvalues = false,
+            bool removenullvalues = false,            
             CancellationToken cancellationToken = default
         )
         {
@@ -286,6 +288,7 @@ namespace OdhApiCore.Controllers.api
                 rawfilter,
                 rawsort,
                 removenullvalues,
+                eventgrouping,
                 cancellationToken
             );
         }
@@ -576,6 +579,7 @@ namespace OdhApiCore.Controllers.api
             string? rawfilter,
             string? rawsort,
             bool removenullvalues,
+            bool eventgrouping,
             CancellationToken cancellationToken
         )
         {
@@ -634,7 +638,8 @@ namespace OdhApiCore.Controllers.api
             var result = TransformEventShortToRoom(
                 eventshortlist,
                 myeventshorthelper.start,
-                myeventshorthelper.end
+                myeventshorthelper.end,
+                eventgrouping
             );
 
             IEnumerable<JsonRaw> resultraw = result.Select(x => new JsonRaw(x));
@@ -655,7 +660,8 @@ namespace OdhApiCore.Controllers.api
         private IEnumerable<EventShortByRoom> TransformEventShortToRoom(
             IEnumerable<EventShort> eventsshort,
             DateTime start,
-            DateTime end
+            DateTime end,
+            bool eventgrouping = true
         )
         {
             List<EventShortByRoom> eventshortlistbyroom = new List<EventShortByRoom>();
@@ -829,7 +835,7 @@ namespace OdhApiCore.Controllers.api
                             if (!string.IsNullOrEmpty(eventshort.Display5))
                                 myeventshortbyroom.CompanyName = eventshort.Display5;
 
-                            AddToRoomList(eventshortlistbyroom, myeventshortbyroom);
+                            AddToRoomList(eventshortlistbyroom, myeventshortbyroom, eventgrouping);
                         }
                     }
                 }
@@ -840,10 +846,11 @@ namespace OdhApiCore.Controllers.api
 
         private void AddToRoomList(
             List<EventShortByRoom> eventshortlistbyroom,
-            EventShortByRoom roomtoadd
+            EventShortByRoom roomtoadd,
+            bool eventgrouping = true
         )
         {
-            // Sieh nach ob bereits ein Event mit demselben namen und
+            // Check if Event with Same Start + Enddate exists
             var sameevent = eventshortlistbyroom
                 .Where(x =>
                     x.Id == roomtoadd.Id
@@ -853,7 +860,8 @@ namespace OdhApiCore.Controllers.api
                 )
                 .FirstOrDefault();
 
-            if (sameevent != null)
+            //If SameEvent is found we add only in the SpaceDescList the second Room Name
+            if (sameevent != null && eventgrouping)
             {
                 string roomname = roomtoadd.SpaceDesc ?? "";
                 if (
