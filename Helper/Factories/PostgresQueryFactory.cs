@@ -30,15 +30,16 @@ namespace Helper.Factories
     {
         public PostgresQueryFactory(ISettings settings, ILogger<QueryFactory> logger)
         {
-            //https://stackoverflow.com/questions/77694133/postgis-ef-nettopologysuite-exception-writing-derived-type-to-db
-            var dataSourceBuilder = new NpgsqlDataSourceBuilder(settings.PostgresConnectionString);
-            dataSourceBuilder.UseNetTopologySuite();
-            var dataSource = dataSourceBuilder.Build();
+            //Not needed
+            ////https://stackoverflow.com/questions/77694133/postgis-ef-nettopologysuite-exception-writing-derived-type-to-db
+            //var dataSourceBuilder = new NpgsqlDataSourceBuilder(settings.PostgresConnectionString);
+            //dataSourceBuilder.UseNetTopologySuite();
+            //var dataSource = dataSourceBuilder.Build();
             
-            Connection = dataSource.OpenConnection(); //new NpgsqlConnection(settings.PostgresConnectionString);
-            //trying to get NetTopologySuite to work
+            //Connection = dataSource.OpenConnection(); //new NpgsqlConnection(settings.PostgresConnectionString);
+            ////trying to get NetTopologySuite to work
 
-            //Connection = new NpgsqlConnection(settings.PostgresConnectionString);
+            Connection = new NpgsqlConnection(settings.PostgresConnectionString);
 
             Compiler = new OdhPostgresCompiler();            
             Logger = info =>

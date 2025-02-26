@@ -95,7 +95,7 @@ namespace DIGIWAY
             coordinatesstr = coordinatesstr + "))";
 
             WKTReader reader = new WKTReader();
-            Geometry geom = reader.Read(coordinatesstr);
+            geoshape.Geometry = reader.Read(coordinatesstr);
 
 
             //var geometryfactory = new GeometryFactory();
@@ -109,10 +109,10 @@ namespace DIGIWAY
             //geoshape.Geometry = geom;
 
 
-            var geomfactory = new GeometryFactory();
-            var linestring = geomfactory.WithSRID(32632).CreateLineString(coordinates.ToArray());
+            //var geomfactory = new GeometryFactory();
+            //var linestring = geomfactory.WithSRID(32632).CreateLineString(coordinates.ToArray());
 
-            geoshape.Geometry = linestring;
+            //geoshape.Geometry = linestring;
 
             //To check if it can be done with linq
             //var test = "MULTILINESTRING((" + String.Join(",", digiwaydata.geometry.coordinates.SelectMany(x => x)) +"))";

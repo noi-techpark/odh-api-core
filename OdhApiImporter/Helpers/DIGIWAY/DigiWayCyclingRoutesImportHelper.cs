@@ -41,15 +41,10 @@ namespace OdhApiImporter.Helpers
             CancellationToken cancellationToken = default
         )
         {
-            var updateresult = new UpdateDetail();
-
-            await InsertDataInShapesDB(null);
-
-            //GET Data
-            //var data = await GetData(cancellationToken);
+            var data = await GetData(cancellationToken);
 
             ////UPDATE all data
-            //var updateresult = await ImportData(data, cancellationToken);
+            var updateresult = await ImportData(data, cancellationToken);
 
             //Disable Data not in list
             var deleteresult = await SetDataNotinListToInactive(cancellationToken);
@@ -215,37 +210,37 @@ namespace OdhApiImporter.Helpers
         {
             try
             {
-                var geomfactory = new GeometryFactory();
+                //var geomfactory = new GeometryFactory();
 
-                List<Coordinate> coordinates = new List<Coordinate>();
-                coordinates.Add(new Coordinate(754907.9859, 5266143.9387));
-                coordinates.Add(new Coordinate(754907.1739, 5266138.4547));
-                coordinates.Add(new Coordinate(754905.7391, 5266131.014));
-                coordinates.Add(new Coordinate(754905.3508, 5266129.0538));
-                coordinates.Add(new Coordinate(754903.9335, 5266121.9573));
-                coordinates.Add(new Coordinate(754897.8422, 5266096.307));
-                coordinates.Add(new Coordinate(754889.3344, 5266067.5832));
-                coordinates.Add(new Coordinate(754874.9674, 5266026.0523));
-                coordinates.Add(new Coordinate(754866.9682, 5265998.65));
-                coordinates.Add(new Coordinate(754860.2605, 5265973.3955));
+                //List<Coordinate> coordinates = new List<Coordinate>();
+                //coordinates.Add(new Coordinate(754907.9859, 5266143.9387));
+                //coordinates.Add(new Coordinate(754907.1739, 5266138.4547));
+                //coordinates.Add(new Coordinate(754905.7391, 5266131.014));
+                //coordinates.Add(new Coordinate(754905.3508, 5266129.0538));
+                //coordinates.Add(new Coordinate(754903.9335, 5266121.9573));
+                //coordinates.Add(new Coordinate(754897.8422, 5266096.307));
+                //coordinates.Add(new Coordinate(754889.3344, 5266067.5832));
+                //coordinates.Add(new Coordinate(754874.9674, 5266026.0523));
+                //coordinates.Add(new Coordinate(754866.9682, 5265998.65));
+                //coordinates.Add(new Coordinate(754860.2605, 5265973.3955));
 
 
-                var linestring = geomfactory.WithSRID(32632).CreateLineString(coordinates.ToArray());
+                //var linestring = geomfactory.WithSRID(32632).CreateLineString(coordinates.ToArray());
 
-                //schneller hack
-                if (data == null)
-                {
-                    data = new GeoShapeJson()
-                    {
-                        LicenseInfo = new LicenseInfo() { License = "open", Author = "", ClosedData = false, LicenseHolder = "" },
-                        Name = "test",
-                        Shape_area = 0,
-                        Shape_length = 0,
-                        Type = "Cyclingroute",
-                        Source = "digiway",
-                        Geometry = linestring
-                    };
-                }
+                ////schneller hack
+                //if (data == null)
+                //{
+                //    data = new GeoShapeJson()
+                //    {
+                //        LicenseInfo = new LicenseInfo() { License = "open", Author = "", ClosedData = false, LicenseHolder = "" },
+                //        Name = "test",
+                //        Shape_area = 0,
+                //        Shape_length = 0,
+                //        Type = "Cyclingroute",
+                //        Source = "digiway",
+                //        Geometry = linestring
+                //    };
+                //}
 
 
                 //Set LicenseInfo
@@ -264,62 +259,18 @@ namespace OdhApiImporter.Helpers
 
                 PGCRUDResult result = default(PGCRUDResult);
                 if (shape == 0)
-                {
-                    //var insert = await QueryFactory
-                    //        .Query("shapes").AsInsert(new GeoShapeDB()
-                    //        {
-                    //            id = 0,
-                    //            abbrev = data.Abbrev,
-                    //            code_cm = data.Code_Cm,
-                    //            code_prov = data.Code_Prov,
-                    //            code_reg = data.Code_Reg,
-                    //            code_rip = data.Code_Rip,
-                    //            code_uts = data.Code_Uts,
-                    //            country = data.Country,
-                    //            istatnumber = data.Istatnumber,
-                    //            licenseinfo = new JsonRaw(data.LicenseInfo),
-                    //            meta = new JsonRaw(data._Meta),
-                    //            name = data.Name,
-                    //            name_alternative = data.Name_Alternative,
-                    //            shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
-                    //            shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
-                    //            type = data.Type,
-                    //            source = "digiway",
-                    //            type_uts = data.Type_Uts,
-                    //            geom = @"ST_GeometryFromText('" + data.Geometry + "', 32632)",
-                    //            //geometry = "ST_Transform(ST_GeometryFromText('" + data.Geometry + "', 32632),4326)",
-                    //        });
-
-
-
+                {                    
                     //var geomfactory = new GeometryFactory();
                     //var linestring = geomfactory.WithSRID(32632).CreateLineString(data.Geometry.Coordinates);
                     var maxid = await QueryFactory
-                    .Query("shapestest").SelectMax("id").GetAsync<int>();
+                    .Query("shapestest").SelectMax("id").GetAsync<int?>();
 
-
-                    //var insert = await QueryFactory
-                    //.Query("shapestest").InsertAsync(new GeoShapeDBTest<PGLineStringRaw>()
-                    //{
-                    //    id = maxid.FirstOrDefault() + 1,
-                    //    licenseinfo = new JsonRaw(data.LicenseInfo),
-                    //    meta = new JsonRaw(data._Meta),
-                    //    name = data.Name,
-                    //    shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
-                    //    shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
-                    //    type = data.Type,
-                    //    source = "digiway",
-                    //    s7rid = "32632",
-                    //    //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
-                    //    //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
-                    //    //geometry = new PGLineStringRaw(linestring)
-                    //    geometry = new PGLineStringRaw(linestring)
-                    //});
+                    int idtopass = maxid != null && maxid.FirstOrDefault() != null && maxid.FirstOrDefault().HasValue ? maxid.FirstOrDefault().Value + 1 : 1;
 
                     var insert = await QueryFactory
                    .Query("shapestest").InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
-                       id = maxid.FirstOrDefault() + 1,
+                       id = idtopass,
                        licenseinfo = new JsonRaw(data.LicenseInfo),
                        meta = new JsonRaw(data._Meta),
                        name = data.Name,
@@ -332,7 +283,7 @@ namespace OdhApiImporter.Helpers
                        //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
                        //geometry = new PGLineStringRaw(linestring)
                        //geometry = "ST_GeometryFromText('" + linestring.ToString() + "', 32632)"
-                       geometry = new UnsafeLiteral("ST_GeometryFromText('" + linestring.ToString() + "', 32632)", false)
+                       geometry = new UnsafeLiteral("ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632)", false)
                    });
 
 
