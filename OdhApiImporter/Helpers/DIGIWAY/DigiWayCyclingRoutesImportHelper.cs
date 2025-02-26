@@ -14,6 +14,7 @@ using Helper;
 using Helper.Generic;
 using NetTopologySuite.Geometries;
 using Newtonsoft.Json;
+using SqlKata;
 using SqlKata.Execution;
 using SqlKata.Extensions;
 
@@ -316,7 +317,7 @@ namespace OdhApiImporter.Helpers
                     //});
 
                     var insert = await QueryFactory
-                   .Query("shapestest").InsertAsync(new GeoShapeDBTest<string>()
+                   .Query("shapestest").InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
                        id = maxid.FirstOrDefault() + 1,
                        licenseinfo = new JsonRaw(data.LicenseInfo),
@@ -330,7 +331,8 @@ namespace OdhApiImporter.Helpers
                        //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),
                        //geom = "ST_GeometryFromText('" + data.Geometry + "', 32632)",
                        //geometry = new PGLineStringRaw(linestring)
-                       geometry = "ST_GeometryFromText('" + linestring.ToString() + "', 32632)"
+                       //geometry = "ST_GeometryFromText('" + linestring.ToString() + "', 32632)"
+                       geometry = new UnsafeLiteral("ST_GeometryFromText('" + linestring.ToString() + "', 32632)", false)
                    });
 
 
