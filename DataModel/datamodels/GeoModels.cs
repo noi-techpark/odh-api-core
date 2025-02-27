@@ -55,10 +55,92 @@ namespace DataModel
 
         public LicenseInfo LicenseInfo { get; set; }
 
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+
         public Geometry Geometry { get; set; }
     }
 
+    public class GeoShapeDB
+    {
+        public int id { get; set; }
+        public string country { get; set; }
+        public int? code_rip { get; set; }
+        public int? code_reg { get; set; }
+        public int? code_prov { get; set; }
+        public int? code_cm { get; set; }
+        public int? code_uts { get; set; }
 
+        public string istatnumber { get; set; }
+
+        public string abbrev { get; set; }
+
+        public string type_uts { get; set; }
+
+        public string name { get; set; }
+
+        public string name_alternative { get; set; }
+
+        public float? shape_leng { get; set; }
+
+        public float? shape_area { get; set; }
+
+        public string source { get; set; }
+
+        public string type { get; set; }
+
+        public JsonRaw meta { get; set; }
+
+        public JsonRaw licenseinfo { get; set; }
+
+        public JsonRaw mapping { get; set; }
+
+        public string srid { get; set; }
+
+        public string idstring { get; set; }
+    }
+
+    public class GeoShapeDB<T>
+    {
+        public int id { get; set; }
+        public string country { get; set; }
+        public int? code_rip { get; set; }
+        public int? code_reg { get; set; }
+        public int? code_prov { get; set; }
+        public int? code_cm { get; set; }
+        public int? code_uts { get; set; }
+
+        public string istatnumber { get; set; }
+
+        public string abbrev { get; set; }
+
+        public string type_uts { get; set; }
+
+        public string name { get; set; }
+
+        public string name_alternative { get; set; }
+
+        public float? shape_leng { get; set; }
+
+        public float? shape_area { get; set; }
+
+        public string source { get; set; }
+
+        public string type { get; set; }
+
+        public JsonRaw meta { get; set; }
+
+        public JsonRaw licenseinfo { get; set; }
+
+        public JsonRaw mapping { get; set; }
+
+        public T geometry { get; set; }
+
+        public T geom { get; set; }
+
+        public string srid { get; set; }
+
+        public string idstring { get; set; }
+    }
 
     public class GeoShapeDBTest<T>
     {

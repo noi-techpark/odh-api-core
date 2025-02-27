@@ -246,7 +246,8 @@ namespace OdhApiImporter.Helpers
                 {                                        
                     
                     insert = await QueryFactory
-                   .Query("shapestest").InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()
+                   .Query("shapestest")
+                   .InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
                        id = data.Id,
                        licenseinfo = new JsonRaw(data.LicenseInfo),
@@ -265,7 +266,9 @@ namespace OdhApiImporter.Helpers
                 else
                 {
                     update = await QueryFactory
-                   .Query("shapestest").UpdateAsync(new GeoShapeDBTest<UnsafeLiteral>()
+                   .Query("shapestest")
+                   .Where("id", data.Id)
+                   .UpdateAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
                        id = data.Id,
                        licenseinfo = new JsonRaw(data.LicenseInfo),
