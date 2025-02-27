@@ -106,6 +106,7 @@ namespace Helper
                 EventV2 ev => GetMetadataforEvent(ev),
                 VenueV2 ev => GetMetadataforVenue(ev),
                 GeoShapeJson gj => GetMetadataForGeoShapeJson(gj),
+                GeoShapeJsonTest gj => GetMetadataForGeoShapeJson(gj),
                 _ => throw new Exception("not known odh type"),
             };
         }
@@ -463,6 +464,20 @@ namespace Helper
         public static Metadata GetMetadataForGeoShapeJson(GeoShapeJson data)
         {
             string type = ODHTypeHelper.TranslateType2TypeString<GeoShapeJson>(data);
+
+            return new Metadata()
+            {
+                Id = data.Id.ToString(),
+                Type = type,
+                LastUpdate = DateTime.Now,
+                Source = data.Source,
+                Reduced = false,
+            };
+        }
+
+        public static Metadata GetMetadataForGeoShapeJson(GeoShapeJsonTest data)
+        {
+            string type = ODHTypeHelper.TranslateType2TypeString<GeoShapeJsonTest>(data);
 
             return new Metadata()
             {

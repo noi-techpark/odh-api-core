@@ -221,50 +221,45 @@ namespace OdhApiImporter.Helpers
         }
 
         private async Task<PGCRUDResult> InsertDataInShapesDB(
-          GeoShapeJson data
+          GeoShapeJsonTest data
       )
         {
             try
             {                
                 //Set LicenseInfo
-                data.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<GeoShapeJson>(
+                data.LicenseInfo = Helper.LicenseHelper.GetLicenseInfoobject<GeoShapeJsonTest>(
                     data,
                     Helper.LicenseHelper.GetLicenseforGeoShape
                 );
 
                 //Set Meta
-                data._Meta = MetadataHelper.GetMetadataobject<GeoShapeJson>(data);
+                data._Meta = MetadataHelper.GetMetadataobject<GeoShapeJsonTest>(data);
 
-                //Check if data is there
-                var shape = await QueryFactory.Query("shapestest").Select("id").Where("id", data.Id).FirstOrDefaultAsync<int>();
+                //Check if data is there by Name
+                var shapeid = await QueryFactory.Query("shapestest").Select("id").Where("id", data.Id).FirstOrDefaultAsync<string>();
 
-                int operationid = 0;
                 int insert = 0;
                 int update = 0;
 
                 PGCRUDResult result = default(PGCRUDResult);
-                if (shape == 0)
+                if (String.IsNullOrEmpty(shapeid))
                 {                                        
-                    var maxid = await QueryFactory
-                    .Query("shapestest").SelectMax("id").GetAsync<int?>();
-
-                    operationid = maxid != null && maxid.FirstOrDefault() != null && maxid.FirstOrDefault().HasValue ? maxid.FirstOrDefault().Value + 1 : 1;
-
+                    
                     insert = await QueryFactory
                    .Query("shapestest").InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
-                       id = operationid,
+                       id = data.Id,
                        licenseinfo = new JsonRaw(data.LicenseInfo),
                        meta = new JsonRaw(data._Meta),
+                       mapping = new JsonRaw(data.Mapping),
                        name = data.Name,
                        country = data.Country,
-                       shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
-                       shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
                        type = data.Type,
                        source = "digiway",
-                       s7rid = "32632",                       
+                       srid = "32632",                       
                        //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),                       
-                       geometry = new UnsafeLiteral("ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632)", false)                       
+                       geometry = new UnsafeLiteral("ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632)", false),
+                       //geojson = new UnsafeLiteral("ST_AsGeoJSON(ST_Transform(ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632),4326))", false),
                    });
                 }
                 else
@@ -272,24 +267,24 @@ namespace OdhApiImporter.Helpers
                     update = await QueryFactory
                    .Query("shapestest").UpdateAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
-                       id = shape,
+                       id = data.Id,
                        licenseinfo = new JsonRaw(data.LicenseInfo),
                        meta = new JsonRaw(data._Meta),
+                       mapping = new JsonRaw(data.Mapping),
                        name = data.Name,
                        country = data.Country,
-                       shape_area = data.Shape_area != null ? data.Shape_area.Value : 0,
-                       shape_leng = data.Shape_length != null ? data.Shape_length.Value : 0,
                        type = data.Type,
                        source = "digiway",
-                       s7rid = "32632",
+                       srid = "32632",
                        //geom = new PGGeometryRaw("ST_GeometryFromText('" + data.Geometry + "', 32632)"),                       
-                       geometry = new UnsafeLiteral("ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632)", false)
+                       geometry = new UnsafeLiteral("ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632)", false),
+                       //geojson = new UnsafeLiteral("ST_AsGeoJSON(ST_Transform(ST_GeometryFromText('" + data.Geometry.ToString() + "', 32632),4326))", false),
                    });
                 }
 
                 return new PGCRUDResult()
                 {
-                    id = operationid.ToString(),
+                    id = data.Id,
                     odhtype = data._Meta.Type,
                     created = insert,
                     updated = update,
@@ -344,7 +339,7 @@ namespace OdhApiImporter.Helpers
         }
 
         //Parse the interface content
-        public async Task<(ODHActivityPoiLinked?, GeoShapeJson?)> ParseDigiWayDataToODHActivityPoi(
+        public async Task<(ODHActivityPoiLinked?, GeoShapeJsonTest?)> ParseDigiWayDataToODHActivityPoi(
             string odhid,
             DigiWayRoutesCycleWays input
         )

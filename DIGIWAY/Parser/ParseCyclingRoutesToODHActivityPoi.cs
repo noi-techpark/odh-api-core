@@ -21,7 +21,7 @@ namespace DIGIWAY
     public class ParseCyclingRoutesToODHActivityPoi
     {
 
-        public static (ODHActivityPoiLinked, GeoShapeJson) ParseDigiWayCyclingRoutesToODHActivityPoi(
+        public static (ODHActivityPoiLinked, GeoShapeJsonTest) ParseDigiWayCyclingRoutesToODHActivityPoi(
             ODHActivityPoiLinked? odhactivitypoi,
             DigiWayRoutesCycleWays digiwaydata
         )
@@ -56,13 +56,19 @@ namespace DIGIWAY
             //Add Tags
 
 
-            GeoShapeJson geoshape = new GeoShapeJson();
-            geoshape.Name = digiwaydata.id;
+            GeoShapeJsonTest geoshape = new GeoShapeJsonTest();            
+            geoshape.Id = digiwaydata.id;
+            geoshape.Name = digiwaydata.properties.ROUTE_NAME;
             geoshape.Type = "cycleway";
-            geoshape.Type_Uts = digiwaydata.properties.OBJECT;
-            geoshape.Name_Alternative = digiwaydata.properties.ROUTE_NAME;
-            geoshape.Shape_area = 0;
-            geoshape.Shape_length = 0;
+
+            Dictionary<string, string> additionalvalues = new Dictionary<string, string>();
+            additionalvalues.Add("object", digiwaydata.properties.OBJECT);
+            additionalvalues.Add("route_number", digiwaydata.properties.ROUTE_NUMBER);
+            additionalvalues.Add("id", digiwaydata.properties.ID.ToString());
+            additionalvalues.Add("route_type", digiwaydata.properties.ROUTE_TYPE);
+            additionalvalues.Add("bbox", "[" + String.Join(",", digiwaydata.bbox) + "]");
+
+            geoshape.Mapping.TryAddOrUpdate("digiway", additionalvalues);
 
             //Check
             //List<LineString> linestringlist = new List<LineString>();
