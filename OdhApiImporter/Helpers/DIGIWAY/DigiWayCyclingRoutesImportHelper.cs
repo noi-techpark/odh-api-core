@@ -130,7 +130,7 @@ namespace OdhApiImporter.Helpers
                 GpsTrack gpstrack = new GpsTrack()
                 {
                     Format = "geojson",
-                    GpxTrackUrl = "v1/GeoShape/" + pgcrudshaperesult.id,
+                    GpxTrackUrl = "GeoShapes/" + pgcrudshaperesult.id,
                     Id = pgcrudshaperesult.id,
                     Type = "Track",
                     GpxTrackDesc = null
@@ -243,8 +243,7 @@ namespace OdhApiImporter.Helpers
 
                 PGCRUDResult result = default(PGCRUDResult);
                 if (String.IsNullOrEmpty(shapeid))
-                {                                        
-                    
+                {                                                            
                     insert = await QueryFactory
                    .Query("shapestest")
                    .InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()

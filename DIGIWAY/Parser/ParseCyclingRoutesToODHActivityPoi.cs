@@ -15,6 +15,7 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Utilities;
 using NetTopologySuite.IO;
 using NetTopologySuite.Algorithm;
+//using NetTopologySuite.CoordinateSystems.Transformations
 
 namespace DIGIWAY
 {
@@ -53,7 +54,17 @@ namespace DIGIWAY
             odhactivitypoi.AltitudeSumDown = digiwaydata.properties.DOWNHILL_METERS;
             odhactivitypoi.AltitudeSumUp = digiwaydata.properties.UPHILL_METERS;
             odhactivitypoi.Source = "digiway";
+            odhactivitypoi.SyncSourceInterface = "geoservices1.civis";
+
             //Add Tags
+            odhactivitypoi.TagIds = new List<string>();
+            odhactivitypoi.TagIds.Add("2C1D1E0CA4E849229DA90775CBBF2312"); //LTS Cycling Tag
+            odhactivitypoi.TagIds.Add("cycling");
+            odhactivitypoi.TagIds.Add("biking biking tours");
+
+           
+
+
 
 
             GeoShapeJsonTest geoshape = new GeoShapeJsonTest();            
@@ -104,6 +115,34 @@ namespace DIGIWAY
             geoshape.Geometry = reader.Read(coordinatesstr);
 
 
+            var geomfactory = new GeometryFactory();
+            var point = geomfactory.WithSRID(32632).CreatePoint(coordinates.FirstOrDefault());
+
+            //Convert the coordinate system to WGS84.
+            var transform = new ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory().CreateFromCoordinateSystems(
+                      ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator,
+                   ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84);
+
+            var wgs84Point = transform.MathTransform.Transform(new double[] { point.Coordinate.X, point.Coordinate.Y });
+
+            var lat = wgs84Point[1];
+            var lon = wgs84Point[0];
+
+
+            //Add Starting GPS Coordinate as GPS Point 
+            odhactivitypoi.GpsInfo = new List<GpsInfo>();
+            odhactivitypoi.GpsInfo.Add(new GpsInfo()
+            {
+                Altitude = digiwaydata.properties.START_HEIGHT,
+                AltitudeUnitofMeasure = "m",
+                Gpstype = "position",
+                Latitude = lat,
+                Longitude = lon
+            });
+            
+
+
+
             //var geometryfactory = new GeometryFactory();
             //List<LineString> lines = new List<LineString>();
             //foreach(var coord in geom.Coordinates)
@@ -115,8 +154,7 @@ namespace DIGIWAY
             //geoshape.Geometry = geom;
 
 
-            //var geomfactory = new GeometryFactory();
-            //var linestring = geomfactory.WithSRID(32632).CreateLineString(coordinates.ToArray());
+            
 
             //geoshape.Geometry = linestring;
 
