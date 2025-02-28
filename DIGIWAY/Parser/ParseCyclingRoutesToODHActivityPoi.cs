@@ -167,14 +167,36 @@ namespace DIGIWAY
             {
                 //RUNNING_TIME 3h11min
                 var hour = duration.Split("h");
-                var minute = hour[1].Replace("min", "");
+                //3h11min
+                if (hour.Length == 2)
+                {
+                    var minute = hour[1].Replace("min", "");
 
-                //transform minute from 60 to 100
-                double hourd = Convert.ToDouble(hour[0]);
-                double minuted = Convert.ToDouble(minute);
-                double minutedconv = minuted / 60;
+                    //transform minute from 60 to 100
+                    double hourd = Convert.ToDouble(hour[0]);
+                    if (!String.IsNullOrEmpty(minute))
+                    {
+                        double minuted = Convert.ToDouble(minute);
+                        double minutedconv = minuted / 60;
 
-                return hourd + minutedconv;
+                        return hourd + minutedconv;
+                    }
+                    //2h
+                    else
+                        return hourd;
+                }
+                //40min
+                else if(hour.Length == 1 && hour[0].Contains("min"))
+                {
+                    var minute = hour[0].Replace("min", "");
+
+                    //transform minute from 60 to 100
+                    double minuted = Convert.ToDouble(minute);
+                    double minutedconv = minuted / 60;
+
+                    return minutedconv;
+                }
+                else { return null; }
             }
         }
     }
