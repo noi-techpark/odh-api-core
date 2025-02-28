@@ -15,6 +15,7 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Utilities;
 using NetTopologySuite.IO;
 using NetTopologySuite.Algorithm;
+using Newtonsoft.Json;
 //using NetTopologySuite.CoordinateSystems.Transformations
 
 namespace DIGIWAY
@@ -55,6 +56,7 @@ namespace DIGIWAY
             odhactivitypoi.AltitudeSumUp = digiwaydata.properties.UPHILL_METERS;
             odhactivitypoi.Source = "digiway";
             odhactivitypoi.SyncSourceInterface = "geoservices1.civis";
+            odhactivitypoi.DistanceDuration = TransformDuration(digiwaydata.properties.RUNNING_TIME);
 
             //Add Tags
             odhactivitypoi.TagIds = new List<string>();
@@ -81,42 +83,54 @@ namespace DIGIWAY
 
             geoshape.Mapping.TryAddOrUpdate("digiway", additionalvalues);
 
-            //Check
-            //List<LineString> linestringlist = new List<LineString>();
 
-            List<Coordinate> coordinates = new List<Coordinate>();
+            //PArsing errors
+            //List<Coordinate> coordinates = new List<Coordinate>();
 
-            string coordinatesstr = "MULTILINESTRING((";
-            foreach(var coordinate1 in digiwaydata.geometry.coordinates)
+            //string coordinatesstr = "MULTILINESTRING((";
+            //foreach(var coordinate1 in digiwaydata.geometry.coordinates)
+            //{
+            //    foreach (var coordinate2 in coordinate1)
+            //    {
+            //        //List<Coordinate> coordinates = new List<Coordinate>();
+
+            //        List<double> coords = new List<double>();
+
+            //        foreach (var coordinate in coordinate2)
+            //        {
+            //            coords.Add(coordinate);
+            //            coordinatesstr = coordinatesstr + coordinate.ToString(CultureInfo.InvariantCulture) + " ";
+            //        }
+
+            //        if(coords.Count == 2)
+            //            coordinates.Add(new Coordinate(coords[0], coords[1]));
+
+            //        coordinatesstr = coordinatesstr.Remove(coordinatesstr.Length - 1);
+            //        coordinatesstr = coordinatesstr + ",";                                       
+            //    }
+            //    coordinatesstr = coordinatesstr.Remove(coordinatesstr.Length - 1);
+            //}
+            //coordinatesstr = coordinatesstr + "))";
+
+            //WKTReader reader = new WKTReader();
+            //geoshape.Geometry = reader.Read(coordinatesstr);
+
+            //var geomfactory = new GeometryFactory();
+            //var point = geomfactory.WithSRID(32632).CreatePoint(coordinates.FirstOrDefault());
+
+            //Transform to geometry
+            var geoJson = JsonConvert.SerializeObject(digiwaydata.geometry);
+           
+            var serializer = GeoJsonSerializer.Create();
+            using (var stringReader = new StringReader(geoJson))
+            using (var jsonReader = new JsonTextReader(stringReader))
             {
-                foreach (var coordinate2 in coordinate1)
-                {
-                    //List<Coordinate> coordinates = new List<Coordinate>();
-
-                    List<double> coords = new List<double>();
-
-                    foreach (var coordinate in coordinate2)
-                    {
-                        coords.Add(coordinate);
-                        coordinatesstr = coordinatesstr + coordinate.ToString(CultureInfo.InvariantCulture) + " ";
-                    }
-
-                    if(coords.Count == 2)
-                        coordinates.Add(new Coordinate(coords[0], coords[1]));
-
-                    coordinatesstr = coordinatesstr.Remove(coordinatesstr.Length - 1);
-                    coordinatesstr = coordinatesstr + ",";                                       
-                }
-                coordinatesstr = coordinatesstr.Remove(coordinatesstr.Length - 1);
+                geoshape.Geometry = serializer.Deserialize<Geometry>(jsonReader);
             }
-            coordinatesstr = coordinatesstr + "))";
 
-            WKTReader reader = new WKTReader();
-            geoshape.Geometry = reader.Read(coordinatesstr);
-
-
+            //get first point of geometry
             var geomfactory = new GeometryFactory();
-            var point = geomfactory.WithSRID(32632).CreatePoint(coordinates.FirstOrDefault());
+            var point = geomfactory.WithSRID(32632).CreatePoint(geoshape.Geometry.Coordinates.FirstOrDefault());
 
             //Convert the coordinate system to WGS84.
             var transform = new ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory().CreateFromCoordinateSystems(
@@ -139,33 +153,29 @@ namespace DIGIWAY
                 Latitude = lat,
                 Longitude = lon
             });
-            
 
-
-
-            //var geometryfactory = new GeometryFactory();
-            //List<LineString> lines = new List<LineString>();
-            //foreach(var coord in geom.Coordinates)
-            //{
-            //    lines.Add()
-            //}
-            //geometryfactory.CreateMultiLineString(geometryfactory.CreateLineString(geom.Coordinates))
-
-            //geoshape.Geometry = geom;
-
-
-            
-
-            //geoshape.Geometry = linestring;
-
-            //To check if it can be done with linq
-            //var test = "MULTILINESTRING((" + String.Join(",", digiwaydata.geometry.coordinates.SelectMany(x => x)) +"))";
-
-            //geoshape.geom = digiwaydata.geometry
 
 
             return (odhactivitypoi, geoshape);
         }
 
+
+        public static double? TransformDuration(string? duration)
+        {
+            if (duration == null) { return null; }
+            else
+            {
+                //RUNNING_TIME 3h11min
+                var hour = duration.Split("h");
+                var minute = hour[1].Replace("min", "");
+
+                //transform minute from 60 to 100
+                double hourd = Convert.ToDouble(hour[0]);
+                double minuted = Convert.ToDouble(minute);
+                double minutedconv = minuted / 60;
+
+                return hourd + minutedconv;
+            }
+        }
     }
 }
