@@ -196,29 +196,25 @@ namespace OdhApiCore.Controllers
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
-                if (int.TryParse(id, out var idint))
-                {
-                    var data = await QueryFactory
-                        .Query("shapes")
-                        .SelectRaw("data")
-                        .Where("id", idint)
-                        .When(
-                            !String.IsNullOrEmpty(additionalfilter),
-                            q => q.FilterAdditionalDataByCondition(additionalfilter)
-                        )
-                        //.FilterDataByAccessRoles(UserRolesToFilter)
-                        .FirstOrDefaultAsync<JsonRaw>();
+                var data = await QueryFactory
+                    .Query("shapestest")
+                    .SelectRaw("data")
+                    .Where("id", id)
+                    .When(
+                        !String.IsNullOrEmpty(additionalfilter),
+                        q => q.FilterAdditionalDataByCondition(additionalfilter)
+                    )
+                    //.FilterDataByAccessRoles(UserRolesToFilter)
+                    .FirstOrDefaultAsync<JsonRaw>();
 
-                    return data?.TransformRawData(
-                        null,
-                        fields,
-                        filteroutNullValues: removenullvalues,
-                        urlGenerator: UrlGenerator,
-                        fieldstohide: null
-                    );
-                }
-                else
-                    throw new Exception("id has to be numeric");
+                return data?.TransformRawData(
+                    null,
+                    fields,
+                    filteroutNullValues: removenullvalues,
+                    urlGenerator: UrlGenerator,
+                    fieldstohide: null
+                );
+
             });
         }
 

@@ -142,6 +142,27 @@ namespace DataModel
         public string idstring { get; set; }
     }
 
+    public class GeoShapeDBTest
+    {
+        public string id { get; set; }
+        public string? name { get; set; }
+
+        public string? country { get; set; }
+
+        //Table
+        public string type { get; set; }
+
+        public JsonRaw? licenseinfo { get; set; }
+
+        public JsonRaw? meta { get; set; }
+
+        public JsonRaw? mapping { get; set; }
+
+        public string source { get; set; }
+
+        public string srid { get; set; }
+    }
+
     public class GeoShapeDBTest<T>
     {
         public string id { get; set; }

@@ -1824,7 +1824,6 @@ namespace OdhApiImporter.Helpers
                 shape.mapping = new JsonRaw(Mapping);
                 shape.srid = "32632";
                 shape.idstring = shape.id + "_istat";
-                
 
                 //Save tp DB
                 var queryresult = await QueryFactory.Query("shapes").Where("id", shape.id)
@@ -1835,6 +1834,40 @@ namespace OdhApiImporter.Helpers
 
             return i;
         }
+
+        public async Task<int> UpdateGeoshapeMetaInfo()
+        {
+            //Load all data from PG and resave
+            var query = QueryFactory
+                .Query()
+                .SelectRaw("id,name,country,type,licenseinfo,meta,mapping,source,srid")
+                .From("shapestest");
+
+            //ST_AsText(geometry) as geometry,
+            var shapes = await query.GetAsync<GeoShapeDBTest>();
+
+            int i = 0;
+
+            foreach (var shape in shapes)
+            {
+                var metainfo = MetadataHelper.GetMetadataobject<GeoShapeJsonTest>(new GeoShapeJsonTest()
+                {
+                    Source = shape.source,
+                    Id = shape.id
+                });
+
+                shape.meta = new JsonRaw(metainfo);
+               
+                //Save tp DB
+                var queryresult = await QueryFactory.Query("shapestest").Where("id", shape.id)
+                     .UpdateAsync(shape);
+
+                i++;
+            }
+
+            return i;
+        }
+
 
         #endregion
     }
