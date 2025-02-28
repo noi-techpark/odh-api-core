@@ -236,7 +236,7 @@ namespace OdhApiImporter.Helpers
                 data._Meta = MetadataHelper.GetMetadataobject<GeoShapeJsonTest>(data);
 
                 //Check if data is there by Name
-                var shapeid = await QueryFactory.Query("shapestest").Select("id").Where("id", data.Id).FirstOrDefaultAsync<string>();
+                var shapeid = await QueryFactory.Query("geoshapes").Select("id").Where("id", data.Id).FirstOrDefaultAsync<string>();
 
                 int insert = 0;
                 int update = 0;
@@ -245,7 +245,7 @@ namespace OdhApiImporter.Helpers
                 if (String.IsNullOrEmpty(shapeid))
                 {                                                            
                     insert = await QueryFactory
-                   .Query("shapestest")
+                   .Query("geoshapes")
                    .InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
                        id = data.Id,
@@ -265,7 +265,7 @@ namespace OdhApiImporter.Helpers
                 else
                 {
                     update = await QueryFactory
-                   .Query("shapestest")
+                   .Query("geoshapes")
                    .Where("id", data.Id)
                    .UpdateAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {

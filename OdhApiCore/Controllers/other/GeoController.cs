@@ -142,10 +142,12 @@ namespace OdhApiCore.Controllers
                 if (format == "espg:32632")
                     columntoretrieve = "data32632";
 
+                //TODO Add searchfilter
+
                 var query = QueryFactory
                     .Query()
                     .SelectRaw(columntoretrieve)
-                    .From("shapestest")
+                    .From("geoshapes")
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(
                         new PGGeoSearchResult() { geosearch = false },
@@ -197,7 +199,7 @@ namespace OdhApiCore.Controllers
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
                 var data = await QueryFactory
-                    .Query("shapestest")
+                    .Query("geoshapes")
                     .SelectRaw("data")
                     .Where("id", id)
                     .When(
