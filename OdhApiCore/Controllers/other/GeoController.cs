@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OdhApiCore.Responses;
 using OdhNotifier;
+using Schema.NET;
 using SqlKata.Execution;
 
 namespace OdhApiCore.Controllers
@@ -148,6 +149,7 @@ namespace OdhApiCore.Controllers
                     .Query()
                     .SelectRaw(columntoretrieve)
                     .From("geoshapes")
+                    .SearchFilter(new List<string>() { "Name" }.ToArray(), searchfilter)
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(
                         new PGGeoSearchResult() { geosearch = false },
