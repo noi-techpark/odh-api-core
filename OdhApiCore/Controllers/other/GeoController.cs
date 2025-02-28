@@ -42,6 +42,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET GeoShapes List
         /// </summary>
+        /// <param name="format">Coordinate System of the geojson, available formats(epsg:4362,epsg:32632)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -60,6 +61,7 @@ namespace OdhApiCore.Controllers
         public async Task<IActionResult> GetGeoShapesAsync(
             uint? pagenumber = 1,
             PageSize pagesize = null!,
+            string? format = "epsg:4362",
             [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             string? searchfilter = null,
             string? rawfilter = null,
@@ -71,6 +73,7 @@ namespace OdhApiCore.Controllers
             return await Get(
                 pagenumber,
                 pagesize,
+                format,
                 fields: fields ?? Array.Empty<string>(),
                 searchfilter,
                 rawfilter,
@@ -99,6 +102,7 @@ namespace OdhApiCore.Controllers
             uint? pagenumber,
             int? pagesize,
             string id,
+            string? format = "epsg:4362",
             [ModelBinder(typeof(CommaSeparatedArrayBinder))] string[]? fields = null,
             bool removenullvalues = false,
             CancellationToken cancellationToken = default
@@ -106,6 +110,7 @@ namespace OdhApiCore.Controllers
         {
             return await GetSingle(
                 id,
+                format,
                 fields: fields ?? Array.Empty<string>(),
                 removenullvalues: removenullvalues,
                 cancellationToken
@@ -119,6 +124,7 @@ namespace OdhApiCore.Controllers
         private Task<IActionResult> Get(
             uint? pagenumber,
             int? pagesize,
+            string format,
             string[] fields,
             string? searchfilter,
             string? rawfilter,
@@ -132,10 +138,14 @@ namespace OdhApiCore.Controllers
                 //Additional Read Filters to Add Check
                 AdditionalFiltersToAdd.TryGetValue("Read", out var additionalfilter);
 
+                string columntoretrieve = "data";
+                if (format == "espg:32632")
+                    columntoretrieve = "data32632";
+
                 var query = QueryFactory
                     .Query()
-                    .SelectRaw("data")
-                    .From("shapes")
+                    .SelectRaw(columntoretrieve)
+                    .From("shapestest")
                     .ApplyRawFilter(rawfilter)
                     .ApplyOrdering(
                         new PGGeoSearchResult() { geosearch = false },
@@ -175,6 +185,7 @@ namespace OdhApiCore.Controllers
 
         private Task<IActionResult> GetSingle(
             string id,
+            string format,
             string[] fields,
             bool removenullvalues,
             CancellationToken cancellationToken
