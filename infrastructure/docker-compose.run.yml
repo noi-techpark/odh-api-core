@@ -77,6 +77,7 @@ services:
       ASPNETCORE_LTSApiIDM__Password: ${LTSAPI_IDM_PASSWORD}
       ASPNETCORE_LTSApiIDM__XLSClientid: ${LTSAPI_IDM_XLTSCLIENTID}
       ASPNETCORE_LTSApiIDM__Opendata: ${LTSAPI_IDM_OPENDATA}
+	  ASPNETCORE_DigiWayConfig__CyclingRoutes__ServiceUrl: ${DIGIWAY_CYCLINGROUTES_URL}
     restart: unless-stopped
     ports:
       - "${SERVER_PORT}:80"
