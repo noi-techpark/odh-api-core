@@ -1841,7 +1841,7 @@ namespace OdhApiImporter.Helpers
             var query = QueryFactory
                 .Query()
                 .SelectRaw("id,name,country,type,licenseinfo,meta,mapping,source,srid")
-                .From("shapestest");
+                .From("geoshapes");
 
             //ST_AsText(geometry) as geometry,
             var shapes = await query.GetAsync<GeoShapeDBTest>();
