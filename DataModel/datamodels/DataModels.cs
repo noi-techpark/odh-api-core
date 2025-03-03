@@ -3587,6 +3587,15 @@ namespace DataModel
         public string? GpxTrackUrl { get; set; }
         public string? Type { get; set; }
         public string? Format { get; set; }
+
+        ////To have self link
+        //public string? Self
+        //{
+        //    get
+        //    {
+        //        return this.GpxTrackUrl != null && this.GpxTrackUrl.StartsWith("GeoShapes") ? this.GpxTrackUrl : null;
+        //    }
+        //}
     }
 
     public class GpsPolygon : IGpsPolygon

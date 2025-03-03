@@ -45,7 +45,9 @@ namespace Helper
         MusportConfig MusportConfig { get; }
         SuedtirolWeinConfig SuedtirolWeinConfig { get; }
         LoopTecConfig LoopTecConfig { get; }
+        IDictionary<string, DigiWayConfig> DigiWayConfig { get; }
         LTSCredentials LtsCredentials { get; }
+
     }
 
     //Classes for Settings shared between Projects
@@ -484,6 +486,28 @@ namespace Helper
         public string password { get; set; }
         public bool opendata { get; set; }
     }
+
+    public class DigiWayConfig
+    {
+        public DigiWayConfig(
+            string serviceurl,
+            string username,
+            string password,
+            string identifier            
+        )
+        {
+            this.ServiceUrl = serviceurl;
+            this.Identifier = identifier;
+            this.Username = username;
+            this.Password = password;            
+        }
+
+        public string ServiceUrl { get; set; }
+        public string Identifier { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }        
+    }
+
 
     #endregion
 

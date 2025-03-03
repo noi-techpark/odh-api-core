@@ -312,18 +312,16 @@ namespace Helper
                     if (inputquery.Length != 3)
                         return null;
 
-                    bool idtofilter = int.TryParse(inputquery[2], out int parsedid);
-
+                 
                     //Retrieve data from shape table
 
                     var geometry = await queryfactory
                         .Query()
-                        .SelectRaw("ST_AsText(geometry)")
-                        .From("shapes")
+                        .SelectRaw("ST_AsText(ST_Transform(geometry, 4326))")
+                        .From("geoshapes")
                         .Where("country", inputquery[0].ToUpper())
                         .Where("type", inputquery[1].ToLower())
-                        .When(idtofilter, x => x.Where("id", parsedid))
-                        .When(!idtofilter, x => x.WhereLike("name", inputquery[2]).OrWhereLike("name_alternative", inputquery[2]))
+                        .Where("id", inputquery[2]).OrWhereLike("name", inputquery[2])
                         //create a generated column which constructs a name by id,type and name
                         .FirstOrDefaultAsync<string>();
 

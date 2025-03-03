@@ -52,6 +52,7 @@ namespace Helper
                 "weatherforecast",
                 "weatherrealtime",
                 "snowreport",
+                "geoshape"
             };
         }
 
@@ -104,6 +105,7 @@ namespace Helper
                 SnowReportBaseData => "snowreport",
                 VenueV2 => "venue",
                 EventV2 => "event",
+                GeoShapeJson or GeoShapeJsonTest => "geoshape",
                 _ => throw new Exception("not known odh type"),
             };
         }
@@ -150,6 +152,7 @@ namespace Helper
                 TagLinked => "tags",
                 EventV2 => "eventsv2",
                 VenueV2 => "venuesv2",
+                GeoShapeJson => "geoshapes",
                 _ => throw new Exception("not known odh type"),
             };
         }
@@ -196,6 +199,7 @@ namespace Helper
                 "weatherhistory" => "weatherdatahistory",
                 "odhmetadata" => "metadata",
                 "tag" => "tags",
+                "geoshape" => "geoshapes",
                 _ => throw new Exception("not known odh type"),
             };
         }
@@ -243,6 +247,7 @@ namespace Helper
                 "snowreport" => typeof(SnowReportBaseData),
                 "odhmetadata" => typeof(TourismMetaData),
                 "tag" => typeof(TagLinked),
+                "geoshape" => typeof(GeoShapeJson),
                 _ => throw new Exception("not known odh type"),
             };
         }
@@ -291,6 +296,7 @@ namespace Helper
                 "tags" => "tag",
                 "venuesv2" => "venue",
                 "eventsv2" => "event",
+                "geoshapes" => "geoshape",
                 _ => throw new Exception("not known odh type"),
             };
         }
@@ -336,6 +342,7 @@ namespace Helper
                 "tags" => typeof(TagLinked),
                 "eventsv2" => typeof(EventV2),
                 "venuesv2" => typeof(VenueV2),
+                "geoshapes" => typeof(GeoShapeJson),
                 _ => throw new Exception("not known table name"),
             };
         }
@@ -384,6 +391,7 @@ namespace Helper
                 "tag" => id.ToLower(),
                 "publisher" => id.ToLower(),
                 "source" => id.ToLower(),
+                "geoshape" => id.ToLower(),
                 _ => throw new Exception("not known odh type"),
             };
         }
