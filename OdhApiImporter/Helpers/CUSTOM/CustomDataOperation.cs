@@ -1859,7 +1859,7 @@ namespace OdhApiImporter.Helpers
                 shape.meta = new JsonRaw(metainfo);
                
                 //Save tp DB
-                var queryresult = await QueryFactory.Query("shapestest").Where("id", shape.id)
+                var queryresult = await QueryFactory.Query("geoshapes").Where("id", shape.id)
                      .UpdateAsync(shape);
 
                 i++;
