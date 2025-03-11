@@ -343,7 +343,7 @@ namespace Helper
 
             if (data.Source?.ToLower() == "a22")
             {
-                isopendata = false;
+                isopendata = true;
                 licenseholder = @"https://www.autobrennero.it/";
             }
 
