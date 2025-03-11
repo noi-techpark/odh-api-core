@@ -705,10 +705,20 @@ namespace Helper
                 //.EventDateFilterEnd_GeneratedColumn(begindate, enddate)
                 //.EventDateFilterBegin_GeneratedColumn(begindate, enddate)
                 //.EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
-                //TEST TSMULTIRANGE
+                //TSMULTIRANGE Filter Both Dates given
                 .When(
                     begindate != DateTime.MinValue && enddate != DateTime.MaxValue, 
                     q => q.DateFilter_GeneratedColumn(begindate, enddate, "")
+                )
+                //TSMULTIRANGE Filter Only Begindate given
+                .When(
+                    begindate != DateTime.MinValue && enddate == DateTime.MaxValue,
+                    q => q.DateFilter_GeneratedColumn(begindate, null, "")
+                )
+                //TSMULTIRANGE Filter Only Enddate given
+                .When(
+                    begindate == DateTime.MinValue && enddate != DateTime.MaxValue,
+                    q => q.DateFilter_GeneratedColumn(null, enddate, "")
                 )
                 .When(
                     languagelist.Count > 0,
