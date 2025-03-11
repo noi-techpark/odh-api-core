@@ -355,7 +355,7 @@ namespace Helper
                     return new JProperty(prop.Name, value);
                 }
                 //Temporary Remove
-                if (prop.Name == "GpxTrackUrl" && prop.Value<string?>().StartsWith("GeoShapes"))
+                if (prop.Name == "GpxTrackUrl" && prop.Value.Value<string?>().StartsWith("GeoShape"))
                 {
                     string? value = TransformSelf(prop.Value.Value<string?>(), urlGenerator);
                     return new JProperty(prop.Name, value);
