@@ -16,6 +16,8 @@ using NetTopologySuite.Geometries.Utilities;
 using NetTopologySuite.IO;
 using NetTopologySuite.Algorithm;
 using Newtonsoft.Json;
+using CoordinateSharp;
+//using ProjNet.CoordinateSystems;
 //using NetTopologySuite.CoordinateSystems.Transformations
 
 namespace DIGIWAY
@@ -31,7 +33,8 @@ namespace DIGIWAY
             if(odhactivitypoi == null)
                 odhactivitypoi = new ODHActivityPoiLinked();
 
-            odhactivitypoi.Id = digiwaydata.id;
+            odhactivitypoi.Id = digiwaydata.id.ToLower();
+            odhactivitypoi.Active = true;
             odhactivitypoi.FirstImport = Convert.ToDateTime(digiwaydata.properties.CREATE_DATE);
             odhactivitypoi.LastChange = Convert.ToDateTime(digiwaydata.properties.UPDATE_DATE);
             odhactivitypoi.HasLanguage = new List<string>() { "de" };
@@ -54,8 +57,8 @@ namespace DIGIWAY
             odhactivitypoi.Difficulty = digiwaydata.properties.DIFFICULTY;
             odhactivitypoi.AltitudeSumDown = digiwaydata.properties.DOWNHILL_METERS;
             odhactivitypoi.AltitudeSumUp = digiwaydata.properties.UPHILL_METERS;
-            odhactivitypoi.Source = "digiway";
-            odhactivitypoi.SyncSourceInterface = "geoservices1.civis";
+            odhactivitypoi.Source = "civis.bz.it";
+            odhactivitypoi.SyncSourceInterface = "geoservices1.civis.bz.it";
             odhactivitypoi.DistanceDuration = TransformDuration(digiwaydata.properties.RUNNING_TIME);
 
             //Add Tags
@@ -73,13 +76,16 @@ namespace DIGIWAY
             geoshape.Id = digiwaydata.id;
             geoshape.Name = digiwaydata.properties.ROUTE_NAME;
             geoshape.Type = "cycleway";
+            geoshape.Source = "civis.bz.it";
 
             Dictionary<string, string> additionalvalues = new Dictionary<string, string>();
             additionalvalues.Add("object", digiwaydata.properties.OBJECT);
             additionalvalues.Add("route_number", digiwaydata.properties.ROUTE_NUMBER);
             additionalvalues.Add("id", digiwaydata.properties.ID.ToString());
             additionalvalues.Add("route_type", digiwaydata.properties.ROUTE_TYPE);
-            additionalvalues.Add("bbox", "[" + String.Join(",", digiwaydata.bbox) + "]");
+            var bboxformatted = digiwaydata.bbox.Select(d => d.ToString(CultureInfo.InvariantCulture));
+
+            additionalvalues.Add("bbox", "[" + String.Join(",", bboxformatted + "]"));
 
             geoshape.Mapping.TryAddOrUpdate("digiway", additionalvalues);
 
@@ -132,15 +138,22 @@ namespace DIGIWAY
             var geomfactory = new GeometryFactory();
             var point = geomfactory.WithSRID(32632).CreatePoint(geoshape.Geometry.Coordinates.FirstOrDefault());
 
-            //Convert the coordinate system to WGS84.
-            var transform = new ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory().CreateFromCoordinateSystems(
-                      ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator,
-                   ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84);
 
-            var wgs84Point = transform.MathTransform.Transform(new double[] { point.Coordinate.X, point.Coordinate.Y });
+            UniversalTransverseMercator utm = new UniversalTransverseMercator("32N", point.X, point.Y);
+            CoordinateSharp.Coordinate latlong = UniversalTransverseMercator.ConvertUTMtoLatLong(utm);
 
-            var lat = wgs84Point[1];
-            var lon = wgs84Point[0];
+
+            //var SourceCoordSystem = new CoordinateSystemFactory().
+
+            ////Convert the coordinate system to WGS84.
+            //var transform = new ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory().CreateFromCoordinateSystems(
+            //          ProjNet.CoordinateSystems.GeocentricCoordinateSystem.WGS84,
+            //       ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84);
+
+            //var wgs84Point = transform.MathTransform.Transform(new double[] { point.Coordinate.X, point.Coordinate.Y });
+
+            //var lat = wgs84Point[1];
+            //var lon = wgs84Point[0];
 
 
             //Add Starting GPS Coordinate as GPS Point 
@@ -150,8 +163,8 @@ namespace DIGIWAY
                 Altitude = digiwaydata.properties.START_HEIGHT,
                 AltitudeUnitofMeasure = "m",
                 Gpstype = "position",
-                Latitude = lat,
-                Longitude = lon
+                Latitude = latlong.Latitude.DecimalDegree,
+                Longitude = latlong.Longitude.DecimalDegree
             });
 
 

@@ -233,6 +233,8 @@ namespace Helper
                 licenseholder = @"";
             if (data.Source.ToLower() == "echargingspreadsheet")
                 licenseholder = @"";
+            if (data.Source.ToLower() == "civis.bz.it")
+                licenseholder = @"https://geoservices1.civis.bz.it";
 
             List<string?> allowedsources = new List<string?>()
             {
@@ -261,6 +263,7 @@ namespace Helper
                 "vek",
                 "pension erlacher",
                 "officina elettrica san vigilio di marebbe spa",
+                "geoservices1.civis.bz.it"
             };
 
             if (data.Active)

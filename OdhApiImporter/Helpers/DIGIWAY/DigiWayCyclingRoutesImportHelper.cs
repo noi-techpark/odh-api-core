@@ -130,7 +130,7 @@ namespace OdhApiImporter.Helpers
                 GpsTrack gpstrack = new GpsTrack()
                 {
                     Format = "geojson",
-                    GpxTrackUrl = "GeoShapes/" + pgcrudshaperesult.id,
+                    GpxTrackUrl = "GeoShape/" + pgcrudshaperesult.id,
                     Id = pgcrudshaperesult.id,
                     Type = "Track",
                     GpxTrackDesc = null
