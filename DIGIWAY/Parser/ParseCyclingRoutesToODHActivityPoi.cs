@@ -82,7 +82,7 @@ namespace DIGIWAY
 
             additionalvalues.Add("bbox", "[" + String.Join(",", bboxformatted) + "]");
 
-            geoshape.Mapping.TryAddOrUpdate("digiway", additionalvalues);
+            geoshape.Mapping.TryAddOrUpdate("civis.geoserver", additionalvalues);
 
 
             //PArsing errors
