@@ -22,6 +22,7 @@ COPY PANOMAX/PANOMAX.csproj PANOMAX/
 COPY PANOCLOUD/PANOCLOUD.csproj PANOCLOUD/
 COPY FERATEL/FERATEL.csproj FERATEL/
 COPY A22/A22.csproj A22/
+COPY DIGIWAY/DIGIWAY.csproj DIGIWAY/
 COPY OdhNotifier/OdhNotifier.csproj OdhNotifier/
 COPY OdhApiImporter/OdhApiImporter.csproj OdhApiImporter/
 RUN dotnet restore OdhApiImporter/OdhApiImporter.csproj
