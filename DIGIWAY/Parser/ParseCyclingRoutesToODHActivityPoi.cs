@@ -66,14 +66,9 @@ namespace DIGIWAY
             odhactivitypoi.TagIds.Add("2C1D1E0CA4E849229DA90775CBBF2312"); //LTS Cycling Tag
             odhactivitypoi.TagIds.Add("cycling");
             odhactivitypoi.TagIds.Add("biking biking tours");
-
            
-
-
-
-
             GeoShapeJsonTest geoshape = new GeoShapeJsonTest();            
-            geoshape.Id = digiwaydata.id;
+            geoshape.Id = digiwaydata.id.ToLower();
             geoshape.Name = digiwaydata.properties.ROUTE_NAME;
             geoshape.Type = "cycleway";
             geoshape.Source = "civis.geoserver";
@@ -83,7 +78,7 @@ namespace DIGIWAY
             additionalvalues.Add("route_number", digiwaydata.properties.ROUTE_NUMBER);
             additionalvalues.Add("id", digiwaydata.properties.ID.ToString());
             additionalvalues.Add("route_type", digiwaydata.properties.ROUTE_TYPE);
-            var bboxformatted = digiwaydata.bbox.Select(d => d.ToString(CultureInfo.InvariantCulture));
+            var bboxformatted = digiwaydata.bbox.Select(d => d.ToString(CultureInfo.InvariantCulture)).ToList();
 
             additionalvalues.Add("bbox", "[" + String.Join(",", bboxformatted + "]"));
 
