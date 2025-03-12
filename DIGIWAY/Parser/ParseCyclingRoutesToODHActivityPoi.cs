@@ -80,7 +80,7 @@ namespace DIGIWAY
             additionalvalues.Add("route_type", digiwaydata.properties.ROUTE_TYPE);
             var bboxformatted = digiwaydata.bbox.Select(d => d.ToString(CultureInfo.InvariantCulture)).ToList();
 
-            additionalvalues.Add("bbox", "[" + String.Join(",", bboxformatted + "]"));
+            additionalvalues.Add("bbox", "[" + String.Join(",", bboxformatted) + "]");
 
             geoshape.Mapping.TryAddOrUpdate("digiway", additionalvalues);
 
