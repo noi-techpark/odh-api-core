@@ -57,7 +57,7 @@ namespace DIGIWAY
             odhactivitypoi.Difficulty = digiwaydata.properties.DIFFICULTY;
             odhactivitypoi.AltitudeSumDown = digiwaydata.properties.DOWNHILL_METERS;
             odhactivitypoi.AltitudeSumUp = digiwaydata.properties.UPHILL_METERS;
-            odhactivitypoi.Source = "civis";
+            odhactivitypoi.Source = "civis.geoserver";
             odhactivitypoi.SyncSourceInterface = "geoservices1.civis.bz.it";
             odhactivitypoi.DistanceDuration = TransformDuration(digiwaydata.properties.RUNNING_TIME);
 
@@ -76,7 +76,7 @@ namespace DIGIWAY
             geoshape.Id = digiwaydata.id;
             geoshape.Name = digiwaydata.properties.ROUTE_NAME;
             geoshape.Type = "cycleway";
-            geoshape.Source = "civis";
+            geoshape.Source = "civis.geoserver";
 
             Dictionary<string, string> additionalvalues = new Dictionary<string, string>();
             additionalvalues.Add("object", digiwaydata.properties.OBJECT);
