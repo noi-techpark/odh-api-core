@@ -127,6 +127,34 @@ namespace DataModel
         public int? id { get; set; }
     }
 
+    public class RawChangesStoreJson : RawChangesStoreWithId
+    {
+        public RawChangesStoreJson(RawChangesStoreWithId rawdatastore)
+        {
+            this.id = rawdatastore.id;
+            this.type = rawdatastore.type;
+            this.datasource = rawdatastore.datasource;
+            this.editedby = rawdatastore.editedby;
+            this.editsource = rawdatastore.editsource;
+            this.sourceid = rawdatastore.sourceid;
+            this.date = rawdatastore.date;
+            this.type = rawdatastore.type;            
+            this.license = rawdatastore.license;
+
+            this.changes = new JsonRaw(rawdatastore.changes);
+        }
+
+        public new JsonRaw changes { get; set; }
+    }
+
+    public static class RawChangesStoreExtensions
+    {
+        public static IRawChangesStore UseJsonRaw(this RawChangesStoreWithId rawchangesstore)
+        {            
+            return new RawChangesStoreJson(rawchangesstore);            
+        }
+    }
+
 
     #endregion
 }

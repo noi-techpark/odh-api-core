@@ -103,7 +103,7 @@ namespace OdhApiCore.Controllers
         [ProducesResponseType(typeof(GeoShapeJson), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet, Route("GeoShapes/{id}")]
+        [HttpGet, Route("GeoShapes/{id}", Name = "SingleGeoShapes")]
         [HttpGet, Route("GeoShape/{id}", Name = "SingleGeoShape")]
         //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetGeoShapeSingle(
