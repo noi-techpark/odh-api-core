@@ -130,8 +130,8 @@ namespace OdhApiImporter.Helpers
                 GpsTrack gpstrack = new GpsTrack()
                 {
                     Format = "geojson",
-                    GpxTrackUrl = "GeoShape/" + pgcrudshaperesult.id,
-                    Id = pgcrudshaperesult.id,
+                    GpxTrackUrl = "GeoShape/" + pgcrudshaperesult.id.ToLower(),
+                    Id = pgcrudshaperesult.id.ToLower(),
                     Type = "Track",
                     GpxTrackDesc = null
                 };
@@ -236,7 +236,7 @@ namespace OdhApiImporter.Helpers
                 data._Meta = MetadataHelper.GetMetadataobject<GeoShapeJsonTest>(data);
 
                 //Check if data is there by Name
-                var shapeid = await QueryFactory.Query("geoshapes").Select("id").Where("id", data.Id).FirstOrDefaultAsync<string>();
+                var shapeid = await QueryFactory.Query("geoshapes").Select("id").Where("id", data.Id.ToLower()).FirstOrDefaultAsync<string>();
 
                 int insert = 0;
                 int update = 0;
@@ -248,7 +248,7 @@ namespace OdhApiImporter.Helpers
                    .Query("geoshapes")
                    .InsertAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
-                       id = data.Id,
+                       id = data.Id.ToLower(),
                        licenseinfo = new JsonRaw(data.LicenseInfo),
                        meta = new JsonRaw(data._Meta),
                        mapping = new JsonRaw(data.Mapping),
@@ -266,10 +266,10 @@ namespace OdhApiImporter.Helpers
                 {
                     update = await QueryFactory
                    .Query("geoshapes")
-                   .Where("id", data.Id)
+                   .Where("id", data.Id.ToLower())
                    .UpdateAsync(new GeoShapeDBTest<UnsafeLiteral>()
                    {
-                       id = data.Id,
+                       id = data.Id.ToLower(),
                        licenseinfo = new JsonRaw(data.LicenseInfo),
                        meta = new JsonRaw(data._Meta),
                        mapping = new JsonRaw(data.Mapping),
