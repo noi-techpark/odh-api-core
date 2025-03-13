@@ -233,6 +233,8 @@ namespace Helper
                 licenseholder = @"";
             if (data.Source.ToLower() == "echargingspreadsheet")
                 licenseholder = @"";
+            if (data.Source.ToLower() == "civis.bz.it")
+                licenseholder = @"https://geoservices1.civis.bz.it";
 
             List<string?> allowedsources = new List<string?>()
             {
@@ -261,6 +263,7 @@ namespace Helper
                 "vek",
                 "pension erlacher",
                 "officina elettrica san vigilio di marebbe spa",
+                "geoservices1.civis.bz.it"
             };
 
             if (data.Active)
@@ -549,6 +552,30 @@ namespace Helper
 
             if (source == "siag")
                 licenseholder = "https://weather.services.siag.it/";
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
+        public static LicenseInfo GetLicenseforGeoShape(GeoShapeJson geoshape)
+        {
+            var isopendata = true;
+            var licensetype = "CC0";
+            var licenseholder = "";
+
+            if (geoshape.Source == "digiway")
+                licenseholder = "https://geoservices1.civis.bz.it/";
+
+            return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
+        }
+
+        public static LicenseInfo GetLicenseforGeoShape(GeoShapeJsonTest geoshape)
+        {
+            var isopendata = true;
+            var licensetype = "CC0";
+            var licenseholder = "";
+
+            if (geoshape.Source == "digiway")
+                licenseholder = "https://geoservices1.civis.bz.it/";
 
             return GetLicenseInfoobject(licensetype, "", licenseholder, !isopendata);
         }

@@ -51,7 +51,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<RawDataStoreWithId>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -273,16 +273,18 @@ namespace OdhApiCore.Controllers.api
             {
                 if (Int32.TryParse(id, out var numericid))
                 {
-                    var query = QueryFactory.Query("rawdata").Where("id", numericid);
-                    //.When(FilterClosedData, q => q.FilterClosedData_Raw());
-
+                    var query = QueryFactory.Query("rawdata").Where("id", numericid)
+                    .FilterDataByAccessRoles(UserRolesToFilter);
+                    
                     var data = await query.FirstOrDefaultAsync<RawDataStoreWithId?>();
 
-                    //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
-                    return data != null ? data.UseJsonRaw() : new RawDataStoreWithId();
+                    if (data != null)
+                        return new JsonRaw(data.UseJsonRaw()).TransformRawData(null, fields, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
+                    else
+                        return null;
                 }
                 else
-                    return BadRequest("Id could not be found");
+                    return null;
             });
         }
     }

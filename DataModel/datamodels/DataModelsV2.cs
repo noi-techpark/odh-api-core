@@ -13,6 +13,45 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace DataModel
 {
+    #region Generic Datamodel
+
+    public class Generic : 
+        IIdentifiable, 
+        IActivateable, 
+        IPublishedOn, 
+        IMetaData, 
+        IMappingAware, 
+        IGPSInfoAware, 
+        ILicenseInfo, 
+        ISource, 
+        IHasTagInfo, 
+        IShortName,
+        IHasLanguage
+    {
+        public string Id { get; set; }
+        public Metadata? _Meta { get; set; }
+        public LicenseInfo? LicenseInfo { get; set; }
+
+        public string? Shortname { get; set; }
+        public bool Active { get; set; }
+
+        public DateTime? FirstImport { get; set; }
+        public DateTime? LastChange { get; set; }
+        public ICollection<string>? HasLanguage { get; set; }
+
+        public ICollection<string>? PublishedOn { get; set; }
+        public IDictionary<string, IDictionary<string, string>> Mapping { get; set; }
+        public IDictionary<string, dynamic> AdditionalProperties { get; set; }
+        public string? Source { get; set; }
+
+        public ICollection<Tags> Tags { get; set; }
+        public ICollection<string> TagIds { get; set; }
+        public ICollection<GpsInfo>? GpsInfo { get; set; }
+    }
+
+    #endregion
+
+
     #region EventsV2 Datamodel
     public class EventV2
         : IIdentifiable,

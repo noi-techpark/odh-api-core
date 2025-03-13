@@ -355,11 +355,11 @@ namespace Helper
                     return new JProperty(prop.Name, value);
                 }
                 //Temporary Remove
-                //if (prop.Name == "ApiUrl")
-                //{
-                //    string? value = TransformSelf(prop.Value.Value<string?>(), urlGenerator);
-                //    return new JProperty(prop.Name, value);
-                //}
+                if (prop.Name == "GpxTrackUrl" && prop.Value.Value<string?>().StartsWith("GeoShape"))
+                {
+                    string? value = TransformSelf(prop.Value.Value<string?>(), urlGenerator);
+                    return new JProperty(prop.Name, value);
+                }
                 else
                 {
                     var value = Walk(prop.Value, urlGenerator);

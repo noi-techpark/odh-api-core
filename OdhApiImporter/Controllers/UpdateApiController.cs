@@ -2629,6 +2629,65 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region DIGIWAY
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("DIGIWAY/CyclingRoutes/Update")]
+        public async Task<IActionResult> UpdateAllDigiwayCyclingRoutes(
+        CancellationToken cancellationToken = default
+    )
+        {
+            UpdateDetail updatedetail = default(UpdateDetail);
+            string operation = "Import DIGIWAY CyclingRoutes";
+            string updatetype = GetUpdateType(null);
+            string source = "digiway";
+            string otherinfo = "";
+
+            try
+            {
+                DigiWayCyclingRoutesImportHelper digiwayimporthelper = new DigiWayCyclingRoutesImportHelper(
+                    settings,
+                    QueryFactory,
+                    "smgpois",
+                    UrlGeneratorStatic("DIGIWAY/CyclingRoutes")
+                );
+
+                updatedetail = await digiwayimporthelper.SaveDataToODH(
+                    null,
+                    null,
+                    cancellationToken
+                );
+                var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import DIGIWAY CyclingRoutes succeeded",
+                    otherinfo,
+                    updatedetail,
+                    true
+                );
+
+                return Ok(updateResult);
+            }
+            catch (Exception ex)
+            {
+                var updateResult = GenericResultsHelper.GetErrorUpdateResult(
+                    null,
+                    source,
+                    operation,
+                    updatetype,
+                    "Import DIGIWAY CyclingRoutes failed",
+                    otherinfo,
+                    updatedetail,
+                    ex,
+                    true
+                );
+                return BadRequest(updateResult);
+            }
+        }
+
+        #endregion
 
         protected Func<string, string> UrlGeneratorStatic
         {

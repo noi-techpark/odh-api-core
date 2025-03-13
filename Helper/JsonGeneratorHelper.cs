@@ -62,7 +62,7 @@ namespace Helper
                     altitudemax: 0,
                     activefilter: null,
                     smgactivefilter: true,
-                    publishedonlist: new List<string>(),
+                    publishedonlist: new List<string>(), //TO CHECK if only South Tyrol active
                     sourcelist: new List<string>(),
                     searchfilter: null,
                     language: null,
