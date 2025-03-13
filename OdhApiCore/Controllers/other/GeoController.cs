@@ -43,7 +43,7 @@ namespace OdhApiCore.Controllers
         /// <summary>
         /// GET GeoShapes List
         /// </summary>
-        /// <param name="srid">Spatial Reference Identifier, Coordinate System of the geojson, available formats(epsg:4362,epsg:32632)</param>
+        /// <param name="srid">Spatial Reference Identifier, Coordinate System of the geojson, available formats(epsg:4362,epsg:32632,epsg:3857)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>        
         /// <param name="searchfilter">String to search for, Title in all languages are searched, (default: null) <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#searchfilter" target="_blank">Wiki searchfilter</a></param>
         /// <param name="rawfilter"><a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -93,7 +93,7 @@ namespace OdhApiCore.Controllers
         /// GET GeoShape Single
         /// </summary>
         /// <param name="id">ID of the Tag</param>
-        /// <param name="format">Spatial Reference Identifier, Coordinate System of the geojson, available formats(epsg:4362,epsg:32632)</param>
+        /// <param name="format">Spatial Reference Identifier, Coordinate System of the geojson, available formats(epsg:4362,epsg:32632,epsg:3857)</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="removenullvalues">Remove all Null values from json output. Useful for reducing json size. By default set to false. Documentation on <a href='https://github.com/noi-techpark/odh-docs/wiki/Common-parameters,-fields,-language,-searchfilter,-removenullvalues,-updatefrom#removenullvalues' target="_blank">Opendatahub Wiki</a></param>
         /// <returns>GeoShapes Object</returns>
@@ -150,7 +150,7 @@ namespace OdhApiCore.Controllers
                 if (srid.Contains("32632"))
                     columntoretrieve = "data32632";
                 if (srid.Contains("4326") || srid.ToLower().Contains("wgs84"))
-                    columntoretrieve = "data4326";
+                    columntoretrieve = "data";
                 if (srid.Contains("3857") || srid.ToLower().Contains("mercator"))
                     columntoretrieve = "data3857";
 
@@ -217,7 +217,7 @@ namespace OdhApiCore.Controllers
                 if (srid.Contains("32632"))
                     columntoretrieve = "data32632";
                 if (srid.Contains("4326") || srid.ToLower().Contains("wgs84"))
-                    columntoretrieve = "data4326";
+                    columntoretrieve = "data";
                 if (srid.Contains("3857") || srid.ToLower().Contains("mercator"))
                     columntoretrieve = "data3857";
 
