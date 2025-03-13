@@ -1566,6 +1566,7 @@ namespace Helper
             return query
                 .When(typelist != null, q => query.WhereIn("type", typelist))
                 .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist))
+                .When(sourceidlist != null, q => query.WhereIn("sourceid", sourceidlist))
                 .When(idlist != null, q => query.WhereIn("id", idlist))
                 //.When(latest, )
                 //.When(filterClosedData, q => q.FilterClosedData_Raw());

@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using OdhApiCore.Filters;
 using OdhApiCore.Responses;
 using OdhNotifier;
+using ServiceReferenceLCS;
 using SqlKata;
 using SqlKata.Execution;
 
@@ -42,7 +43,7 @@ namespace OdhApiCore.Controllers.api
         /// <param name="source">Source Filter (Separator ',' List of rawdata sources, 'null' = No Filter), (default:'null')</param>
         /// <param name="sourceinterface">SourceInterface Filter (Separator ',' List of Sourceinterfaces, 'null' = No Filter), (default:'null')</param>
         /// <param name="sourceid">SourceIDFilter (Separator ',' List of Rawdata SourceIDs, 'null' = No Filter), (default:'null')</param>
-        /// <param name="idlist">IDFilter (Separator ',' List of Rawdata IDs, 'null' = No Filter), (default:'null')</param>
+        /// <param name="idlist">IDFilter (Separator ',' List of Rawchanges IDs, 'null' = No Filter), (default:'null')</param>
         /// <param name="latest">Get only latest data</param>
         /// <param name="fields">Select fields to display, More fields are indicated by separator ',' example fields=Id,Active,Shortname (default:'null' all fields are displayed). <a href="https://github.com/noi-techpark/odh-docs/wiki/Common-parameters%2C-fields%2C-language%2C-searchfilter%2C-removenullvalues%2C-updatefrom#fields" target="_blank">Wiki fields</a></param>
         /// <param name="rawfilter">Currently not working on rawdata<a href="https://github.com/noi-techpark/odh-docs/wiki/Using-rawfilter-and-rawsort-on-the-Tourism-Api#rawfilter" target="_blank">Wiki rawfilter</a></param>
@@ -52,17 +53,11 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">List created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(JsonResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<RawChangesStoreJson>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ApiExplorerSettings(IgnoreApi = true)]
-        [OdhCacheOutput(
-            ClientTimeSpan = 0,
-            ServerTimeSpan = 3600,
-            CacheKeyGenerator = typeof(CustomCacheKeyGenerator)
-        )]
         [HttpGet, Route("Rawchanges")]
-        //[Authorize(Roles = "DataReader,CommonReader,AccoReader,ActivityReader,PoiReader,ODHPoiReader,PackageReader,GastroReader,EventReader,ArticleReader")]
         public async Task<IActionResult> GetRawchangesAsync(
             uint pagenumber = 1,
             PageSize pagesize = null!,
@@ -106,7 +101,7 @@ namespace OdhApiCore.Controllers.api
         /// <response code="200">Object created</response>
         /// <response code="400">Request Error</response>
         /// <response code="500">Internal Server Error</response>
-        [ProducesResponseType(typeof(RawDataStoreWithId), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RawChangesStoreJson), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -227,7 +222,7 @@ namespace OdhApiCore.Controllers.api
                             null,
                             fields,
                             filteroutNullValues: removenullvalues,
-                            urlGenerator: UrlGenerator,
+                            null,
                             fieldstohide: null
                         )
                     );
@@ -258,24 +253,18 @@ namespace OdhApiCore.Controllers.api
             {
                 if (Int32.TryParse(id, out var numericid))
                 {
-                    var query = QueryFactory.Query("rawchanges").Where("id", numericid);
-                    //.When(FilterClosedData, q => q.FilterClosedData_Raw());
-
+                    var query = QueryFactory.Query("rawchanges").Where("id", numericid)
+                    .FilterDataByAccessRoles(UserRolesToFilter);
+                    
                     var data = await query.FirstOrDefaultAsync<RawChangesStoreWithId?>();
 
-                    //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
-                    return data != null ? data.UseJsonRaw() : new RawChangesStoreWithId();
+                    if (data != null)
+                        return new JsonRaw(data.UseJsonRaw()).TransformRawData(null, fields, filteroutNullValues: removenullvalues, null, fieldstohide: null);
+                    else
+                        return null;
                 }
                 else
-                {
-                    var query = QueryFactory.Query("rawchanges").Where("sourceid", id);
-                    //.When(FilterClosedData, q => q.FilterClosedData_Raw());
-
-                    var data = await query.FirstOrDefaultAsync<RawChangesStoreWithId?>();
-
-                    //return data?.TransformRawData(language, fields, checkCC0: FilterCC0License, filterClosedData: FilterClosedData, filteroutNullValues: removenullvalues, urlGenerator: UrlGenerator, fieldstohide: null);
-                    return data != null ? data.UseJsonRaw() : new RawChangesStoreWithId();
-                }
+                    return null;
             });
         }
     }
