@@ -158,8 +158,9 @@ namespace DIGIWAY
                 Altitude = digiwaydata.properties.START_HEIGHT,
                 AltitudeUnitofMeasure = "m",
                 Gpstype = "position",
-                Latitude = latlong.Latitude.DecimalDegree,
-                Longitude = latlong.Longitude.DecimalDegree
+                //Use only first digits otherwise point and track will differ
+                Latitude = Math.Round(latlong.Latitude.DecimalDegree,9), 
+                Longitude = Math.Round(latlong.Longitude.DecimalDegree,9)
             });
 
 

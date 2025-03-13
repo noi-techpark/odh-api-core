@@ -357,7 +357,8 @@ namespace OdhApiCore.Controllers.api
                                     polygonsearchresult.wktstring,
                                     polygonsearchresult.polygon,
                                     polygonsearchresult.srid,
-                                    polygonsearchresult.operation
+                                    polygonsearchresult.operation,
+                                    polygonsearchresult.reduceprecision
                                 )
                             )
                     )
