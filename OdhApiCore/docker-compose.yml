@@ -44,6 +44,7 @@ services:
       ASPNETCORE_NotifierConfig__idm-marketplace__Token: ${MARKETPLACE_PUSH_TOKEN}
       ASPNETCORE_S3Config__dc-meteorology-province-forecast__Filename: ${S3_WEATHERFORECAST_FILENAME}
       ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessKey: ${S3_WEATHERFORECAST_ACCESSKEY}
-      ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessSecretKey: ${S3_WEATHERFORECAST_SECRET}      
+      ASPNETCORE_S3Config__dc-meteorology-province-forecast__AccessSecretKey: ${S3_WEATHERFORECAST_SECRET}
+      ASPNETCORE_DigiWayConfig__CyclingRoutes__ServiceUrl: ${DIGIWAY_CYCLINGROUTES_URL}
     ports:
       - "8001:80"

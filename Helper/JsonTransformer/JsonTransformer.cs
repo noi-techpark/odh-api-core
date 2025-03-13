@@ -47,7 +47,8 @@ namespace Helper
             //if (filterClosedData) token = token.FilterClosedData();
 
             //Ensure Self Link is the right url
-            token = token.TransformSelfLink(urlGenerator);
+            if(urlGenerator != null)
+                token = token.TransformSelfLink(urlGenerator);
 
             if (filteroutNullValues)
                 token = JsonTransformerMethods.FilterOutNullProperties(token);

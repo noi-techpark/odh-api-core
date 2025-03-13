@@ -35,6 +35,8 @@ namespace OdhApiCore
         private readonly List<NotifierConfig> notifierConfig;
         private readonly IDictionary<string, S3Config> s3Config;
 
+        private readonly IDictionary<string, DigiWayConfig> digiwayConfig;
+
         private readonly LTSCredentials ltsCredentials;
         private readonly LTSCredentials ltsCredentialsOpen;
 
@@ -224,6 +226,25 @@ namespace OdhApiCore
                 }
             }
 
+            this.digiwayConfig = new Dictionary<string, DigiWayConfig>();
+
+            var digiwayconfigdict = this.configuration.GetSection("DigiWayConfig").GetChildren();
+            if (digiwayconfigdict != null)
+            {
+                foreach (var digiwaycfg in digiwayconfigdict)
+                {
+                    this.digiwayConfig.TryAddOrUpdate(
+                        digiwaycfg.Key,
+                        new DigiWayConfig(
+                            digiwaycfg.GetValue<string>("ServiceUrl", ""),
+                            digiwaycfg.GetValue<string>("Username", ""),
+                            digiwaycfg.GetValue<string>("Password", ""),
+                            digiwaycfg.Key
+                        )
+                    );
+                }
+            }
+
             var ltsapi = this.configuration.GetSection("LTSApiIDM");
             this.ltsCredentials = new LTSCredentials(
                 ltsapi.GetValue<string>("ServiceUrl", ""),
@@ -274,6 +295,7 @@ namespace OdhApiCore
         public RavenConfig RavenConfig => this.ravenConfig;
         public List<NotifierConfig> NotifierConfig => this.notifierConfig;
         public IDictionary<string, S3Config> S3Config => this.s3Config;
+        public IDictionary<string, DigiWayConfig> DigiWayConfig => this.digiwayConfig;
 
         public LTSCredentials LtsCredentials => this.ltsCredentials;
 

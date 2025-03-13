@@ -198,27 +198,62 @@ namespace Helper
             string? wkt,
             List<Tuple<double, double>>? polygon,
             string srid,
-            string? operation = null
+            string? operation = null,
+            bool reduceprecision = false
         )
         {
             if (String.IsNullOrEmpty(wkt))
-                return GetGeoWhereInPolygon_GeneratedColumns(polygon, srid, operation);
+                return GetGeoWhereInPolygon_GeneratedColumns(polygon, srid, operation, reduceprecision);
             else
-                return GetGeoWhereInPolygon_GeneratedColumns(wkt, srid, operation);
+                return GetGeoWhereInPolygon_GeneratedColumns(wkt, srid, operation, reduceprecision);
         }
 
         public static string GetGeoWhereInPolygon_GeneratedColumns(
             List<Tuple<double, double>> polygon,
             string srid = "4326",
-            string? operation = "intersects"
+            string? operation = "intersects",
+            bool reduceprecision = false
         )
         {
-            if (srid != "4326")
-                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', {srid}), ST_Transform(gen_position,{srid}))";
-            else
-                return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', 4326), gen_position)";
+            string wkt = $"POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))";
+            return GetGeoWhereInPolygon_GeneratedColumns(wkt, srid, operation, reduceprecision);
+
+            //if (srid != "4326")
+            //    return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', {srid}), ST_Transform(gen_position,{srid}))";
+            //else
+            //    return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('POLYGON(({String.Join(",", polygon.Select(t => string.Format("{0} {1}", t.Item1.ToString(CultureInfo.InvariantCulture), t.Item2.ToString(CultureInfo.InvariantCulture))))}))', 4326), gen_position)";
         }
 
+        public static string GetGeoWhereInPolygon_GeneratedColumns(
+            string wkt,
+            string srid = "4326",
+            string? operation = "intersects",
+            bool reduceprecision = false
+        )
+        {
+            if (reduceprecision)
+            {
+                if (srid != "4326")
+                    return $"{GetPolygonOperator(operation)}(ST_ReducePrecision(ST_GeometryFromText('{wkt}', {srid}),0.00000001), ST_ReducePrecision(ST_Transform(gen_position,{srid}),0.00000001))";
+                else
+                    return $"{GetPolygonOperator(operation)}(ST_ReducePrecision(ST_GeometryFromText('{wkt}', 4326),0.00000001), ST_ReducePrecision(gen_position,0.00000001))";
+            }
+            else
+            {
+                if (srid != "4326")
+                    return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', {srid}), ST_Transform(gen_position,{srid}))";
+                else
+                    return $"{GetPolygonOperator(operation)}(ST_GeometryFromText('{wkt}', 4326), gen_position)";
+            }
+        }
+
+        /// <summary>
+        /// Adding ST_ReducePrecision if Points - Linestrings are given, 
+        /// </summary>
+        /// <param name="wkt"></param>
+        /// <param name="srid"></param>
+        /// <param name="operation"></param>
+        /// <returns></returns>
         public static string GetGeoWhereInPolygon_GeneratedColumns(
             string wkt,
             string srid = "4326",
@@ -234,7 +269,8 @@ namespace Helper
         public static string GetPolygonOperator(string? operation) =>
             operation switch
             {
-                "contains" => "ST_Contains",
+                //"contains" => "ST_Contains",
+                "contains" => "ST_Covers",
                 "intersects" => "ST_Intersects",
                 _ => "ST_Contains",
             };

@@ -40,6 +40,7 @@ namespace OdhApiImporter
 
         private readonly LTSCredentials ltsCredentials;
         private readonly LTSCredentials ltsCredentialsOpen;
+        private readonly IDictionary<string, DigiWayConfig> digiwayConfig;
 
         public Settings(IConfiguration configuration)
         {
@@ -197,6 +198,25 @@ namespace OdhApiImporter
                 }
             }
 
+            this.digiwayConfig = new Dictionary<string, DigiWayConfig>();
+
+            var digiwayconfigdict = this.configuration.GetSection("DigiWayConfig").GetChildren();
+            if (digiwayconfigdict != null)
+            {
+                foreach (var digiwaycfg in digiwayconfigdict)
+                {
+                    this.digiwayConfig.TryAddOrUpdate(
+                        digiwaycfg.Key,
+                        new DigiWayConfig(
+                            digiwaycfg.GetValue<string>("ServiceUrl", ""),
+                            digiwaycfg.GetValue<string>("Username", ""),                            
+                            digiwaycfg.GetValue<string>("Password", ""),
+                            digiwaycfg.Key
+                        )
+                    );
+                }
+            }
+
             var ltsapi = this.configuration.GetSection("LTSApiIDM");
             this.ltsCredentials = new LTSCredentials(
                 ltsapi.GetValue<string>("ServiceUrl", ""),
@@ -251,5 +271,6 @@ namespace OdhApiImporter
         public IDictionary<string, S3Config> S3Config => this.s3Config;
         public LTSCredentials LtsCredentials => this.ltsCredentials;
         public LTSCredentials LtsCredentialsOpen => this.ltsCredentialsOpen;
+        public IDictionary<string, DigiWayConfig> DigiWayConfig => this.digiwayConfig;
     }
 }

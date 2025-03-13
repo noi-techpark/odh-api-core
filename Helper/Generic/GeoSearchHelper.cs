@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Amazon.S3.Model;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using SqlKata.Execution;
 
 namespace Helper
@@ -238,6 +239,9 @@ namespace Helper
                     {
                         result.wktstring = wktandsrid.Value.Item1;
                         result.srid = wktandsrid.Value.Item2;
+
+                        result.reduceprecision = CheckPrecisionReduceNeeded(polygon);
+
                         return result;
                     }
                     else
@@ -307,29 +311,32 @@ namespace Helper
                 }
                 else
                 {
+                    //pass only id of geoshape
+                    //
+
                     //Format = country.type.id or country.type.name
                     var inputquery = polygon.Split(".");
-                    if (inputquery.Length != 3)
-                        return null;
+                    //if (inputquery.Length != 3)
+                    //    return null;
 
-                    bool idtofilter = int.TryParse(inputquery[2], out int parsedid);
-
+                 
                     //Retrieve data from shape table
 
                     var geometry = await queryfactory
                         .Query()
-                        .SelectRaw("ST_AsText(geometry)")
-                        .From("shapes")
-                        .Where("country", inputquery[0].ToUpper())
-                        .Where("type", inputquery[1].ToLower())
-                        .When(idtofilter, x => x.Where("id", parsedid))
-                        .When(!idtofilter, x => x.WhereLike("name", inputquery[2]).OrWhereLike("name_alternative", inputquery[2]))
+                        .SelectRaw("ST_AsText(ST_Transform(geometry, 4326))")
+                        .From("geoshapes")
+                        .When(inputquery.Length == 3, x => x.Where("country", inputquery[0].ToUpper()))
+                        .When(inputquery.Length == 3, x => x.Where("type", inputquery[1].ToLower()))
+                        .When(inputquery.Length == 3, x => x.Where("id", inputquery[2]).OrWhereLike("name", inputquery[2]))
+                        .OrWhere("id", polygon)                                                                      
                         //create a generated column which constructs a name by id,type and name
                         .FirstOrDefaultAsync<string>();
 
                     if (!String.IsNullOrEmpty(geometry))
                     {
                         result.wktstring = geometry.ToString();
+                        result.reduceprecision = CheckPrecisionReduceNeeded(geometry.ToString());
 
                         return result;
                     }
@@ -350,6 +357,7 @@ namespace Helper
                 || polygon.ToUpper().StartsWith("GEOMETRYCOLLECTION")
                 || polygon.ToUpper().StartsWith("POINT ZM")
                 || polygon.ToUpper().StartsWith("POINT M")
+                || polygon.ToUpper().StartsWith("POINT")
             )
             {
                 return true;
@@ -357,6 +365,23 @@ namespace Helper
             else
                 return false;
         }
+
+
+        public static bool CheckPrecisionReduceNeeded(string? polygon)
+        {
+            if (
+                polygon.ToUpper().StartsWith("LINESTRING")
+                || polygon.ToUpper().StartsWith("POINT")
+                || polygon.ToUpper().StartsWith("MULTIPOINT")
+                || polygon.ToUpper().StartsWith("MULTILINESTRING")                
+            )
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
 
         public static bool CheckWKTSyntax(string? polygon, QueryFactory queryFactory)
         {
@@ -505,6 +530,8 @@ namespace Helper
         public List<Tuple<double, double>>? polygon { get; set; }
         public string? wktstring { get; set; } = null;
         public string srid { get; set; } = "4326";
+
+        public bool reduceprecision { get; set; } = false;
     }
 
     public class RavenGeoSearchResult

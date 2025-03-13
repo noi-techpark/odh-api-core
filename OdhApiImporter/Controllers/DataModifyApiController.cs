@@ -953,6 +953,72 @@ namespace OdhApiImporter.Controllers
 
         #endregion
 
+        #region Shape
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ModifyGeoShapes")]
+        public async Task<IActionResult> ModifyGeoShapes(          
+          CancellationToken cancellationToken
+      )
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
+            var objectscount = await customdataoperation.UpdateGeoshapeCreateMapping(               
+            );
+            
+
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify GeoShape",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
+        }
+
+        [Authorize(Roles = "DataPush")]
+        [HttpGet, Route("ModifyGeoShapesTestMetaInfo")]
+        public async Task<IActionResult> ModifyGeoShapeMetadata(
+          CancellationToken cancellationToken
+      )
+        {
+            CustomDataOperation customdataoperation = new CustomDataOperation(
+                settings,
+                QueryFactory
+            );
+            var objectscount = await customdataoperation.UpdateGeoshapeMetaInfo(
+            );
+
+
+            return Ok(
+                new UpdateResult
+                {
+                    operation = "Modify GeoShape",
+                    updatetype = "custom",
+                    otherinfo = "",
+                    message = "Done",
+                    recordsmodified = objectscount,
+                    created = 0,
+                    deleted = 0,
+                    id = "",
+                    updated = 0,
+                    success = true,
+                }
+            );
+        }
+
+        #endregion
+
         #region Reduced
 
         [Authorize(Roles = "DataPush")]

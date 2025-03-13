@@ -695,10 +695,20 @@ namespace Helper
                 //.EventDateFilterEnd_GeneratedColumn(begindate, enddate)
                 //.EventDateFilterBegin_GeneratedColumn(begindate, enddate)
                 //.EventDateFilterBeginEnd_GeneratedColumn(begindate, enddate)
-                //TEST TSMULTIRANGE
+                //TSMULTIRANGE Filter Both Dates given
                 .When(
                     begindate != DateTime.MinValue && enddate != DateTime.MaxValue, 
                     q => q.DateFilter_GeneratedColumn(begindate, enddate, "")
+                )
+                //TSMULTIRANGE Filter Only Begindate given
+                .When(
+                    begindate != DateTime.MinValue && enddate == DateTime.MaxValue,
+                    q => q.DateFilter_GeneratedColumn(begindate, null, "")
+                )
+                //TSMULTIRANGE Filter Only Enddate given
+                .When(
+                    begindate == DateTime.MinValue && enddate != DateTime.MaxValue,
+                    q => q.DateFilter_GeneratedColumn(null, enddate, "")
                 )
                 .When(
                     languagelist.Count > 0,
@@ -1546,6 +1556,7 @@ namespace Helper
             return query
                 .When(typelist != null, q => query.WhereIn("type", typelist))
                 .When(sourcelist != null, q => query.WhereIn("datasource", sourcelist))
+                .When(sourceidlist != null, q => query.WhereIn("sourceid", sourceidlist))
                 .When(idlist != null, q => query.WhereIn("id", idlist))
                 //.When(latest, )
                 //.When(filterClosedData, q => q.FilterClosedData_Raw());
