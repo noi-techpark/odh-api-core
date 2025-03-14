@@ -457,7 +457,7 @@ namespace Helper
             //Day/Date, DateTo, SingleDays, Begin, End
             reduced.DateBegin = myevent.DateBegin;
             reduced.DateEnd = myevent.DateEnd;
-            reduced.NextBeginDate = myevent.NextBeginDate;
+            //reduced.NextBeginDate = myevent.NextBeginDate;
 
             reduced.EventProperty = myevent.EventProperty;
 

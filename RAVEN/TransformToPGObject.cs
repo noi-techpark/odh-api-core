@@ -589,7 +589,7 @@ namespace RAVEN
             eventlinked.LocationInfo = data.LocationInfo;
             //eventlinked.LTSTags = data.LTSTags;
             eventlinked.Mapping = data.Mapping;
-            eventlinked.NextBeginDate = data.NextBeginDate;
+            //eventlinked.NextBeginDate = data.NextBeginDate;
             eventlinked.OrganizerInfos = data.OrganizerInfos;
             eventlinked.EventProperty.EventOrganizerId = data.OrgRID;
             //eventlinked.PayMet = data.PayMet;

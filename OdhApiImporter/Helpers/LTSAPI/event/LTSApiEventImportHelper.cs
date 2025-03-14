@@ -469,15 +469,17 @@ namespace OdhApiImporter.Helpers.LTSAPI
         {
             if(eventNew.EventPublisher != null)
             {
-                if(eventNew.EventPublisher.Where(x => x.PublisherRID == "C9475CF585664B2887DE543481182A2D").Count() > 0)
+                if (eventNew.EventPublisher.Where(x => x.PublisherRID == "C9475CF585664B2887DE543481182A2D").Count() > 0)
                 {
                     var toppublisher = eventNew.EventPublisher.Where(x => x.PublisherRID == "C9475CF585664B2887DE543481182A2D").FirstOrDefault();
                     if (toppublisher != null)
-                    {
+                    {                        
                         eventNew.EventPublisher.Remove(toppublisher);
-                        eventNew.EventPublisher.ToList().Insert(0, toppublisher);
+                        eventNew.EventPublisher = eventNew.EventPublisher.Prepend(toppublisher).ToList();
                     }
                 }
+                //seems not working
+                //eventNew.EventPublisher = eventNew.EventPublisher.OrderBy(x => x.PublisherRID == "C9475CF585664B2887DE543481182A2D").ToList();
             }
         }
 
@@ -486,6 +488,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
             if(!String.IsNullOrEmpty(eventNew.OrgRID))
             {
                 //Get the Organizer from LTS
+                //To check add organizer only in languages the event is available?
+                //To chek VAT missing
+
                 var organizer = await GetOrganizerFromLTSV2(eventNew.OrgRID);
 
                 if (organizer != null)

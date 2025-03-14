@@ -262,7 +262,7 @@ namespace NINJA.Parser
                 //myevent.DateBegin = Convert.ToDateTime(begindate, myculture);
                 //myevent.DateEnd = Convert.ToDateTime(enddate, myculture);
 
-                myevent.NextBeginDate = myevent.DateBegin;
+                //myevent.NextBeginDate = myevent.DateBegin;
 
                 myevent.EventDate = new List<EventDate>()
                 {
