@@ -224,14 +224,15 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                     //Create Tags
                     await eventparsed.UpdateTagsExtension(QueryFactory);
-
-                    //TODO Topic Generation?
-
-                    //TODO Metadata assignment detailde.MetaTitle = detailde.Title + " | suedtirol.info";
-
-                    //GET Organizer Data and add to Event
+                                                      
                     if (!opendata)
+                    {
+                        //GET Organizer Data and add to Event
                         await AddOrganizerData(eventparsed);
+
+                        //Add the MetaTitle for IDM
+                        await AddMetaTitle(eventparsed);
+                    }                        
 
                     //Compatibility create Topic Object
                     await GenerateTopicObject(eventparsed);
@@ -444,6 +445,18 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     eventNew.Topics.Add(new TopicLinked() { TopicRID = topicrid });
                 }
             }            
+        }
+
+        //Metadata assignment detailde.MetaTitle = detailde.Title + " | suedtirol.info";
+        private async Task AddMetaTitle(EventLinked eventNew)
+        {
+            if (eventNew != null && eventNew.Detail != null)
+            {                
+                foreach (var detail in eventNew.Detail)
+                {
+                    detail.Value.MetaTitle = detail.Value.Title + " | suedtirol.info";
+                }
+            }
         }
 
         private async Task AddOrganizerData(EventLinked eventNew)
