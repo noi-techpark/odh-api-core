@@ -65,14 +65,14 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 
                 if(eventids.Count == 1)
                 {
-                    var qs = new LTSQueryStrings() { page_size = 1, filter_endDate = DateTime.Now.AddYears(1).ToString("yyyy-MM-dd") };
+                    var qs = new LTSQueryStrings() { page_size = 1, filter_endDate = DateTime.Now.AddYears(1).ToString("yyyy-MM-dd"), filter_startDate = DateTime.Now.AddMonths(-6).ToString("yyyy-MM-dd") };
                     var dict = ltsapi.GetLTSQSDictionary(qs);
 
                     return await ltsapi.EventDetailRequest(eventids.FirstOrDefault(), dict);
                 }
                 else
                 {
-                    var qs = new LTSQueryStrings() { page_size = 100, filter_endDate = DateTime.Now.AddYears(1).ToString("yyyy-MM-dd") };
+                    var qs = new LTSQueryStrings() { page_size = 100, filter_endDate = DateTime.Now.AddYears(1).ToString("yyyy-MM-dd"), filter_startDate = DateTime.Now.AddMonths(-6).ToString("yyyy-MM-dd") };
 
                     if (eventids != null && eventids.Count > 0)
                         qs.filter_rids = String.Join(",", eventids);
@@ -151,16 +151,17 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 var result = await SaveEventsToPG(eventlts);
                 return result;
             }
-            //If data is not accessible on LTS Side, 
+            //If data is not accessible on LTS Side, delete or disable it
             else if(eventlts != null && eventlts.FirstOrDefault().ContainsKey("status") && (int)eventlts.FirstOrDefault()["status"] == 403)
             {
-                var result = await DeleteOrDisableData<EventLinked>(idlist.FirstOrDefault() + "_REDUCED", true);
+                var result = await DeleteOrDisableData<EventLinked>(idlist.FirstOrDefault(), false);
+                var resultopen = await DeleteOrDisableData<EventLinked>(idlist.FirstOrDefault() + "_REDUCED", true);
 
                 return new UpdateDetail()
                 {
-                    updated = 0,
+                    updated = result.Item1,
                     created = 0,
-                    deleted = result.Item2,
+                    deleted = resultopen.Item2,
                     error = 0,
                 };
             }
@@ -227,6 +228,10 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     //GET Organizer Data and add to Event
                     if (!opendata)
                         await AddOrganizerData(eventparsed);
+
+                    //Compatibility create Topic Object
+                    await GenerateTopicObject(eventparsed);
+
 
                     var result = await InsertDataToDB(eventparsed, data.data);
 
@@ -421,6 +426,20 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 }
             }
             //TODO import the Redactional Tags from Events into Tags ?
+        }
+
+        //Compatibility reasons recreate this Topic Object but without description
+        private async Task GenerateTopicObject(EventLinked eventNew)
+        {
+            if (eventNew != null && eventNew.TopicRIDs != null && eventNew.TopicRIDs.Count > 0)
+            {
+                eventNew.Topics = new List<TopicLinked>();
+
+                foreach (var topicrid in eventNew.TopicRIDs)
+                {
+                    eventNew.Topics.Add(new TopicLinked() { TopicRID = topicrid });
+                }
+            }            
         }
 
         private async Task AddOrganizerData(EventLinked eventNew)
