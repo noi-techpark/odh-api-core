@@ -507,7 +507,12 @@ namespace Helper
             }
             else if (oldmetadata != null)
             {
-                if (oldmetadata.UpdateInfo == null || oldmetadata.UpdateInfo.UpdateHistory == null)
+                //Compatibility Update Info not present
+                if (oldmetadata.UpdateInfo == null)
+                    newmetadata.UpdateInfo = new UpdateInfo();
+
+                //Compatibility UpdateHistory not present
+                if (oldmetadata.UpdateInfo.UpdateHistory == null)
                     newmetadata.UpdateInfo.UpdateHistory = new List<UpdateHistory>();
                 else
                     newmetadata.UpdateInfo.UpdateHistory = oldmetadata.UpdateInfo.UpdateHistory;
