@@ -217,7 +217,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     var eventindb = await LoadDataFromDB<EventLinked>(id);
 
                     //Do not delete Old Dates from Event
-                    await MergeEventDates(eventparsed, eventindb);
+                    await MergeEventDates(eventparsed, eventindb, 6);
 
                     //Add manual assigned Tags to TagIds
                     await MergeEventTags(eventparsed, eventindb);
@@ -232,6 +232,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
 
                         //Add the MetaTitle for IDM
                         await AddMetaTitle(eventparsed);
+
+                        //Resort the publisher
+                        await ResortPublisher(eventparsed);
                     }                        
 
                     //Compatibility create Topic Object
@@ -384,7 +387,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
             );
         }
 
-        private async Task MergeEventDates(EventLinked eventNew, EventLinked eventOld)
+        private async Task MergeEventDates(EventLinked eventNew, EventLinked eventOld, int monthstogoback = 12)
         {
 
             if (eventOld != null)
@@ -394,7 +397,9 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 List<EventDate> eventDatesBeforeToday = new List<EventDate>();
                 foreach (var eventdate in eventOld.EventDate.Where(x => x.From.Date < DateTime.Now.Date))
                 {
-                    eventDatesBeforeToday.Add(eventdate);
+                    //How many event dates we have to store?
+                    if(eventdate.From.Date > DateTime.Now.Date.AddMonths(-1 * monthstogoback))
+                        eventDatesBeforeToday.Add(eventdate);
                 }
 
                 foreach (var eventdatebefore in eventDatesBeforeToday)
@@ -436,13 +441,13 @@ namespace OdhApiImporter.Helpers.LTSAPI
         //Compatibility reasons recreate this Topic Object but without description
         private async Task GenerateTopicObject(EventLinked eventNew)
         {
-            if (eventNew != null && eventNew.TopicRIDs != null && eventNew.TopicRIDs.Count > 0)
+            if (eventNew != null && eventNew.Tags != null && eventNew.Tags.Count > 0)
             {
                 eventNew.Topics = new List<TopicLinked>();
 
-                foreach (var topicrid in eventNew.TopicRIDs)
+                foreach (var topicrid in eventNew.Tags.Where(x => x.Type == "eventcategory"))
                 {
-                    eventNew.Topics.Add(new TopicLinked() { TopicRID = topicrid });
+                    eventNew.Topics.Add(new TopicLinked() { TopicRID = topicrid.Id, TopicInfo = topicrid.Name  });
                 }
             }            
         }
@@ -455,6 +460,23 @@ namespace OdhApiImporter.Helpers.LTSAPI
                 foreach (var detail in eventNew.Detail)
                 {
                     detail.Value.MetaTitle = detail.Value.Title + " | suedtirol.info";
+                }
+            }
+        }
+
+        //Compatibility make sure publisher C9475CF585664B2887DE543481182A2D if available is on first position
+        private async Task ResortPublisher(EventLinked eventNew)
+        {
+            if(eventNew.EventPublisher != null)
+            {
+                if(eventNew.EventPublisher.Where(x => x.PublisherRID == "C9475CF585664B2887DE543481182A2D").Count() > 0)
+                {
+                    var toppublisher = eventNew.EventPublisher.Where(x => x.PublisherRID == "C9475CF585664B2887DE543481182A2D").FirstOrDefault();
+                    if (toppublisher != null)
+                    {
+                        eventNew.EventPublisher.Remove(toppublisher);
+                        eventNew.EventPublisher.ToList().Insert(0, toppublisher);
+                    }
                 }
             }
         }

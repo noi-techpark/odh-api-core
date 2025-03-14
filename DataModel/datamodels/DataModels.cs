@@ -1023,9 +1023,10 @@ namespace DataModel
         
         public string? DistrictId { get; set; }
         public ICollection<string>? DistrictIds { get; set; }
-        
-        
+
+        [SwaggerDeprecated("Deprecated use Tags of type eventcategory")]
         public ICollection<string>? TopicRIDs { get; set; }
+        [SwaggerDeprecated("Deprecated use Tags of type eventcategory")]
         public ICollection<Topic>? Topics { get; set; }
 
         public ICollection<EventPublisher>? EventPublisher { get; set; }
@@ -1041,8 +1042,8 @@ namespace DataModel
         public ICollection<EventUrls>? EventUrls { get; set; }
 
 
-        [SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
-        public DateTime? NextBeginDate { get; set; }
+        //[SwaggerDeprecated("Obsolete, Dates are stored into EventDates Object Array")]
+        //public DateTime? NextBeginDate { get; set; }
 
         [SwaggerDeprecated("Deprecated use Mapping.lts.ClassificationRID, EventProperty.EventClassificationId")]
         public string? ClassificationRID
