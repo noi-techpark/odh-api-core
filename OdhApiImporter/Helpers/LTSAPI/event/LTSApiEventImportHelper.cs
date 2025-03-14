@@ -224,6 +224,10 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     //Create Tags
                     await eventparsed.UpdateTagsExtension(QueryFactory);
 
+                    //TODO Topic Generation?
+
+                    //TODO Metadata assignment detailde.MetaTitle = detailde.Title + " | suedtirol.info";
+
                     //GET Organizer Data and add to Event
                     if (!opendata)
                         await AddOrganizerData(eventparsed);
@@ -420,7 +424,7 @@ namespace OdhApiImporter.Helpers.LTSAPI
                     }
                 }
             }
-            //TODO import the Redactional Tags from Events into Tags ?
+            //TODO import the Redactional Tags from Events into Tags?
         }
 
         private async Task AddOrganizerData(EventLinked eventNew)
