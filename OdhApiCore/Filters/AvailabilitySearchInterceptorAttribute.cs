@@ -150,7 +150,7 @@ namespace OdhApiCore.Filters
 
                     string? publishedon = actionarguments.ContainsKey("publishedon")
                         ? (string?)actionarguments["publishedon"]
-                        : null;
+                        : "idm-marketplace";
 
                     string language = actionarguments.ContainsKey("language")
                         ? (string)actionarguments["language"]!
@@ -695,6 +695,7 @@ namespace OdhApiCore.Filters
                 mssversion
             );
 
+            //Filters the Request after 
             if (bookableaccoIDs.Count > 0 || msscache)
             {
                 // 0 MSS Method Olle channels affamol mit IDList
@@ -880,7 +881,7 @@ namespace OdhApiCore.Filters
                     languagelist: new List<string>(),
                     additionalfilter: null,
                     userroles: new List<string>() { "IDM" }
-                ) //Availability Search only for IDM Users therefore no filte Closed Data, no reduced data
+                ) //Availability Search only for IDM Users therefore no filter Closed Data, no reduced data
                 .OrderBySeed(ref seed, "data #>>'\\{Shortname\\}' ASC")
                 .GeoSearchFilterAndOrderby(geosearchresult);
 

@@ -662,7 +662,7 @@ namespace OdhApiCore.Controllers
             string? msssource = "sinfo",
             string? detail = "0",
             string? locfilter = null,
-            string? publishedon = null,
+            string? publishedon = null, //setting idm-marketplace as default publishedon
             bool availabilityonly = false,
             bool usemsscache = false,
             bool uselcscache = true,
@@ -782,7 +782,7 @@ namespace OdhApiCore.Controllers
                     bookablefilter: null,
                     smgtagfilter: null,
                     sourcefilter: null,
-                    publishedon: null,
+                    publishedon: publishedon,
                     seed: null,
                     updatefrom: null,
                     langfilter: null,
@@ -835,7 +835,7 @@ namespace OdhApiCore.Controllers
             [FromBody(
                 EmptyBodyBehavior = Microsoft.AspNetCore.Mvc.ModelBinding.EmptyBodyBehavior.Allow
             )]
-                string? idfilter = null,
+            string? idfilter = null,
             string? availabilitychecklanguage = "en",
             string? boardfilter = null,
             string? arrival = null,
@@ -845,7 +845,7 @@ namespace OdhApiCore.Controllers
             string? msssource = "sinfo",
             string? detail = "0",
             string? locfilter = null,
-            string? publishedon = null,
+            string? publishedon = "idm-marketplace",
             bool usemsscache = false,
             bool uselcscache = false,
             string? removeduplicatesfrom = null,
