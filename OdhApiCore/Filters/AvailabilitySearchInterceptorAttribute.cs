@@ -122,7 +122,7 @@ namespace OdhApiCore.Filters
                         : null;
                     bool? active = actionarguments.ContainsKey("active")
                         ? ((LegacyBool?)actionarguments["active"])?.Value
-                        : null;
+                        : true;
                     bool? odhactive = actionarguments.ContainsKey("odhactive")
                         ? ((LegacyBool?)actionarguments["odhactive"])?.Value
                         : null;
