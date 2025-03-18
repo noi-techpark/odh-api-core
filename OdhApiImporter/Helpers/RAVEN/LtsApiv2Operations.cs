@@ -28,17 +28,22 @@ namespace OdhApiImporter.Helpers.RAVEN
         {
             var ltsdata = await GetAccommodationFromLTSV2(accommodation, settings);
 
-            //Assign the CinCode
-            if (updatecincode)
-                await AssignCinCodeFromNewLtsApi(accommodation, ltsdata);
+            //TODO IF Ltsdata is not accessible deactivate it
 
-            //Assign AccoLTSInfo
-            if (updateaccoltsinfo)
-                await AssignAccoLTSInfoFromNewLtsApi(accommodation, ltsdata);
+            if (ltsdata != null)
+            {
+                //Assign the CinCode
+                if (updatecincode)
+                    await AssignCinCodeFromNewLtsApi(accommodation, ltsdata);
 
-            //Guestcard Tag
-            if (updateguestcards)
-                await AssignGuestcardDataFromNewLtsApi(accommodation, ltsdata, queryFactory);
+                //Assign AccoLTSInfo
+                if (updateaccoltsinfo)
+                    await AssignAccoLTSInfoFromNewLtsApi(accommodation, ltsdata);
+
+                //Guestcard Tag
+                if (updateguestcards)
+                    await AssignGuestcardDataFromNewLtsApi(accommodation, ltsdata, queryFactory);
+            }
         }
 
         private static async Task<JObject> GetAccommodationFromLTSV2(
