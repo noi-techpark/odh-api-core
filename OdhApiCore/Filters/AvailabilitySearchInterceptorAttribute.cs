@@ -858,17 +858,7 @@ namespace OdhApiCore.Filters
             string requestsource,
             bool lcscache = false
 )
-        {
-            LcsHelper myhelper = LcsHelper.Create(
-                bookableaccoIDs,
-                language,
-                roominfo,
-                boardfilter,
-                arrival,
-                departure,
-                requestsource
-            );
-
+        {            
             // Edge Case No Ids Provided, load all of them
             if ((bookableaccoIDs.Count == 0) && !lcscache)
             {
@@ -890,12 +880,18 @@ namespace OdhApiCore.Filters
                 var myroomdata = AccommodationSearchUtilities.RoomstringtoAvailabilitySearchRequestRoomoption(roominfo);
 
 
+                var accoidlist =
+                    bookableaccoIDs != null && bookableaccoIDs.Count > 0
+                        ? bookableaccoIDs.Select(x => x.ToUpper()).ToList()
+                        : bookableaccoIDs ?? new();
+
+
                 LTSAvailabilitySearchRequestBody body = new LTSAvailabilitySearchRequestBody()
                 {
-                    accommodationRids = myhelper.accoidlist,
+                    accommodationRids = accoidlist,
                     //marketingGroupRids = new List<string>() { "" },
-                    startDate = myhelper.arrival,
-                    endDate = myhelper.departure,
+                    startDate = arrival,
+                    endDate = departure,
                     paging = new LTSAvailabilitySearchRequestPaging() { pageNumber = 1, pageSize = 10000 },
                     cacheLifeTimeInSeconds = 300,
                     onlySuedtirolInfoActive = true,
@@ -903,7 +899,6 @@ namespace OdhApiCore.Filters
                     roomOptions = myroomdata
                 };
                 
-
                 //What about language
 
                 var ltsavailablilitysearch = await ltsapi.AccommodationAvailabilitySearchRequest(null, body);
