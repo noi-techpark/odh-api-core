@@ -24,8 +24,9 @@ namespace Helper
         public static async Task GenerateJSONAccommodationsForBooklist(
             QueryFactory queryFactory,
             string jsondir,
-            bool isbookable,
-            string jsonName
+            bool? isbookable,
+            string jsonName,
+            string publishedon = "idm-marketplace"
         )
         {
             //List<string> languagelist = new List<string>() { "de", "it", "en" };
@@ -36,6 +37,10 @@ namespace Helper
             string select = "id as Id";
             var seed = Helper.CreateSeed.GetSeed(0);
             string orderby = $"md5(id || '{seed}')";
+
+            List<string> publishedonlist = new List<string>();
+            if(publishedon != null)
+                publishedonlist = Helper.CommonListCreator.CreateIdList(publishedon.ToLower());
 
             var query = queryFactory
                 .Query()
@@ -56,13 +61,13 @@ namespace Helper
                     tourismvereinlist: new List<string>(),
                     regionlist: new List<string>(),
                     apartmentfilter: null,
-                    bookable: isbookable,
+                    bookable: isbookable != null ? isbookable.Value : null,
                     altitude: false,
                     altitudemin: 0,
                     altitudemax: 0,
                     activefilter: null,
-                    smgactivefilter: true,
-                    publishedonlist: new List<string>(), //TO CHECK if only South Tyrol active
+                    smgactivefilter: null,
+                    publishedonlist: publishedonlist,
                     sourcelist: new List<string>(),
                     searchfilter: null,
                     language: null,

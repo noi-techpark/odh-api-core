@@ -85,7 +85,7 @@ namespace OdhApiCore.Controllers.other
                 await JsonGeneratorHelper.GenerateJSONAccommodationsForBooklist(
                     QueryFactory,
                     settings.JsonConfig.Jsondir,
-                    true,
+                    null,
                     "AccosAll"
                 );
 
