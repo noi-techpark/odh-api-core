@@ -207,6 +207,12 @@ namespace OdhApiCore.Filters
                         ? (string?)actionarguments!["removeduplicatesfrom"]
                         : null;
 
+                    string? ltsapiversion = actionarguments.ContainsKey(
+                        "ltsapiversion"
+                    )
+                        ? (string?)actionarguments!["ltsapiversion"]
+                        : "v1";
+
                     if (CheckArrivalAndDeparture(arrival, departure))
                     {
                         var booklist = new List<string>();
@@ -378,7 +384,7 @@ namespace OdhApiCore.Filters
                                     {
                                         context.HttpContext.Items.Add(
                                             "lcsavailablity",
-                                            await GetLCSAvailability(
+                                            await GetLTSAvailability(
                                                 language: language,
                                                 arrival: arrival,
                                                 departure: departure,
@@ -386,7 +392,8 @@ namespace OdhApiCore.Filters
                                                 roominfo: roominfo,
                                                 bookableaccoIDs: booklist,
                                                 requestsource: msssource,
-                                                lcscache: lcscache ?? usecache
+                                                lcscache: lcscache ?? usecache,
+                                                ltsapiversion
                                             )
                                         );
                                     }
@@ -736,6 +743,26 @@ namespace OdhApiCore.Filters
             };
         }
 
+        private async Task<MssResult> GetLTSAvailability(
+            string language,
+            string arrival,
+            string departure,
+            string boardfilter,
+            string roominfo,
+            List<string> bookableaccoIDs,
+            string requestsource,
+            bool lcscache = false,
+            string apiversion = "v1"
+            )
+        {
+            if(apiversion == "v2")
+            {
+                return await GetLTSApiAvailability(language, arrival, departure, boardfilter, roominfo, bookableaccoIDs, requestsource, lcscache);
+            }
+            else
+                return await GetLCSAvailability(language, arrival, departure, boardfilter, roominfo, bookableaccoIDs, requestsource, lcscache);
+        }
+
         private async Task<MssResult> GetLCSAvailability(
             string language,
             string arrival,
@@ -822,14 +849,14 @@ namespace OdhApiCore.Filters
         }
 
         private async Task<MssResult> GetLTSApiAvailability(
-    string language,
-    string arrival,
-    string departure,
-    string boardfilter,
-    string roominfo,
-    List<string> bookableaccoIDs,
-    string requestsource,
-    bool lcscache = false
+            string language,
+            string arrival,
+            string departure,
+            string boardfilter,
+            string roominfo,
+            List<string> bookableaccoIDs,
+            string requestsource,
+            bool lcscache = false
 )
         {
             LcsHelper myhelper = LcsHelper.Create(
