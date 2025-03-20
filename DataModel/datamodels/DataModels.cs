@@ -2324,21 +2324,22 @@ namespace DataModel
         [SwaggerDeprecated("Deprecated")]
         [RegularExpression("Y|N", ErrorMessage = "Only Y and N allowed")]
         [SwaggerEnum(new[] { "Y", "N" })]
-        [SwaggerSchema("Active Today.noi.bz")]
+        [SwaggerSchema("Active Eurac Videowall")]
         public string? Display1 { get; set; }
 
         [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
-        [SwaggerSchema("Intranet Eurac")]
+        [SwaggerSchema("Active Eurac Seminarroom")]
         public string? Display2 { get; set; }
 
         [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
-        [SwaggerSchema("Website Eurac")]
+        [SwaggerSchema("Active Today.noi.bz (Videowall)")]
         public string? Display3 { get; set; }
 
         [SwaggerDeprecated("Deprecated")]
         [SwaggerEnum(new[] { "Y", "N" })]
+        [SwaggerSchema("Active Today.noi.bz (Totem)")]
         public string? Display4 { get; set; }
 
         [SwaggerDeprecated("Deprecated")]

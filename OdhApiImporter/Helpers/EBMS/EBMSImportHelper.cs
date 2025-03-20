@@ -215,11 +215,27 @@ namespace OdhApiImporter.Helpers
                         //eventshort.TechnologyFields = AssignTechnologyfieldsautomatically(eventshort.CompanyName, eventshort.TechnologyFields);
                     }
 
-                    //Set ActiveToday / PublishedOn in base of Display1
+                    //Set Publishers in base of Displays
+                    //Eurac Videowall
                     if (eventshort.Display1 == "Y")
-                        publishedon.TryAddOrUpdateOnList("today.noi.bz.it");
+                        publishedon.TryAddOrUpdateOnList("eurac-videowall");
                     if (eventshort.Display1 == "N")
+                        publishedon.TryRemoveOnList("eurac-videowall");
+                    //Eurac Videowall
+                    if (eventshort.Display2 == "Y")
+                        publishedon.TryAddOrUpdateOnList("eurac-seminarroom");
+                    if (eventshort.Display2 == "N")
+                        publishedon.TryRemoveOnList("eurac-seminarroom");
+                    //today.noi.bz.it
+                    if (eventshort.Display3 == "Y")
+                        publishedon.TryAddOrUpdateOnList("today.noi.bz.it");
+                    if (eventshort.Display3 == "N")
                         publishedon.TryRemoveOnList("today.noi.bz.it");
+                    //Eurac Videowall
+                    if (eventshort.Display4 == "Y")
+                        publishedon.TryAddOrUpdateOnList("totem-noi");
+                    if (eventshort.Display4 == "N")
+                        publishedon.TryRemoveOnList("totem-noi");
 
                     //Fix when TagIds are set lets update the Tags Object
                     if (eventshort.TagIds != null && eventshort.TagIds.Count > 0)
