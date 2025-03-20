@@ -3236,6 +3236,28 @@ namespace DataModel
         public ICollection<string>? Interfaces { get; set; }
 
         public ICollection<string> Types { get; set; }
+
+        //New fields to store Information on Sync
+        public ICollection<SyncDataConfig>? SyncDataConfig { get; set; }
+    }
+
+    public class SyncDataConfig
+    {
+        public ICollection<string>? PathParam { get; set; }
+
+        public string? BaseUrl { get; set; }
+
+        public string? SyncDataApiUrl
+        {
+            get
+            {
+                return String.Format(
+                    "{0}/{1}",
+                    this.BaseUrl != null ? this.BaseUrl : "",
+                    String.Join("/", this.PathParam)
+                );
+            }
+        }
     }
 
     public class LTSTaggingType
