@@ -233,9 +233,9 @@ namespace OdhApiImporter.Helpers
                         publishedon.TryRemoveOnList("today.noi.bz.it");
                     //Eurac Videowall
                     if (eventshort.Display4 == "Y")
-                        publishedon.TryAddOrUpdateOnList("totem-noi");
+                        publishedon.TryAddOrUpdateOnList("noi-totem");
                     if (eventshort.Display4 == "N")
-                        publishedon.TryRemoveOnList("totem-noi");
+                        publishedon.TryRemoveOnList("noi-totem");
 
                     //Fix when TagIds are set lets update the Tags Object
                     if (eventshort.TagIds != null && eventshort.TagIds.Count > 0)
