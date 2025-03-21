@@ -20,6 +20,8 @@ namespace OdhApiImporter.Helpers
 {
     public class EbmsEventsImportHelper : ImportHelper, IImportHelper
     {
+        public bool forceupdate = false; 
+
         public EbmsEventsImportHelper(
             ISettings settings,
             QueryFactory queryfactory,
@@ -61,7 +63,7 @@ namespace OdhApiImporter.Helpers
 
         private async Task<UpdateDetail> ImportData(
             List<Tuple<EventShortLinked, EBMSEventREST>> resulttuple,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken            
         )
         {
             int updatecounter = 0;
@@ -168,7 +170,7 @@ namespace OdhApiImporter.Helpers
                     tagids = eventindb.TagIds;
                 }
 
-                if (changedonDB != eventshort.ChangedOn)
+                if (changedonDB != eventshort.ChangedOn || forceupdate)
                 {
                     eventshort.ImageGallery = imagegallery;
                     //eventshort.EventTextDE = eventTextDE;

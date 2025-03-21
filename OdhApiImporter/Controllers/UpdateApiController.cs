@@ -329,6 +329,7 @@ namespace OdhApiImporter.Controllers
         [HttpGet, Route("EBMS/EventShort/UpdateAll")]
         [HttpGet, Route("EBMS/EventShort/Update")]
         public async Task<IActionResult> UpdateAllEBMS(
+            bool forceupdate = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -345,6 +346,9 @@ namespace OdhApiImporter.Controllers
                     "eventeuracnoi",
                     UrlGeneratorStatic("EBMS/EventShort")
                 );
+
+                if (forceupdate)
+                    ebmsimporthelper.forceupdate = true;
 
                 updatedetail = await ebmsimporthelper.SaveDataToODH(null, null, cancellationToken);
                 var updateResult = GenericResultsHelper.GetSuccessUpdateResult(
